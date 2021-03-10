@@ -12,19 +12,18 @@ SRCS = ./main.c \
 	   ./edit_functions.c \
 	   ../core.c
 OBJS = $(SRCS:.c=.o)
-INCLUDES = -I ../libft -L ../libft -I ../../better_libui -L ../../better_libui -I ../ft_printf -L ../ft_printf -I ../libgfx -L ../libgfx -I ../ -L ../
 LIBS = -l libft -l libprintf -l better_libui -l libgfx 
 FLAGS = -Wall
-#-Wextra -Werror
 
 all: $(NAME)
 
 $(NAME): $(SRCS)
 	@gcc -o $(NAME) $(SRCS) $(FLAGS) \
-		-I ../ -L ../ -I ../libgfx -L ../libgfx -l libgfx \
-		-I ../../better_libui -L ../../better_libui -l better_libui \
-		-I ../ft_printf -L ../ft_printf -l libprintf \
+		-I ../ -L ../ \
+		-I ../libgfx -L ../libgfx -l libgfx \
 		-I ../libft -L ../libft -l libft \
+		-I ../ft_printf -L ../ft_printf -l libprintf \
+		-I ../../better_libui -L ../../better_libui -l better_libui \
 		-I ../include/SDL2 -L ../lib -l SDL2 -l SDL2_ttf -l SDL2_image
 	@echo "$(NAME) was successfully created."
 

@@ -42,6 +42,7 @@ int	main(int argc, char **argv)
 	*/
 	while (libui->run)
 	{
+
 		draw_grid(doom, &doom->grid);
 		hover_calc(doom, &doom->grid);
 		if (bui_button_toggle(libui, doom->button_draw))

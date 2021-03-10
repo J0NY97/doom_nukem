@@ -308,20 +308,21 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 	int max_y;
 	int max_x;
 
-	max_y = grid->elem->active_surface->h / grid->gap;
-	max_x = grid->elem->active_surface->w / grid->gap;
-	y = 0;
-	while (y < max_y)
-	{	
-		gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem, (t_vector){0, y * grid->gap, 0}, (t_vector){grid->elem->active_surface->w, y * grid->gap, 0});
-		y++;
-	}
-	x = 0;
-	while (x < max_x)
-	{
-		gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem, (t_vector){x * grid->gap, 0, 0}, (t_vector){x * grid->gap, grid->elem->active_surface->h, 0});
-		x++;
-	}
+	// this draws the grid on the grid view
+		max_y = grid->elem->active_surface->h / grid->gap;
+		max_x = grid->elem->active_surface->w / grid->gap;
+		y = 0;
+		while (y < max_y)
+		{	
+			gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem, (t_vector){0, y * grid->gap, 0}, (t_vector){grid->elem->active_surface->w, y * grid->gap, 0});
+			y++;
+		}
+		x = 0;
+		while (x < max_x)
+		{
+			gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem, (t_vector){x * grid->gap, 0, 0}, (t_vector){x * grid->gap, grid->elem->active_surface->h, 0});
+			x++;
+		}
 //ft_printf("Grid drawn\n");
 	// the dimensions
 	gfx_draw_line(grid->elem->active_surface, 0xff999966, (t_vector){0, grid->dimensions.y, 0},

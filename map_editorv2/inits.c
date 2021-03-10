@@ -469,13 +469,14 @@ void	entity_edit_button_init(t_editor *doom)
 //"RENDER VIEW"
 	option->ent_render_sprite = bui_new_element(option->menu, "entity render view", option->view->position);
 	option->ent_render_sprite->show = 0;
+
 // "SPRITE" tab
 // the button
 	coord = ui_init_coords(25, 25, 100, 50);
-	option->ent_sprite_button = bui_new_element(option->add_view, "the button", coord);
+	option->ent_sprite_button = bui_new_element(option->add_view, "Sprites", coord);
 	bui_set_element_color(option->ent_sprite_button, doom->palette.elem_elem_elem);
 	option->ent_sprite_button->show = 0;
-// the sprites
+// the sprites view
 	coord = ui_init_coords(25, 100, option->add_view->position.w - 50, option->add_view->position.h - 125);
 	option->ent_sprites = bui_new_element(option->add_view, "the sprites", coord);
 	bui_set_element_color(option->ent_sprites, 0xffffffff);
@@ -485,7 +486,7 @@ void	entity_edit_button_init(t_editor *doom)
 	option->ent_info_button = bui_new_element(option->add_view, "Other", coord);
 	bui_set_element_color(option->ent_info_button, doom->palette.elem_elem_elem);
 	option->ent_info_button->show = 0;
-// the menu;
+// the menu; (this is the main viewer that changes when you click on the tabs.
 	coord = ui_init_coords(25, 125, option->add_view->position.w - 50, option->add_view->position.h - 150);
 	option->ent_info_menu = bui_new_element(option->add_view, "the menu", coord);
 	bui_set_element_color(option->ent_info_menu, doom->palette.elem_elem);

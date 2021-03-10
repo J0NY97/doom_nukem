@@ -14,6 +14,9 @@
 // TODO: some place needs drop down menu
 // TODO: entity editor view should get fixed, the addview should be tabs...
 // TODO: when in selection mode. ctrl or (drag and highlight) to choose multiple points, walls, sectors, entities for deletion. 
+//
+// TODO TODO TODO TODO TODO TODO
+// draw the grid only once on the surface of the grid, and only update it when you zoom.
 
 typedef	struct	s_editor			t_editor;
 

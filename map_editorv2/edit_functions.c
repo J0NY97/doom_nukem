@@ -209,8 +209,12 @@ void	entity_option(t_editor *doom, t_grid *grid, SDL_Event *e)
 	option->ent_sprite_button->show = 1;
 	option->ent_info_button->show = 1;
 	option->ent_render_sprite->show = 1;
-	if (bui_button(doom->libui, option->ent_info_button))
+	if (bui_button_toggle(doom->libui, option->ent_info_button))
 	{
+		// Untoggle the other buttons/tabs
+		option->ent_sprite_button->toggle = 0;
+		option->ent_sprites->show = 0;
+
 		option->ent_info_menu->show = 1;
 		// TODO: strdel here if they havent already
 		// TODO: better libui elements dont have .text
@@ -234,9 +238,13 @@ void	entity_option(t_editor *doom, t_grid *grid, SDL_Event *e)
 		}
 //ft_printf("Entity type: %d\n", grid->modify_entity->type);
 	}
-	else if (bui_button(doom->libui, option->ent_sprite_button))
+	if (bui_button_toggle(doom->libui, option->ent_sprite_button))
 	{
-		doom->option.ent_sprites->show = 1;
+		// Untoggle the other tabs
+		option->ent_info_button->toggle = 0;
+		option->ent_info_menu->show = 0;
+
+		option->ent_sprites->show = 1;
 		entity_sprite_buttons(doom, grid);
 	}
 	// render the sprite on the menu view
