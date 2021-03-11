@@ -12,19 +12,33 @@ SRCS = ./main.c \
 	   ./edit_functions.c \
 	   ../core.c
 OBJS = $(SRCS:.c=.o)
-LIBS = -l libft -l libprintf -l better_libui -l libgfx 
+INCLUDES = -I ../../libft \
+	   -I ../../ft_printf \
+	   -I ../../better_libui \
+	   -I ../../libgfx \
+	   -I ../../include/SDL2
+LIB_FOLDERS = -L ../../libft \
+		-L ../../ft_printf \
+		-L ../../better_libui \
+		-L ../../libgfx \
+		-L ../../lib
+
+LIBS = \
+	-l libgfx \
+	-l better_libui \
+	-l libprintf \
+	-l libft \
+	-l SDL2 -l SDL2_ttf -l SDL2_image
 FLAGS = -Wall
 
 all: $(NAME)
 
 $(NAME): $(SRCS)
-	@gcc -o $(NAME) $(SRCS) $(FLAGS) \
-		-I ../ -L ../ \
-		-I ../libgfx -L ../libgfx -l libgfx \
-		-I ../libft -L ../libft -l libft \
-		-I ../ft_printf -L ../ft_printf -l libprintf \
-		-I ../../better_libui -L ../../better_libui -l better_libui \
-		-I ../include/SDL2 -L ../lib -l SDL2 -l SDL2_ttf -l SDL2_image
+	@mingw32-make -C ../../libft
+	@mingw32-make -C ../../ft_printf
+	@mingw32-make -C ../../better_libui
+	@mingw32-make -C ../../libgfx
+	@gcc -o $(NAME)	$(SRCS) $(FLAGS) $(INCLUDES) $(LIB_FOLDERS) $(LIBS)
 	@echo "$(NAME) was successfully created."
 
 clean:
@@ -37,3 +51,11 @@ fclean: clean
 re: fclean all
 
 .PHONY: clean, all, re, fclean
+
+#@gcc -o $(NAME) $(SRCS) $(FLAGS) \
+#		-I ../../libgfx -L ../../libgfx -l libgfx \
+#		-I ../../better_libui -L ../../better_libui -l better_libui \
+#		-I ../../ft_printf -L ../../ft_printf -l libprintf \
+#		-I ../../libft -L ../../libft -l libft \
+#		-I ../../include/SDL2 -L ../../lib -l SDL2 -l SDL2_ttf -l SDL2_image
+

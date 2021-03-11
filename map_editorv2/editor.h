@@ -2,7 +2,7 @@
 # define EDITOR_H
 # define SDL_MAIN_HANDLED
 
-# include "core.h"
+# include "../core.h"
 # include "libft.h"
 # include "better_libui.h"
 # include "libgfx.h"
@@ -17,6 +17,8 @@
 //
 // TODO TODO TODO TODO TODO TODO
 // draw the grid only once on the surface of the grid, and only update it when you zoom.
+//
+// TODO: split wall doesnt workin
 
 typedef	struct	s_editor			t_editor;
 
