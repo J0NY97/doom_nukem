@@ -113,7 +113,7 @@ void	place_sprite_on_wall(t_editor *doom)
 }
 
 // @Optimization: ft_set_text needs to be called only ONCE when new wall is selected.
-void	wall_option(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
 	bui_change_element_text(doom->option.title, "Wall edit");
 	doom->option.texture_button->show = 1;
@@ -156,14 +156,37 @@ void	wall_option(t_editor *doom, t_grid *grid, SDL_Event *e)
 	}
 	// TODO: fix this when you have loaded the textures.
 	//show_wall_render(doom, grid);
+	
+
+	// The new stuff
+	doom->edit_view_wall->show = 1;
+	doom->edit_toolbox_wall->show = 1;
+
+	preset_tab_events(doom->wall_tab);
 }
 
-void	sector_option(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	sector_edit_button_events(t_bui_libui *libui, t_sector_edit *collection, short int *current_value)
+{
+	char *str = NULL;
+	
+	if (bui_button(libui, collection->add_button))
+		*current_value += 1;
+	if (bui_button(libui, collection->sub_button))
+		*current_value -= 1;
+	str = ft_sprintf("%d", *current_value);
+	bui_change_element_text(collection->amount, str);
+	ft_strdel(&str);
+}
+
+void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
 	t_list *curr;
 	t_sector_edit *temp;
 
 	bui_change_element_text(doom->option.title, "Sector edit");
+
+	doom->edit_view_sector->show = 1;
+	doom->edit_toolbox_sector->show = 1;
 
 	curr = doom->option.sector_edit_buttons;
 	if (grid->modify_sector == NULL)
@@ -198,9 +221,41 @@ void	sector_option(t_editor *doom, t_grid *grid, SDL_Event *e)
 		ft_strdel(&str);
 		curr = curr->next;
 	}
+
+	// Floor and ceiling texture element events
+	curr = doom->floor_texture_buttons;
+	while (curr)
+	{
+		bui_button_toggle(libui, curr->content);
+		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
+		doom->active_floor_texture != NULL &&
+		doom->active_floor_texture != ((t_bui_element *)curr->content))
+			((t_bui_element *)curr->content)->toggle = 0;
+		else
+			doom->active_floor_texture = curr->content;
+		curr = curr->next;	
+	}
+
+	curr = doom->ceiling_texture_buttons;
+	while (curr)
+	{
+		bui_button_toggle(libui, curr->content);
+		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
+		doom->active_ceiling_texture != NULL &&
+		doom->active_ceiling_texture != ((t_bui_element *)curr->content))
+			((t_bui_element *)curr->content)->toggle = 0;
+		else
+			doom->active_ceiling_texture = curr->content;
+		curr = curr->next;	
+	}
+	// new sector editing buttons.
+	sector_edit_button_events(libui, doom->floor_height, &grid->modify_sector->floor_height);
+	sector_edit_button_events(libui, doom->ceiling_height, &grid->modify_sector->ceiling_height);
+	sector_edit_button_events(libui, doom->gravity, &grid->modify_sector->gravity);
+	sector_edit_button_events(libui, doom->lighting, &grid->modify_sector->light_level);
 }
 
-void	entity_option(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	entity_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
 	t_wall_edit *option;
 
@@ -261,14 +316,23 @@ void	entity_option(t_editor *doom, t_grid *grid, SDL_Event *e)
 								doom->entity_sprites[0].y_size});
 }
 
-void	selected_option_menu(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
 	doom->option.texture_button->show = 0;
 	doom->option.textures->show = 0;
 	doom->option.add_button->show = 0;
 	doom->option.sprites->show = 0;
 	doom->option.show_render->show = 0;
-// sector shit
+	
+	// NEW STUFF
+	doom->edit_view_sector->show = 0;
+	doom->edit_toolbox_sector->show = 0;
+
+	doom->edit_view_wall->show = 0;
+	doom->edit_toolbox_wall->show = 0;
+	// END NEW STUFF
+
+// sector stuff
 	t_list *curr;
 	t_sector_edit *temp;
 
@@ -282,18 +346,18 @@ void	selected_option_menu(t_editor *doom, t_grid *grid, SDL_Event *e)
 		temp->add_button->show = 0;
 		curr = curr->next;
 	}
-// entity shit
+// entity stuff
 	doom->option.ent_sprite_button->show = 0;
 	doom->option.ent_sprites->show = 0;
 	doom->option.ent_info_button->show = 0;
 	doom->option.ent_info_menu->show = 0;
 	doom->option.ent_render_sprite->show = 0;
 	if (grid->modify_wall != NULL)
-		wall_option(doom, grid, e);
+		wall_option(doom, grid, libui);
 	else if (grid->modify_sector != NULL)
-		sector_option(doom, grid, e);
+		sector_option(doom, grid, libui);
 	else if (grid->modify_entity != NULL)
-		entity_option(doom, grid, e);
+		entity_option(doom, grid, libui);
 	else
 	{
 		bui_change_element_text(doom->option.title, " "); // reset the text if nothing is selected

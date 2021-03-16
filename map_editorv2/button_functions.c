@@ -81,6 +81,28 @@ void	remove_portal(t_editor *doom, t_grid *grid)
 	}
 }
 
+void		scale_changer_events(t_bui_libui *libui, t_editor *editor)
+{
+	char *str;
+
+	if (bui_button(libui, editor->scale_increase))
+	{
+		editor->scale += 1;
+		str = ft_itoa(editor->scale);
+		bui_change_element_text(editor->scale_button, str);
+		ft_strdel(&str);
+		ft_printf("map scale increased to: %d\n", editor->scale);
+	}
+	else if (bui_button(libui, editor->scale_decrease))
+	{
+		editor->scale -= 1;
+		str = ft_itoa(editor->scale);
+		bui_change_element_text(editor->scale_button, str);
+		ft_strdel(&str);
+		ft_printf("map scale decreased to: %d\n", editor->scale);
+	}
+}
+
 int		entity_compare(t_entity *ent, t_entity *ity)
 {
 	if (vector_compare(ent->pos, ity->pos) &&

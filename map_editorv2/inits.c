@@ -16,16 +16,24 @@ void	window_init(t_editor *doom, t_bui_libui *libui)
 {
 	t_xywh coord = ui_init_coords(0, 0, 1920, 1080);
 	char *title = ft_strjoiner("Doom Nukem Map Editor : ", doom->filename, NULL);
-	Uint32 bg_color = doom->palette.win;
-	doom->window = bui_new_window(libui, title, coord, 0, bg_color);
+	doom->window = bui_new_window(libui, title, coord, 0, doom->palette.win);
 	ft_strdel(&title);
 
 	coord = ui_init_coords(500, 500, 1500, 750);
-	title = ft_strdup("Editor");
-	bg_color = doom->palette.win;
-	doom->edit_window = bui_new_window(libui, title, coord, 0, bg_color);
-	ft_strdel(&title);
+	doom->edit_window = bui_new_window(libui, "Editor", coord, 0, doom->palette.win);
 	SDL_MinimizeWindow(doom->edit_window->win);
+}
+
+void	edit_window_init(t_editor *editor, t_bui_libui *libui)
+{
+	t_xywh coord;
+
+	// New edit window, replace this with the old one after its done.
+	coord = ui_init_coords(500, 500, 1000, 500);
+	editor->new_edit_window = bui_new_window(libui, "New Editor", coord, 0, editor->palette.win);
+	
+	init_sector_editor(editor);
+	init_wall_editor(editor);
 }
 
 void	grid_init(t_editor *doom)
@@ -58,6 +66,9 @@ void	grid_init(t_editor *doom)
 	doom->grid.x = doom->grid.coords.x;
 	doom->grid.y = doom->grid.coords.y;
 	doom->grid.dimensions = doom->grid.coords;
+
+	// map thingy
+	doom->scale = 1;
 }
 
 void	toolbox_init(t_editor *doom)
@@ -78,6 +89,21 @@ void	toolbox_init(t_editor *doom)
 
 	doom->selected_sector_info = bui_new_element(doom->info_area, "selected sector info", (t_xywh) {10, 75, 200, 50});
 	bui_set_element_color(doom->selected_sector_info, doom->info_area->color);
+
+	// scale changer
+	coord = ui_init_coords(300, 360, 100, 40);
+	doom->scale_menu = bui_new_element(doom->info_area, "scale", coord);
+	coord = ui_init_coords(0, 20, 100, 20);
+	doom->scale_button = bui_new_element(doom->scale_menu, "-1", coord);
+	doom->scale_button->text_x = 50;
+
+	coord.x = 0;
+	coord.y = 0;
+	coord.w = 20;
+	coord.h = 20;
+	doom->scale_decrease = bui_new_element(doom->scale_button, "-", coord);
+	coord.x = 80;
+	doom->scale_increase = bui_new_element(doom->scale_button, "+", coord);
 }
 
 void	button_init(t_editor *doom)
@@ -328,6 +354,29 @@ void	option_menu_init(t_editor *doom)
 	option->sprites->show = 0;
 }
 
+t_sector_edit	*new_add_sector_button_prefab(t_bui_element *parent_menu, char *title, int x, int y)
+{
+	t_xywh coord;
+	t_sector_edit *prefab;
+
+	prefab = malloc(sizeof(t_sector_edit));
+	memset(prefab, 0, sizeof(t_sector_edit));
+// menu
+	coord = ui_init_coords(x, y, 100, 40);
+	prefab->menu = bui_new_element(parent_menu, title, coord);
+// sub
+	coord = ui_init_coords(0, 20, 20, 20);
+	prefab->sub_button = bui_new_element(prefab->menu, "-", coord);
+// amount
+	coord = ui_init_coords(20, 20, 60, 20);
+	prefab->amount = bui_new_element(prefab->menu, "not set", coord);
+// add
+	coord = ui_init_coords(100 - 20, 20, 20, 20);
+	prefab->add_button = bui_new_element(prefab->menu, "+", coord);
+	return (prefab);
+}
+
+
 void	add_sector_button_prefab(t_editor *doom, char *str, t_xywh position)
 {
 	t_xywh coord;
@@ -378,6 +427,133 @@ void	sector_edit_buttons_init(t_editor *doom)
 
 	coord = ui_init_coords(25, 250, option->add_view->position.w - 50, 50);
 	add_sector_button_prefab(doom, "lighting", coord);
+}
+
+void	init_sector_editor(t_editor *editor)
+{
+	t_xywh coord;
+
+	// edit toolbox- and view element
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_sector = bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_view_sector = bui_new_menu(editor->new_edit_window, "New View", coord);
+
+	// floor texture menu
+	coord = ui_init_coords(0, 20,
+			editor->edit_view_sector->position.w * 0.5,
+			editor->edit_view_sector->position.h - 20);
+	editor->sector_floor_menu = bui_new_element(editor->edit_view_sector, "Floor Texture", coord);
+
+	// ceiling texture menu
+	coord = ui_init_coords(editor->edit_view_sector->position.w * 0.5, 20,
+			editor->edit_view_sector->position.w * 0.5,
+			editor->edit_view_sector->position.h - 20);
+	editor->sector_ceiling_menu = bui_new_element(editor->edit_view_sector, "Ceiling Texture", coord);
+	bui_set_element_color(editor->sector_ceiling_menu, 0xff06D6A0);
+
+// TODO: from a texture file take all the textures and make buttons of them and show them on both of the menus above.
+	// this is just a demonstration
+	t_bui_element *temp_elem;
+	char *str;
+	int floor_texture_count = 5;
+	int i = 0;
+	while (i++ < floor_texture_count)
+	{
+		// these coords need to be placed correctly on the view so that they lok nice aka use modulo
+		coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
+		str = ft_sprintf("%d", i);
+		temp_elem = bui_new_element(editor->sector_floor_menu, str, coord);
+		ft_strdel(&str);
+		bui_set_element_color(temp_elem, 0xff06D6A0);
+		add_to_list(&editor->floor_texture_buttons, temp_elem, sizeof(t_bui_element));
+	}
+	i = 0;
+	while (i++ < floor_texture_count)
+	{
+		coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
+		str = ft_sprintf("%d", i);
+		temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
+		ft_strdel(&str);
+		bui_set_element_image_from_path(temp_elem, "../engine/ui/ui_images/doom.jpg");
+		add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
+	}
+
+	// Init the ceiling- and floor height... etc. buttons
+	editor->floor_height = new_add_sector_button_prefab(editor->edit_toolbox_sector, "floor height", 5, (25 * 1) + (40 * 0));
+	editor->ceiling_height = new_add_sector_button_prefab(editor->edit_toolbox_sector, "ceiling height", 5, (25 * 2) + (40 * 1));
+	editor->gravity = new_add_sector_button_prefab(editor->edit_toolbox_sector, "gravity", 5, (25 * 3) + (40 * 2));
+	editor->lighting = new_add_sector_button_prefab(editor->edit_toolbox_sector, "lighting", 5, (25 * 4) + (40 * 3));
+}
+
+void	init_wall_editor(t_editor *editor)
+{
+	t_xywh coord;
+
+	// edit toolbox- and view element
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_wall = bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_view_wall = bui_new_menu(editor->new_edit_window, "New View", coord);
+
+	// tabsystem in toolbox
+	coord = ui_init_coords(5, 20, editor->edit_toolbox_wall->position.w - 10, editor->edit_toolbox_wall->position.h - 25);
+	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall, "texture tabs", coord);
+	// Note; if you want to add these tabs youre adding, you have to save them somewhere, [0] is tab button [1] is the view
+	// Note2; it seems that i have planned to make the tab system more dynamic, aka you can have differnece sized buttons
+	editor->wall_texture_view = preset_tab_add(editor->wall_tab, "Wall Texture")[1];
+	editor->portal_texture_view = preset_tab_add(editor->wall_tab, "Portal Texture")[1];
+	editor->wall_sprite_view = preset_tab_add(editor->wall_tab, "Wall Sprite")[1];
+
+	// TODO: make this modular on the y axis aswell
+	t_bui_element *temp_elem;
+	char *str;
+	int texture_count = 5;
+	int i = 0;
+	int temp_x;
+
+	// wall texture buttons
+	while (i++ < texture_count)
+	{
+		str = ft_itoa(i);
+		temp_x = (i * 5) + ((i - 1) * 50);
+		coord = ui_init_coords(temp_x, 50, 50, 50);
+		temp_elem = bui_new_element(editor->wall_texture_view, str, coord);
+		ft_strdel(&str);
+		bui_set_element_image_from_path(temp_elem, "../engine/ui/ui_images/doom.jpg");
+	}
+
+	// portal texture buttons
+	texture_count = 2;
+	i = 0;
+	while (i++ < texture_count)
+	{
+		str = ft_itoa(i);
+		temp_x = (i * 5) + ((i - 1) * 50);
+		coord = ui_init_coords(temp_x, 50, 50, 50);
+		temp_elem = bui_new_element(editor->portal_texture_view, str, coord);
+		ft_strdel(&str);
+		bui_set_element_image_from_path(temp_elem, "../engine/ui/ui_images/doom.jpg");
+	}
+
+	// wall sprite buttons
+	texture_count = 1;
+	i = 0;
+	while (i++ < texture_count)
+	{
+		str = ft_itoa(i);
+		temp_x = (i * 5) + ((i - 1) * 50);
+		coord = ui_init_coords(temp_x, 50, 50, 50);
+		temp_elem = bui_new_element(editor->wall_sprite_view, str, coord);
+		ft_strdel(&str);
+		bui_set_element_image_from_path(temp_elem, "../engine/ui/ui_images/doom.jpg");
+	}
 }
 
 /*

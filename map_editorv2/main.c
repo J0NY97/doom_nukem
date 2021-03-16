@@ -35,6 +35,9 @@ int	main(int argc, char **argv)
 	sector_edit_buttons_init(doom);
 	entity_edit_button_init(doom);
 
+	// New stuff
+	edit_window_init(doom, libui);
+
 	/*
 	texture_init(doom);
 	sprite_init(doom);
@@ -43,6 +46,7 @@ int	main(int argc, char **argv)
 	while (libui->run)
 	{
 
+		scale_changer_events(libui, doom);
 		draw_grid(doom, &doom->grid);
 		hover_calc(doom, &doom->grid);
 		if (bui_button_toggle(libui, doom->button_draw))
@@ -64,7 +68,7 @@ int	main(int argc, char **argv)
 			draw_selected_sector(doom, &doom->grid);
 			draw_selected_entity(doom, &doom->grid);
 			selection_mode_buttons(doom, &doom->grid);
-			selected_option_menu(doom, &doom->grid, &libui->event);
+			selected_option_menu(doom, &doom->grid, libui);
 		}
 		unselect_selected(doom, &doom->grid, &libui->event);
 		// boundaries(doom, &doom->grid);

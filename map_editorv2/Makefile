@@ -34,10 +34,6 @@ FLAGS = -Wall
 all: $(NAME)
 
 $(NAME): $(SRCS)
-	@mingw32-make -C ../../libft
-	@mingw32-make -C ../../ft_printf
-	@mingw32-make -C ../../better_libui
-	@mingw32-make -C ../../libgfx
 	@gcc -o $(NAME)	$(SRCS) $(FLAGS) $(INCLUDES) $(LIB_FOLDERS) $(LIBS)
 	@echo "$(NAME) was successfully created."
 
@@ -51,11 +47,3 @@ fclean: clean
 re: fclean all
 
 .PHONY: clean, all, re, fclean
-
-#@gcc -o $(NAME) $(SRCS) $(FLAGS) \
-#		-I ../../libgfx -L ../../libgfx -l libgfx \
-#		-I ../../better_libui -L ../../better_libui -l better_libui \
-#		-I ../../ft_printf -L ../../ft_printf -l libprintf \
-#		-I ../../libft -L ../../libft -l libft \
-#		-I ../../include/SDL2 -L ../../lib -l SDL2 -l SDL2_ttf -l SDL2_image
-

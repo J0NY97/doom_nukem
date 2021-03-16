@@ -75,10 +75,11 @@ typedef	struct	s_grid
 
 typedef	struct	s_sector_edit
 {
+	t_bui_element	*menu;
 	t_bui_element	*text;
 	t_bui_element	*sub_button;
 	t_bui_element	*amount;
-	short int	*f_amount;
+	short int	*f_amount; // this is redundant in the new version, use value
 	t_bui_element	*add_button;
 }				t_sector_edit;
 
@@ -128,8 +129,7 @@ typedef	struct	s_wall_edit
 struct			s_editor
 {
 	t_bui_libui	*libui;
-	int map_w;
-	int map_h;
+
 	t_bui_window	*window;
 	t_bui_element	*toolbox; // menu / surface
 	t_bui_element	*info_area; // menu / surface / located on toolbox
@@ -140,6 +140,12 @@ struct			s_editor
 	t_bui_element	*button_remove_portal;
 	t_bui_element	*hover_info;
 	t_bui_element	*selected_sector_info;
+
+	unsigned int 	scale;
+	t_bui_element	*scale_menu;
+	t_bui_element	*scale_button;
+	t_bui_element	*scale_increase;
+	t_bui_element	*scale_decrease;
 
 	t_grid		grid;
 	char		*filename;
@@ -161,7 +167,49 @@ struct			s_editor
 	// edit window
 	t_bui_window	*edit_window;
 	t_wall_edit	option;
+
+	// New edit window
+	t_bui_window	*new_edit_window;
+
+	///////////////////
+	// Wall elements
+	///////////////////
+	t_bui_element *edit_toolbox_wall;
+	t_bui_element *edit_view_wall;
+
+	// toolbox texture adding tabsystem
+	t_preset_tab *wall_tab;
+	t_bui_element *wall_texture_view;
+	t_bui_element *portal_texture_view;
+	t_bui_element *wall_sprite_view;
+	t_list *wall_texture_buttons;	// list of t_bui_element * of the texture buttons for wall
+	t_list *portal_texture_buttons; // list of t_bui_element * of the texture buttons for wall
+
+	///////////////////
+	// Sector elements,
+	///////////////////
+	t_bui_element	*edit_toolbox_sector;
+	t_bui_element	*edit_view_sector;
+
+	// toolbox sector edit buttons
+	t_sector_edit	*floor_height;
+	t_sector_edit	*ceiling_height;
+	t_sector_edit	*gravity;
+	t_sector_edit	*lighting;
+
+	// sector editing stuff
+	t_bui_element	*sector_ceiling_menu;
+	t_bui_element	*sector_floor_menu;
+	t_list		*ceiling_texture_buttons; // list of t_bui_element * of the texture buttons for ceiling
+	t_list		*floor_texture_buttons;	  // list of t_bui_element * of the texture buttons for floor
+	t_bui_element	*active_floor_texture;
+	t_bui_element	*active_ceiling_texture;
 };
+
+// Rewrites
+void	edit_window_init(t_editor *editor, t_bui_libui *libui);
+void	init_sector_editor(t_editor *editor);
+void	init_wall_editor(t_editor *editor);
 
 void			color_palette_init(t_color_palette *pal);
 void			window_init(t_editor *doom, t_bui_libui *libui);
@@ -184,6 +232,7 @@ void			draw_selected_button(t_editor *doom);
 void			option_menu_init(t_editor *doom);
 void			sector_edit_buttons_init(t_editor *doom);
 void			entity_edit_button_init(t_editor *doom);
+void			scale_changer_events(t_bui_libui *libui, t_editor *editor);
 
 void			selection(t_editor *doom, t_grid *grid, SDL_Event *e);
 void			select_point(t_editor *doom, t_grid *grid, SDL_Event *e);
@@ -199,7 +248,7 @@ void			draw_selected_entity(t_editor *doom, t_grid *grid);
 void			boundaries(t_editor *doom, t_grid *grid);
 void			selection_mode_buttons(t_editor *doom, t_grid *grid);
 void			show_selected_wall_texture(t_editor *doom, t_grid *grid);
-void			selected_option_menu(t_editor *doom, t_grid *grid, SDL_Event *e);
+void			selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui);
 
 int				args_parser(char **filename, int ac, char **av);
 t_point			*get_point_from_list(t_grid *grid, t_point *v);
