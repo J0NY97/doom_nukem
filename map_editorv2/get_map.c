@@ -87,6 +87,7 @@ void	read_map(t_map *map, int fd)
 	ft_strdel(&line);
 }
 
+// TODO: get the texture_scale from the file, to accomplish this you have to first write in it
 void	read_wall(t_grid *grid, int fd)
 {
 	char *line;
@@ -98,10 +99,11 @@ void	read_wall(t_grid *grid, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		new_w = (t_wall *)malloc(sizeof(t_wall));
+		new_w = new_wall(get_point_with_id(grid->points, ft_atoi(arr[1])),
+				get_point_with_id(grid->points, ft_atoi(arr[2])));
 		new_w->id = ft_atoi(arr[0]);
-		new_w->orig = get_point_with_id(grid->points, ft_atoi(arr[1]));
-		new_w->dest = get_point_with_id(grid->points, ft_atoi(arr[2]));
+		//new_w->orig = get_point_with_id(grid->points, ft_atoi(arr[1]));
+		//new_w->dest = get_point_with_id(grid->points, ft_atoi(arr[2]));
 		new_w->texture_id = ft_atoi(arr[3]);
 		add_to_list(&grid->walls, new_w, sizeof(t_wall));
 		free_array(arr);

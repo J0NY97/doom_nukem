@@ -16,7 +16,7 @@ Uint32		random_color(void)
 {
 	Uint32	color;
 
-	color = rgba_to_hex((t_rgba) {rand() % 255, rand() % 255, 245, 255});
+	color = rgba_to_hex((t_rgba) {255, rand() % 255, rand() % 255, 245});
 	ft_printf("generated color: %#x\n", color);
 
 	t_rgba rgba = hex_to_rgba(color);
@@ -77,9 +77,12 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 
 	new_wall->dest = dest;
 	new_wall->orig = orig;
+	new_wall->texture_scale = 1;
 	new_wall->texture_id = 0;
+	new_wall->portal_texture_id = 0;
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;
+
 	return (new_wall);
 }
 
@@ -446,4 +449,17 @@ void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors)
 			remove_from_walls(walls, wall->content);
 		wall = wall->next;
 	}
+}
+
+t_editor_texture	*load_editor_texture(char *path)
+{
+	// unsigned int id
+	// int w, h, x, y
+	// char *path
+	t_editor_texture *texture;
+
+	texture = malloc(sizeof(t_editor_texture));
+	memset(texture, 0, sizeof(t_editor_texture));
+
+	return (texture);
 }

@@ -20,7 +20,7 @@ void	show_wall_render(t_editor *doom, t_grid *grid)
 	SDL_Rect	texture;
 	SDL_Rect	temp;
 	SDL_Surface	*scaled_wall;
-	double scale;
+	double	scale;
 	double	x_axis;
 	double	y_axis;
 
@@ -97,6 +97,96 @@ void	show_wall_render(t_editor *doom, t_grid *grid)
 	SDL_FreeSurface(scaled_wall);
 }
 
+void	new_wall_render(t_editor *doom)
+{
+	t_grid *grid;
+	t_wall *wall;
+	t_xywh dim;
+	SDL_Rect	texture;
+	SDL_Rect	temp;
+	SDL_Surface	*scaled_wall;
+	double	scale;
+	double	x_axis;
+	double	y_axis;
+
+	grid = &doom->grid;
+	wall = grid->modify_wall;
+	// get w from the difference from the orig -> dest x
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos);
+	// get h from the sector it is a part of
+	dim.h = 96; // get the sector that the wall is a part of... and then take the height from it
+	// all of these values needs to  have a zoom value depending on which is...
+	//	more the x or the y so that we can see the whole wall...
+	//	but if you after that want to zoom you can??
+	dim.x = 50; // offsets
+	dim.y = 50;
+	// get texture from the wall selected
+	// (wall->texture_id)
+	// render wall with the texture
+
+	SDL_Surface *tex = load_image("../engine/ui/ui_images/doom.jpg");
+	texture.x = 0;
+	texture.y = 0;
+	texture.w = tex->w;
+	texture.h = tex->h;
+
+	// how many of the textures can fit on each axis
+	x_axis = (float)dim.w / (float)texture.w;
+	y_axis = (float)dim.h / (float)texture.h;
+
+	scale = (doom->edit_view_wall->position.w - (dim.x * 2)) / dim.w;
+	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
+	for (int y = 0; y < y_axis; y++)
+	{
+		for (int x = 0; x < x_axis; x++)
+		{
+			temp.w = texture.h * scale;
+			temp.h = texture.w * scale;
+			temp.x = x * temp.w;
+			temp.y = y * temp.h;
+			// TODO: this needs to be niklas made blitscaled
+			SDL_BlitScaled(tex, &texture, scaled_wall, &temp);
+		}
+	}
+	SDL_FreeSurface(tex);
+// render the objects placed on the wall
+/*
+	t_list *curr;
+	t_sprite *sprite;
+
+	curr = wall->sprites;
+	while (curr)
+	{
+		sprite = curr->content;
+		temp.x = sprite->pos.x;
+		temp.y = sprite->pos.y;
+		temp.w = sprite->w;
+		temp.h = sprite->h;
+		// TODO: this needs to be niklas blitscaled
+		SDL_BlitScaled(doom->sprites[0].surface,
+					&(SDL_Rect){doom->sprites[0].position[sprite->sprite_id][0],
+								doom->sprites[0].position[sprite->sprite_id][1],
+								doom->sprites[0].x_size,
+								doom->sprites[0].y_size},
+					scaled_wall, &temp);
+		curr = curr->next;
+	}
+	if (doom->option.modify_sprite != NULL)
+	{
+		gfx_draw_rect(doom->option.show_render->active_surface,
+					0xffff0000,
+					(t_xywh){doom->option.modify_sprite->pos.x,
+							doom->option.modify_sprite->pos.y,
+							doom->option.modify_sprite->w,
+							doom->option.modify_sprite->h});
+	}
+// finally blit the wall to the surface of the window
+*/
+	SDL_BlitSurface(scaled_wall, NULL, doom->edit_view_wall->active_surface, &(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
+	gfx_draw_rect(doom->edit_view_wall->active_surface, 0xff00ff00, (t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
+	SDL_FreeSurface(scaled_wall);
+}
+
 void	place_sprite_on_wall(t_editor *doom)
 {
 	t_wall		*wall;
@@ -163,6 +253,62 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	doom->edit_toolbox_wall->show = 1;
 
 	preset_tab_events(doom->wall_tab);
+
+	// check all the wall texture view elements
+	
+		// scale
+	// Note: add and subtract from "t_wall" "texture_scale"
+	if (bui_button(libui, doom->wall_scale_add))
+		doom->grid.modify_wall->texture_scale += 1;
+	else if (bui_button(libui, doom->wall_scale_sub))
+		doom->grid.modify_wall->texture_scale -= 1;
+	
+	char *scale_value_str = ft_itoa(doom->grid.modify_wall->texture_scale);
+	bui_change_element_text(doom->wall_scale_value, scale_value_str);
+	ft_strdel(&scale_value_str);
+	
+		// texture buttons
+	// Note: first step is to take from the "modify_wall" the "texture_id" and toggle that texture button
+	t_list *curr;
+	int current_id = 0; // this is the texture id for the current button in the loop
+	curr = doom->wall_texture_buttons;
+	while (curr)
+	{
+		bui_button_toggle(libui, curr->content);
+		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
+		doom->grid.modify_wall->texture_id != current_id)
+			((t_bui_element *)curr->content)->toggle = 0;
+		else
+		{
+			doom->grid.modify_wall->texture_id = current_id;
+			// TODO: when coming in to this function toggle on the already selected texture.
+			((t_bui_element *)curr->content)->toggle = 1;
+		}
+		current_id++;
+		curr = curr->next;	
+	}
+
+	// portal textures
+	current_id = 0; // this is the texture id for the current button in the loop
+	curr = doom->portal_texture_buttons;
+	while (curr)
+	{
+		bui_button_toggle(libui, curr->content);
+		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
+		doom->grid.modify_wall->portal_texture_id != current_id)
+			((t_bui_element *)curr->content)->toggle = 0;
+		else
+		{
+			doom->grid.modify_wall->portal_texture_id = current_id;
+			// TODO: when coming in to this function toggle on the already selected texture.
+			((t_bui_element *)curr->content)->toggle = 1;
+		}
+		current_id++;
+		curr = curr->next;	
+	}
+
+	// TODO: fix this, its slower than jesus on the cross
+	//new_wall_render(doom);
 }
 
 void	sector_edit_button_events(t_bui_libui *libui, t_sector_edit *collection, short int *current_value)

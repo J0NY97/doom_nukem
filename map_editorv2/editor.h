@@ -8,19 +8,27 @@
 # include "libgfx.h"
 # include "ft_printf.h"
 
-// TODO: all the draw * info needs the better libui to be able to set text on elements aka change the current text
 // TODO: in the bui_button take libui from the element instead of being required in the function call
-// TODO: set_map saving file causes segfaults
+//
 // TODO: some place needs drop down menu
+//
 // TODO: entity editor view should get fixed, the addview should be tabs...
+//
 // TODO: when in selection mode. ctrl or (drag and highlight) to choose multiple points, walls, sectors, entities for deletion. 
 //
-// TODO TODO TODO TODO TODO TODO
-// draw the grid only once on the surface of the grid, and only update it when you zoom.
+// TODO: draw the grid only once on the surface of the grid, and only update it when you zoom.
 //
 // TODO: split wall doesnt workin
+//
+// TODO: when edit view is open dont enable keypresses in the grid thinga majig
 
 typedef	struct	s_editor			t_editor;
+typedef struct	s_editor_texture		t_editor_texture;
+
+struct		s_editor_texture
+{
+	t_xywh	coord;
+};
 
 typedef struct	s_color_palette
 {
@@ -168,6 +176,8 @@ struct			s_editor
 	t_bui_window	*edit_window;
 	t_wall_edit	option;
 
+	// New stuff
+	t_list		*all_textures; // list of t_editor_texture (note: wall, portal and wall_sprite textures take their tex from here)
 	// New edit window
 	t_bui_window	*new_edit_window;
 
@@ -179,11 +189,21 @@ struct			s_editor
 
 	// toolbox texture adding tabsystem
 	t_preset_tab *wall_tab;
+
 	t_bui_element *wall_texture_view;
 	t_bui_element *portal_texture_view;
 	t_bui_element *wall_sprite_view;
+	
 	t_list *wall_texture_buttons;	// list of t_bui_element * of the texture buttons for wall
 	t_list *portal_texture_buttons; // list of t_bui_element * of the texture buttons for wall
+	t_list *wall_sprite_buttons;
+
+	t_bui_element *add_wall_sprite_button;
+	
+	t_bui_element *wall_scale;
+	t_bui_element *wall_scale_value;
+	t_bui_element *wall_scale_add;
+	t_bui_element *wall_scale_sub;
 
 	///////////////////
 	// Sector elements,
@@ -207,9 +227,10 @@ struct			s_editor
 };
 
 // Rewrites
-void	edit_window_init(t_editor *editor, t_bui_libui *libui);
-void	init_sector_editor(t_editor *editor);
-void	init_wall_editor(t_editor *editor);
+void			edit_window_init(t_editor *editor, t_bui_libui *libui);
+void			init_sector_editor(t_editor *editor);
+void			init_wall_editor(t_editor *editor);
+t_editor_texture	*load_editor_texture(char *path);
 
 void			color_palette_init(t_color_palette *pal);
 void			window_init(t_editor *doom, t_bui_libui *libui);

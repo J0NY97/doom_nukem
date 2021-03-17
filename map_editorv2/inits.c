@@ -478,7 +478,7 @@ void	init_sector_editor(t_editor *editor)
 		str = ft_sprintf("%d", i);
 		temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
 		add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
 	}
 
@@ -501,6 +501,7 @@ void	init_wall_editor(t_editor *editor)
 			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
 			editor->new_edit_window->position.h - 10);
 	editor->edit_view_wall = bui_new_menu(editor->new_edit_window, "New View", coord);
+	editor->edit_view_wall->update = 0;
 
 	// tabsystem in toolbox
 	coord = ui_init_coords(5, 20, editor->edit_toolbox_wall->position.w - 10, editor->edit_toolbox_wall->position.h - 25);
@@ -511,6 +512,28 @@ void	init_wall_editor(t_editor *editor)
 	editor->portal_texture_view = preset_tab_add(editor->wall_tab, "Portal Texture")[1];
 	editor->wall_sprite_view = preset_tab_add(editor->wall_tab, "Wall Sprite")[1];
 
+	// wall textures view elements
+	coord = ui_init_coords(5, 20, 100, 40);
+	editor->wall_scale = bui_new_element(editor->wall_texture_view, "texture scale", coord);
+	bui_set_element_color(editor->wall_scale, 0xff06D6A0);
+
+	coord = ui_init_coords(0, 20, 20, 20);
+	editor->wall_scale_sub = bui_new_element(editor->wall_scale, "-", coord);
+	bui_set_element_color(editor->wall_scale_sub, 0xff06D6A0);
+
+	coord = ui_init_coords(20, 20, 60, 20);
+	editor->wall_scale_value = bui_new_element(editor->wall_scale, "not set", coord);
+	bui_set_element_color(editor->wall_scale_value, 0xff06D6A0);
+	
+	coord = ui_init_coords(80, 20, 20, 20);
+	editor->wall_scale_add = bui_new_element(editor->wall_scale, "+", coord);
+	bui_set_element_color(editor->wall_scale_add, 0xff06D6A0);
+
+	// wall sprite view elements
+	coord = ui_init_coords(5, 20, 50, 20);
+	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view ,"add sprite", coord);
+	bui_set_element_color(editor->add_wall_sprite_button, 0xff06D6A0);
+
 	// TODO: make this modular on the y axis aswell
 	t_bui_element *temp_elem;
 	char *str;
@@ -519,17 +542,24 @@ void	init_wall_editor(t_editor *editor)
 	int temp_x;
 
 	// wall texture buttons
+	editor->wall_texture_buttons = NULL;
 	while (i++ < texture_count)
 	{
 		str = ft_itoa(i);
 		temp_x = (i * 5) + ((i - 1) * 50);
-		coord = ui_init_coords(temp_x, 50, 50, 50);
+		coord = ui_init_coords(temp_x, 70, 50, 50);
 		temp_elem = bui_new_element(editor->wall_texture_view, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg");
+		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
+		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
+		add_to_list(&editor->wall_texture_buttons, temp_elem, sizeof(t_bui_element));
 	}
 
 	// portal texture buttons
+	editor->portal_texture_buttons = NULL;
 	texture_count = 2;
 	i = 0;
 	while (i++ < texture_count)
@@ -539,10 +569,16 @@ void	init_wall_editor(t_editor *editor)
 		coord = ui_init_coords(temp_x, 50, 50, 50);
 		temp_elem = bui_new_element(editor->portal_texture_view, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg");
+		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
+		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
+		add_to_list(&editor->portal_texture_buttons, temp_elem, sizeof(t_bui_element));
 	}
 
 	// wall sprite buttons
+	editor->wall_sprite_buttons = NULL;
 	texture_count = 1;
 	i = 0;
 	while (i++ < texture_count)
@@ -552,7 +588,12 @@ void	init_wall_editor(t_editor *editor)
 		coord = ui_init_coords(temp_x, 50, 50, 50);
 		temp_elem = bui_new_element(editor->wall_sprite_view, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg");
+		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
+		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
+		add_to_list(&editor->wall_sprite_buttons, temp_elem, sizeof(t_bui_element));
 	}
 }
 

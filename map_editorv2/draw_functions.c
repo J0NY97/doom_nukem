@@ -203,6 +203,7 @@ void	check_selected(t_editor *doom, t_grid *grid)
 			curr = curr->next;
 		}
 		temp_wall = new_wall(temp1, temp2);
+ft_printf("wall->texture_scale: %d\n", temp_wall->texture_scale);
 		add_to_list(&grid->walls, temp_wall, sizeof(t_wall));
 		add_to_list(&grid->modify_sector->walls, temp_wall, sizeof(t_wall));
 	}
