@@ -21,6 +21,20 @@
 // TODO: split wall doesnt workin
 //
 // TODO: when edit view is open dont enable keypresses in the grid thinga majig
+//
+// TODO: when you make the texture_scale less than 0 it will loop back to max unsigned short int which will f-up the wall render
+// 	thing in the wall edit, because its trying to make 2billion of that texture on a wall
+//
+// TODO: on the right side of the wall editor, you can add a list for all the wall sprites and from there choose the sprite
+// 	you want to edit (move or rechoose texture)
+//
+// TODO: add scaling for sprites
+//
+// TODO: on the right side of the sector editor, list all the walls that are in taht sector then you can choose from there to edit them?
+//
+// TODO: change colors of all the tabs in wall editor.
+//
+// TODO: make the toolbox on the main window smaller
 
 typedef	struct	s_editor			t_editor;
 typedef struct	s_editor_texture		t_editor_texture;
@@ -196,7 +210,7 @@ struct			s_editor
 	
 	t_list *wall_texture_buttons;	// list of t_bui_element * of the texture buttons for wall
 	t_list *portal_texture_buttons; // list of t_bui_element * of the texture buttons for wall
-	t_list *wall_sprite_buttons;
+	t_list *wall_sprite_buttons;	// list of t_bui_element * of the sprite buttons for wall
 
 	t_bui_element *add_wall_sprite_button;
 	
@@ -204,6 +218,9 @@ struct			s_editor
 	t_bui_element *wall_scale_value;
 	t_bui_element *wall_scale_add;
 	t_bui_element *wall_scale_sub;
+
+	// temporary variable for the current wall sprite youre editing.
+	//t_wall_sprite *active_wall_sprite;
 
 	///////////////////
 	// Sector elements,
@@ -317,6 +334,7 @@ int				wall_compare(t_wall *v1, t_wall *v2);
 void			add_to_list(t_list **list, void *new_v, size_t size);
 t_list			*get_nth_from_list(t_list **list, int index);
 t_wall			*new_wall(t_point *orig, t_point *dest);
+t_sprite		*new_sprite(void);
 t_sector		*new_sector(int id);
 t_entity		*new_entity(int id, t_vector pos);
 Uint32			random_color(void);

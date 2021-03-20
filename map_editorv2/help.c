@@ -64,6 +64,25 @@ t_list	*get_nth_from_list(t_list **list, int index)
 	return (NULL);
 }
 
+// NOTE: this is a wall sprite, not the ones in the actual game.
+t_sprite	*new_sprite(void)
+{
+	t_sprite *sprite;
+
+	sprite = malloc(sizeof(t_sprite));
+	memset(sprite, 0, sizeof(t_sprite));
+
+	sprite->sprite_id = 0;
+	sprite->scale = 1.0f;
+	// NOT sure if the memset will set these to 0
+	sprite->coord.x = 0;
+	sprite->coord.y = 0;
+	sprite->coord.w = 0;
+	sprite->coord.h = 0;
+
+	return (sprite);
+}
+
 t_wall		*new_wall(t_point *orig, t_point *dest)
 {
 	t_wall *new_wall;
@@ -247,15 +266,21 @@ void	remove_from_walls_non_free(t_list **walls, t_wall *wall)
 t_sprite	*get_sprite_from_list(t_list **list, int x, int y)
 {
 	t_list *curr;
-	int i;
+	t_sprite *sprite;
+	int i; // NOTE: this i looks to only be used in the printf
 
 	i = 0;
 	curr = *list;
+
+	ft_printf("Searching for sprite on coords: %d %d\n", x, y);
 	while (curr)
 	{
-		//printf("%d: %d %d %d %d\n", i, ((t_sprite *)curr->content)->pos.x, ((t_sprite *)curr->content)->pos.y, ((t_sprite *)curr->content)->w, ((t_sprite *)curr->content)->h);
-		if (((t_sprite *)curr->content)->pos.x <= x && ((t_sprite *)curr->content)->pos.x + ((t_sprite *)curr->content)->w >= x &&
-			((t_sprite *)curr->content)->pos.y <= y && ((t_sprite *)curr->content)->pos.y + ((t_sprite *)curr->content)->h >= y)
+		sprite = curr->content;
+		ft_printf("%d: %d %d %d %d\n", i, sprite->coord.x, sprite->coord.y, sprite->coord.w, sprite->coord.h);
+		if (sprite->coord.x <= x &&
+		sprite->coord.x + sprite->coord.w >= x &&
+		sprite->coord.y <= y &&
+		sprite->coord.y + sprite->coord.h >= y)
 		{
 			return (curr->content);
 		}

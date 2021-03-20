@@ -112,7 +112,9 @@ void	new_wall_render(t_editor *doom)
 	grid = &doom->grid;
 	wall = grid->modify_wall;
 	// get w from the difference from the orig -> dest x
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos);
+	// TODO: figure out what 1 value on the grid is, so that we know how much we have to multiply the dimensions with,
+	// 	pretty sure these are niklas things.
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * 10; // NOTE: this '* x', means what one value on the grid is in the game
 	// get h from the sector it is a part of
 	dim.h = 96; // get the sector that the wall is a part of... and then take the height from it
 	// all of these values needs to  have a zoom value depending on which is...
@@ -124,10 +126,12 @@ void	new_wall_render(t_editor *doom)
 	// (wall->texture_id)
 	// render wall with the texture
 
-	SDL_Surface *tex = load_image("../engine/ui/ui_images/doom.jpg");
+	// TODO: this needs to be taken from somewhere else, maybe take in a t_texture that has all these informations
+	// 	already in it
+	SDL_Surface *tex = load_image("../engine/ui/ui_images/wallimage.png");
 	texture.x = 0;
 	texture.y = 0;
-	texture.w = tex->w;
+	texture.w = tex->w; 
 	texture.h = tex->h;
 
 	// how many of the textures can fit on each axis
@@ -136,12 +140,15 @@ void	new_wall_render(t_editor *doom)
 
 	scale = (doom->edit_view_wall->position.w - (dim.x * 2)) / dim.w;
 	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
-	for (int y = 0; y < y_axis; y++)
+	// TODO: ceil() function call needs to happen once.
+	for (int y = 0; y < ceil(y_axis); y++)
 	{
-		for (int x = 0; x < x_axis; x++)
+		for (int x = 0; x < ceil(x_axis); x++)
 		{
-			temp.w = texture.h * scale;
-			temp.h = texture.w * scale;
+			// TODO: figure out, if you want to be able to make the texture smaller, probably
+			// 	discuss with niknokkare
+			temp.w = texture.h * scale * doom->grid.modify_wall->texture_scale;
+			temp.h = texture.w * scale * doom->grid.modify_wall->texture_scale;
 			temp.x = x * temp.w;
 			temp.y = y * temp.h;
 			// TODO: this needs to be niklas made blitscaled
@@ -150,7 +157,6 @@ void	new_wall_render(t_editor *doom)
 	}
 	SDL_FreeSurface(tex);
 // render the objects placed on the wall
-/*
 	t_list *curr;
 	t_sprite *sprite;
 
@@ -158,97 +164,53 @@ void	new_wall_render(t_editor *doom)
 	while (curr)
 	{
 		sprite = curr->content;
-		temp.x = sprite->pos.x;
-		temp.y = sprite->pos.y;
-		temp.w = sprite->w;
-		temp.h = sprite->h;
-		// TODO: this needs to be niklas blitscaled
+
+		SDL_Surface *temp_sprite = load_image("../engine/ui/ui_images/sprite.jpg");
+
+		temp.x = sprite->coord.x;
+		temp.y = sprite->coord.y;
+		// TODO: this 2 needs to be multiplied by the scale when working.
+		temp.w = temp_sprite->w; // * sprite->scale;
+		temp.h = temp_sprite->h; // * sprite->scale;
+
+				// Remove this when you have something else... duh?!
+		sprite->coord.w = temp_sprite->w;
+		sprite->coord.h = temp_sprite->h;
+		SDL_BlitScaled(temp_sprite,
+			&(SDL_Rect) {
+				0, 0, temp_sprite->w, temp_sprite->h
+			}, scaled_wall, &temp);
+
+	// TODO: this needs to be niklas blitscaled
+		/* // This might be the way to do this, but before this work i will only use one sprite
 		SDL_BlitScaled(doom->sprites[0].surface,
-					&(SDL_Rect){doom->sprites[0].position[sprite->sprite_id][0],
-								doom->sprites[0].position[sprite->sprite_id][1],
-								doom->sprites[0].x_size,
-								doom->sprites[0].y_size},
-					scaled_wall, &temp);
+			&(SDL_Rect){
+				doom->sprites[0].position[sprite->sprite_id][0],
+				doom->sprites[0].position[sprite->sprite_id][1],
+				doom->sprites[0].x_size,
+				doom->sprites[0].y_size},
+			scaled_wall, &temp);
+			*/
+
 		curr = curr->next;
 	}
 	if (doom->option.modify_sprite != NULL)
 	{
-		gfx_draw_rect(doom->option.show_render->active_surface,
-					0xffff0000,
-					(t_xywh){doom->option.modify_sprite->pos.x,
-							doom->option.modify_sprite->pos.y,
-							doom->option.modify_sprite->w,
-							doom->option.modify_sprite->h});
+		draw_rect_border(scaled_wall, 
+				doom->option.modify_sprite->coord.x,
+				doom->option.modify_sprite->coord.y,
+				doom->option.modify_sprite->coord.w,
+				doom->option.modify_sprite->coord.h,
+				0xff0000ff, 3);
 	}
 // finally blit the wall to the surface of the window
-*/
 	SDL_BlitSurface(scaled_wall, NULL, doom->edit_view_wall->active_surface, &(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
 	gfx_draw_rect(doom->edit_view_wall->active_surface, 0xff00ff00, (t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
 	SDL_FreeSurface(scaled_wall);
 }
 
-void	place_sprite_on_wall(t_editor *doom)
-{
-	t_wall		*wall;
-	t_sprite	*sprite;
-
-	sprite = (t_sprite *)malloc(sizeof(t_sprite));
-	wall = doom->grid.modify_wall;
-	sprite->pos = gfx_new_vector(0, 0, 0);
-	sprite->sprite_id = doom->option.selected_sprite;
-	sprite->w = doom->sprites[0].x_size;
-	sprite->h = doom->sprites[0].y_size;
-	printf("%f %f %f %f\n", sprite->pos.x, sprite->pos.y, sprite->w, sprite->h);
-	add_to_list(&wall->sprites, sprite, sizeof(t_sprite));
-}
-
-// @Optimization: ft_set_text needs to be called only ONCE when new wall is selected.
 void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
-	bui_change_element_text(doom->option.title, "Wall edit");
-	doom->option.texture_button->show = 1;
-	doom->option.add_button->show = 1;
-	doom->option.show_render->show = 1;
-	if (bui_button(doom->libui, doom->option.texture_button))
-	{
-		doom->option.textures->show = 1;
-		texture_buttons(doom, &doom->grid);
-	}
-	else if (bui_button(doom->libui, doom->option.add_button))
-	{
-		doom->option.sprites->show = 1;
-		sprite_buttons(doom, &doom->grid);
-		if (doom->option.selected_sprite != -1)
-		{
-			if (key_pressed(doom->libui, KEY_SPACE))
-			{
-				place_sprite_on_wall(doom);
-			}
-			else if (mouse_hover(doom->libui, doom->option.show_render->position) &&
-					mouse_pressed(doom->libui, MKEY_LEFT))
-			{
-				int view_x = doom->libui->mouse_x - doom->option.show_render->position.x - 50;
-				int view_y = doom->libui->mouse_y - doom->option.show_render->position.y - 50;
-				printf("x  %d y %d\n", view_x, view_y);
-				t_sprite *temp;
-
-				temp = get_sprite_from_list(&doom->grid.modify_wall->sprites, view_x, view_y);
-				if (temp != NULL)
-				{
-					doom->option.modify_sprite = temp;
-				}
-			}
-		}
-	}
-	else
-	{
-		doom->option.selected_sprite = -1;
-	}
-	// TODO: fix this when you have loaded the textures.
-	//show_wall_render(doom, grid);
-	
-
-	// The new stuff
 	doom->edit_view_wall->show = 1;
 	doom->edit_toolbox_wall->show = 1;
 
@@ -262,6 +224,10 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		doom->grid.modify_wall->texture_scale += 1;
 	else if (bui_button(libui, doom->wall_scale_sub))
 		doom->grid.modify_wall->texture_scale -= 1;
+
+	// TODO:NOTE:IDKK: not sure where i should do this.
+	if (doom->grid.modify_wall->texture_scale < 1)
+		doom->grid.modify_wall->texture_scale = 1; 
 	
 	char *scale_value_str = ft_itoa(doom->grid.modify_wall->texture_scale);
 	bui_change_element_text(doom->wall_scale_value, scale_value_str);
@@ -307,8 +273,81 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		curr = curr->next;	
 	}
 
+		// wall sprites
+	// TODO: update this everytime you click on the wall render thing.
+	// TODO: maybe save this somewhere else, t.ex in the t_wall you have chosen or in the editor main struct;
+	t_sprite *current_wall_sprite = NULL;
+	short int chosen_texture = 0;
+
+	current_id = 0; // this is the texture id for the current button in the loop
+	curr = doom->wall_sprite_buttons;
+	while (curr)
+	{
+		bui_button_toggle(libui, curr->content);
+		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
+		current_wall_sprite != NULL &&
+		current_wall_sprite->sprite_id != current_id)
+			((t_bui_element *)curr->content)->toggle = 0;
+		else
+		{
+			if (current_wall_sprite != NULL)
+				current_wall_sprite->sprite_id = current_id;
+			// TODO: when coming in to this function toggle on the already selected texture.
+			((t_bui_element *)curr->content)->toggle = 1;
+			chosen_texture = current_id;
+		}
+		current_id++;
+		curr = curr->next;	
+	}
+	// the sprite add button
+	if (bui_button(libui, doom->add_wall_sprite_button))
+	{
+		// add the sprite to the wall
+		ft_putstr("Adding sprite to wall\n");
+		// 1. get the texture you have chosen from list below;
+		// 	has been done already, aka chosen_texture??
+		// 2. make new sprite,
+		 	t_sprite *sprite = new_sprite();
+		 	sprite->sprite_id = chosen_texture;
+		// 3. add to wall->sprites
+		 	add_to_list(&doom->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
+	}
 	// TODO: fix this, its slower than jesus on the cross
-	//new_wall_render(doom);
+	// NOTE: in this function you also render the wall sprites.
+	new_wall_render(doom);
+
+	// Choose the sprite
+	if (mouse_hover(doom->libui, doom->edit_view_wall->position) &&
+	mouse_pressed(doom->libui, MKEY_LEFT))
+	{
+		int view_x = doom->libui->mouse_x - doom->edit_view_wall->position.x - 50;
+		int view_y = doom->libui->mouse_y - doom->edit_view_wall->position.y - 50;
+		t_sprite *temp;
+
+		// Note: this function returns the sprite at that exact location, so you have to give
+		// 	the exact location of where you want it to look if there is a sprite. thus the way you have
+		// 	removed from the mouse_x and y the view location.
+		temp = get_sprite_from_list(&doom->grid.modify_wall->sprites, view_x, view_y);
+		if (temp != NULL)
+		{
+			// TODO: remove this from doom->option. (because we want to remove that struct helt och and the whole)
+			ft_putstr("Sprite was successfully selected.\n");
+			doom->option.modify_sprite = temp;
+		}
+	}
+	// Move the sprite
+	if (doom->option.modify_sprite != NULL)
+	{
+		int move_speed = 5;
+		if (key_pressed(libui, KEY_LEFT))
+			doom->option.modify_sprite->coord.x -= move_speed;
+		else if (key_pressed(libui, KEY_RIGHT))
+			doom->option.modify_sprite->coord.x += move_speed;
+		if (key_pressed(libui, KEY_UP))
+			doom->option.modify_sprite->coord.y -= move_speed;
+		else if (key_pressed(libui, KEY_DOWN))
+			doom->option.modify_sprite->coord.y += move_speed;
+	}
 }
 
 void	sector_edit_button_events(t_bui_libui *libui, t_sector_edit *collection, short int *current_value)
