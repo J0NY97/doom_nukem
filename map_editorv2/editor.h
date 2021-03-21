@@ -35,6 +35,17 @@
 // TODO: change colors of all the tabs in wall editor.
 //
 // TODO: make the toolbox on the main window smaller
+//
+// MAJOR TODO: if you can figure out how to remove sectors until you have the file, it would be insane. and make this project
+// 		so much better and probably less complicated.
+//
+// TODO: right click draws, left click selects, double click edits.
+// 	draw mode;
+// 		-vertex, adds vertex where you click.
+// 		-line, draws line between 2 points you click.
+// 		-sector, functions the same as the current type of drawing.
+// 		-thing, adds things that you can edit at a later time.
+// 		-create sector from, creates a sector from a compilation of lines.... havent thought enought about this mode.
 
 typedef	struct	s_editor			t_editor;
 typedef struct	s_editor_texture		t_editor_texture;
