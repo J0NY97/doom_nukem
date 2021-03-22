@@ -31,6 +31,7 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 	// New edit window, replace this with the old one after its done.
 	coord = ui_init_coords(500, 500, 1000, 500);
 	editor->new_edit_window = bui_new_window(libui, "New Editor", coord, 0, editor->palette.win);
+	SDL_MinimizeWindow(editor->new_edit_window->win);
 	
 	init_sector_editor(editor);
 	init_wall_editor(editor);
@@ -84,6 +85,7 @@ void	toolbox_init(t_editor *doom)
 	doom->info_area = bui_new_element(doom->toolbox, "info area", coord);
 	bui_set_element_color(doom->info_area, doom->palette.elem_elem);
 
+	// TODO: put this in a infoarea_init function or something, but remove from this function
 	doom->hover_info = bui_new_element(doom->info_area, "hover info", (t_xywh) {10, 20, 200, 50});
 	bui_set_element_color(doom->hover_info, doom->info_area->color);
 
@@ -241,26 +243,10 @@ void	texture_buttons(t_editor *doom, t_grid *grid)
 	i = 0;
 	while (i < doom->textures[0].max_textures)
 	{
-		// NOTE: this here is so that it stands out which button you have pressed.
-		// 	curretnly doesnt work in better libui.
-		// 	(its all the commented out stuff.
-		if (bui_button(doom->libui, doom->texture_buttons[i]))
+		if (bui_button(doom->texture_buttons[i]))
 		{
 			grid->modify_wall->texture_id = i;
-			/*
-			doom->texture_buttons[i]->shadow = 0;
-			doom->texture_buttons[i]->offset_x = 5;
-			doom->texture_buttons[i]->offset_y = 5;
-			*/
 		}
-		/*
-		if (grid->modify_wall->texture_id != i)
-		{
-			doom->texture_buttons[i]->shadow = 1;
-			doom->texture_buttons[i]->offset_x = 0;
-			doom->texture_buttons[i]->offset_y = 0;
-		}
-		*/
 		i++;
 	}
 }
@@ -276,6 +262,7 @@ void	sprite_init(t_editor *doom)
 }
 */
 
+// TODO: Redundant: this function might we redundrand
 void	sprite_buttons(t_editor *doom, t_grid *grid)
 {
 	int i;
@@ -285,25 +272,10 @@ void	sprite_buttons(t_editor *doom, t_grid *grid)
 	i = 0;
 	while (i < doom->sprites[0].max_textures)
 	{
-		// TODO: this is so that its more obvious which button is pressed.
-		// 	currently doesnt work in better libui
-		if (bui_button(doom->libui, doom->sprite_buttons[i]))
+		if (bui_button(doom->sprite_buttons[i]))
 		{
 			doom->option.selected_sprite = i;
-			/*
-			doom->sprite_buttons[i]->shadow = 0;
-			doom->sprite_buttons[i]->offset_x = 5;
-			doom->sprite_buttons[i]->offset_y = 5;
-			*/
 		}
-		/*
-		if (doom->option.selected_sprite != i)
-		{
-			doom->sprite_buttons[i]->shadow = 1;
-			doom->sprite_buttons[i]->offset_x = 0;
-			doom->sprite_buttons[i]->offset_y = 0;
-		}
-		*/
 		i++;
 	}
 }
@@ -531,8 +503,25 @@ void	init_wall_editor(t_editor *editor)
 
 	// wall sprite view elements
 	coord = ui_init_coords(5, 20, 50, 20);
-	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view ,"add sprite", coord);
+	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "add sprite", coord);
 	bui_set_element_color(editor->add_wall_sprite_button, 0xff06D6A0);
+
+		// wall sprite scale elements
+	coord = ui_init_coords(5, editor->wall_sprite_view->position.h - 45, 100, 40);
+	editor->sprite_scale = bui_new_element(editor->wall_sprite_view, "sprite scale", coord);
+	bui_set_element_color(editor->sprite_scale, 0xff06D6A0);
+
+	coord = ui_init_coords(0, 20, 20, 20);
+	editor->sprite_scale_sub = bui_new_element(editor->sprite_scale, "-", coord);
+	bui_set_element_color(editor->sprite_scale_sub, 0xff06D6A0);
+
+	coord = ui_init_coords(20, 20, 40, 20);
+	editor->sprite_scale_value = bui_new_element(editor->sprite_scale, "not set", coord);
+	bui_set_element_color(editor->sprite_scale_value, 0xff06D6A0);
+
+	coord = ui_init_coords(80, 20, 20, 20);
+	editor->sprite_scale_add = bui_new_element(editor->sprite_scale, "+", coord);
+	bui_set_element_color(editor->sprite_scale_add, 0xff06D6A0);
 
 	// TODO: make this modular on the y axis aswell
 	t_bui_element *temp_elem;
@@ -653,26 +642,10 @@ void	entity_sprite_buttons(t_editor *doom, t_grid *grid)
 	i = 0;
 	while (i < doom->entity_sprites[0].max_textures)
 	{
-		// NOTE: this makes it more obvious which button is pressed.
-		// 	currently doesnt work in better_libui
-		// 	(all the commented out code i mean)
-		if (bui_button(doom->libui, doom->entity_sprite_buttons[i]))
+		if (bui_button(doom->entity_sprite_buttons[i]))
 		{
 			grid->modify_entity->sprite_id = i;
-			/*
-			doom->entity_sprite_buttons[i]->shadow = 0;
-			doom->entity_sprite_buttons[i]->offset_x = 5;
-			doom->entity_sprite_buttons[i]->offset_y = 5;
-			*/
 		}
-		/*
-		if (grid->modify_entity->sprite_id != i)
-		{
-			doom->entity_sprite_buttons[i]->shadow = 1;
-			doom->entity_sprite_buttons[i]->offset_x = 0;
-			doom->entity_sprite_buttons[i]->offset_y = 0;
-		}
-		*/
 		i++;
 	}
 }

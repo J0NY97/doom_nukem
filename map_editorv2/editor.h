@@ -8,6 +8,8 @@
 # include "libgfx.h"
 # include "ft_printf.h"
 
+// TODO: hotkeys for all the buttons.
+//
 // TODO: in the bui_button take libui from the element instead of being required in the function call
 //
 // TODO: some place needs drop down menu
@@ -18,17 +20,13 @@
 //
 // TODO: draw the grid only once on the surface of the grid, and only update it when you zoom.
 //
-// TODO: split wall doesnt workin
+// TODO: split wall doesnt workin (the question is, is that important?)
 //
-// TODO: when edit view is open dont enable keypresses in the grid thinga majig
-//
-// TODO: when you make the texture_scale less than 0 it will loop back to max unsigned short int which will f-up the wall render
-// 	thing in the wall edit, because its trying to make 2billion of that texture on a wall
+// TODO: when edit view is open dont enable keypresses in the grid thinga majig (done in libui?)
 //
 // TODO: on the right side of the wall editor, you can add a list for all the wall sprites and from there choose the sprite
 // 	you want to edit (move or rechoose texture)
-//
-// TODO: add scaling for sprites
+// 	maybe add this to the sector editing, where you can choose each wall for editiing.
 //
 // TODO: on the right side of the sector editor, list all the walls that are in taht sector then you can choose from there to edit them?
 //
@@ -39,13 +37,31 @@
 // MAJOR TODO: if you can figure out how to remove sectors until you have the file, it would be insane. and make this project
 // 		so much better and probably less complicated.
 //
-// TODO: right click draws, left click selects, double click edits.
-// 	draw mode;
+// TODO: right click draws, left click selects, double click edits. (instead of exactly this, do this only for selecting)
+// 	draw mode; (select mode not draw :))
 // 		-vertex, adds vertex where you click.
 // 		-line, draws line between 2 points you click.
 // 		-sector, functions the same as the current type of drawing.
 // 		-thing, adds things that you can edit at a later time.
 // 		-create sector from, creates a sector from a compilation of lines.... havent thought enought about this mode.
+//
+// TODO: having different modes for selecting, so that you can just return the closest whatever (depending on the mode) to
+// 	where you clicked.
+//
+// TODO: before adding anything new please give this version to niklas, so you dont "waste" your time doing stuff =)
+//
+// TODO: scrolling actually scrolls towards where youre scrolling, i have done this in the mandelbrot thing.
+//
+// TODO: temporary save the file everytime you have completed a new sector, so that you can go back.
+
+// Remove this if not used in the final version.
+enum e_select_mode
+{
+	VERTEX_MODE,
+	LINE_MODE,
+	SECTOR_MODE,
+	CREATE_SECTOR_MODE // not sure what this does yet
+};
 
 typedef	struct	s_editor			t_editor;
 typedef struct	s_editor_texture		t_editor_texture;
@@ -78,7 +94,8 @@ typedef	struct	s_spawn
 
 typedef	struct	s_grid
 {
-	t_vector	hover;
+	// Note: this is like this because its easier when you finally save the points to map file.
+	t_vector	hover; // this is calculating from the coordinate system used in this program.
 
 	t_xywh		coords;
 	int			x;
@@ -96,7 +113,7 @@ typedef	struct	s_grid
 // the information for the output when you save the map
 	t_list		*points;
 	int			point_amount;
-	t_list		*walls; // try to make the walls list redundant, they should only be stored in the sectors.
+	t_list		*walls;
 	int			wall_amount;
 	t_list		*sectors;
 	int			sector_amount;
@@ -112,7 +129,7 @@ typedef	struct	s_sector_edit
 	t_bui_element	*text;
 	t_bui_element	*sub_button;
 	t_bui_element	*amount;
-	short int	*f_amount; // this is redundant in the new version, use value
+	short int	*f_amount; // this is redundant in the new version, use value.. (22.03.2021 wtf is value)
 	t_bui_element	*add_button;
 }				t_sector_edit;
 
@@ -135,9 +152,9 @@ typedef	struct	s_wall_edit
 	t_bui_element	*show_render;
 	t_sprite	*modify_sprite;
 
-// sector editing shit
+// sector editing stuff
 	t_list		*sector_edit_buttons; // t_list of s_sector_edit;
-// entity editing shit
+// entity editing stuff
 	t_bui_element	*ent_sprite_button;
 	t_bui_element	*ent_sprites;
 	t_bui_element	*ent_render_sprite;
@@ -174,6 +191,7 @@ struct			s_editor
 	t_bui_element	*hover_info;
 	t_bui_element	*selected_sector_info;
 
+	// Scale for the map
 	unsigned int 	scale;
 	t_bui_element	*scale_menu;
 	t_bui_element	*scale_button;
@@ -225,13 +243,18 @@ struct			s_editor
 
 	t_bui_element *add_wall_sprite_button;
 	
+	// Scale for the wall texture. texture_scale, this is here because of search keyword.
 	t_bui_element *wall_scale;
 	t_bui_element *wall_scale_value;
 	t_bui_element *wall_scale_add;
 	t_bui_element *wall_scale_sub;
 
 	// temporary variable for the current wall sprite youre editing.
-	//t_wall_sprite *active_wall_sprite;
+	//t_wall_sprite *active_wall_sprite; // disabled?
+	t_bui_element *sprite_scale;
+	t_bui_element *sprite_scale_value;
+	t_bui_element *sprite_scale_add;
+	t_bui_element *sprite_scale_sub;
 
 	///////////////////
 	// Sector elements,
@@ -260,6 +283,9 @@ void			init_sector_editor(t_editor *editor);
 void			init_wall_editor(t_editor *editor);
 t_editor_texture	*load_editor_texture(char *path);
 
+void			mode_functions(t_editor *editor);
+void			draw_all_points(SDL_Surface *surface, t_list *points);
+
 void			color_palette_init(t_color_palette *pal);
 void			window_init(t_editor *doom, t_bui_libui *libui);
 void			grid_init(t_editor *doom);
@@ -272,7 +298,7 @@ void			unselect_selected(t_editor *doom, t_grid *grid, SDL_Event *e);
 void			hover_calc(t_editor *doom, t_grid *grid);
 void			draw_sectors(t_editor *doom, t_grid *grid);
 void			draw_walls(t_grid *grid, t_list **walls, Uint32 color);
-void			draw_points(t_editor *doom, t_grid *grid);
+void			draw_points(t_editor *doom, t_grid *grid, t_list *points);
 void			draw_entities(t_editor *doom, t_grid *grid);
 void			draw_hover_info(t_editor *doom, t_grid *grid);
 void			draw_selected_sector_info(t_editor *doom, t_grid *grid);

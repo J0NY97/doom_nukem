@@ -65,6 +65,7 @@ t_list	*get_nth_from_list(t_list **list, int index)
 }
 
 // NOTE: this is a wall sprite, not the ones in the actual game.
+// 	aka t_sprite found in ../core.h
 t_sprite	*new_sprite(void)
 {
 	t_sprite *sprite;

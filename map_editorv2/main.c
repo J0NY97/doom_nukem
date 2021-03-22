@@ -49,7 +49,7 @@ int	main(int argc, char **argv)
 		scale_changer_events(libui, doom);
 		draw_grid(doom, &doom->grid);
 		hover_calc(doom, &doom->grid);
-		if (bui_button_toggle(libui, doom->button_draw))
+		if (bui_button_toggle(doom->button_draw))
 		{
 			click_calc(doom, &doom->grid, &libui->event);
 			check_selected(doom, &doom->grid);
@@ -75,14 +75,14 @@ int	main(int argc, char **argv)
 		update_real_dimensions(doom, &doom->grid);
 		//draw_walls(&doom->grid, &doom->grid.walls, 0xffffffff); // this is just for debugging purposes, to know if you remove a wall it actually is removed.
 		draw_sectors(doom, &doom->grid);
-		draw_points(doom, &doom->grid);
+		draw_points(doom, &doom->grid, doom->grid.points);
 		draw_entities(doom, &doom->grid);
 		// draw spawn
 		if (!vector_is_empty(doom->spawn.pos))
 			gfx_draw_vector(doom->grid.elem->active_surface, 0xff00ff00, 6, gfx_vector_multiply(doom->spawn.pos, doom->grid.gap));
 	// @Note: this is here so that it will be drawn on top of the walls
 	// Draw line from the last positioned vertex to the current mouse hover position.
-		if (!vector_is_empty(doom->grid.selected1) && bui_button_toggle(doom->libui, doom->button_draw))
+		if (!vector_is_empty(doom->grid.selected1) && bui_button_toggle(doom->button_draw))
 		{
 			gfx_draw_line(doom->grid.elem->active_surface, 0xffffff00,
 						gfx_vector_multiply(doom->grid.selected1, doom->grid.gap),

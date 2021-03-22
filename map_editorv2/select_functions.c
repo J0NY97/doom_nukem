@@ -17,6 +17,7 @@ void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 	t_list *curr;
 	float move_x = 0.0f;
 	float move_y = 0.0f;
+
 	if (key_pressed(doom->libui, KEY_LEFT))
 		move_x = -0.5f;
 	else if (key_pressed(doom->libui, KEY_RIGHT))
@@ -50,8 +51,6 @@ void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 			doom->option.modify_sprite->w -= 5.0f;
 			doom->option.modify_sprite->h -= 5.0f;
 		}
-		else
-			return ;
 	}
 	else if (grid->modify_wall != NULL) // wall movement
 	{
@@ -103,10 +102,12 @@ void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 
 		doom->spawn.pos.x += move_x;
 		doom->spawn.pos.y += move_y;
-		if (key_pressed(doom->libui, KPKEY_MINUS))
-			grid->gap = grid->gap - 1 > 0 ? grid->gap - 1 : grid->gap;
-		if (key_pressed(doom->libui, KPKEY_PLUS))
-			grid->gap += 1;
+	}
+	// scrolling
+	else if (grid->elem->was_hovered_last_frame && doom->libui->mouse_wheel_y != 0)
+	{
+		// TODO: figure out why this cant go under 2... not even 1
+		grid->gap = grid->gap + doom->libui->mouse_wheel_y > 1 ? grid->gap + doom->libui->mouse_wheel_y : 2;
 		ft_printf("gap: %d\n",grid->gap);
 	}
 }

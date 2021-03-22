@@ -105,9 +105,9 @@ void	new_wall_render(t_editor *doom)
 	SDL_Rect	texture;
 	SDL_Rect	temp;
 	SDL_Surface	*scaled_wall;
-	double	scale;
-	double	x_axis;
-	double	y_axis;
+	float	scale;
+	float	x_axis;
+	float	y_axis;
 
 	grid = &doom->grid;
 	wall = grid->modify_wall;
@@ -135,27 +135,26 @@ void	new_wall_render(t_editor *doom)
 	texture.h = tex->h;
 
 	// how many of the textures can fit on each axis
-	x_axis = (float)dim.w / (float)texture.w;
-	y_axis = (float)dim.h / (float)texture.h;
+	x_axis = (float)dim.w / ((float)texture.w * doom->grid.modify_wall->texture_scale);
+	y_axis = (float)dim.h / ((float)texture.h * doom->grid.modify_wall->texture_scale);
+
+//ft_printf("x_axis amount: %.3f, y amount: %.3f\n", x_axis, y_axis);
 
 	scale = (doom->edit_view_wall->position.w - (dim.x * 2)) / dim.w;
 	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
-	// TODO: ceil() function call needs to happen once.
 	for (int y = 0; y < ceil(y_axis); y++)
 	{
 		for (int x = 0; x < ceil(x_axis); x++)
 		{
-			// TODO: figure out, if you want to be able to make the texture smaller, probably
-			// 	discuss with niknokkare
 			temp.w = texture.h * scale * doom->grid.modify_wall->texture_scale;
 			temp.h = texture.w * scale * doom->grid.modify_wall->texture_scale;
 			temp.x = x * temp.w;
 			temp.y = y * temp.h;
-			// TODO: this needs to be niklas made blitscaled
 			SDL_BlitScaled(tex, &texture, scaled_wall, &temp);
 		}
 	}
 	SDL_FreeSurface(tex);
+
 // render the objects placed on the wall
 	t_list *curr;
 	t_sprite *sprite;
@@ -165,21 +164,17 @@ void	new_wall_render(t_editor *doom)
 	{
 		sprite = curr->content;
 
+		// should take this from somewhere else
 		SDL_Surface *temp_sprite = load_image("../engine/ui/ui_images/sprite.jpg");
 
 		temp.x = sprite->coord.x;
 		temp.y = sprite->coord.y;
-		// TODO: this 2 needs to be multiplied by the scale when working.
-		temp.w = temp_sprite->w; // * sprite->scale;
-		temp.h = temp_sprite->h; // * sprite->scale;
+		temp.w = temp_sprite->w * sprite->scale;
+		temp.h = temp_sprite->h * sprite->scale;
 
-				// Remove this when you have something else... duh?!
 		sprite->coord.w = temp_sprite->w;
 		sprite->coord.h = temp_sprite->h;
-		SDL_BlitScaled(temp_sprite,
-			&(SDL_Rect) {
-				0, 0, temp_sprite->w, temp_sprite->h
-			}, scaled_wall, &temp);
+		SDL_BlitScaled(temp_sprite, NULL, scaled_wall, &temp);
 
 	// TODO: this needs to be niklas blitscaled
 		/* // This might be the way to do this, but before this work i will only use one sprite
@@ -199,8 +194,8 @@ void	new_wall_render(t_editor *doom)
 		draw_rect_border(scaled_wall, 
 				doom->option.modify_sprite->coord.x,
 				doom->option.modify_sprite->coord.y,
-				doom->option.modify_sprite->coord.w,
-				doom->option.modify_sprite->coord.h,
+				doom->option.modify_sprite->coord.w * doom->option.modify_sprite->scale,
+				doom->option.modify_sprite->coord.h * doom->option.modify_sprite->scale,
 				0xff0000ff, 3);
 	}
 // finally blit the wall to the surface of the window
@@ -218,18 +213,18 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 
 	// check all the wall texture view elements
 	
-		// scale
+		// texture scale
 	// Note: add and subtract from "t_wall" "texture_scale"
-	if (bui_button(libui, doom->wall_scale_add))
-		doom->grid.modify_wall->texture_scale += 1;
-	else if (bui_button(libui, doom->wall_scale_sub))
-		doom->grid.modify_wall->texture_scale -= 1;
+	if (bui_button(doom->wall_scale_add))
+		doom->grid.modify_wall->texture_scale += 0.1f;
+	else if (bui_button(doom->wall_scale_sub))
+		doom->grid.modify_wall->texture_scale -= 0.1f;
 
 	// TODO:NOTE:IDKK: not sure where i should do this.
-	if (doom->grid.modify_wall->texture_scale < 1)
-		doom->grid.modify_wall->texture_scale = 1; 
+	if (doom->grid.modify_wall->texture_scale < 0.1)
+		doom->grid.modify_wall->texture_scale = 0.1f; 
 	
-	char *scale_value_str = ft_itoa(doom->grid.modify_wall->texture_scale);
+	char *scale_value_str = ft_ftoa(doom->grid.modify_wall->texture_scale, 1);
 	bui_change_element_text(doom->wall_scale_value, scale_value_str);
 	ft_strdel(&scale_value_str);
 	
@@ -240,7 +235,7 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	curr = doom->wall_texture_buttons;
 	while (curr)
 	{
-		bui_button_toggle(libui, curr->content);
+		bui_button_toggle(curr->content);
 		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
 		doom->grid.modify_wall->texture_id != current_id)
 			((t_bui_element *)curr->content)->toggle = 0;
@@ -259,7 +254,7 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	curr = doom->portal_texture_buttons;
 	while (curr)
 	{
-		bui_button_toggle(libui, curr->content);
+		bui_button_toggle(curr->content);
 		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
 		doom->grid.modify_wall->portal_texture_id != current_id)
 			((t_bui_element *)curr->content)->toggle = 0;
@@ -283,7 +278,7 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	curr = doom->wall_sprite_buttons;
 	while (curr)
 	{
-		bui_button_toggle(libui, curr->content);
+		bui_button_toggle(curr->content);
 		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
 		current_wall_sprite != NULL &&
 		current_wall_sprite->sprite_id != current_id)
@@ -300,7 +295,7 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		curr = curr->next;	
 	}
 	// the sprite add button
-	if (bui_button(libui, doom->add_wall_sprite_button))
+	if (bui_button(doom->add_wall_sprite_button))
 	{
 		// add the sprite to the wall
 		ft_putstr("Adding sprite to wall\n");
@@ -312,7 +307,7 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		// 3. add to wall->sprites
 		 	add_to_list(&doom->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
 	}
-	// TODO: fix this, its slower than jesus on the cross
+	
 	// NOTE: in this function you also render the wall sprites.
 	new_wall_render(doom);
 
@@ -347,6 +342,21 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 			doom->option.modify_sprite->coord.y -= move_speed;
 		else if (key_pressed(libui, KEY_DOWN))
 			doom->option.modify_sprite->coord.y += move_speed;
+
+		// the sprite scale buttons
+		// NOTE: might aswell do this here where we are already checking if there is a modify sprite.
+		if (bui_button(doom->sprite_scale_add))
+			doom->option.modify_sprite->scale += 0.1f;
+		else if (bui_button(doom->sprite_scale_sub))
+			doom->option.modify_sprite->scale -= 0.1f;
+
+		// TODO:NOTE:IDKK: not sure where i should do this.
+		if (doom->option.modify_sprite->scale < 0.1)
+			doom->option.modify_sprite->scale = 0.1f; 
+		
+		char *sprite_scale_value_str = ft_ftoa(doom->option.modify_sprite->scale, 1);
+		bui_change_element_text(doom->sprite_scale_value, sprite_scale_value_str);
+		ft_strdel(&sprite_scale_value_str);
 	}
 }
 
@@ -354,9 +364,9 @@ void	sector_edit_button_events(t_bui_libui *libui, t_sector_edit *collection, sh
 {
 	char *str = NULL;
 	
-	if (bui_button(libui, collection->add_button))
+	if (bui_button(collection->add_button))
 		*current_value += 1;
-	if (bui_button(libui, collection->sub_button))
+	if (bui_button(collection->sub_button))
 		*current_value -= 1;
 	str = ft_sprintf("%d", *current_value);
 	bui_change_element_text(collection->amount, str);
@@ -397,9 +407,9 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		else
 		{
 			str = ft_itoa(*temp->f_amount);
-			if (bui_button(doom->libui, temp->sub_button))
+			if (bui_button(temp->sub_button))
 				*temp->f_amount -= 1;
-			if (bui_button(doom->libui, temp->add_button))
+			if (bui_button(temp->add_button))
 				*temp->f_amount += 1;
 		}
 		bui_change_element_text(temp->amount, str);
@@ -411,7 +421,7 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	curr = doom->floor_texture_buttons;
 	while (curr)
 	{
-		bui_button_toggle(libui, curr->content);
+		bui_button_toggle(curr->content);
 		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
 		doom->active_floor_texture != NULL &&
 		doom->active_floor_texture != ((t_bui_element *)curr->content))
@@ -424,7 +434,7 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	curr = doom->ceiling_texture_buttons;
 	while (curr)
 	{
-		bui_button_toggle(libui, curr->content);
+		bui_button_toggle(curr->content);
 		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
 		doom->active_ceiling_texture != NULL &&
 		doom->active_ceiling_texture != ((t_bui_element *)curr->content))
@@ -449,7 +459,7 @@ void	entity_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	option->ent_sprite_button->show = 1;
 	option->ent_info_button->show = 1;
 	option->ent_render_sprite->show = 1;
-	if (bui_button_toggle(doom->libui, option->ent_info_button))
+	if (bui_button_toggle(option->ent_info_button))
 	{
 		// Untoggle the other buttons/tabs
 		option->ent_sprite_button->toggle = 0;
@@ -471,14 +481,14 @@ void	entity_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		item = NULL; // dont forget to remove this
 		while (item)
 		{
-			if (bui_button(doom->libui, item->content))
+			if (bui_button(item->content))
 				grid->modify_entity->type = i;
 			item = item->next;
 			i++;
 		}
 //ft_printf("Entity type: %d\n", grid->modify_entity->type);
 	}
-	if (bui_button_toggle(doom->libui, option->ent_sprite_button))
+	if (bui_button_toggle(option->ent_sprite_button))
 	{
 		// Untoggle the other tabs
 		option->ent_info_button->toggle = 0;

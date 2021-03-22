@@ -85,7 +85,7 @@ void		scale_changer_events(t_bui_libui *libui, t_editor *editor)
 {
 	char *str;
 
-	if (bui_button(libui, editor->scale_increase))
+	if (bui_button(editor->scale_increase))
 	{
 		editor->scale += 1;
 		str = ft_itoa(editor->scale);
@@ -93,7 +93,7 @@ void		scale_changer_events(t_bui_libui *libui, t_editor *editor)
 		ft_strdel(&str);
 		ft_printf("map scale increased to: %d\n", editor->scale);
 	}
-	else if (bui_button(libui, editor->scale_decrease))
+	else if (bui_button(editor->scale_decrease))
 	{
 		editor->scale -= 1;
 		str = ft_itoa(editor->scale);
@@ -148,15 +148,15 @@ void	remove_entity_from_list(t_list **entities, t_entity *entity)
 void	loop_buttons(t_editor *doom)
 {
 // save button
-	if (bui_button(doom->libui, doom->button_save))
+	if (bui_button(doom->button_save))
 	{
 		set_map(doom);
 	}
-	else if (bui_button(doom->libui, doom->button_add))
+	else if (bui_button(doom->button_add))
 	{
 		add_portal(doom, &doom->grid);
 	}
-	else if (bui_button(doom->libui, doom->button_remove_portal))
+	else if (bui_button(doom->button_remove_portal))
 	{
 		remove_portal(doom, &doom->grid);
 	}
@@ -204,7 +204,7 @@ void	recount_everything(t_editor *doom)
 
 void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 {
-	if (bui_button(doom->libui, doom->button_remove))
+	if (bui_button(doom->button_remove))
 	{
 		if (grid->modify_point != NULL)
 		{
@@ -262,7 +262,7 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 		grid->modify_sector = NULL;
 		grid->modify_entity = NULL;
 	}
-	else if (bui_button(doom->libui, doom->button_edit))
+	else if (bui_button(doom->button_edit))
 	{
 		SDL_RestoreWindow(doom->edit_window->win);
 		SDL_RaiseWindow(doom->edit_window->win);

@@ -276,9 +276,9 @@ void	unselect_selected(t_editor *doom, t_grid *grid, SDL_Event *e)
 		grid->modify_wall = NULL;
 		grid->modify_entity = NULL;
 		doom->option.modify_sprite = NULL;
-		if (bui_button(doom->libui, doom->button_select) ||
+		if (bui_button(doom->button_select) ||
 		/*this is only for now*/ 
-		!bui_button(doom->libui, doom->button_draw))
+		!bui_button(doom->button_draw))
 			grid->modify_sector = NULL;
 		ft_putstr("Unselected everything.\n");
 	}
@@ -340,11 +340,11 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 		gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 2, gfx_vector_multiply(grid->modify_sector->first_point->pos, grid->gap));
 }
 
-void	draw_points(t_editor *doom, t_grid *grid)
+void	draw_points(t_editor *doom, t_grid *grid, t_list *points)
 {
 	t_list *curr;
 
-	curr = grid->points;
+	curr = points;
 	while (curr)
 	{
 		gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 1, gfx_vector_multiply(((t_point *)curr->content)->pos, grid->gap));
