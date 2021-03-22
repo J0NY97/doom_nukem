@@ -223,7 +223,7 @@ ft_printf("wall->texture_scale: %d\n", temp_wall->texture_scale);
 	ft_printf("Wall was added!\n");
 }
 
-void	click_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	click_calc(t_editor *doom, t_grid *grid)
 {
 	t_sector	*sector;
 
@@ -250,6 +250,7 @@ void	click_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 		}
 		else if (mouse_pressed(doom->libui, MKEY_RIGHT))
 		{
+			ft_putstr("Placed new entity.\n");
 			t_entity *entity;
 
 			entity = new_entity(grid->entity_amount++, grid->hover);
@@ -257,6 +258,7 @@ void	click_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 		}
 		else if (mouse_pressed(doom->libui, MKEY_MIDDLE))
 		{
+			ft_putstr("Place spawn point.\n");
 			doom->spawn.pos = grid->hover;
 		}
 	}

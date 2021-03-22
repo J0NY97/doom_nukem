@@ -51,7 +51,7 @@ int	main(int argc, char **argv)
 		hover_calc(doom, &doom->grid);
 		if (bui_button_toggle(doom->button_draw))
 		{
-			click_calc(doom, &doom->grid, &libui->event);
+			click_calc(doom, &doom->grid);
 			check_selected(doom, &doom->grid);
 		}
 		else

@@ -115,6 +115,7 @@ void	button_init(t_editor *doom)
 	coord = ui_init_coords(25, 25, 100, 50);
 	doom->button_draw = bui_new_element(doom->toolbox, "draw", coord);
 	bui_set_element_color(doom->button_draw, doom->palette.elem_elem);
+	draw_rect_border(doom->button_draw->surface[ELEMENT_CLICK], 0, 0, doom->button_draw->position.w, doom->button_draw->position.h, 0xff0000ff, 2);
 
 	coord = ui_init_coords(150, 25, 100, 50);
 	doom->button_select = bui_new_element(doom->toolbox, "select", coord);

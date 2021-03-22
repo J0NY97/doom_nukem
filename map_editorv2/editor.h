@@ -53,6 +53,8 @@
 // TODO: scrolling actually scrolls towards where youre scrolling, i have done this in the mandelbrot thing.
 //
 // TODO: temporary save the file everytime you have completed a new sector, so that you can go back.
+//
+// TODO: remove "select" button
 
 // Remove this if not used in the final version.
 enum e_select_mode
@@ -292,7 +294,7 @@ void			grid_init(t_editor *doom);
 void			toolbox_init(t_editor *doom);
 void			button_init(t_editor *doom);
 void			draw_grid(t_editor *doom, t_grid *grid);
-void			click_calc(t_editor *doom, t_grid *grid, SDL_Event *e);
+void			click_calc(t_editor *doom, t_grid *grid);
 void			check_selected(t_editor *doom, t_grid *grid);
 void			unselect_selected(t_editor *doom, t_grid *grid, SDL_Event *e);
 void			hover_calc(t_editor *doom, t_grid *grid);
