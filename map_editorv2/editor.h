@@ -46,7 +46,7 @@
 // 		-create sector from, creates a sector from a compilation of lines.... havent thought enought about this mode.
 //
 // TODO: having different modes for selecting, so that you can just return the closest whatever (depending on the mode) to
-// 	where you clicked.
+// 	where you clicked. (calc the distance from mouse to the point youre checking)
 //
 // TODO: before adding anything new please give this version to niklas, so you dont "waste" your time doing stuff =)
 //
