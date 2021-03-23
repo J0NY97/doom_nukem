@@ -112,6 +112,33 @@ void	read_wall(t_grid *grid, int fd)
 	ft_strdel(&line);
 }
 
+void	read_sprite(t_grid *grid, int fd)
+{
+	char *line;
+	char **arr;
+	t_sprite *sprite;
+	t_wall *wall;
+
+	while (get_next_line(fd, &line))
+	{
+		if (line[0] == '-')
+			break ;
+		arr = ft_strsplit(line, '\t');
+
+		sprite = new_sprite();
+		sprite->coord = ui_init_coords(ft_atoi(arr[2]), ft_atoi(arr[3]), 64, 64); // the size you should also be here?
+		sprite->sprite_id = ft_atoi(arr[4]);
+		sprite->scale = ft_atof(arr[5]);
+		wall = get_wall_with_id(grid->walls, ft_atoi(arr[1]));
+		add_to_list(&wall->sprites, sprite, sizeof(t_sprite));
+
+		free_array(arr);
+		ft_strdel(&line);
+	}
+	ft_strdel(&line);
+
+}
+
 void	read_spawn(t_spawn *spawn, int fd)
 {
 	char *line;
@@ -208,6 +235,8 @@ void		read_map_file(t_editor *doom)
 		ft_putchar('\n');
 		if (!(ft_strncmp(line, "type:vertex", 11)))
 			read_vertex(&doom->grid, fd);
+		else if (!(ft_strncmp(line, "type:wall_sprite", 16)))
+			read_sprite(&doom->grid, fd);
 		else if (!(ft_strncmp(line, "type:wall", 9)))
 			read_wall(&doom->grid, fd);
 		else if (!(ft_strncmp(line, "type:spawn", 10)))

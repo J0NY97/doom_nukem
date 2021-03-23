@@ -10,8 +10,6 @@
 
 // TODO: hotkeys for all the buttons.
 //
-// TODO: in the bui_button take libui from the element instead of being required in the function call
-//
 // TODO: some place needs drop down menu
 //
 // TODO: entity editor view should get fixed, the addview should be tabs...
@@ -48,13 +46,28 @@
 // TODO: having different modes for selecting, so that you can just return the closest whatever (depending on the mode) to
 // 	where you clicked. (calc the distance from mouse to the point youre checking)
 //
-// TODO: before adding anything new please give this version to niklas, so you dont "waste" your time doing stuff =)
-//
 // TODO: scrolling actually scrolls towards where youre scrolling, i have done this in the mandelbrot thing.
 //
 // TODO: temporary save the file everytime you have completed a new sector, so that you can go back.
 //
 // TODO: remove "select" button
+//
+// TODO: status/info area, where you can send stuff that are important for the user, (when you save it tells you, if you cant
+// 	save it tells you, etc...)
+//
+// TODO: not letting user save in some cases (if  there is no spawn (this breaks the game))
+//
+// TODO: add solidity toggle for walls
+//
+// TODO: a way of removing wall_sprites
+//
+// TODO: map getter with new version, some changes made, but more needed after talk with nik
+//
+// TODO: instead of having some default images on the texture chagner actually show all the textures you can choose from,
+// 	be able to give a texture pack and/or load textures that you can set as "wall textures"/"portal textures"/"wall sprites"
+// 	t_texture *load_texture(TEXTURE_WALL/TEXTURE_PORTAL/TEXTURE_SPRITE, char *path);
+// 	and depending ont the type you give in it will save in a list of textures, from where the editor window will take
+// 	the textures for the buttons from, i hope this makes sense.
 
 // Remove this if not used in the final version.
 enum e_select_mode
@@ -114,13 +127,15 @@ typedef	struct	s_grid
 
 // the information for the output when you save the map
 	t_list		*points;
-	int			point_amount;
+	int		point_amount;
 	t_list		*walls;
-	int			wall_amount;
+	int		wall_amount;
 	t_list		*sectors;
-	int			sector_amount;
+	int		sector_amount;
 	t_list		*entities;
-	int			entity_amount;
+	int		entity_amount;
+
+	int		wall_sprite_amount;
 	// t_list		*portals;
 	t_xywh			dimensions;
 }				t_grid;

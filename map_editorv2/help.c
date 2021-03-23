@@ -16,11 +16,11 @@ Uint32		random_color(void)
 {
 	Uint32	color;
 
-	color = rgba_to_hex((t_rgba) {255, rand() % 255, rand() % 255, 245});
+	color = rgba_to_hex((t_rgba) {.a = 255, .r = rand() % 255, .g = rand() % 255, .b = 245});
 	ft_printf("generated color: %#x\n", color);
 
 	t_rgba rgba = hex_to_rgba(color);
-	SDL_Color col = {rgba.a, rgba.r, rgba.g, rgba.b};
+	SDL_Color col = {rgba.r, rgba.g, rgba.b, rgba.a};
 	ft_printf("A:%d R:%d G:%d B:%d\n", col.a,col.r,col.g,col.b);
 	return (color);
 }
@@ -99,7 +99,8 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 	new_wall->orig = orig;
 	new_wall->texture_scale = 1;
 	new_wall->texture_id = 0;
-	new_wall->portal_texture_id = 0;
+	new_wall->portal_texture_id = -1; // -1, aka default, aka nothing, aka not set, aka not changed, aka ...
+	new_wall->solid = -1; // this is -1, if not set to something else it will default to something in the setmapper
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;
 

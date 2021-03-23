@@ -170,6 +170,7 @@ void	recount_everything(t_editor *doom)
 	doom->grid.wall_amount = 0;
 	doom->grid.point_amount = 0;
 	doom->grid.entity_amount = 0;
+	doom->grid.wall_sprite_amount = 0;
 	// id = 0;
 	// curr = doom->grid.sectors;
 	// while (curr)
@@ -180,9 +181,18 @@ void	recount_everything(t_editor *doom)
 	// }
 	// doom->grid.sector_amount = id;
 	curr = doom->grid.walls;
+	t_list *curr_sprite;
 	while (curr)
 	{
 		doom->grid.wall_amount++;
+
+		curr_sprite = ((t_wall *)curr->content)->sprites;
+		while (curr_sprite)
+		{
+			doom->grid.wall_sprite_amount++;
+			curr_sprite = curr_sprite->next;
+		}
+
 		curr = curr->next;
 	}
 	curr = doom->grid.points;
@@ -209,7 +219,7 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 		if (grid->modify_point != NULL)
 		{
 			// Loop through all sectors
-			//	Loop throught all walls in that sector
+			//	Loop through all walls in that sector
 			//	 Check if the point you have selected is in wall
 			//	  Remove that wall from all sectors
 			ft_printf("Starting to remove point.\n");

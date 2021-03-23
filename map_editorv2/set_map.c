@@ -43,7 +43,7 @@ char	*set_point(t_editor *doom)
 		point = v->content;
 		point->id = id;
 		vec = point->pos;
-		temp = ft_sprintf("\t%d\t%.1f\t%.1f\t%.1f\n", point->id, vec.x,	vec.y, vec.z);
+		temp = ft_sprintf("\t\t%d\t%.1f\t%.1f\t%.1f\n", point->id, vec.x,	vec.y, vec.z);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		point->id = id;
@@ -53,24 +53,64 @@ char	*set_point(t_editor *doom)
 	return (str);
 }
 
+char	*set_sprite(t_editor *doom)
+{
+	t_list *curr_wall;
+	t_list *curr_sprite;
+	t_wall *wall;
+	t_sprite *sprite;
+	char *temp = NULL;
+	char *str = ft_sprintf("type:wall_sprite\tid\twall_id\tx\ty\ttex\tscale\n");
+	int id = 0;
+	int wall_id = 0;
+
+	curr_wall = doom->grid.walls;
+	while (curr_wall)
+	{
+		wall = curr_wall->content;
+		curr_sprite = wall->sprites;
+		while (curr_sprite)
+		{
+			sprite = curr_sprite->content;
+			// NOTE: if the wall id is not matching to the correct wall, then you have to rethink this,
+			// 	but it should because youre looping in the same order as the set_wall function comes up with ids.
+			temp = ft_sprintf("\t%d\t%d\t%d\t%d\t%d\t%.3f\n", id, wall_id, sprite->coord.x, sprite->coord.y, sprite->sprite_id, sprite->scale);
+			// maybe remove this and just add it in the printf, actually no idea if its even faster
+			ft_stradd(&str, temp);
+			ft_strdel(&temp);
+			id++;
+			curr_sprite = curr_sprite->next;
+		}
+		wall_id++;
+		curr_wall = curr_wall->next;
+	}
+	return (str);
+}
+
 char	*set_wall(t_editor *doom)
 {
 	t_list *v;
 	char *str;
 	char *temp;
-	t_wall *line;
+	t_wall *wall;
 	int id;
 
 	v = doom->grid.walls;
 	id = 0;
-	str = ft_sprintf("type:wall\tid\tv1\tv2\ttexture\n");
+	str = ft_sprintf("type:wall\tid\tv1\tv2\twalltex\tportaltex\tscale\tsolid\n");
 	while (v)
 	{
-		line = v->content;
-		line->id = id;
-		temp = ft_sprintf("\t%d\t%d\t%d\t%d\n", line->id, line->orig->id, line->dest->id, line->texture_id);
+		wall = v->content;
+		wall->id = id;
+
+		// default the soliditiy of the wall if not set (-1 means its not set (if youre curious))
+		if (wall->solid == -1)
+			wall->solid = wall->neighbor == -1;
+
+		temp = ft_sprintf("\t\t%d\t%d\t%d\t%d\t%d\t\t%.1f\t%d\n", wall->id, wall->orig->id, wall->dest->id, wall->texture_id, wall->portal_texture_id, wall->texture_scale, wall->solid);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
+
 		id++;
 		v = v->next;
 	}
@@ -171,6 +211,7 @@ void	set_map(t_editor *doom)
 	char	*spawn;
 	char	*point;
 	char	*wall;
+	char	*sprite;
 	char	*sector;
 	char	*entity;
 
@@ -181,14 +222,15 @@ void	set_map(t_editor *doom)
 	recount_everything(doom);
 
 	divider = ft_strdup("-----------------------------------\n");
-	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tf&c\twallsprite\tsec\tent\n\t%s\t%d\t%d\t%d\t%d\t%d\t%d\t%d\n", doom->filename, 1, doom->grid.point_amount, doom->grid.wall_amount, 0, 0, doom->grid.sector_amount, doom->grid.entity_amount);
+	map = ft_sprintf("type:map\tname\tscale\tvert\twall\twallsprite\tsec\tent\n\t%s\t%d\t%d\t%d\t%d\t%d\t%d\n", doom->filename, 1, doom->grid.point_amount, doom->grid.wall_amount, doom->grid.wall_sprite_amount, doom->grid.sector_amount, doom->grid.entity_amount);
 	spawn = set_spawn(doom);
 	point = set_point(doom);
 	wall = set_wall(doom);
+	sprite = set_sprite(doom);
 	sector = set_sector(doom);
 	entity = set_entities(doom);
 	// str = ft_sprintf("%s%s%s%s%s%s%s%s%s%s%s%s", map, divider, spawn, divider, point, divider, wall, divider, sector, divider, entity, divider);
-	str = ft_strjoiner(map, divider, spawn, divider, point, divider, wall, divider, sector, divider, entity, divider, NULL);
+	str = ft_strjoiner(map, divider, spawn, divider, point, divider, wall, divider, sprite, divider, sector, divider, entity, divider, NULL);
 
 	fd = creat(doom->filename, S_IRUSR | S_IWUSR);
 	if (fd > -1)
@@ -204,6 +246,7 @@ void	set_map(t_editor *doom)
 	ft_strdel(&spawn);
 	ft_strdel(&point);
 	ft_strdel(&wall);
+	ft_strdel(&sprite);
 	ft_strdel(&sector);
 	ft_strdel(&entity);
 	ft_strdel(&str);
