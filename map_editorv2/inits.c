@@ -35,6 +35,7 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 	
 	init_sector_editor(editor);
 	init_wall_editor(editor);
+	init_entity_editor(editor);
 }
 
 void	grid_init(t_editor *doom)
@@ -585,6 +586,33 @@ void	init_wall_editor(t_editor *editor)
 		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
 		add_to_list(&editor->wall_sprite_buttons, temp_elem, sizeof(t_bui_element));
 	}
+}
+
+void	init_entity_editor(t_editor *editor)
+{
+	t_xywh coord;
+
+	// Toolbox menu
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_entity = bui_new_menu(editor->new_edit_window, "Entity Toolbox", coord);
+
+	// View menu
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_view_entity = bui_new_menu(editor->new_edit_window, "Entity View", coord);
+
+	// Drop down menu for all the entity preset types
+	coord = ui_init_coords(5, 20, editor->edit_toolbox_entity->position.w - 10, 20);
+	// TODO: change the text of the type that you have chosen.
+	editor->entity_type_drop = bui_new_dropdown_preset(editor->edit_toolbox_entity, "Entity types", coord);
+
+	// adding elements to the drop
+	preset_dropdown_add_element(editor->entity_type_drop, "Medkit");
+	preset_dropdown_add_element(editor->entity_type_drop, "Ammokit");
+	preset_dropdown_add_element(editor->entity_type_drop, "Alfred");
+	preset_dropdown_add_element(editor->entity_type_drop, "Peter");
+	preset_dropdown_add_element(editor->entity_type_drop, "Carlos");
 }
 
 /*

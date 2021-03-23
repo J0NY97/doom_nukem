@@ -68,6 +68,8 @@
 // 	t_texture *load_texture(TEXTURE_WALL/TEXTURE_PORTAL/TEXTURE_SPRITE, char *path);
 // 	and depending ont the type you give in it will save in a list of textures, from where the editor window will take
 // 	the textures for the buttons from, i hope this makes sense.
+//
+// TODO: instead of zoom changing 1 pixel at a time +/-, you should make it change procentuellt.
 
 // Remove this if not used in the final version.
 enum e_select_mode
@@ -292,12 +294,21 @@ struct			s_editor
 	t_list		*floor_texture_buttons;	  // list of t_bui_element * of the texture buttons for floor
 	t_bui_element	*active_floor_texture;
 	t_bui_element	*active_ceiling_texture;
+
+	///////////////////
+	// Entity elements
+	// ////////////////
+	t_bui_element *edit_toolbox_entity;
+	t_bui_element *edit_view_entity; 	
+
+	t_preset_dropdown *entity_type_drop;
 };
 
 // Rewrites
 void			edit_window_init(t_editor *editor, t_bui_libui *libui);
 void			init_sector_editor(t_editor *editor);
 void			init_wall_editor(t_editor *editor);
+void			init_entity_editor(t_editor *doom);
 t_editor_texture	*load_editor_texture(char *path);
 
 void			mode_functions(t_editor *editor);

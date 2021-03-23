@@ -13,91 +13,7 @@
 #include "editor.h"
 
 // @Improvement: blit everything on the normal sized wall and then finally scale it up -.-
-void	show_wall_render(t_editor *doom, t_grid *grid)
-{
-	t_wall *wall;
-	t_xywh dim;
-	SDL_Rect	texture;
-	SDL_Rect	temp;
-	SDL_Surface	*scaled_wall;
-	double	scale;
-	double	x_axis;
-	double	y_axis;
-
-	wall = grid->modify_wall;
-	// get w from the difference from the orig -> dest x
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos);
-	// get h from the sector it is a part of
-	dim.h = 96; // get the sector that the wall is a part of... and then take the height from it
-	// all of these values needs to  have a zoom value depending on which is...
-	//	more the x or the y so that we can see the whole wall...
-	//	but if you after that want to zoom you can??
-	dim.x = 50; // offsets
-	dim.y = 50;
-	// get texture from the wall selected
-	// (wall->texture_id)
-	// render wall with the texture
-
-	texture.x = doom->textures[0].position[wall->texture_id][0];
-	texture.y = doom->textures[0].position[wall->texture_id][1];
-	texture.w = doom->textures[0].x_size;
-	texture.h = doom->textures[0].y_size;
-
-	// how many of the textures can fit on each axis
-	x_axis = (float)dim.w / (float)doom->textures[0].x_size;
-	y_axis = (float)dim.h / (float)doom->textures[0].y_size;
-
-	scale = (doom->option.show_render->position.w - (dim.x * 2)) / dim.w;
-	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
-	for (int y = 0; y < y_axis; y++)
-	{
-		for (int x = 0; x < x_axis; x++)
-		{
-			temp.w = doom->textures[0].x_size * scale;
-			temp.h = doom->textures[0].y_size * scale;
-			temp.x = x * temp.w;
-			temp.y = y * temp.h;
-			// TODO: this needs to be niklas made blitscaled
-			SDL_BlitScaled(doom->textures[0].surface, &texture, scaled_wall, &temp);
-		}
-	}
-// render the objects placed on the wall
-	t_list *curr;
-	t_sprite *sprite;
-
-	curr = wall->sprites;
-	while (curr)
-	{
-		sprite = curr->content;
-		temp.x = sprite->pos.x;
-		temp.y = sprite->pos.y;
-		temp.w = sprite->w;
-		temp.h = sprite->h;
-		// TODO: this needs to be niklas blitscaled
-		SDL_BlitScaled(doom->sprites[0].surface,
-					&(SDL_Rect){doom->sprites[0].position[sprite->sprite_id][0],
-								doom->sprites[0].position[sprite->sprite_id][1],
-								doom->sprites[0].x_size,
-								doom->sprites[0].y_size},
-					scaled_wall, &temp);
-		curr = curr->next;
-	}
-	if (doom->option.modify_sprite != NULL)
-	{
-		gfx_draw_rect(doom->option.show_render->active_surface,
-					0xffff0000,
-					(t_xywh){doom->option.modify_sprite->pos.x,
-							doom->option.modify_sprite->pos.y,
-							doom->option.modify_sprite->w,
-							doom->option.modify_sprite->h});
-	}
-// finally blit the wall to the surface of the window
-	SDL_BlitSurface(scaled_wall, NULL, doom->option.show_render->active_surface, &(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
-	gfx_draw_rect(doom->option.show_render->active_surface, 0xff00ff00, (t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
-	SDL_FreeSurface(scaled_wall);
-}
-
-void	new_wall_render(t_editor *doom)
+void	wall_render(t_editor *doom)
 {
 	t_grid *grid;
 	t_wall *wall;
@@ -309,7 +225,7 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	}
 	
 	// NOTE: in this function you also render the wall sprites.
-	new_wall_render(doom);
+	wall_render(doom);
 
 	// Choose the sprite
 	if (mouse_hover(doom->libui, doom->edit_view_wall->position) &&
@@ -378,44 +294,8 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	t_list *curr;
 	t_sector_edit *temp;
 
-	bui_change_element_text(doom->option.title, "Sector edit");
-
 	doom->edit_view_sector->show = 1;
 	doom->edit_toolbox_sector->show = 1;
-
-	curr = doom->option.sector_edit_buttons;
-	if (grid->modify_sector == NULL)
-		return ;
-	while (curr)
-	{
-		temp = curr->content;
-		if (ft_strstr(temp->text->text, "floor height"))
-			temp->f_amount = &grid->modify_sector->floor_height;
-		else if (ft_strstr(temp->text->text, "ceiling height"))
-			temp->f_amount = &grid->modify_sector->ceiling_height;
-		else if (ft_strstr(temp->text->text, "gravity"))
-			temp->f_amount = &grid->modify_sector->gravity;
-		else if (ft_strstr(temp->text->text, "lighting"))
-			temp->f_amount = &grid->modify_sector->light_level;
-		temp->text->show = 1;
-		temp->sub_button->show = 1;
-		temp->amount->show = 1;
-		temp->add_button->show = 1;
-		char *str;
-		if (temp->f_amount == NULL)
-			str = ft_strdup("not set");
-		else
-		{
-			str = ft_itoa(*temp->f_amount);
-			if (bui_button(temp->sub_button))
-				*temp->f_amount -= 1;
-			if (bui_button(temp->add_button))
-				*temp->f_amount += 1;
-		}
-		bui_change_element_text(temp->amount, str);
-		ft_strdel(&str);
-		curr = curr->next;
-	}
 
 	// Floor and ceiling texture element events
 	curr = doom->floor_texture_buttons;
@@ -452,111 +332,29 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 
 void	entity_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
-	t_wall_edit *option;
+	doom->edit_toolbox_entity->show = 1;
+	doom->edit_view_entity->show = 1;
 
-	bui_change_element_text(doom->option.title, "Entity edit");
-	option = &doom->option;
-	option->ent_sprite_button->show = 1;
-	option->ent_info_button->show = 1;
-	option->ent_render_sprite->show = 1;
-	if (bui_button_toggle(option->ent_info_button))
-	{
-		// Untoggle the other buttons/tabs
-		option->ent_sprite_button->toggle = 0;
-		option->ent_sprites->show = 0;
+	preset_dropdown_events(doom->entity_type_drop);
 
-		option->ent_info_menu->show = 1;
-		// TODO: strdel here if they havent already
-		// TODO: better libui elements dont have .text
-		/*
-		grid->modify_entity->max_health = ft_atoi(option->ent_info_health_text_area->text.text);
-		grid->modify_entity->speed = ft_atoi(option->ent_info_speed_text_area->text.text);
-		grid->modify_entity->armor = ft_atoi(option->ent_info_armor_text_area->text.text);
-		*/
-
-		t_list *item;
-		int i = 0;
-		// TODO: drop down is not supported yet in better libui
-		//item = ((t_drop_down *)option->type_dropdown->info)->items;
-		item = NULL; // dont forget to remove this
-		while (item)
-		{
-			if (bui_button(item->content))
-				grid->modify_entity->type = i;
-			item = item->next;
-			i++;
-		}
-//ft_printf("Entity type: %d\n", grid->modify_entity->type);
-	}
-	if (bui_button_toggle(option->ent_sprite_button))
-	{
-		// Untoggle the other tabs
-		option->ent_info_button->toggle = 0;
-		option->ent_info_menu->show = 0;
-
-		option->ent_sprites->show = 1;
-		entity_sprite_buttons(doom, grid);
-	}
-	// render the sprite on the menu view
-	if (grid->modify_entity->sprite_id < 0 || grid->modify_entity->sprite_id >= doom->entity_sprites[0].max_textures)
-		return ;
-	SDL_BlitSurface(doom->entity_sprites[0].surface,
-					&(SDL_Rect){doom->entity_sprites[0].position[grid->modify_entity->sprite_id][0],
-								doom->entity_sprites[0].position[grid->modify_entity->sprite_id][1],
-								doom->entity_sprites[0].x_size,
-								doom->entity_sprites[0].y_size},
-					doom->option.ent_render_sprite->active_surface,
-					&(SDL_Rect){0, 0,
-								doom->entity_sprites[0].x_size,
-								doom->entity_sprites[0].y_size});
+	// 
 }
 
 void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
-	doom->option.texture_button->show = 0;
-	doom->option.textures->show = 0;
-	doom->option.add_button->show = 0;
-	doom->option.sprites->show = 0;
-	doom->option.show_render->show = 0;
-	
-	// NEW STUFF
 	doom->edit_view_sector->show = 0;
 	doom->edit_toolbox_sector->show = 0;
 
 	doom->edit_view_wall->show = 0;
 	doom->edit_toolbox_wall->show = 0;
-	// END NEW STUFF
 
-// sector stuff
-	t_list *curr;
-	t_sector_edit *temp;
+	doom->edit_toolbox_entity->show = 0;
+	doom->edit_view_entity->show = 0;
 
-	curr = doom->option.sector_edit_buttons;
-	while (curr)
-	{
-		temp = curr->content;
-		temp->text->show = 0;
-		temp->sub_button->show = 0;
-		temp->amount->show = 0;
-		temp->add_button->show = 0;
-		curr = curr->next;
-	}
-// entity stuff
-	doom->option.ent_sprite_button->show = 0;
-	doom->option.ent_sprites->show = 0;
-	doom->option.ent_info_button->show = 0;
-	doom->option.ent_info_menu->show = 0;
-	doom->option.ent_render_sprite->show = 0;
 	if (grid->modify_wall != NULL)
 		wall_option(doom, grid, libui);
 	else if (grid->modify_sector != NULL)
 		sector_option(doom, grid, libui);
 	else if (grid->modify_entity != NULL)
 		entity_option(doom, grid, libui);
-	else
-	{
-		bui_change_element_text(doom->option.title, " "); // reset the text if nothing is selected
-		return ;
-	}
-	doom->option.menu->show = 1;
 }
