@@ -330,14 +330,16 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	sector_edit_button_events(libui, doom->lighting, &grid->modify_sector->light_level);
 }
 
-void	entity_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
+// TODO: rmeove libui
+void	entity_option(t_editor *editor, t_grid *grid, t_bui_libui *libui)
 {
-	doom->edit_toolbox_entity->show = 1;
-	doom->edit_view_entity->show = 1;
+	editor->edit_toolbox_entity->show = 1;
+	editor->edit_view_entity->show = 1;
 
-	preset_dropdown_events(doom->entity_type_drop);
+	preset_dropdown_events(editor->entity_type_drop);
 
-	// 
+	// direction radio buttons
+	only_one_button_toggled_at_a_time(editor->entity_direction_radio_buttons, &editor->active_direction_button);
 }
 
 void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)

@@ -70,6 +70,8 @@
 // 	the textures for the buttons from, i hope this makes sense.
 //
 // TODO: instead of zoom changing 1 pixel at a time +/-, you should make it change procentuellt.
+//
+// TODO: change all the copies of only_one_button_toggled_at_a_time to that function.
 
 // Remove this if not used in the final version.
 enum e_select_mode
@@ -78,6 +80,13 @@ enum e_select_mode
 	LINE_MODE,
 	SECTOR_MODE,
 	CREATE_SECTOR_MODE // not sure what this does yet
+};
+
+enum e_entity_type
+{
+	ENTITY_TYPE_HOSTILE,
+	ENTITY_TYPE_FRIENDLY,
+	ENTITY_TYPE_NEUTRAL
 };
 
 typedef	struct	s_editor			t_editor;
@@ -302,6 +311,9 @@ struct			s_editor
 	t_bui_element *edit_view_entity; 	
 
 	t_preset_dropdown *entity_type_drop;
+
+	t_list	*entity_direction_radio_buttons; // list of t_bui_element, these are the "radio" buttons for the direction of entity
+	t_bui_element *active_direction_button;
 };
 
 // Rewrites

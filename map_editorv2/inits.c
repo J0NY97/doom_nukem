@@ -588,6 +588,25 @@ void	init_wall_editor(t_editor *editor)
 	}
 }
 
+/*
+ ** Adds a new button at x, y to the prefered list.
+*/
+// TODO: remove the str, its only for debugging before i actually know how i will get the values  from the buttons for direction.
+void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *str)
+{
+	t_xywh coord;
+	t_bui_element *radio;
+
+	coord = ui_init_coords(x, y, 15, 15);
+	radio = bui_new_element(parent, str, coord);
+	radio->text_y = -100; // This is because we dont want to display the text, only store it for the map file
+	bui_set_element_color(radio, 0x00);
+	bui_set_element_image_from_path(radio, ELEMENT_DEFAULT,"../engine/ui/ui_images/radio_button_off.png");
+	bui_set_element_image_from_path(radio, ELEMENT_HOVER,"../engine/ui/ui_images/radio_button_hover.png");
+	bui_set_element_image_from_path(radio, ELEMENT_CLICK,"../engine/ui/ui_images/radio_button_on.png");
+	add_to_list(list, radio, sizeof(t_bui_element));
+}
+
 void	init_entity_editor(t_editor *editor)
 {
 	t_xywh coord;
@@ -604,7 +623,6 @@ void	init_entity_editor(t_editor *editor)
 
 	// Drop down menu for all the entity preset types
 	coord = ui_init_coords(5, 20, editor->edit_toolbox_entity->position.w - 10, 20);
-	// TODO: change the text of the type that you have chosen.
 	editor->entity_type_drop = bui_new_dropdown_preset(editor->edit_toolbox_entity, "Entity types", coord);
 
 	// adding elements to the drop
@@ -613,6 +631,27 @@ void	init_entity_editor(t_editor *editor)
 	preset_dropdown_add_element(editor->entity_type_drop, "Alfred");
 	preset_dropdown_add_element(editor->entity_type_drop, "Peter");
 	preset_dropdown_add_element(editor->entity_type_drop, "Carlos");
+
+	// radio buttons for entity direction
+	int start_x = editor->edit_toolbox_entity->position.w * 0.5f - 50; // this -50 == radio_parent->position.w * 0.5 
+	int start_y = editor->edit_toolbox_entity->position.h * 0.5f;
+	coord = ui_init_coords(start_x, start_y, 100, 100);
+	t_bui_element *radio_parent = bui_new_element(editor->edit_toolbox_entity, "direction", coord);
+
+	start_x = radio_parent->position.w * 0.5f - 7; // this -7 == radio_button->position.w * 0.5
+	start_y = 25; 
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			radio_parent, start_x, start_y, "90");
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			radio_parent, start_x + 25, start_y + 25, "0");
+	// setting default button
+	editor->active_direction_button = editor->entity_direction_radio_buttons->content;
+
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			radio_parent, start_x, start_y + 50, "270");
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			radio_parent, start_x - 25, start_y + 25, "180");
+
 }
 
 /*

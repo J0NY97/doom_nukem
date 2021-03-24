@@ -438,11 +438,11 @@ void	draw_entities(t_editor *doom, t_grid *grid)
 		pos = gfx_vector_multiply(entity->pos, grid->gap);
 		dir = gfx_vector_multiply(entity->dir, grid->gap);
 		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 6, pos);
-		if (entity->type == 0)
+		if (entity->type == ENTITY_TYPE_HOSTILE)
 			gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 3, pos);
-		else if (entity->type == 1)
+		else if (entity->type == ENTITY_TYPE_FRIENDLY)
 			gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 3, pos);
-		else if (entity->type == 2)
+		else if (entity->type == ENTITY_TYPE_NEUTRAL)
 			gfx_draw_vector(grid->elem->active_surface, 0xff0000ff, 3, pos);
 
 		t_vector dir_pos = gfx_new_vector(dir.x - pos.x, dir.y - pos.y, 0);
