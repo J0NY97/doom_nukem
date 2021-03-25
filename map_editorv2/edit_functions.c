@@ -333,13 +333,27 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 // TODO: rmeove libui
 void	entity_option(t_editor *editor, t_grid *grid, t_bui_libui *libui)
 {
+	if (editor->grid.modify_entity == NULL)
+		return ;
+
 	editor->edit_toolbox_entity->show = 1;
 	editor->edit_view_entity->show = 1;
 
 	preset_dropdown_events(editor->entity_type_drop);
 
 	// direction radio buttons
+	t_list *curr;
+
+	curr = editor->entity_direction_radio_buttons;
+	while (curr)
+	{
+		if (ft_atoi(((t_bui_element *)curr->content)->text) == editor->grid.modify_entity->direction)
+			editor->active_direction_button = curr->content;
+		curr = curr->next;
+	}
+
 	only_one_button_toggled_at_a_time(editor->entity_direction_radio_buttons, &editor->active_direction_button);
+	editor->grid.modify_entity->direction = ft_atoi(editor->active_direction_button->text);
 }
 
 void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)

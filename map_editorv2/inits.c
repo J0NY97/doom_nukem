@@ -641,14 +641,12 @@ void	init_entity_editor(t_editor *editor)
 	start_x = radio_parent->position.w * 0.5f - 7; // this -7 == radio_button->position.w * 0.5
 	start_y = 25; 
 	new_radio_button(&editor->entity_direction_radio_buttons,
-			radio_parent, start_x, start_y, "90");
+			radio_parent, start_x, start_y, "270");
 	new_radio_button(&editor->entity_direction_radio_buttons,
 			radio_parent, start_x + 25, start_y + 25, "0");
-	// setting default button
-	editor->active_direction_button = editor->entity_direction_radio_buttons->content;
 
 	new_radio_button(&editor->entity_direction_radio_buttons,
-			radio_parent, start_x, start_y + 50, "270");
+			radio_parent, start_x, start_y + 50, "90");
 	new_radio_button(&editor->entity_direction_radio_buttons,
 			radio_parent, start_x - 25, start_y + 25, "180");
 

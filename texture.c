@@ -12,6 +12,7 @@
 
 #include "core.h"
 
+/*
 void	split_texture(t_texture *t)
 {
 	int				y;
@@ -47,3 +48,4 @@ void	load_texture(t_texture *t, char *dir, int x_size, int y_size)
 	t->x_size = x_size;
 	t->y_size = y_size;
 }
+*/

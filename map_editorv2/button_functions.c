@@ -106,8 +106,8 @@ void		scale_changer_events(t_bui_libui *libui, t_editor *editor)
 int		entity_compare(t_entity *ent, t_entity *ity)
 {
 	if (vector_compare(ent->pos, ity->pos) &&
-		vector_compare(ent->dir, ity->dir) &&
-		ent->type == ity->type && ent->sprite_id == ity->sprite_id)
+		ent->direction == ity->direction &&
+		ft_strcmp(ent->name, ity->name) == 0 && ent->sprite_id == ity->sprite_id)
 		return (1);
 	return (0);
 }

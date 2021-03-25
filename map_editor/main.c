@@ -87,6 +87,7 @@ int	main(int argc, char **argv)
 		draw_hover_info(doom, &doom->grid);
 		draw_selected_sector_info(doom, &doom->grid);
 		loop_buttons(doom);
+
 		ui_render(doom->window);
 		ui_render(doom->edit_window);
 	}

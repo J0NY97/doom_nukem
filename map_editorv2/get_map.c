@@ -206,15 +206,20 @@ void		read_entities(t_editor *doom, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
+		/*
+		ft_putstr(line);
+		ft_putstr("\n");
+		*/
 		ent = new_entity(ft_atoi(arr[0]), (t_vector){
 				atof(arr[1]),
 				atof(arr[2]),
 				atof(arr[3])
 			});
-		ent->type = ft_atoi(arr[4]);
+		ent->name = ft_strdup(arr[4]);
 		ent->sprite_id = ft_atoi(arr[5]);
 		ent->max_health = ft_atoi(arr[6]);
 		ent->speed = ft_atoi(arr[7]);
+		ent->direction = ft_atoi(arr[8]);
 		add_to_list(&doom->grid.entities, ent, sizeof(t_entity));
 		free_array(arr);
 		ft_strdel(&line);

@@ -188,12 +188,12 @@ char	*set_entities(t_editor *doom)
 	char *str;
 
 	e = doom->grid.entities;
-	str = ft_sprintf("type:entity\tid\tx\ty\tz\ttype\tsprite_id\thealth\tspeed\n");
+	str = ft_sprintf("type:entity\tid\tx\ty\tz\tname\tsprite_id\thealth\tspeed\tdirection\n");
 	while (e)
 	{
 		ent = e->content;
 		gfx_vector_string(ent->pos);
-		temp = ft_sprintf("\t\t%d\t%.1f\t%.1f\t%.1f\t%d\t%d\t%d\t%d\n", ent->id, ent->pos.x, ent->pos.y, ent->pos.z, ent->type, ent->sprite_id, ent->max_health, ent->speed);
+		temp = ft_sprintf("\t\t%d\t%.1f\t%.1f\t%.1f\t%s\t%d\t%d\t%d\t%d\n", ent->id, ent->pos.x, ent->pos.y, ent->pos.z, ent->name, ent->sprite_id, ent->max_health, ent->speed, ent->direction);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		e = e->next;

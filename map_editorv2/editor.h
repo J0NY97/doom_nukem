@@ -219,6 +219,9 @@ struct			s_editor
 	t_bui_element	*hover_info;
 	t_bui_element	*selected_sector_info;
 
+	// Entity presets
+	t_list *entity_presets; // list of t_entity_preset , you can find it in ../core.h
+
 	// Scale for the map
 	unsigned int 	scale;
 	t_bui_element	*scale_menu;

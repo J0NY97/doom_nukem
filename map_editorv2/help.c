@@ -146,12 +146,13 @@ t_entity	*new_entity(int id, t_vector pos)
 	memset(entity, 0, sizeof(t_entity));
 	entity->id = id;
 	entity->pos = pos;
-	entity->dir = gfx_new_vector(10, 10, 0);
+	entity->direction = 90;
 	entity->sprite_id = 0;
-	entity->max_health = 10;
-	entity->speed = 1;
-	entity->armor = 1;
-	entity->type = 2;
+	entity->max_health = -1;
+	entity->speed = -1;
+	entity->armor = -1;
+	entity->name = NULL;
+	entity->mood = ENTITY_TYPE_NEUTRAL;
 	return (entity);
 }
 

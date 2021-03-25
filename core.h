@@ -3,7 +3,7 @@
 # define SDL_MAIN_HANDLED
 
 # include "libgfx.h"
-# include "./engine/game/srcs/doom.h"
+//# include "./engine/game/srcs/doom.h"
 # include <time.h>
 
 # define INT_MAX 2147483647
@@ -14,9 +14,140 @@ typedef	struct	s_sector	t_sector;
 typedef	struct	s_wall		t_wall;
 typedef	struct	s_point		t_point;
 typedef struct	s_entity	t_entity;
+typedef	struct	s_entity_preset	t_entity_preset;
 typedef struct	s_texture	t_texture;
 typedef struct	s_game		t_game;
 typedef	struct	s_player	t_player;
+
+// Remove s_xyz and s_doom and uncomment ./engine/game...
+# define W				1920
+typedef struct	s_xyz
+{
+	float	x;
+	float	y;
+	float	z;
+}				t_xyz;
+
+typedef struct		s_wall_a
+{
+	t_xyz			v1;
+	t_xyz			v2;
+	int				texture;
+}			t_wall_a;	
+typedef struct		s_entity_a
+{
+	t_xyz			where;
+	float			dist;
+}					t_entity_a;
+
+typedef struct	s_sector_a
+{
+    float		floor;
+	float		ceil;
+    signed char *neighbors;
+    signed char *textures;
+    unsigned	npoints;
+    t_xyz		*vertex;
+	float		light;
+	float		gravity;
+	short		entity_nb;
+	t_entity_a	entity[10];
+} 				t_sector_a;
+
+typedef struct	s_player_a
+{
+    t_xyz		where;
+    t_xyz		velocity;
+    float		angle;
+	float		anglesin;
+	float		anglecos;
+	float 		yaw;
+	int 		moving;
+	int			falling;
+	int			ground;
+	int			ducking;
+    unsigned	sector;
+}				t_player_a;
+typedef	struct		s_keys
+{
+	int				chr;
+	short			num;
+	int				fnc;
+	int				w;
+	int				a;
+	int				s;
+	int				d;
+	int				t;
+	int				space;
+	int				l_ctrl;
+	int				l_shift;
+	int				tab;
+}					t_keys;
+typedef	struct		s_fps
+{
+	float		curr;
+	float		prev;
+	float		avg;
+	TTF_Font	*font;
+}					t_fps;
+typedef struct	s_ab
+{
+	int			a1;
+	int			a2;
+	int			b1;
+	int			b2;
+}				t_ab;
+
+typedef struct	s_height_info //yinfo
+{
+	float		yceil;
+	float		yfloor;
+	float		nyceil;
+	float		nyfloor;
+	t_ab		y;
+	t_ab		ny;
+}				t_height_info;
+
+
+typedef struct	s_doom
+{
+	//window_init
+	int					quit;
+	char				*file;
+	char				*name;
+	SDL_Window			*win;
+	SDL_Surface			*surface;
+	//t_tpool				tpool;
+
+	//read_map
+	t_xyz				*vert;//is redundant after secotors are created
+	t_wall_a				*walls; //temp
+	t_sector_a			*sectors;
+	t_entity_a			*entity;
+	t_player_a			player;
+	unsigned			num_sector;
+	unsigned			num_sectors;
+
+	//Input
+	t_keys				key;
+
+	//random
+	int					start_x;
+	int					end_x;
+	float				yaw;
+	t_fps				fps;
+	short				ytop[W];
+	short				ybottom[W];
+	t_height_info		height_info;
+
+	//Textures
+	SDL_Surface			*texture[5];
+	int					u0;
+	int					u1;
+	SDL_Surface			*imp;
+	t_list *entities;
+
+}		t_doom;
 
 struct	s_point
 {
@@ -30,15 +161,22 @@ typedef struct	s_sprite
 	double			w;
 	double			h;
 	short int		sprite_id;
-}					t_sprite;
+
+	// New
+	t_xywh			coord;
+	float			scale;
+}				t_sprite;
 
 struct				s_wall
 {
 	unsigned int	id;
 	t_point			*orig;
 	t_point			*dest;
+	float			texture_scale;
 	short int		texture_id;
-	t_list			*sprites;
+	short int		portal_texture_id;
+	int			solid; // default 1 if wall, default 0 if portal
+	t_list			*sprites; // list of t_sprite 
 	int				neighbor;
 };
 
@@ -91,17 +229,30 @@ struct				s_entity
 {
 	unsigned int	id;
 	t_vector		pos;
-	t_vector		dir;
+	int			direction; // in degrees 
 	short int		sprite_id;
 	int				max_health;
 	int				speed;
 	int				armor;
-	int				type; // 2 = neutral, 1 = friendly, 0 = enemy
+	char				*name;
+	int				mood; // 0 = hostile, 1 = affine, 2 = neutral
 	//int				health;
 	//int				speed_modifier;
 	// t_weapon			weapon;
 
 	int				statique; // if npc or static sprite
+};
+
+struct				s_entity_preset
+{
+	char			*name;
+	float			scale;
+	int			mood;
+	int			health;
+	int			damage;
+	int			speed;
+	int			attack_style;
+	int			flying;
 };
 
 struct				s_texture
