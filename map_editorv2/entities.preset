@@ -1,0 +1,17 @@
+#scale float
+#mood neutral/friendly/hostile
+#health int
+#damage int
+#speed int
+#attack_style melee/ranged
+
+// NOTE: only let user update health damage speed and attacksytle if the entity is hostile.
+// NOTE: make this dynamic so if you add more attributes it will show in the ui.
+
+name		scale	mood	health	damage	speed	attack_style	flying
+alfred		1.0	hostile	10	10	10	melee		1
+fred		1.0	hostile	10	10	10	melee		0
+carlos		1.0	hostile	10	10	10	ranged		0
+shopkeeper	1.0	affable	-1	-1	-1	-1		0
+healthbox	1.0	neutral	-1	-1	-1	-1		0
+ammobox		1.0	neutral	-1	-1	-1	-1		0
