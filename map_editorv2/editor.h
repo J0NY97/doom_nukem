@@ -106,6 +106,11 @@ typedef struct	s_color_palette
 	int			win_elem;
 	int			elem_elem;
 	int			elem_elem_elem;
+
+	// Coolors.co
+	int	granny_smith_apple;
+	int	peach_crayola;
+	int	light_blue;
 }				t_color_palette;
 
 typedef	struct	s_map

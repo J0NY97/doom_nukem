@@ -150,6 +150,12 @@ void	color_palette_init(t_color_palette *pal)
 	pal->win_elem = 0xff232b2b;
 	pal->elem_elem = 0xff353839;
 	pal->elem_elem_elem = 0xffa6a6a4;
+
+	// These are taken from coolors.co,
+	// which is the reason they may have weird names
+	pal->granny_smith_apple = 0xffadf7b6;
+	pal->peach_crayola = 0xffffc09f;
+	pal->light_blue = 0xffa0ced9;
 }
 
 /*
@@ -486,18 +492,18 @@ void	init_wall_editor(t_editor *editor)
 	t_bui_element **elems;
 	
 	elems = preset_tab_add(editor->wall_tab, "Wall Texture");
-	bui_set_element_color(elems[0], 0xffA0CED9);
-	bui_set_element_color(elems[1], 0xffA0CED9);
+	bui_set_element_color(elems[0], editor->palette.light_blue);
+	bui_set_element_color(elems[1], editor->palette.light_blue);
 	editor->wall_texture_view = elems[1]; 
 
 	elems = preset_tab_add(editor->wall_tab, "Portal Texture");
-	bui_set_element_color(elems[0], 0xffADF7B6);
-	bui_set_element_color(elems[1], 0xffADF7B6);
+	bui_set_element_color(elems[0], editor->palette.granny_smith_apple);
+	bui_set_element_color(elems[1], editor->palette.granny_smith_apple);
 	editor->portal_texture_view = elems[1];
 
 	elems = preset_tab_add(editor->wall_tab, "Wall Sprite");
-	bui_set_element_color(elems[0], 0xffFFC09F);
-	bui_set_element_color(elems[1], 0xffFFC09F);
+	bui_set_element_color(elems[0], editor->palette.peach_crayola);
+	bui_set_element_color(elems[1], editor->palette.peach_crayola);
 	editor->wall_sprite_view = elems[1]; 
 
 	// wall textures view elements
@@ -520,6 +526,7 @@ void	init_wall_editor(t_editor *editor)
 	// wall texture solidity tick box
 	coord = ui_init_coords(115, 20, 100, 20);
 	editor->wall_solid = bui_new_element(editor->wall_texture_view, "Solid:", coord);
+	bui_set_element_color(editor->wall_solid, ((t_bui_element *)editor->wall_solid->parent)->color);
 
 	coord = ui_init_coords(40, 0, 20, 20);
 	editor->wall_solid_tick = bui_new_element(editor->wall_solid, " ", coord);

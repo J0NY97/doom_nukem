@@ -147,7 +147,6 @@ void	remove_entity_from_list(t_list **entities, t_entity *entity)
 
 void	loop_buttons(t_editor *doom)
 {
-// save button
 	if (bui_button(doom->button_save))
 	{
 		set_map(doom);
@@ -274,7 +273,7 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 	}
 	else if (bui_button(doom->button_edit))
 	{
-		SDL_RestoreWindow(doom->edit_window->win);
-		SDL_RaiseWindow(doom->edit_window->win);
+		SDL_RestoreWindow(doom->new_edit_window->win);
+		SDL_RaiseWindow(doom->new_edit_window->win);
 	}
 }
