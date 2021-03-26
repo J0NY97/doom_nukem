@@ -87,7 +87,6 @@ void	read_map(t_map *map, int fd)
 	ft_strdel(&line);
 }
 
-// TODO: get the texture_scale from the file, to accomplish this you have to first write in it
 void	read_wall(t_grid *grid, int fd)
 {
 	char *line;
@@ -105,6 +104,9 @@ void	read_wall(t_grid *grid, int fd)
 		//new_w->orig = get_point_with_id(grid->points, ft_atoi(arr[1]));
 		//new_w->dest = get_point_with_id(grid->points, ft_atoi(arr[2]));
 		new_w->texture_id = ft_atoi(arr[3]);
+		new_w->portal_texture_id = ft_atoi(arr[4]);
+		new_w->texture_scale = ft_atof(arr[5]);
+		new_w->solid = ft_atoi(arr[6]);
 		add_to_list(&grid->walls, new_w, sizeof(t_wall));
 		free_array(arr);
 		ft_strdel(&line);
@@ -216,6 +218,7 @@ void		read_entities(t_editor *doom, int fd)
 				atof(arr[3])
 			});
 		ent->name = ft_strdup(arr[4]);
+		ent->preset = get_entity_preset_from_list_with_name(doom->entity_presets, ent->name);
 		ent->sprite_id = ft_atoi(arr[5]);
 		ent->max_health = ft_atoi(arr[6]);
 		ent->speed = ft_atoi(arr[7]);

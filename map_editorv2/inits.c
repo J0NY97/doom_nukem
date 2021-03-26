@@ -482,9 +482,23 @@ void	init_wall_editor(t_editor *editor)
 	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall, "texture tabs", coord);
 	// Note; if you want to add these tabs youre adding, you have to save them somewhere, [0] is tab button [1] is the view
 	// Note2; it seems that i have planned to make the tab system more dynamic, aka you can have differnece sized buttons
-	editor->wall_texture_view = preset_tab_add(editor->wall_tab, "Wall Texture")[1];
-	editor->portal_texture_view = preset_tab_add(editor->wall_tab, "Portal Texture")[1];
-	editor->wall_sprite_view = preset_tab_add(editor->wall_tab, "Wall Sprite")[1];
+	// Note3; but yet not made it tho...
+	t_bui_element **elems;
+	
+	elems = preset_tab_add(editor->wall_tab, "Wall Texture");
+	bui_set_element_color(elems[0], 0xffA0CED9);
+	bui_set_element_color(elems[1], 0xffA0CED9);
+	editor->wall_texture_view = elems[1]; 
+
+	elems = preset_tab_add(editor->wall_tab, "Portal Texture");
+	bui_set_element_color(elems[0], 0xffADF7B6);
+	bui_set_element_color(elems[1], 0xffADF7B6);
+	editor->portal_texture_view = elems[1];
+
+	elems = preset_tab_add(editor->wall_tab, "Wall Sprite");
+	bui_set_element_color(elems[0], 0xffFFC09F);
+	bui_set_element_color(elems[1], 0xffFFC09F);
+	editor->wall_sprite_view = elems[1]; 
 
 	// wall textures view elements
 	coord = ui_init_coords(5, 20, 100, 40);
@@ -502,6 +516,17 @@ void	init_wall_editor(t_editor *editor)
 	coord = ui_init_coords(80, 20, 20, 20);
 	editor->wall_scale_add = bui_new_element(editor->wall_scale, "+", coord);
 	bui_set_element_color(editor->wall_scale_add, 0xff06D6A0);
+
+	// wall texture solidity tick box
+	coord = ui_init_coords(115, 20, 100, 20);
+	editor->wall_solid = bui_new_element(editor->wall_texture_view, "Solid:", coord);
+
+	coord = ui_init_coords(40, 0, 20, 20);
+	editor->wall_solid_tick = bui_new_element(editor->wall_solid, " ", coord);
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_DEFAULT, "../engine/ui/ui_images/tick_box_off.png");
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_HOVER, "../engine/ui/ui_images/tick_box_hover.png");
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_CLICK, "../engine/ui/ui_images/tick_box_on.png");
+
 
 	// wall sprite view elements
 	coord = ui_init_coords(5, 20, 50, 20);
@@ -525,6 +550,7 @@ void	init_wall_editor(t_editor *editor)
 	editor->sprite_scale_add = bui_new_element(editor->sprite_scale, "+", coord);
 	bui_set_element_color(editor->sprite_scale_add, 0xff06D6A0);
 
+
 	// TODO: make this modular on the y axis aswell
 	t_bui_element *temp_elem;
 	char *str;
@@ -534,10 +560,11 @@ void	init_wall_editor(t_editor *editor)
 
 	// wall texture buttons
 	editor->wall_texture_buttons = NULL;
-	while (i++ < texture_count)
+	editor->active_wall_texture = NULL;
+	while (i < texture_count)
 	{
 		str = ft_itoa(i);
-		temp_x = (i * 5) + ((i - 1) * 50);
+		temp_x = (i * 5) + ((i) * 50);
 		coord = ui_init_coords(temp_x, 70, 50, 50);
 		temp_elem = bui_new_element(editor->wall_texture_view, str, coord);
 		ft_strdel(&str);
@@ -547,16 +574,18 @@ void	init_wall_editor(t_editor *editor)
 		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
 		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
 		add_to_list(&editor->wall_texture_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
 	}
 
 	// portal texture buttons
 	editor->portal_texture_buttons = NULL;
+	editor->active_portal_texture = NULL;
 	texture_count = 2;
 	i = 0;
-	while (i++ < texture_count)
+	while (i < texture_count)
 	{
 		str = ft_itoa(i);
-		temp_x = (i * 5) + ((i - 1) * 50);
+		temp_x = (i * 5) + ((i) * 50);
 		coord = ui_init_coords(temp_x, 50, 50, 50);
 		temp_elem = bui_new_element(editor->portal_texture_view, str, coord);
 		ft_strdel(&str);
@@ -566,16 +595,18 @@ void	init_wall_editor(t_editor *editor)
 		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
 		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
 		add_to_list(&editor->portal_texture_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
 	}
 
 	// wall sprite buttons
 	editor->wall_sprite_buttons = NULL;
-	texture_count = 1;
+	editor->active_wall_sprite = NULL;
+	texture_count = 5;
 	i = 0;
-	while (i++ < texture_count)
+	while (i < texture_count)
 	{
 		str = ft_itoa(i);
-		temp_x = (i * 5) + ((i - 1) * 50);
+		temp_x = (i * 5) + ((i) * 50);
 		coord = ui_init_coords(temp_x, 50, 50, 50);
 		temp_elem = bui_new_element(editor->wall_sprite_view, str, coord);
 		ft_strdel(&str);
@@ -585,6 +616,7 @@ void	init_wall_editor(t_editor *editor)
 		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
 		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
 		add_to_list(&editor->wall_sprite_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
 	}
 }
 
@@ -607,6 +639,59 @@ void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *
 	add_to_list(list, radio, sizeof(t_bui_element));
 }
 
+// list is the linked list you will add the t_entity_preset to from path
+// TODO: maybe make a "new_entity_preset" function if you need it later.
+// TODO: there are alot of sizeof() maybe store the size somewhere so you dont have to call is 20 times
+// 	might not have a difference sine youre only calling this function when you startup the program
+// NOTE: first line in the file is just description of the value in that column.
+// TODO: have an int array with all the different descriptions of value  and then take them from there when you store it...
+// 	aka first read the first line and store those value descriptions and store them in an array
+// 	t.ex "name" = index 0, "scale" = index 1 ...
+void	init_entity_presets(t_list **list, char *path)
+{
+	t_entity_preset *preset;
+	char *line;
+	char **arr;
+	int fd;
+	int i = 0;
+
+	fd = open(path, O_RDONLY);
+	get_next_line(fd, &line);
+	ft_strdel(&line);
+	while (get_next_line(fd, &line))
+	{
+		arr = ft_strsplit(line, '\t');
+		preset = new_entity_preset();
+		preset->name = ft_strdup(arr[0]);
+		preset->scale = ft_atof(arr[1]);
+
+		if (ft_strcmp(arr[2], "hostile") == 0)
+			preset->mood = ENTITY_TYPE_HOSTILE;
+		else if (ft_strcmp(arr[2], "affable") == 0)
+			preset->mood = ENTITY_TYPE_FRIENDLY;
+		else if (ft_strcmp(arr[2], "neutral") == 0)
+			preset->mood = ENTITY_TYPE_NEUTRAL;
+
+		preset->health = ft_atoi(arr[3]);
+		preset->damage = ft_atoi(arr[4]);
+		preset->speed = ft_atoi(arr[5]);
+
+		if (ft_strcmp(arr[6], "melee") == 0)
+			preset->attack_style = ENTITY_STYLE_MELEE;
+		else if (ft_strcmp(arr[6], "ranged") == 0)
+			preset->attack_style = ENTITY_STYLE_RANGED;
+		else
+			preset->attack_style = ENTITY_STYLE_NONE;
+
+		preset->flying = ft_atoi(arr[7]);
+
+		ft_strdel(&line);
+		i++;
+		add_to_list(list, preset, sizeof(t_entity_preset));
+	}
+ft_printf("[init_entity_presets] %d entity presets read.\n", i);
+}
+
 void	init_entity_editor(t_editor *editor)
 {
 	t_xywh coord;
@@ -626,11 +711,16 @@ void	init_entity_editor(t_editor *editor)
 	editor->entity_type_drop = bui_new_dropdown_preset(editor->edit_toolbox_entity, "Entity types", coord);
 
 	// adding elements to the drop
-	preset_dropdown_add_element(editor->entity_type_drop, "Medkit");
-	preset_dropdown_add_element(editor->entity_type_drop, "Ammokit");
-	preset_dropdown_add_element(editor->entity_type_drop, "Alfred");
-	preset_dropdown_add_element(editor->entity_type_drop, "Peter");
-	preset_dropdown_add_element(editor->entity_type_drop, "Carlos");
+	t_list *curr;
+	t_entity_preset *preset;
+
+	curr = editor->entity_presets;
+	while (curr)
+	{
+		preset = curr->content;
+		preset_dropdown_add_element(editor->entity_type_drop, preset->name);
+		curr = curr->next;
+	}
 
 	// radio buttons for entity direction
 	int start_x = editor->edit_toolbox_entity->position.w * 0.5f - 50; // this -50 == radio_parent->position.w * 0.5 
@@ -716,6 +806,7 @@ void	entity_sprite_buttons(t_editor *doom, t_grid *grid)
 	}
 }
 
+// TODO: this function might be redundant and only used in the old editor window
 void	entity_edit_button_init(t_editor *doom)
 {
 	t_xywh coord;

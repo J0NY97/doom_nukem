@@ -43,6 +43,9 @@ void	wall_render(t_editor *doom)
 	// render wall with the texture
 
 	// TODO: this needs to be taken from somewhere else, maybe take in a t_texture that has all these informations
+	// 	(get texture with id function that takes from t_texture list and returns that surface)
+	// 	get_texture_from_list_with_id();
+	// 	get_texture_with_id_from_list();
 	// 	already in it
 	SDL_Surface *tex = load_image("../engine/ui/ui_images/wallimage.png");
 	texture.x = 0;
@@ -122,6 +125,10 @@ void	wall_render(t_editor *doom)
 
 void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
+	t_editor *editor;
+
+	editor = doom;
+
 	doom->edit_view_wall->show = 1;
 	doom->edit_toolbox_wall->show = 1;
 
@@ -143,74 +150,58 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	char *scale_value_str = ft_ftoa(doom->grid.modify_wall->texture_scale, 1);
 	bui_change_element_text(doom->wall_scale_value, scale_value_str);
 	ft_strdel(&scale_value_str);
+
+		// wall solidity tick box
+	doom->wall_solid_tick->toggle = doom->grid.modify_wall->solid;
+	if (bui_button(doom->wall_solid_tick))
+	{
+		if (doom->wall_solid_tick->toggle == 1)
+			doom->grid.modify_wall->solid = 0;
+		else
+			doom->grid.modify_wall->solid = 1;
+	}
 	
+	// TODO: first step is to take from the "modify_wall" the "texture_id" and toggle that texture button
+	// TODO: second step is to check for the mouse event on the buttons
+	// TODO: third step is to set the modify_wall texture id with the correct one.
+	// NOTE: i think this is pretty spaghett, not pretty spaghett but pretty spaghett if you know what i mean.
 		// texture buttons
-	// Note: first step is to take from the "modify_wall" the "texture_id" and toggle that texture button
-	t_list *curr;
-	int current_id = 0; // this is the texture id for the current button in the loop
-	curr = doom->wall_texture_buttons;
-	while (curr)
-	{
-		bui_button_toggle(curr->content);
-		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
-		doom->grid.modify_wall->texture_id != current_id)
-			((t_bui_element *)curr->content)->toggle = 0;
-		else
-		{
-			doom->grid.modify_wall->texture_id = current_id;
-			// TODO: when coming in to this function toggle on the already selected texture.
-			((t_bui_element *)curr->content)->toggle = 1;
-		}
-		current_id++;
-		curr = curr->next;	
-	}
+	char *temp;
 
-	// portal textures
-	current_id = 0; // this is the texture id for the current button in the loop
-	curr = doom->portal_texture_buttons;
-	while (curr)
-	{
-		bui_button_toggle(curr->content);
-		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
-		doom->grid.modify_wall->portal_texture_id != current_id)
-			((t_bui_element *)curr->content)->toggle = 0;
-		else
-		{
-			doom->grid.modify_wall->portal_texture_id = current_id;
-			// TODO: when coming in to this function toggle on the already selected texture.
-			((t_bui_element *)curr->content)->toggle = 1;
-		}
-		current_id++;
-		curr = curr->next;	
-	}
-
+	temp = ft_itoa(editor->grid.modify_wall->texture_id);
+	if (only_one_button_toggled_at_a_time(doom->wall_texture_buttons, &doom->active_wall_texture))
+	{}
+	else
+		toggle_on_element_with_text(doom->wall_texture_buttons, &doom->active_wall_texture, temp);
+	ft_strdel(&temp);
+	if (editor->active_wall_texture != NULL)
+		editor->grid.modify_wall->texture_id = ft_atoi(editor->active_wall_texture->text);
+		// portal textures
+	temp = ft_itoa(editor->grid.modify_wall->portal_texture_id);
+	if (only_one_button_toggled_at_a_time(editor->portal_texture_buttons, &editor->active_portal_texture))
+	{}
+	else
+		toggle_on_element_with_text(editor->portal_texture_buttons, &editor->active_portal_texture, temp);
+	ft_strdel(&temp);
+	if (editor->active_portal_texture != NULL)
+		editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
 		// wall sprites
-	// TODO: update this everytime you click on the wall render thing.
-	// TODO: maybe save this somewhere else, t.ex in the t_wall you have chosen or in the editor main struct;
-	t_sprite *current_wall_sprite = NULL;
-	short int chosen_texture = 0;
-
-	current_id = 0; // this is the texture id for the current button in the loop
-	curr = doom->wall_sprite_buttons;
-	while (curr)
+	// TODO: figure out where this should get its texture id
+	temp = ft_itoa(2);
+	if (only_one_button_toggled_at_a_time(editor->wall_sprite_buttons, &editor->active_wall_sprite))
+	{}
+	else
+		toggle_on_element_with_text(editor->wall_sprite_buttons, &editor->active_wall_sprite, temp);
+	ft_strdel(&temp);
+	if (editor->active_wall_sprite != NULL)
 	{
-		bui_button_toggle(curr->content);
-		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
-		current_wall_sprite != NULL &&
-		current_wall_sprite->sprite_id != current_id)
-			((t_bui_element *)curr->content)->toggle = 0;
-		else
-		{
-			if (current_wall_sprite != NULL)
-				current_wall_sprite->sprite_id = current_id;
-			// TODO: when coming in to this function toggle on the already selected texture.
-			((t_bui_element *)curr->content)->toggle = 1;
-			chosen_texture = current_id;
-		}
-		current_id++;
-		curr = curr->next;	
+		// editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
 	}
+
 	// the sprite add button
+	short int chosen_texture = 0;
+	if (editor->active_wall_sprite != NULL)
+		chosen_texture = ft_atoi(editor->active_wall_sprite->text);
 	if (bui_button(doom->add_wall_sprite_button))
 	{
 		// add the sprite to the wall
@@ -227,6 +218,7 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	// NOTE: in this function you also render the wall sprites.
 	wall_render(doom);
 
+	// TODO: this doesnt take into account the scale of the sprite
 	// Choose the sprite
 	if (mouse_hover(doom->libui, doom->edit_view_wall->position) &&
 	mouse_pressed(doom->libui, MKEY_LEFT))
@@ -339,7 +331,20 @@ void	entity_option(t_editor *editor, t_grid *grid, t_bui_libui *libui)
 	editor->edit_toolbox_entity->show = 1;
 	editor->edit_view_entity->show = 1;
 
-	preset_dropdown_events(editor->entity_type_drop);
+	// NOTE: when you unselect the entity you should reset the active drop element
+	// 	unfortunately this does so, the element isnt always clicked, only once.
+	// NOTE: if the dropdown menu is open when you select another entity, it will automatically make that
+	// 	the last clicked entity type... bug or feature?
+	if (preset_dropdown_events(editor->entity_type_drop))
+	{}
+	else
+		toggle_on_element_with_text(editor->entity_type_drop->elements, &editor->entity_type_drop->active, editor->grid.modify_entity->preset->name); 
+	if (editor->entity_type_drop->active != NULL)
+	{
+		t_entity_preset *preset = get_entity_preset_from_list_with_name(editor->entity_presets, editor->entity_type_drop->active->text);
+		if (preset != NULL)
+			editor->grid.modify_entity->preset = preset;
+	}
 
 	// direction radio buttons
 	t_list *curr;

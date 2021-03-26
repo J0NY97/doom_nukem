@@ -225,6 +225,8 @@ typedef	struct		s_perk
 	void			(*f)(t_game *, t_player *);
 }					t_perk;
 
+// TODO: try to remove all the extra info of this and store everything in the preset
+// 	aka mood, name ,speed, health...
 struct				s_entity
 {
 	unsigned int	id;
@@ -236,6 +238,7 @@ struct				s_entity
 	int				armor;
 	char				*name;
 	int				mood; // 0 = hostile, 1 = affine, 2 = neutral
+	t_entity_preset			*preset;
 	//int				health;
 	//int				speed_modifier;
 	// t_weapon			weapon;

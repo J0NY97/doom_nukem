@@ -99,8 +99,8 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 	new_wall->orig = orig;
 	new_wall->texture_scale = 1;
 	new_wall->texture_id = 0;
-	new_wall->portal_texture_id = -1; // -1, aka default, aka nothing, aka not set, aka not changed, aka ...
-	new_wall->solid = -1; // this is -1, if not set to something else it will default to something in the setmapper
+	new_wall->portal_texture_id = 0;
+	new_wall->solid = -1; 
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;
 
@@ -154,6 +154,41 @@ t_entity	*new_entity(int id, t_vector pos)
 	entity->name = NULL;
 	entity->mood = ENTITY_TYPE_NEUTRAL;
 	return (entity);
+}
+
+t_entity_preset	*new_entity_preset(void)
+{
+	t_entity_preset *preset;
+
+	preset = malloc(sizeof(t_entity_preset));
+	memset(preset, 0, sizeof(t_entity_preset));
+
+	preset->name = ft_strdup("Default name");
+	preset->scale = 1;
+	preset->mood = ENTITY_TYPE_NEUTRAL; // e_entity
+	preset->health = -1;
+	preset->damage = -1;
+	preset->speed = -1;
+	preset->attack_style = ENTITY_STYLE_NONE; // e_entity
+	preset->flying = 0;
+
+	return (preset);
+}
+
+t_entity_preset	*get_entity_preset_from_list_with_name(t_list *list, char *name)
+{
+	t_list *curr;
+	t_entity_preset *preset;
+
+	curr = list;
+	while (curr)
+	{
+		preset = curr->content;
+		if (ft_strcmp(preset->name, name) == 0) 
+			return (preset);
+		curr = curr->next;
+	}
+	return (NULL);
 }
 
 void	remove_from_points(t_list **points, t_point *v)

@@ -82,11 +82,14 @@ enum e_select_mode
 	CREATE_SECTOR_MODE // not sure what this does yet
 };
 
-enum e_entity_type
+enum e_entity
 {
 	ENTITY_TYPE_HOSTILE,
 	ENTITY_TYPE_FRIENDLY,
-	ENTITY_TYPE_NEUTRAL
+	ENTITY_TYPE_NEUTRAL,
+	ENTITY_STYLE_NONE = -1,
+	ENTITY_STYLE_MELEE,
+	ENTITY_STYLE_RANGED
 };
 
 typedef	struct	s_editor			t_editor;
@@ -268,9 +271,13 @@ struct			s_editor
 	t_bui_element *portal_texture_view;
 	t_bui_element *wall_sprite_view;
 	
+	// TODO: init the active to null
 	t_list *wall_texture_buttons;	// list of t_bui_element * of the texture buttons for wall
+	t_bui_element *active_wall_texture;
 	t_list *portal_texture_buttons; // list of t_bui_element * of the texture buttons for wall
+	t_bui_element *active_portal_texture;
 	t_list *wall_sprite_buttons;	// list of t_bui_element * of the sprite buttons for wall
+	t_bui_element *active_wall_sprite;
 
 	t_bui_element *add_wall_sprite_button;
 	
@@ -279,6 +286,10 @@ struct			s_editor
 	t_bui_element *wall_scale_value;
 	t_bui_element *wall_scale_add;
 	t_bui_element *wall_scale_sub;
+
+	// solidity tick box for wall
+	t_bui_element *wall_solid;
+	t_bui_element *wall_solid_tick;
 
 	// temporary variable for the current wall sprite youre editing.
 	//t_wall_sprite *active_wall_sprite; // disabled?
@@ -325,6 +336,7 @@ void			init_sector_editor(t_editor *editor);
 void			init_wall_editor(t_editor *editor);
 void			init_entity_editor(t_editor *doom);
 t_editor_texture	*load_editor_texture(char *path);
+void			init_entity_presets(t_list **list, char *path);
 
 void			mode_functions(t_editor *editor);
 void			draw_all_points(SDL_Surface *surface, t_list *points);
@@ -417,6 +429,8 @@ t_wall			*new_wall(t_point *orig, t_point *dest);
 t_sprite		*new_sprite(void);
 t_sector		*new_sector(int id);
 t_entity		*new_entity(int id, t_vector pos);
+t_entity_preset		*new_entity_preset(void);
+t_entity_preset		*get_entity_preset_from_list_with_name(t_list *list, char *name);
 Uint32			random_color(void);
 
 void			set_map(t_editor *doom);

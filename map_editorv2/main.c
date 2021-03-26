@@ -29,6 +29,10 @@ int	main(int argc, char **argv)
 	toolbox_init(doom);
 	button_init(doom);
 	grid_init(doom);
+
+	
+	// NOTE: this needs to be called before map getter so that we can put the correct preset in the correct entity
+	init_entity_presets(&doom->entity_presets, "entities.preset");
 	read_map_file(doom); // map getter
 
 	option_menu_init(doom);

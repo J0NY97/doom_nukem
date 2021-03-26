@@ -193,7 +193,7 @@ char	*set_entities(t_editor *doom)
 	{
 		ent = e->content;
 		gfx_vector_string(ent->pos);
-		temp = ft_sprintf("\t\t%d\t%.1f\t%.1f\t%.1f\t%s\t%d\t%d\t%d\t%d\n", ent->id, ent->pos.x, ent->pos.y, ent->pos.z, ent->name, ent->sprite_id, ent->max_health, ent->speed, ent->direction);
+		temp = ft_sprintf("\t\t%d\t%.1f\t%.1f\t%.1f\t%s\t%d\t%d\t%d\t%d\n", ent->id, ent->pos.x, ent->pos.y, ent->pos.z, ent->preset->name, ent->sprite_id, ent->preset->health, ent->preset->speed, ent->direction);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		e = e->next;
