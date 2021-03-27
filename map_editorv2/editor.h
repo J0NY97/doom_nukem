@@ -169,6 +169,15 @@ typedef	struct	s_sector_edit
 	t_bui_element	*add_button;
 }				t_sector_edit;
 
+typedef	struct		s_changer_prefab
+{
+	t_bui_element	*menu;
+	t_bui_element	*text;
+	t_bui_element	*sub_button;
+	t_bui_element	*value;
+	t_bui_element	*add_button;
+}			t_changer_prefab;
+
 typedef	struct	s_wall_edit
 {
 	t_bui_element	*menu;
@@ -230,18 +239,14 @@ struct			s_editor
 	// Entity presets
 	t_list *entity_presets; // list of t_entity_preset , you can find it in ../core.h
 
-	// Scale for the map
-	unsigned int 	scale;
-	t_bui_element	*scale_menu;
-	t_bui_element	*scale_button;
-	t_bui_element	*scale_increase;
-	t_bui_element	*scale_decrease;
+	// scale changer
+	int scale;
+	t_changer_prefab *scaler;
 
 	t_grid		grid;
 	char		*filename;
 // bui_elements
 	t_bui_element	*button_draw;
-	t_bui_element	*button_select;
 	t_color_palette	palette;
 	t_texture	textures[1];
 	t_bui_element	**texture_buttons;
@@ -260,6 +265,11 @@ struct			s_editor
 
 	// New stuff
 	t_list		*all_textures; // list of t_editor_texture (note: wall, portal and wall_sprite textures take their tex from here)
+	//////////////////
+	// Draw Mode
+	//////////////////
+	t_bui_element *draw_mode;
+
 	//////////////////
 	// Selection Mode
 	//////////////////
@@ -357,6 +367,8 @@ void			init_wall_editor(t_editor *editor);
 void			init_entity_editor(t_editor *doom);
 t_editor_texture	*load_editor_texture(char *path);
 void			init_entity_presets(t_list **list, char *path);
+t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord);
+void			changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount);
 
 void			mode_functions(t_editor *editor);
 void			draw_all_points(SDL_Surface *surface, t_list *points);

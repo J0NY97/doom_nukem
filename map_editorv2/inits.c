@@ -14,8 +14,12 @@
 
 void	window_init(t_editor *doom, t_bui_libui *libui)
 {
-	t_xywh coord = ui_init_coords(0, 0, 1920, 1080);
+	t_xywh coord;
+
+	coord = ui_init_coords(0, 0, 1920, 1080);
+	//coord = ui_init_coords(0, 0, 1280, 720);
 	char *title = ft_strjoiner("Doom Nukem Map Editor : ", doom->filename, NULL);
+	//doom->window = bui_new_window(libui, title, coord, SDL_WINDOW_RESIZABLE, doom->palette.win);
 	doom->window = bui_new_window(libui, title, coord, 0, doom->palette.win);
 	ft_strdel(&title);
 
@@ -42,8 +46,14 @@ void	grid_init(t_editor *doom)
 {
 	t_xywh coord;
 
-	coord = ui_init_coords(doom->window->active_surface->w / 4 + 20, 10,
-			(doom->window->active_surface->w / 4) * 3 - 30, doom->window->active_surface->h - 20);
+	// NOTE: enable this if you dont want the grid to be modular taken from the toolbox size
+/*	coord = ui_init_coords(doom->window->active_surface->w / 6 + 20, 10,
+			(doom->window->active_surface->w / 6) * 5 - 30, doom->window->active_surface->h - 20);
+			*/
+	coord.x = doom->toolbox->position.w + 20;
+	coord.y = 10;
+	coord.w = doom->window->active_surface->w - coord.x - 10;
+	coord.h = doom->window->active_surface->h - 20;
 	doom->grid.elem = bui_new_menu(doom->window, "grid", coord);
 	bui_set_element_color(doom->grid.elem, doom->palette.win_elem);
 	doom->grid.elem->update = 0;
@@ -78,15 +88,15 @@ void	toolbox_init(t_editor *doom)
 	t_editor *editor = doom;
 	t_xywh coord;
 
-	coord = ui_init_coords(10, 10, doom->window->active_surface->w / 4, doom->window->active_surface->h - 20);
+	coord = ui_init_coords(10, 10, doom->window->active_surface->w / 6, doom->window->active_surface->h - 20);
 	doom->toolbox = bui_new_menu(doom->window, "toolbox", coord);
 	bui_set_element_color(doom->toolbox, doom->palette.win_elem);
 
 	// Selection mode buttons
 	int select_gap = 10;
 	int select_w = 20;
-	coord = ui_init_coords(10, 100, 200, 50);
-	editor->select_mode = bui_new_element(editor->toolbox, "Selection Modes", coord);
+	coord = ui_init_coords(70, 25, 200, 50);
+	editor->select_mode = bui_new_element(editor->toolbox, "Select", coord);
 	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
 		//vertex button
 	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, 20, 20);
@@ -101,64 +111,72 @@ void	toolbox_init(t_editor *doom)
 	coord = ui_init_coords((3 * (select_w + select_gap)) + select_gap, 20, 20, 20);
 	editor->select_mode_entity = bui_new_element(editor->select_mode, "Entity", coord);
 
-	editor->select_mode_vertex->text_y = -10;
-	editor->select_mode_wall->text_y = -10;
-	editor->select_mode_sector->text_y = -10;
+	editor->select_mode_vertex->text_y = -20;
+	editor->select_mode_wall->text_y = -20;
+	editor->select_mode_sector->text_y = -20;
+	editor->select_mode_entity->text_y = -20;
 	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_vertex.png");
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_vertex_click.png");
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_vertex_click.png");
 	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_wall.png");
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_wall_click.png");
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_wall_click.png");
 	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_sector.png");
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_sector_click.png");
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_sector_click.png");
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_entity.png");
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_entity_click.png");
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_entity_click.png");
 		// putting them in list
 	// NOTE: these are there so that we can use the only one toggled at a time function
 	editor->select_mode_buttons = NULL;
-	editor->active_select_mode = editor->select_mode_entity;
+	editor->active_select_mode = NULL;
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_vertex, sizeof(t_bui_element));
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_wall, sizeof(t_bui_element));
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_sector, sizeof(t_bui_element));
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_entity, sizeof(t_bui_element));
 
 
+	// info area init
 	coord = ui_init_coords(10, (doom->toolbox->position.h / 4 + 10),
 			doom->toolbox->position.w - 20, (doom->toolbox->position.h / 4) * 3 - 20);
 	doom->info_area = bui_new_element(doom->toolbox, "info area", coord);
 	bui_set_element_color(doom->info_area, doom->palette.elem_elem);
 
 	// TODO: put this in a infoarea_init function or something, but remove from this function
-	doom->hover_info = bui_new_element(doom->info_area, "hover info", (t_xywh) {10, 20, 200, 50});
+	doom->hover_info = bui_new_element(doom->info_area, "hover info", (t_xywh) {10, 20, 100, 50});
 	bui_set_element_color(doom->hover_info, doom->info_area->color);
 
-	doom->selected_sector_info = bui_new_element(doom->info_area, "selected sector info", (t_xywh) {10, 75, 200, 50});
+	doom->selected_sector_info = bui_new_element(doom->info_area, "selected sector info", (t_xywh) {10, 75, 100, 50});
 	bui_set_element_color(doom->selected_sector_info, doom->info_area->color);
 
-	// scale changer
-	coord = ui_init_coords(300, 360, 100, 40);
-	doom->scale_menu = bui_new_element(doom->info_area, "scale", coord);
-	coord = ui_init_coords(0, 20, 100, 20);
-	doom->scale_button = bui_new_element(doom->scale_menu, "-1", coord);
-	doom->scale_button->text_x = 50;
-
-	coord.x = 0;
-	coord.y = 0;
-	coord.w = 20;
-	coord.h = 20;
-	doom->scale_decrease = bui_new_element(doom->scale_button, "-", coord);
-	coord.x = 80;
-	doom->scale_increase = bui_new_element(doom->scale_button, "+", coord);
+	// new scale changer
+	coord = ui_init_coords(editor->info_area->position.w - 110, 320, 100, 40);
+	editor->scaler = new_changer_prefab(editor->info_area, "Scale", coord);
 }
 
 void	button_init(t_editor *doom)
 {
 	t_xywh coord;
+	t_editor *editor = doom;
 
-	coord = ui_init_coords(25, 25, 100, 50);
-	doom->button_draw = bui_new_element(doom->toolbox, "draw", coord);
-	bui_set_element_color(doom->button_draw, doom->palette.elem_elem);
-	draw_rect_border(doom->button_draw->surface[ELEMENT_CLICK], 0, 0, doom->button_draw->position.w, doom->button_draw->position.h, 0xff0000ff, 2);
+	int gap = 10;
+	int button_w = 20;
 
-	coord = ui_init_coords(150, 25, 100, 50);
-	doom->button_select = bui_new_element(doom->toolbox, "select", coord);
-	bui_set_element_color(doom->button_select, doom->palette.elem_elem);
+	coord = ui_init_coords(10, 25, 50, 50);
+	editor->draw_mode = bui_new_element(editor->toolbox, "Draw", coord);
+	bui_set_element_color(editor->draw_mode, editor->palette.elem_elem);
 
-	coord = ui_init_coords(275, 25, 100, 50);
+	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20, button_w, button_w);
+	doom->button_draw = bui_new_element(editor->draw_mode, "draw", coord);
+	doom->button_draw->text_y = -20;
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_DEFAULT, "../engine/ui/ui_images/draw_mode.png");
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_HOVER, "../engine/ui/ui_images/draw_mode_click.png");
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_CLICK, "../engine/ui/ui_images/draw_mode_click.png");
+	// add draw button to the list of select_buttons
+	add_to_list(&editor->select_mode_buttons, editor->button_draw, sizeof(t_bui_element));
+
+	coord = ui_init_coords(130, 100, 100, 50);
 	doom->button_save = bui_new_element(doom->toolbox, "save", coord);
 	bui_set_element_color(doom->button_save, doom->palette.elem_elem);
 
@@ -390,6 +408,43 @@ t_sector_edit	*new_add_sector_button_prefab(t_bui_element *parent_menu, char *ti
 	coord = ui_init_coords(100 - 20, 20, 20, 20);
 	prefab->add_button = bui_new_element(prefab->menu, "+", coord);
 	return (prefab);
+}
+
+t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord)
+{
+	t_xywh temp_coord;
+	t_changer_prefab *prefab;
+
+	prefab = ft_memalloc(sizeof(t_changer_prefab));
+// menu
+	prefab->menu = bui_new_element(parent_menu, title, coord);
+// sub
+	temp_coord = ui_init_coords(0, coord.h - 20, 20, 20);
+	prefab->sub_button = bui_new_element(prefab->menu, "-", temp_coord);
+// add
+	temp_coord = ui_init_coords(coord.w - 20, coord.h - 20, 20, 20);
+	prefab->add_button = bui_new_element(prefab->menu, "+", temp_coord);
+// value
+	temp_coord.x = prefab->sub_button->position.x + prefab->sub_button->position.w;
+	temp_coord.w = prefab->menu->position.w - (prefab->menu->position.w - prefab->add_button->position.x);
+	prefab->value = bui_new_element(prefab->menu, "not set", temp_coord);
+
+	return (prefab);
+}
+
+// TODO: figure out how to do so it only changes the text if you actually clicked either of the buttons.
+// TODO: maybe take in the value you want to change already in the initter. this would leave room for min and max here.
+void	changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount)
+{
+	char *str = NULL;
+	
+	if (bui_button(changer->add_button))
+		*current_value += change_amount;
+	else if (bui_button(changer->sub_button))
+		*current_value -= change_amount;
+	str = ft_sprintf("%d", *current_value);
+	bui_change_element_text(changer->value, str);
+	ft_strdel(&str);
 }
 
 

@@ -278,10 +278,7 @@ void	unselect_selected(t_editor *doom, t_grid *grid, SDL_Event *e)
 		grid->modify_wall = NULL;
 		grid->modify_entity = NULL;
 		doom->option.modify_sprite = NULL;
-		if (bui_button(doom->button_select) ||
-		/*this is only for now*/ 
-		!bui_button(doom->button_draw))
-			grid->modify_sector = NULL;
+		grid->modify_sector = NULL;
 		ft_putstr("Unselected everything.\n");
 	}
 }

@@ -81,28 +81,6 @@ void	remove_portal(t_editor *doom, t_grid *grid)
 	}
 }
 
-void		scale_changer_events(t_bui_libui *libui, t_editor *editor)
-{
-	char *str;
-
-	if (bui_button(editor->scale_increase))
-	{
-		editor->scale += 1;
-		str = ft_itoa(editor->scale);
-		bui_change_element_text(editor->scale_button, str);
-		ft_strdel(&str);
-		ft_printf("map scale increased to: %d\n", editor->scale);
-	}
-	else if (bui_button(editor->scale_decrease))
-	{
-		editor->scale -= 1;
-		str = ft_itoa(editor->scale);
-		bui_change_element_text(editor->scale_button, str);
-		ft_strdel(&str);
-		ft_printf("map scale decreased to: %d\n", editor->scale);
-	}
-}
-
 int		entity_compare(t_entity *ent, t_entity *ity)
 {
 	if (vector_compare(ent->pos, ity->pos) &&
@@ -160,9 +138,14 @@ void	loop_buttons(t_editor *editor)
 		remove_portal(editor, &editor->grid);
 	}
 
+	// the selection mode buttons
 	only_one_button_toggled_at_a_time(editor->select_mode_buttons, &editor->active_select_mode);
 	if (editor->active_select_mode != NULL)
 		bui_button_toggle(editor->active_select_mode);
+
+	// scale changer prefab
+	changer_prefab_events(editor->scaler, &editor->scale, 1);
+	editor->scale = clamp(editor->scale, 1, 64);
 }
 
 void	recount_everything(t_editor *doom)

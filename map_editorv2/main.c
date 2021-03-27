@@ -50,7 +50,6 @@ int	main(int argc, char **argv)
 	while (libui->run)
 	{
 
-		scale_changer_events(libui, doom);
 		draw_grid(doom, &doom->grid);
 		hover_calc(doom, &doom->grid);
 		if (bui_button_toggle(doom->button_draw))
