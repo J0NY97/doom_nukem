@@ -125,6 +125,8 @@ t_sector	*new_sector(int id)
 	sector->ceiling_height = 20;
 	sector->floor_texture = 0;
 	sector->ceiling_texture = 0;
+	sector->floor_texture_scale = 1.0f;
+	sector->ceiling_texture_scale = 1.0f;
 	sector->gravity = 9;
 	sector->light_level = 10;
 	sector->lowest_pos = gfx_new_vector(INT_MAX, INT_MAX, INT_MAX);

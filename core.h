@@ -188,6 +188,10 @@ struct				s_sector
 	short int		ceiling_height;
 	short int		floor_texture;
 	short int		ceiling_texture;
+
+	float			floor_texture_scale;
+	float			ceiling_texture_scale;
+
 	short int		gravity;		// this is short int but in the real game a float (from 0.10 - 0.01)
 	short int		light_level;	// this is short int but in the real game a float (from 1.0 - 0.1)
 	//t_list			*neighbors;

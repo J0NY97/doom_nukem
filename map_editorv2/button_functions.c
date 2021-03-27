@@ -145,20 +145,24 @@ void	remove_entity_from_list(t_list **entities, t_entity *entity)
 	}
 }
 
-void	loop_buttons(t_editor *doom)
+void	loop_buttons(t_editor *editor)
 {
-	if (bui_button(doom->button_save))
+	if (bui_button(editor->button_save))
 	{
-		set_map(doom);
+		set_map(editor);
 	}
-	else if (bui_button(doom->button_add))
+	else if (bui_button(editor->button_add))
 	{
-		add_portal(doom, &doom->grid);
+		add_portal(editor, &editor->grid);
 	}
-	else if (bui_button(doom->button_remove_portal))
+	else if (bui_button(editor->button_remove_portal))
 	{
-		remove_portal(doom, &doom->grid);
+		remove_portal(editor, &editor->grid);
 	}
+
+	only_one_button_toggled_at_a_time(editor->select_mode_buttons, &editor->active_select_mode);
+	if (editor->active_select_mode != NULL)
+		bui_button_toggle(editor->active_select_mode);
 }
 
 void	recount_everything(t_editor *doom)

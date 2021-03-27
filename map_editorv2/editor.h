@@ -260,6 +260,17 @@ struct			s_editor
 
 	// New stuff
 	t_list		*all_textures; // list of t_editor_texture (note: wall, portal and wall_sprite textures take their tex from here)
+	//////////////////
+	// Selection Mode
+	//////////////////
+	t_bui_element *select_mode;
+	t_list *select_mode_buttons; // list of t_bui_element *
+	t_bui_element *active_select_mode;
+	t_bui_element *select_mode_vertex;
+	t_bui_element *select_mode_wall;
+	t_bui_element *select_mode_sector;
+	t_bui_element *select_mode_entity;
+
 	// New edit window
 	t_bui_window	*new_edit_window;
 
@@ -315,6 +326,9 @@ struct			s_editor
 	t_sector_edit	*gravity;
 	t_sector_edit	*lighting;
 
+	t_sector_edit	*floor_scale;
+	t_sector_edit	*ceiling_scale;
+
 	// sector editing stuff
 	t_bui_element	*sector_ceiling_menu;
 	t_bui_element	*sector_floor_menu;
@@ -322,6 +336,7 @@ struct			s_editor
 	t_list		*floor_texture_buttons;	  // list of t_bui_element * of the texture buttons for floor
 	t_bui_element	*active_floor_texture;
 	t_bui_element	*active_ceiling_texture;
+
 
 	///////////////////
 	// Entity elements

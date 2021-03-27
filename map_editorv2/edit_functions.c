@@ -268,22 +268,37 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	}
 }
 
-void	sector_edit_button_events(t_bui_libui *libui, t_sector_edit *collection, short int *current_value)
+void	sector_edit_button_events(t_sector_edit *collection, short int *current_value, int change_amount)
 {
 	char *str = NULL;
 	
 	if (bui_button(collection->add_button))
-		*current_value += 1;
+		*current_value += change_amount;
 	if (bui_button(collection->sub_button))
-		*current_value -= 1;
+		*current_value -= change_amount;
 	str = ft_sprintf("%d", *current_value);
 	bui_change_element_text(collection->amount, str);
 	ft_strdel(&str);
 }
 
+void	sector_edit_button_events_float(t_sector_edit *collection, float *current_value, float change_amount)
+{
+	char *str = NULL;
+	
+	if (bui_button(collection->add_button))
+		*current_value += change_amount;
+	if (bui_button(collection->sub_button))
+		*current_value -= change_amount;
+	str = ft_sprintf("%.1f", *current_value);
+	bui_change_element_text(collection->amount, str);
+	ft_strdel(&str);
+}
+
+
 void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
 	t_list *curr;
+	t_editor *editor = doom;
 	t_sector_edit *temp;
 
 	doom->edit_view_sector->show = 1;
@@ -316,10 +331,14 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		curr = curr->next;	
 	}
 	// new sector editing buttons.
-	sector_edit_button_events(libui, doom->floor_height, &grid->modify_sector->floor_height);
-	sector_edit_button_events(libui, doom->ceiling_height, &grid->modify_sector->ceiling_height);
-	sector_edit_button_events(libui, doom->gravity, &grid->modify_sector->gravity);
-	sector_edit_button_events(libui, doom->lighting, &grid->modify_sector->light_level);
+	sector_edit_button_events(editor->floor_height, &grid->modify_sector->floor_height, 1);
+	sector_edit_button_events(editor->ceiling_height, &grid->modify_sector->ceiling_height, 1);
+	sector_edit_button_events(editor->gravity, &grid->modify_sector->gravity, 1);
+	sector_edit_button_events(editor->lighting, &grid->modify_sector->light_level, 1);
+
+	// floor and ceiling
+	sector_edit_button_events_float(editor->floor_scale, &grid->modify_sector->floor_texture_scale, 0.1f);
+	sector_edit_button_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
 }
 
 // TODO: rmeove libui

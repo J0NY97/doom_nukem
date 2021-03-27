@@ -75,11 +75,47 @@ void	grid_init(t_editor *doom)
 
 void	toolbox_init(t_editor *doom)
 {
+	t_editor *editor = doom;
 	t_xywh coord;
 
 	coord = ui_init_coords(10, 10, doom->window->active_surface->w / 4, doom->window->active_surface->h - 20);
 	doom->toolbox = bui_new_menu(doom->window, "toolbox", coord);
 	bui_set_element_color(doom->toolbox, doom->palette.win_elem);
+
+	// Selection mode buttons
+	int select_gap = 10;
+	int select_w = 20;
+	coord = ui_init_coords(10, 100, 200, 50);
+	editor->select_mode = bui_new_element(editor->toolbox, "Selection Modes", coord);
+	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
+		//vertex button
+	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, 20, 20);
+	editor->select_mode_vertex = bui_new_element(editor->select_mode, "Vertex", coord);
+		//wall button
+	coord = ui_init_coords((1 * (select_w + select_gap)) + select_gap, 20, 20, 20);
+	editor->select_mode_wall = bui_new_element(editor->select_mode, "Wall", coord);
+		// sector button
+	coord = ui_init_coords((2 * (select_w + select_gap)) + select_gap, 20, 20, 20);
+	editor->select_mode_sector = bui_new_element(editor->select_mode, "Sector", coord);
+		//entity button
+	coord = ui_init_coords((3 * (select_w + select_gap)) + select_gap, 20, 20, 20);
+	editor->select_mode_entity = bui_new_element(editor->select_mode, "Entity", coord);
+
+	editor->select_mode_vertex->text_y = -10;
+	editor->select_mode_wall->text_y = -10;
+	editor->select_mode_sector->text_y = -10;
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_vertex.png");
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_wall.png");
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_sector.png");
+		// putting them in list
+	// NOTE: these are there so that we can use the only one toggled at a time function
+	editor->select_mode_buttons = NULL;
+	editor->active_select_mode = editor->select_mode_entity;
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_vertex, sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_wall, sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_sector, sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_entity, sizeof(t_bui_element));
+
 
 	coord = ui_init_coords(10, (doom->toolbox->position.h / 4 + 10),
 			doom->toolbox->position.w - 20, (doom->toolbox->position.h / 4) * 3 - 20);
@@ -436,30 +472,43 @@ void	init_sector_editor(t_editor *editor)
 	bui_set_element_color(editor->sector_ceiling_menu, 0xff06D6A0);
 
 // TODO: from a texture file take all the textures and make buttons of them and show them on both of the menus above.
+// TODO: NOTE: the ceiling- and floor texture count should be gotten from the same place as where you laod the textures.
 	// this is just a demonstration
 	t_bui_element *temp_elem;
 	char *str;
-	int floor_texture_count = 5;
+	int floor_texture_count = 9;
+	int ceiling_texture_count = 20;
 	int i = 0;
-	while (i++ < floor_texture_count)
+	
+	int offset_x = 20;
+	int offset_y = 50;
+	int button_gap = 20;
+	int amount_on_x = floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
+	while (i < floor_texture_count)
 	{
-		// these coords need to be placed correctly on the view so that they lok nice aka use modulo
-		coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
+		coord.w = 50;
+		coord.h = 50;
+		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
 		str = ft_sprintf("%d", i);
 		temp_elem = bui_new_element(editor->sector_floor_menu, str, coord);
 		ft_strdel(&str);
 		bui_set_element_color(temp_elem, 0xff06D6A0);
 		add_to_list(&editor->floor_texture_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
 	}
 	i = 0;
-	while (i++ < floor_texture_count)
+	while (i < ceiling_texture_count)
 	{
 		coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
+		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
 		str = ft_sprintf("%d", i);
 		temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
 		ft_strdel(&str);
 		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
 		add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
 	}
 
 	// Init the ceiling- and floor height... etc. buttons
@@ -467,6 +516,11 @@ void	init_sector_editor(t_editor *editor)
 	editor->ceiling_height = new_add_sector_button_prefab(editor->edit_toolbox_sector, "ceiling height", 5, (25 * 2) + (40 * 1));
 	editor->gravity = new_add_sector_button_prefab(editor->edit_toolbox_sector, "gravity", 5, (25 * 3) + (40 * 2));
 	editor->lighting = new_add_sector_button_prefab(editor->edit_toolbox_sector, "lighting", 5, (25 * 4) + (40 * 3));
+
+	// floor & ceiling texture scale
+	editor->floor_scale = new_add_sector_button_prefab(editor->edit_toolbox_sector, "floor texture scale", 5, (25 * 6) + (40 * 5));
+	editor->ceiling_scale = new_add_sector_button_prefab(editor->edit_toolbox_sector, "ceiling texture scale", 5, (25 * 7) + (40 * 6));
+
 }
 
 void	init_wall_editor(t_editor *editor)
