@@ -298,6 +298,52 @@ void	remove_from_walls_non_free(t_list **walls, t_wall *wall)
 	ft_printf("No wall found in that t_list of walls.\n");
 }
 
+int	sprite_compare(t_sprite *bubble, t_sprite *gum)
+{
+	if (bubble->sprite_id == gum->sprite_id &&
+	bubble->coord.x == gum->coord.x &&
+	bubble->coord.y == gum->coord.y &&
+	bubble->coord.w == gum->coord.w &&
+	bubble->coord.h == gum->coord.h &&
+	bubble->scale == gum->scale)
+		return (1);
+	return (0);
+
+}
+
+void	remove_from_sprites(t_list **list, t_sprite *s)
+{
+	t_list *curr;
+	t_list *prev;
+
+	curr = *list;
+	if (curr == NULL)
+		return ;
+	if (sprite_compare(curr->content, s))
+	{
+		*list = curr->next;
+		free(curr->content);
+		free(curr);
+	}
+	else
+	{
+		while (curr)
+		{
+			if (sprite_compare(curr->content, s))
+			{
+				prev->next = curr->next;
+				free(curr->content);
+				free(curr);
+			}
+			else
+				prev = curr;
+			curr = prev->next;
+		}
+	}
+	printf("Sprite removed\n");
+}
+
+
 t_sprite	*get_sprite_from_list(t_list **list, int x, int y)
 {
 	t_list *curr;

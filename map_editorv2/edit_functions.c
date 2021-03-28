@@ -275,6 +275,8 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		{
 			ft_putstr("Removing sprite from wall.\n");
 			// TODO: make function for removing and freeing wall sprite.
+			remove_from_sprites(&editor->grid.modify_wall->sprites, editor->grid.modify_sprite);
+			editor->grid.modify_sprite = NULL;
 		}
 	}
 }

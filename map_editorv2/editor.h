@@ -299,6 +299,7 @@ void			init_entity_presets(t_list **list, char *path);
 t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord);
 void			changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount);
 void			changer_prefab_events_float(t_changer_prefab *changer, float *current_value, float change_amount);
+void			remove_from_sprites(t_list **list, t_sprite *s);
 
 void			mode_functions(t_editor *editor);
 void			draw_all_points(SDL_Surface *surface, t_list *points);
