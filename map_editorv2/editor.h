@@ -126,8 +126,11 @@ typedef	struct	s_spawn
 	t_vector	pos;
 }				t_spawn;
 
+// TODO: at some point make this struct redundant
 typedef	struct	s_grid
 {
+	t_bui_element	*elem; // the actual element where you draw everything.
+
 	// Note: this is like this because its easier when you finally save the points to map file.
 	t_vector	hover; // this is calculating from the coordinate system used in this program.
 
@@ -137,12 +140,12 @@ typedef	struct	s_grid
 	int			gap;
 	t_vector	selected1;
 	t_vector	selected2;
-	t_bui_element	*elem;
 // these are the information for when you want to edit
 	t_point		*modify_point;
 	t_wall		*modify_wall;
 	t_sector	*modify_sector;
 	t_entity	*modify_entity;
+	t_sprite	*modify_sprite;
 
 // the information for the output when you save the map
 	t_list		*points;
@@ -159,16 +162,6 @@ typedef	struct	s_grid
 	t_xywh			dimensions;
 }				t_grid;
 
-typedef	struct	s_sector_edit
-{
-	t_bui_element	*menu;
-	t_bui_element	*text;
-	t_bui_element	*sub_button;
-	t_bui_element	*amount;
-	short int	*f_amount; // this is redundant in the new version, use value.. (22.03.2021 wtf is value)
-	t_bui_element	*add_button;
-}				t_sector_edit;
-
 typedef	struct		s_changer_prefab
 {
 	t_bui_element	*menu;
@@ -177,49 +170,6 @@ typedef	struct		s_changer_prefab
 	t_bui_element	*value;
 	t_bui_element	*add_button;
 }			t_changer_prefab;
-
-typedef	struct	s_wall_edit
-{
-	t_bui_element	*menu;
-	t_bui_element	*title;
-	t_bui_element	*view;
-	t_bui_element	*info;
-	t_bui_element	*add_view;
-
-// wall editing shit
-	t_bui_element	*texture_button;
-	t_bui_element	*textures;
-
-	t_bui_element	*add_button;
-	t_bui_element	*sprites;	// the surface with all of the sprite buttons on it
-	short int	selected_sprite;
-
-	t_bui_element	*show_render;
-	t_sprite	*modify_sprite;
-
-// sector editing stuff
-	t_list		*sector_edit_buttons; // t_list of s_sector_edit;
-// entity editing stuff
-	t_bui_element	*ent_sprite_button;
-	t_bui_element	*ent_sprites;
-	t_bui_element	*ent_render_sprite;
-
-	t_bui_element	*ent_info_button;
-	t_bui_element	*ent_info_menu;
-
-	t_bui_element	*ent_info_id_text;
-
-	t_bui_element	*ent_info_health_text;
-	t_bui_element	*ent_info_health_text_area;
-
-	t_bui_element	*ent_info_speed_text;
-	t_bui_element	*ent_info_speed_text_area;
-
-	t_bui_element	*ent_info_armor_text;
-	t_bui_element	*ent_info_armor_text_area;
-
-	t_bui_element	*type_dropdown; // neutral, friendly, enemy
-}				t_wall_edit;
 
 struct			s_editor
 {
@@ -238,6 +188,7 @@ struct			s_editor
 
 	// Entity presets
 	t_list *entity_presets; // list of t_entity_preset , you can find it in ../core.h
+	t_entity_preset *default_entity;
 
 	// scale changer
 	int scale;
@@ -259,9 +210,6 @@ struct			s_editor
 
 	t_texture	entity_sprites[1];
 	t_bui_element	**entity_sprite_buttons;
-	// edit window
-	t_bui_window	*edit_window;
-	t_wall_edit	option;
 
 	// New stuff
 	t_list		*all_textures; // list of t_editor_texture (note: wall, portal and wall_sprite textures take their tex from here)
@@ -331,13 +279,13 @@ struct			s_editor
 	t_bui_element	*edit_view_sector;
 
 	// toolbox sector edit buttons
-	t_sector_edit	*floor_height;
-	t_sector_edit	*ceiling_height;
-	t_sector_edit	*gravity;
-	t_sector_edit	*lighting;
+	t_changer_prefab	*floor_height;
+	t_changer_prefab	*ceiling_height;
+	t_changer_prefab	*gravity;
+	t_changer_prefab	*lighting;
 
-	t_sector_edit	*floor_scale;
-	t_sector_edit	*ceiling_scale;
+	t_changer_prefab	*floor_scale;
+	t_changer_prefab	*ceiling_scale;
 
 	// sector editing stuff
 	t_bui_element	*sector_ceiling_menu;
@@ -369,6 +317,7 @@ t_editor_texture	*load_editor_texture(char *path);
 void			init_entity_presets(t_list **list, char *path);
 t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord);
 void			changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount);
+void			changer_prefab_events_float(t_changer_prefab *changer, float *current_value, float change_amount);
 
 void			mode_functions(t_editor *editor);
 void			draw_all_points(SDL_Surface *surface, t_list *points);
@@ -391,7 +340,6 @@ void			draw_hover_info(t_editor *doom, t_grid *grid);
 void			draw_selected_sector_info(t_editor *doom, t_grid *grid);
 void			loop_buttons(t_editor *doom);
 void			draw_selected_button(t_editor *doom);
-void			option_menu_init(t_editor *doom);
 void			sector_edit_buttons_init(t_editor *doom);
 void			entity_edit_button_init(t_editor *doom);
 void			scale_changer_events(t_bui_libui *libui, t_editor *editor);

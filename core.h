@@ -184,16 +184,16 @@ struct				s_sector
 {
 	unsigned int	id;
 	t_list			*walls;
-	short int		floor_height;
-	short int		ceiling_height;
-	short int		floor_texture;
-	short int		ceiling_texture;
+	int		floor_height;
+	int		ceiling_height;
+	int		floor_texture;
+	int		ceiling_texture;
 
 	float			floor_texture_scale;
 	float			ceiling_texture_scale;
 
-	short int		gravity;		// this is short int but in the real game a float (from 0.10 - 0.01)
-	short int		light_level;	// this is short int but in the real game a float (from 1.0 - 0.1)
+	int		gravity;		// this is short int but in the real game a float (from 0.10 - 0.01)
+	int		light_level;	// this is short int but in the real game a float (from 1.0 - 0.1)
 	//t_list			*neighbors;
 
 	t_point			*first_point;
@@ -236,16 +236,7 @@ struct				s_entity
 	unsigned int	id;
 	t_vector		pos;
 	int			direction; // in degrees 
-	short int		sprite_id;
-	int				max_health;
-	int				speed;
-	int				armor;
-	char				*name;
-	int				mood; // 0 = hostile, 1 = affine, 2 = neutral
 	t_entity_preset			*preset;
-	//int				health;
-	//int				speed_modifier;
-	// t_weapon			weapon;
 
 	int				statique; // if npc or static sprite
 };

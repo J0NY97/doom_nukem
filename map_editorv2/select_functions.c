@@ -31,25 +31,25 @@ void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 		grid->modify_point->pos.x += move_x;
 		grid->modify_point->pos.y += move_y;
 	}
-	else if (doom->option.modify_sprite != NULL)
+	else if (doom->grid.modify_sprite != NULL)
 	{
 		if (key_pressed(doom->libui, KEY_LEFT))
-			doom->option.modify_sprite->pos.x -= (double)grid->gap;
+			doom->grid.modify_sprite->pos.x -= (double)grid->gap;
 		else if (key_pressed(doom->libui, KEY_RIGHT))
-			doom->option.modify_sprite->pos.x += (double)grid->gap;
+			doom->grid.modify_sprite->pos.x += (double)grid->gap;
 		else if (key_pressed(doom->libui, KEY_UP))
-			doom->option.modify_sprite->pos.y -= (double)grid->gap;
+			doom->grid.modify_sprite->pos.y -= (double)grid->gap;
 		else if (key_pressed(doom->libui, KEY_DOWN))
-			doom->option.modify_sprite->pos.y += (double)grid->gap;
+			doom->grid.modify_sprite->pos.y += (double)grid->gap;
 		else if (key_pressed(doom->libui, KPKEY_PLUS))
 		{
-			doom->option.modify_sprite->w += 5.0f;
-			doom->option.modify_sprite->h += 5.0f;
+			doom->grid.modify_sprite->w += 5.0f;
+			doom->grid.modify_sprite->h += 5.0f;
 		}
 		else if (key_pressed(doom->libui, KPKEY_MINUS))
 		{
-			doom->option.modify_sprite->w -= 5.0f;
-			doom->option.modify_sprite->h -= 5.0f;
+			doom->grid.modify_sprite->w -= 5.0f;
+			doom->grid.modify_sprite->h -= 5.0f;
 		}
 	}
 	else if (grid->modify_wall != NULL) // wall movement
@@ -212,19 +212,13 @@ void	select_wall(t_editor *doom, t_grid *grid, SDL_Event *e)
 	}
 	if (temp == NULL)
 		return ;
-	doom->option.modify_sprite = NULL;
+	doom->grid.modify_sprite = NULL;
 	grid->modify_wall = temp;
 printf("Wall selected.\n");
 }
 
 void	draw_selected_wall(t_editor *doom, t_grid *grid)
 {
-	SDL_Surface *text;
-	SDL_Rect	temp;
-	char		*str;
-	TTF_Font	*font;
-	int			margin;
-
 	if (grid->modify_wall == NULL)
 		return ;
 	t_vector orig = gfx_vector_multiply((t_vector){(grid->modify_wall->orig->pos.x),
@@ -236,20 +230,6 @@ void	draw_selected_wall(t_editor *doom, t_grid *grid)
 	dest.x += 1;
 	dest.y += 1;
 	gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
-	margin = 25;
-	str = ft_sprintf("Selected Line:\norig:\tdest:\nx %.1f\tx %.1f\ny %.1f\ty %.1f\n",
-					grid->modify_wall->orig->pos.x, grid->modify_wall->dest->pos.x,
-					grid->modify_wall->orig->pos.y, grid->modify_wall->dest->pos.y);
-	font = TTF_OpenFont("../libui/TTF/font.ttf", 20);
-	text = TTF_RenderText_Blended_Wrapped(font, str, (SDL_Color) {255, 255, 255, 255}, doom->option.info->active_surface->w - (margin * 2));
-	temp.x = margin;
-	temp.y = margin;
-	temp.w = text->w;
-	temp.h = text->h;
-	SDL_BlitSurface(text, NULL, doom->option.info->active_surface, &temp);
-	ft_strdel(&str);
-	TTF_CloseFont(font);
-	SDL_FreeSurface(text);
 }
 
 void	draw_selected_sector(t_editor *doom, t_grid *grid)

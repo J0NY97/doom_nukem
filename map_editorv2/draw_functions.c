@@ -277,7 +277,7 @@ void	unselect_selected(t_editor *doom, t_grid *grid, SDL_Event *e)
 		grid->modify_point = NULL;
 		grid->modify_wall = NULL;
 		grid->modify_entity = NULL;
-		doom->option.modify_sprite = NULL;
+		doom->grid.modify_sprite = NULL;
 		grid->modify_sector = NULL;
 		ft_putstr("Unselected everything.\n");
 	}
@@ -431,6 +431,8 @@ void	draw_entities(t_editor *doom, t_grid *grid)
 	while (curr)
 	{
 		entity = curr->content;
+		if (entity->preset == NULL)
+			entity->preset = doom->default_entity;
 		pos = gfx_vector_multiply(entity->pos, grid->gap);
 		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 6, pos);
 		if (entity->preset->mood == ENTITY_TYPE_HOSTILE)

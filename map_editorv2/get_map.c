@@ -23,6 +23,7 @@ t_point	*get_point_with_id(t_list *points, unsigned int id)
 			return (curr->content);
 		curr = curr->next;
 	}
+ft_putstr("[get_point_with_id] no point with that id.\n");
 	return (NULL);
 }
 
@@ -37,6 +38,22 @@ t_wall	*get_wall_with_id(t_list *walls, unsigned int id)
 			return (curr->content);
 		curr = curr->next;
 	}
+ft_putstr("[get_wall_with_id] no wall with that id.\n");
+	return (NULL);
+}
+
+t_sector *get_sector_with_id(t_list *sectors, unsigned int id)
+{
+	t_list *curr;
+
+	curr = sectors;
+	while (curr)
+	{
+		if (((t_sector *)curr->content)->id == id)
+			return (curr->content);
+		curr = curr->next;
+	}
+ft_putstr("[get_sector_with_id] no sector with that id.\n");
 	return (NULL);
 }
 
@@ -173,10 +190,8 @@ void	read_sectors(t_editor *doom, int fd)
 		arr = ft_strsplit(line, '\t');
 		sect = new_sector(doom->grid.sector_amount++);
 		sect->id = ft_atoi(arr[0]);
-		sect->floor_height = ft_atoi(arr[1]);
-		sect->ceiling_height = ft_atoi(arr[2]);
-		walls = ft_strsplit(arr[3], ' ');
-		neighbor = ft_strsplit(arr[4], ' ');
+		walls = ft_strsplit(arr[1], ' ');
+		neighbor = ft_strsplit(arr[2], ' ');
 		int i = 0;
 		while (walls[i] != 0)
 		{
@@ -184,10 +199,8 @@ void	read_sectors(t_editor *doom, int fd)
 			((t_wall *)sect->walls->content)->neighbor = ft_atoi(neighbor[i]);
 			i++;
 		}
-		sect->floor_texture = ft_atoi(arr[5]);
-		sect->ceiling_texture = ft_atoi(arr[6]);
-		sect->gravity = ft_atoi(arr[7]);
-		sect->light_level = ft_atoi(arr[8]);
+		sect->gravity = ft_atoi(arr[3]);
+		sect->light_level = ft_atoi(arr[4]);
 		add_to_list(&doom->grid.sectors, sect, sizeof(t_sector));
 		free_array(arr);
 		free_array(walls);
@@ -195,6 +208,31 @@ void	read_sectors(t_editor *doom, int fd)
 		ft_strdel(&line);
 	}
 	ft_strdel(&line);
+}
+
+void	read_fandc(t_editor *editor, int fd)
+{
+	char *line;
+	char **arr;
+	t_sector *sec;
+
+	while (get_next_line(fd, &line))
+	{
+		if (line[0] == '-')
+			break ;
+		arr = ft_strsplit(line, '\t');
+		if ((sec = get_sector_with_id(editor->grid.sectors, ft_atoi(arr[1]))) == NULL)
+			continue ;
+		sec->floor_height = ft_atoi(arr[2]);
+		sec->ceiling_height = ft_atoi(arr[3]);
+		sec->floor_texture = ft_atoi(arr[4]);
+		sec->ceiling_texture = ft_atoi(arr[5]);
+		sec->floor_texture_scale = ft_atof(arr[6]);
+		sec->ceiling_texture_scale = ft_atof(arr[7]);
+
+		free_array(arr);
+		ft_strdel(&line);
+	}
 }
 
 void		read_entities(t_editor *doom, int fd)
@@ -208,21 +246,13 @@ void		read_entities(t_editor *doom, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		/*
-		ft_putstr(line);
-		ft_putstr("\n");
-		*/
 		ent = new_entity(ft_atoi(arr[0]), (t_vector){
 				atof(arr[1]),
 				atof(arr[2]),
 				atof(arr[3])
 			});
-		ent->name = ft_strdup(arr[4]);
-		ent->preset = get_entity_preset_from_list_with_name(doom->entity_presets, ent->name);
-		ent->sprite_id = ft_atoi(arr[5]);
-		ent->max_health = ft_atoi(arr[6]);
-		ent->speed = ft_atoi(arr[7]);
-		ent->direction = ft_atoi(arr[8]);
+		ent->preset = get_entity_preset_from_list_with_name(doom->entity_presets, arr[4]);
+		ent->direction = ft_atoi(arr[5]);
 		add_to_list(&doom->grid.entities, ent, sizeof(t_entity));
 		free_array(arr);
 		ft_strdel(&line);
@@ -251,6 +281,8 @@ void		read_map_file(t_editor *doom)
 			read_spawn(&doom->spawn, fd);
 		else if (!(ft_strncmp(line, "type:sectors", 11)))
 			read_sectors(doom, fd);
+		else if (!(ft_strncmp(line, "type:f&c", 8)))
+			read_fandc(doom, fd);
 		else if (!(ft_strncmp(line, "type:entity", 10)))
 			read_entities(doom, fd);
 		ft_strdel(&line);

@@ -85,8 +85,10 @@ int		entity_compare(t_entity *ent, t_entity *ity)
 {
 	if (vector_compare(ent->pos, ity->pos) &&
 		ent->direction == ity->direction &&
-		ft_strcmp(ent->name, ity->name) == 0 && ent->sprite_id == ity->sprite_id)
+		ft_strcmp(ent->preset->name, ity->preset->name) == 0)
+	{
 		return (1);
+	}
 	return (0);
 }
 
@@ -240,6 +242,7 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 		}
 		else if (grid->modify_sector != NULL)
 		{
+			ft_putstr("Removing sector.\n");
 			remove_everything_from_list(&grid->modify_sector->walls);
 			remove_from_sectors(&doom->grid.sectors, grid->modify_sector);
 			remove_all_walls_not_a_part_of_a_sector(&grid->walls, &grid->sectors);
@@ -248,6 +251,7 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 		}
 		else if (grid->modify_entity != NULL)
 		{
+			ft_putstr("Removing entity.\n");
 			remove_entity_from_list(&grid->entities, grid->modify_entity);
 		}
 		else

@@ -108,13 +108,13 @@ void	wall_render(t_editor *doom)
 
 		curr = curr->next;
 	}
-	if (doom->option.modify_sprite != NULL)
+	if (doom->grid.modify_sprite != NULL)
 	{
 		draw_rect_border(scaled_wall, 
-				doom->option.modify_sprite->coord.x,
-				doom->option.modify_sprite->coord.y,
-				doom->option.modify_sprite->coord.w * doom->option.modify_sprite->scale,
-				doom->option.modify_sprite->coord.h * doom->option.modify_sprite->scale,
+				doom->grid.modify_sprite->coord.x,
+				doom->grid.modify_sprite->coord.y,
+				doom->grid.modify_sprite->coord.w * doom->grid.modify_sprite->scale,
+				doom->grid.modify_sprite->coord.h * doom->grid.modify_sprite->scale,
 				0xff0000ff, 3);
 	}
 // finally blit the wall to the surface of the window
@@ -235,110 +235,72 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		{
 			// TODO: remove this from doom->option. (because we want to remove that struct helt och and the whole)
 			ft_putstr("Sprite was successfully selected.\n");
-			doom->option.modify_sprite = temp;
+			doom->grid.modify_sprite = temp;
 		}
 	}
 	// Move the sprite
-	if (doom->option.modify_sprite != NULL)
+	if (doom->grid.modify_sprite != NULL)
 	{
 		int move_speed = 5;
 		if (key_pressed(libui, KEY_LEFT))
-			doom->option.modify_sprite->coord.x -= move_speed;
+			doom->grid.modify_sprite->coord.x -= move_speed;
 		else if (key_pressed(libui, KEY_RIGHT))
-			doom->option.modify_sprite->coord.x += move_speed;
+			doom->grid.modify_sprite->coord.x += move_speed;
 		if (key_pressed(libui, KEY_UP))
-			doom->option.modify_sprite->coord.y -= move_speed;
+			doom->grid.modify_sprite->coord.y -= move_speed;
 		else if (key_pressed(libui, KEY_DOWN))
-			doom->option.modify_sprite->coord.y += move_speed;
+			doom->grid.modify_sprite->coord.y += move_speed;
 
 		// the sprite scale buttons
 		// NOTE: might aswell do this here where we are already checking if there is a modify sprite.
 		if (bui_button(doom->sprite_scale_add))
-			doom->option.modify_sprite->scale += 0.1f;
+			doom->grid.modify_sprite->scale += 0.1f;
 		else if (bui_button(doom->sprite_scale_sub))
-			doom->option.modify_sprite->scale -= 0.1f;
+			doom->grid.modify_sprite->scale -= 0.1f;
 
 		// TODO:NOTE:IDKK: not sure where i should do this.
-		if (doom->option.modify_sprite->scale < 0.1)
-			doom->option.modify_sprite->scale = 0.1f; 
+		if (doom->grid.modify_sprite->scale < 0.1)
+			doom->grid.modify_sprite->scale = 0.1f; 
 		
-		char *sprite_scale_value_str = ft_ftoa(doom->option.modify_sprite->scale, 1);
+		char *sprite_scale_value_str = ft_ftoa(doom->grid.modify_sprite->scale, 1);
 		bui_change_element_text(doom->sprite_scale_value, sprite_scale_value_str);
 		ft_strdel(&sprite_scale_value_str);
 	}
 }
 
-void	sector_edit_button_events(t_sector_edit *collection, short int *current_value, int change_amount)
-{
-	char *str = NULL;
-	
-	if (bui_button(collection->add_button))
-		*current_value += change_amount;
-	if (bui_button(collection->sub_button))
-		*current_value -= change_amount;
-	str = ft_sprintf("%d", *current_value);
-	bui_change_element_text(collection->amount, str);
-	ft_strdel(&str);
-}
-
-void	sector_edit_button_events_float(t_sector_edit *collection, float *current_value, float change_amount)
-{
-	char *str = NULL;
-	
-	if (bui_button(collection->add_button))
-		*current_value += change_amount;
-	if (bui_button(collection->sub_button))
-		*current_value -= change_amount;
-	str = ft_sprintf("%.1f", *current_value);
-	bui_change_element_text(collection->amount, str);
-	ft_strdel(&str);
-}
-
-
 void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
 	t_list *curr;
 	t_editor *editor = doom;
-	t_sector_edit *temp;
 
 	doom->edit_view_sector->show = 1;
 	doom->edit_toolbox_sector->show = 1;
 
 	// Floor and ceiling texture element events
-	curr = doom->floor_texture_buttons;
-	while (curr)
+	char *temp;
+	if (!only_one_button_toggled_at_a_time(editor->floor_texture_buttons, &editor->active_floor_texture))
 	{
-		bui_button_toggle(curr->content);
-		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
-		doom->active_floor_texture != NULL &&
-		doom->active_floor_texture != ((t_bui_element *)curr->content))
-			((t_bui_element *)curr->content)->toggle = 0;
-		else
-			doom->active_floor_texture = curr->content;
-		curr = curr->next;	
+		temp = ft_itoa(editor->grid.modify_sector->floor_texture);
+		toggle_on_element_with_text(editor->floor_texture_buttons, &editor->active_floor_texture, temp);
+		ft_strdel(&temp);
 	}
-
-	curr = doom->ceiling_texture_buttons;
-	while (curr)
+	if (!only_one_button_toggled_at_a_time(editor->ceiling_texture_buttons, &editor->active_ceiling_texture))
 	{
-		bui_button_toggle(curr->content);
-		if (!((t_bui_element *)curr->content)->was_clicked_last_frame &&
-		doom->active_ceiling_texture != NULL &&
-		doom->active_ceiling_texture != ((t_bui_element *)curr->content))
-			((t_bui_element *)curr->content)->toggle = 0;
-		else
-			doom->active_ceiling_texture = curr->content;
-		curr = curr->next;	
+		temp = ft_itoa(editor->grid.modify_sector->ceiling_texture);
+		toggle_on_element_with_text(editor->ceiling_texture_buttons, &editor->active_ceiling_texture, temp);
+		ft_strdel(&temp);
 	}
+	editor->grid.modify_sector->floor_texture = ft_atoi(editor->active_floor_texture->text);
+	editor->grid.modify_sector->ceiling_texture = ft_atoi(editor->active_ceiling_texture->text);
 	// new sector editing buttons.
-	sector_edit_button_events(editor->floor_height, &grid->modify_sector->floor_height, 1);
-	sector_edit_button_events(editor->ceiling_height, &grid->modify_sector->ceiling_height, 1);
-	sector_edit_button_events(editor->gravity, &grid->modify_sector->gravity, 1);
-	sector_edit_button_events(editor->lighting, &grid->modify_sector->light_level, 1);
+	changer_prefab_events(editor->floor_height, &grid->modify_sector->floor_height, 1);
+	changer_prefab_events(editor->ceiling_height, &grid->modify_sector->ceiling_height, 1);
+	changer_prefab_events(editor->gravity, &grid->modify_sector->gravity, 1);
+	changer_prefab_events(editor->lighting, &grid->modify_sector->light_level, 1);
 
 	// floor and ceiling
-	sector_edit_button_events_float(editor->floor_scale, &grid->modify_sector->floor_texture_scale, 0.1f);
-	sector_edit_button_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
+	changer_prefab_events_float(editor->floor_scale, &grid->modify_sector->floor_texture_scale, 0.1f);
+	changer_prefab_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
 }
 
 // TODO: rmeove libui

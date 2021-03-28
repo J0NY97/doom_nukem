@@ -33,12 +33,12 @@ int	main(int argc, char **argv)
 	
 	// NOTE: this needs to be called before map getter so that we can put the correct preset in the correct entity
 	init_entity_presets(&doom->entity_presets, "entities.preset");
+	// TODO: figure out better place for this.
+	doom->default_entity = new_entity_preset();
 	read_map_file(doom); // map getter
 
-	option_menu_init(doom);
-	sector_edit_buttons_init(doom);
-	entity_edit_button_init(doom);
-
+	// TODO: why is this the only modify variable that is in the option and not grid ?
+	doom->grid.modify_sprite = NULL;
 	// New stuff
 	edit_window_init(doom, libui);
 
@@ -64,7 +64,7 @@ int	main(int argc, char **argv)
 			selection(doom, &doom->grid, &libui->event);
 
 			if (doom->grid.modify_wall == NULL) // improtant?
-				doom->option.modify_sprite = NULL;
+				doom->grid.modify_sprite = NULL;
 			drag_calc(doom, &doom->grid, &libui->event);
 			draw_selected_point(doom, &doom->grid);
 			draw_selected_wall(doom, &doom->grid);

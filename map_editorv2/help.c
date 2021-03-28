@@ -149,12 +149,7 @@ t_entity	*new_entity(int id, t_vector pos)
 	entity->id = id;
 	entity->pos = pos;
 	entity->direction = 90;
-	entity->sprite_id = 0;
-	entity->max_health = -1;
-	entity->speed = -1;
-	entity->armor = -1;
-	entity->name = NULL;
-	entity->mood = ENTITY_TYPE_NEUTRAL;
+	entity->preset = NULL;
 	return (entity);
 }
 
