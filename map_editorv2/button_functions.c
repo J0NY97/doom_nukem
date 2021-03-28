@@ -140,6 +140,7 @@ void	loop_buttons(t_editor *editor)
 		remove_portal(editor, &editor->grid);
 	}
 
+	// NOTE: the draw button is in this select_mode_buttons list
 	// the selection mode buttons
 	only_one_button_toggled_at_a_time(editor->select_mode_buttons, &editor->active_select_mode);
 	if (editor->active_select_mode != NULL)

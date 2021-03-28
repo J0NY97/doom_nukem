@@ -282,7 +282,7 @@ void	select_sector(t_editor *doom, t_grid *grid, SDL_Event *e)
 ft_printf("Sector selected.\n");
 }
 
-void	select_entity(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	select_entity(t_editor *editor, t_grid *grid, SDL_Event *e)
 {
 	t_list		*curr;
 	t_entity	*temp;
@@ -304,6 +304,9 @@ void	select_entity(t_editor *doom, t_grid *grid, SDL_Event *e)
 	if (temp == NULL)
 		return ;
 	grid->modify_entity = temp;
+	// TODO: this is temporary fix to the drop being open and automatically making the new edit entity same as the 
+	// 	previous entity you edited.
+	editor->entity_type_drop->drop->toggle = 0;	
 // when entity is chosen you have to populate the values in the edit screen, pretty spaghett but...
 // TODO: you cant edit the text of elements yet, when you can fix this.
 /*
@@ -324,20 +327,6 @@ void	select_entity(t_editor *doom, t_grid *grid, SDL_Event *e)
 	str = ft_itoa(grid->modify_entity->armor);
 	ft_set_text(&doom->option.ent_info_armor_text_area->text, str);
 	ft_strdel(&str);
-	*/
-
-	// TODO: drop down doesnt work yet, when it does fix this.
-	/*
-	int index = 0;
-	SDL_Event eb;
-	curr = ((t_drop_down *)doom->option.type_dropdown->info)->items;
-	while (curr)
-	{
-		if (index == grid->modify_entity->type)
-			ft_drop_item_function(eb, curr->content);
-		index++;
-		curr = curr->next;
-	}
 	*/
 ft_printf("Entity selected.\n");
 }

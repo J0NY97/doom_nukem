@@ -10,10 +10,6 @@
 
 // TODO: hotkeys for all the buttons.
 //
-// TODO: some place needs drop down menu
-//
-// TODO: entity editor view should get fixed, the addview should be tabs...
-//
 // TODO: when in selection mode. ctrl or (drag and highlight) to choose multiple points, walls, sectors, entities for deletion. 
 //
 // TODO: draw the grid only once on the surface of the grid, and only update it when you zoom.
@@ -28,10 +24,6 @@
 //
 // TODO: on the right side of the sector editor, list all the walls that are in taht sector then you can choose from there to edit them?
 //
-// TODO: change colors of all the tabs in wall editor.
-//
-// TODO: make the toolbox on the main window smaller
-//
 // MAJOR TODO: if you can figure out how to remove sectors until you have the file, it would be insane. and make this project
 // 		so much better and probably less complicated.
 //
@@ -42,26 +34,23 @@
 // 		-sector, functions the same as the current type of drawing.
 // 		-thing, adds things that you can edit at a later time.
 // 		-create sector from, creates a sector from a compilation of lines.... havent thought enought about this mode.
+// 	i have rethunk this idea, not quite the same as what this text says but idgaf to change it, i hope i will remember
+// 	my new idea when i actually do it.
 //
 // TODO: having different modes for selecting, so that you can just return the closest whatever (depending on the mode) to
 // 	where you clicked. (calc the distance from mouse to the point youre checking)
+// 	NOTE: read the TODO above
 //
 // TODO: scrolling actually scrolls towards where youre scrolling, i have done this in the mandelbrot thing.
 //
 // TODO: temporary save the file everytime you have completed a new sector, so that you can go back.
-//
-// TODO: remove "select" button
 //
 // TODO: status/info area, where you can send stuff that are important for the user, (when you save it tells you, if you cant
 // 	save it tells you, etc...)
 //
 // TODO: not letting user save in some cases (if  there is no spawn (this breaks the game))
 //
-// TODO: add solidity toggle for walls
-//
 // TODO: a way of removing wall_sprites
-//
-// TODO: map getter with new version, some changes made, but more needed after talk with nik
 //
 // TODO: instead of having some default images on the texture chagner actually show all the textures you can choose from,
 // 	be able to give a texture pack and/or load textures that you can set as "wall textures"/"portal textures"/"wall sprites"
@@ -70,8 +59,6 @@
 // 	the textures for the buttons from, i hope this makes sense.
 //
 // TODO: instead of zoom changing 1 pixel at a time +/-, you should make it change procentuellt.
-//
-// TODO: change all the copies of only_one_button_toggled_at_a_time to that function.
 
 // Remove this if not used in the final version.
 enum e_select_mode
@@ -93,12 +80,6 @@ enum e_entity
 };
 
 typedef	struct	s_editor			t_editor;
-typedef struct	s_editor_texture		t_editor_texture;
-
-struct		s_editor_texture
-{
-	t_xywh	coord;
-};
 
 typedef struct	s_color_palette
 {
@@ -254,6 +235,7 @@ struct			s_editor
 	t_bui_element *active_wall_sprite;
 
 	t_bui_element *add_wall_sprite_button;
+	t_bui_element *remove_wall_sprite_button;
 	
 	// Scale for the wall texture. texture_scale, this is here because of search keyword.
 	t_bui_element *wall_scale;
@@ -313,7 +295,6 @@ void			edit_window_init(t_editor *editor, t_bui_libui *libui);
 void			init_sector_editor(t_editor *editor);
 void			init_wall_editor(t_editor *editor);
 void			init_entity_editor(t_editor *doom);
-t_editor_texture	*load_editor_texture(char *path);
 void			init_entity_presets(t_list **list, char *path);
 t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord);
 void			changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount);

@@ -59,7 +59,7 @@ int		wall_in_list(t_wall *wall, t_list *wall_list)
 	return (0);
 }
 
-// This will calculate the amounts of walls in a sector
+// Calculates the amount of walls in a sector
 int		get_sector_wall_amount(t_sector *sector)
 {
 	t_list *wall;
@@ -75,7 +75,7 @@ int		get_sector_wall_amount(t_sector *sector)
 	return (i);
 }
 
-// Not to confuse with vector_on_line, which is vector math,
+// NOTE: Not to confuse with vector_on_line, which is vector math,
 // 	this just checks if t_vector *v is either vec->dest or ->orig
 int		vector_in_wall(t_vector v, t_wall *vec)
 {

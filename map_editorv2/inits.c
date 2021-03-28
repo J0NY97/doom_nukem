@@ -427,6 +427,11 @@ void	init_wall_editor(t_editor *editor)
 	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "add sprite", coord);
 	bui_set_element_color(editor->add_wall_sprite_button, 0xff06D6A0);
 
+	coord = ui_init_coords(editor->add_wall_sprite_button->position.x + editor->add_wall_sprite_button->position.w + 15, 20, 50, 20);
+	editor->remove_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "remove sprite", coord);
+	bui_set_element_color(editor->remove_wall_sprite_button, 0xff06D6A0);
+
+
 		// wall sprite scale elements
 	coord = ui_init_coords(5, editor->wall_sprite_view->position.h - 45, 100, 40);
 	editor->sprite_scale = bui_new_element(editor->wall_sprite_view, "sprite scale", coord);

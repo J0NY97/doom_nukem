@@ -30,6 +30,8 @@ void	wall_render(t_editor *doom)
 	// get w from the difference from the orig -> dest x
 	// TODO: figure out what 1 value on the grid is, so that we know how much we have to multiply the dimensions with,
 	// 	pretty sure these are niklas things.
+	
+	// TODO: the "NOTE:" under here, i think that '* x' is the scale of the map...???
 	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * 10; // NOTE: this '* x', means what one value on the grid is in the game
 	// get h from the sector it is a part of
 	dim.h = 96; // get the sector that the wall is a part of... and then take the height from it
@@ -267,6 +269,13 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		char *sprite_scale_value_str = ft_ftoa(doom->grid.modify_sprite->scale, 1);
 		bui_change_element_text(doom->sprite_scale_value, sprite_scale_value_str);
 		ft_strdel(&sprite_scale_value_str);
+		
+		// remove sprite button
+		if (bui_button(doom->remove_wall_sprite_button))
+		{
+			ft_putstr("Removing sprite from wall.\n");
+			// TODO: make function for removing and freeing wall sprite.
+		}
 	}
 }
 

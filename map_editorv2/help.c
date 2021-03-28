@@ -511,15 +511,3 @@ void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors)
 	}
 }
 
-t_editor_texture	*load_editor_texture(char *path)
-{
-	// unsigned int id
-	// int w, h, x, y
-	// char *path
-	t_editor_texture *texture;
-
-	texture = malloc(sizeof(t_editor_texture));
-	memset(texture, 0, sizeof(t_editor_texture));
-
-	return (texture);
-}
