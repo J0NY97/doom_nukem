@@ -218,7 +218,10 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	// NOTE: in this function you also render the wall sprites.
 	wall_render(doom);
 
-	// TODO: this doesnt take into account the scale of the sprite
+	// TODO: this doesnt take into account the scale of the sprite, it assumes that the scale is default, which means
+	// 	if you mkae the scale bigger you can only choose the sprite from the top left corner of the sprite, and not
+	// 	the actual whole sprite render. (change the mouse_hover to multiply the position with the scale)
+
 	// Choose the sprite
 	if (mouse_hover(doom->libui, doom->edit_view_wall->position) &&
 	mouse_pressed(doom->libui, MKEY_LEFT))
@@ -233,7 +236,6 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		temp = get_sprite_from_list(&doom->grid.modify_wall->sprites, view_x, view_y);
 		if (temp != NULL)
 		{
-			// TODO: remove this from doom->option. (because we want to remove that struct helt och and the whole)
 			ft_putstr("Sprite was successfully selected.\n");
 			doom->grid.modify_sprite = temp;
 		}
@@ -292,7 +294,7 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	}
 	editor->grid.modify_sector->floor_texture = ft_atoi(editor->active_floor_texture->text);
 	editor->grid.modify_sector->ceiling_texture = ft_atoi(editor->active_ceiling_texture->text);
-	// new sector editing buttons.
+	// sector editing buttons.
 	changer_prefab_events(editor->floor_height, &grid->modify_sector->floor_height, 1);
 	changer_prefab_events(editor->ceiling_height, &grid->modify_sector->ceiling_height, 1);
 	changer_prefab_events(editor->gravity, &grid->modify_sector->gravity, 1);
@@ -303,8 +305,7 @@ void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	changer_prefab_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
 }
 
-// TODO: rmeove libui
-void	entity_option(t_editor *editor, t_grid *grid, t_bui_libui *libui)
+void	entity_option(t_editor *editor)
 {
 	if (editor->grid.modify_entity == NULL)
 		return ;
@@ -315,7 +316,7 @@ void	entity_option(t_editor *editor, t_grid *grid, t_bui_libui *libui)
 	// NOTE: when you unselect the entity you should reset the active drop element
 	// 	unfortunately this does so, the element isnt always clicked, only once.
 	// NOTE: if the dropdown menu is open when you select another entity, it will automatically make that
-	// 	the last clicked entity type... bug or feature?
+	// 	the last clicked entity type... bug or feature? ANOTHER NOTE: it doesnt matter if the bass is dropped.
 	if (preset_dropdown_events(editor->entity_type_drop))
 	{}
 	else
@@ -358,5 +359,5 @@ void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	else if (grid->modify_sector != NULL)
 		sector_option(doom, grid, libui);
 	else if (grid->modify_entity != NULL)
-		entity_option(doom, grid, libui);
+		entity_option(doom);
 }

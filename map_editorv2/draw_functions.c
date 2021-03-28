@@ -203,7 +203,6 @@ void	check_selected(t_editor *doom, t_grid *grid)
 			curr = curr->next;
 		}
 		temp_wall = new_wall(temp1, temp2);
-ft_printf("wall->texture_scale: %d\n", temp_wall->texture_scale);
 		add_to_list(&grid->walls, temp_wall, sizeof(t_wall));
 		add_to_list(&grid->modify_sector->walls, temp_wall, sizeof(t_wall));
 	}
@@ -227,6 +226,7 @@ void	click_calc(t_editor *doom, t_grid *grid)
 {
 	t_sector	*sector;
 
+	// NOTE: mouse_down doesnt matter which button can be any of left, middle and right.
 	if (doom->libui->mouse_down && SDL_GetMouseFocus() == doom->window->win)
 	{
 		// if the mouse doesnt hover the grid, just gtfo.
@@ -234,6 +234,8 @@ void	click_calc(t_editor *doom, t_grid *grid)
 		grid->elem->position.x + grid->elem->position.w, grid->elem->position.y + grid->elem->position.h}))
 			return ;
 
+		// FUNNY: if you remove the mouse down last frame it will just draw endlessly :D
+		//	"if (mouse_pressed(doom->libui, MKEY_LEFT))"
 		if (doom->libui->mouse_down_last_frame && mouse_pressed(doom->libui, MKEY_LEFT))
 		{
 			if (grid->modify_sector == NULL)
@@ -248,7 +250,7 @@ void	click_calc(t_editor *doom, t_grid *grid)
 			else if (!vector_compare(grid->selected1, grid->hover))
 				grid->selected2 = grid->hover;
 		}
-		else if (mouse_pressed(doom->libui, MKEY_RIGHT))
+		else if (doom->libui->mouse_down_last_frame && mouse_pressed(doom->libui, MKEY_RIGHT))
 		{
 			ft_putstr("Placed new entity.\n");
 			t_entity *entity;

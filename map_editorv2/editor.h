@@ -393,7 +393,6 @@ void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors)
 void			texture_init(t_editor *doom);
 void			texture_buttons(t_editor *doom, t_grid *grid);
 void			sprite_init(t_editor *doom);
-void			sprite_buttons(t_editor *doom, t_grid *grid);
 void			entity_sprite_init(t_editor *doom);
 void			entity_sprite_buttons(t_editor *doom, t_grid *grid);
 

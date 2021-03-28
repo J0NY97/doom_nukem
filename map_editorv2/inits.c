@@ -208,80 +208,7 @@ void	color_palette_init(t_color_palette *pal)
 	pal->light_blue = 0xffa0ced9;
 }
 
-/*
-void	texture_button_init(t_editor *doom)
-{
-	SDL_Surface	 *temp;
-	SDL_Rect	rect;
-	t_xywh coord;
-	int	gap;
-	int i;
-	int size;
-	int x;
-	int y;
-	int amount;
-
-	doom->texture_buttons = (t_bui_element **)malloc(sizeof(t_bui_element *) * doom->textures[0].max_textures);
-	gap = 25;
-	size = 55;
-	i = 0;
-	amount = doom->option.textures->surface->w / (gap + size);
-	rect.w = doom->textures[0].x_size;
-	rect.h = doom->textures[0].y_size;
-	temp = SDL_CreateRGBSurface(0, doom->textures[0].x_size, doom->textures[0].y_size, 32, 0,0,0,0);
-	while (i < doom->textures[0].max_textures)
-	{
-		rect.x = doom->textures[0].position[i][0];
-		rect.y = doom->textures[0].position[i][1];
-		SDL_BlitSurface(doom->textures[0].surface, &rect, temp, NULL);
-		x = (i % amount) * (gap + size) + gap;
-		y = (i / amount) * (gap + size) + gap;
-		coord = ui_init_coords(x, y, size, size);
-		doom->texture_buttons[i] = ui_create_button(doom->edit_window, coord, doom->option.textures);
-		doom->texture_buttons[i]->f = &single_click;
-		ft_set_element_image(doom->texture_buttons[i], temp, NULL);
-		i++;
-	}
-}
-*/
-
-/*
-void	sprite_button_init(t_editor *doom)
-{
-	SDL_Surface	 *temp;
-	SDL_Rect	rect;
-	t_xywh coord;
-	int	gap;
-	int i;
-	int size;
-	int x;
-	int y;
-	int amount;
-
-	doom->sprite_buttons = (t_bui_element **)malloc(sizeof(t_bui_element *) * doom->sprites[0].max_textures);
-	gap = 25;
-	size = 55;
-	i = 0;
-	amount = doom->option.sprites->surface->w / (gap + size);
-	rect.w = doom->sprites[0].x_size;
-	rect.h = doom->sprites[0].y_size;
-	temp = SDL_CreateRGBSurface(0, doom->sprites[0].x_size, doom->sprites[0].y_size, 32, 0,0,0,0);
-	while (i < doom->sprites[0].max_textures)
-	{
-		rect.x = doom->sprites[0].position[i][0];
-		rect.y = doom->sprites[0].position[i][1];
-		SDL_BlitSurface(doom->sprites[0].surface, &rect, temp, NULL);
-		x = (i % amount) * (gap + size) + gap;
-		y = (i / amount) * (gap + size) + gap;
-		coord = ui_init_coords(x, y, size, size);
-		doom->sprite_buttons[i] = ui_create_button(doom->edit_window, coord, doom->option.sprites);
-		doom->sprite_buttons[i]->f = &single_click;
-		ft_set_element_image(doom->sprite_buttons[i], temp, NULL);
-		i++;
-	}
-}
-*/
-
+// TODO: you can probably take from this mallia how to do the texture thingy majig when youre actually making it.
 /*
 void	texture_init(t_editor *doom)
 {
@@ -289,54 +216,6 @@ void	texture_init(t_editor *doom)
 	split_texture(&doom->textures[0]);
 
 	texture_button_init(doom);
-}
-*/
-
-void	texture_buttons(t_editor *doom, t_grid *grid)
-{
-	int i;
-
-	if (grid->modify_wall == NULL) // nothing to modify
-		return ;
-	i = 0;
-	while (i < doom->textures[0].max_textures)
-	{
-		if (bui_button(doom->texture_buttons[i]))
-		{
-			grid->modify_wall->texture_id = i;
-		}
-		i++;
-	}
-}
-
-/*
-void	sprite_init(t_editor *doom)
-{
-	load_texture(&doom->sprites[0], "../textures/sprite.bmp", 128, 128);
-	split_texture(&doom->sprites[0]);
-
-	sprite_button_init(doom);
-	doom->option.selected_sprite = -1;
-}
-*/
-
-/*
-// TODO: Redundant: this function might we redundrand
-void	sprite_buttons(t_editor *doom, t_grid *grid)
-{
-	int i;
-
-	if (grid->modify_wall == NULL) // nothing to modify
-		return ;
-	i = 0;
-	while (i < doom->sprites[0].max_textures)
-	{
-		if (bui_button(doom->sprite_buttons[i]))
-		{
-			doom->option.selected_sprite = i;
-		}
-		i++;
-	}
 }
 */
 
@@ -356,7 +235,7 @@ t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_
 	prefab->add_button = bui_new_element(prefab->menu, "+", temp_coord);
 // value
 	temp_coord.x = prefab->sub_button->position.x + prefab->sub_button->position.w;
-	temp_coord.w = prefab->menu->position.w - (prefab->menu->position.w - prefab->add_button->position.x);
+	temp_coord.w = prefab->menu->position.w - temp_coord.x - (prefab->menu->position.w - prefab->add_button->position.x);
 	prefab->value = bui_new_element(prefab->menu, "not set", temp_coord);
 
 	return (prefab);
@@ -649,6 +528,8 @@ void	init_wall_editor(t_editor *editor)
 /*
  ** Adds a new button at x, y to the prefered list.
 */
+// TODO: add this to better_libui? this means that the textures should be saved there too.
+// 	but dont add any textures before the dynamic texture path and font path is done.
 // TODO: remove the str, its only for debugging before i actually know how i will get the values  from the buttons for direction.
 void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *str)
 {
@@ -666,12 +547,11 @@ void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *
 }
 
 // list is the linked list you will add the t_entity_preset to from path
-// TODO: maybe make a "new_entity_preset" function if you need it later.
 // TODO: there are alot of sizeof() maybe store the size somewhere so you dont have to call is 20 times
-// 	might not have a difference sine youre only calling this function when you startup the program
+// 	might not have a difference sine youre only calling this function when you startup the program.
 // NOTE: first line in the file is just description of the value in that column.
 // TODO: have an int array with all the different descriptions of value  and then take them from there when you store it...
-// 	aka first read the first line and store those value descriptions and store them in an array
+// 	aka first read the first line and store those value descriptions and store them in an array, hard to explain.
 // 	t.ex "name" = index 0, "scale" = index 1 ...
 void	init_entity_presets(t_list **list, char *path)
 {
