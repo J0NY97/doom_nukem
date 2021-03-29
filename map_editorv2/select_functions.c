@@ -260,7 +260,7 @@ float	distance_from_vector_to_wall(t_vector p0, t_wall *wall)
 	p2 = wall->dest->pos;
 
 	float up = (p2.x - p1.x) * (p1.y - p0.y) - (p1.x - p0.x) * (p2.y - p1.y);
-	float down = sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
+	float down = sqrt(ft_pow(p2.x - p1.x, 2) + ft_pow(p2.y - p1.y, 2));
 
 	dist = up / down;
 	return (dist);
@@ -275,7 +275,7 @@ void	select_wall(t_editor *doom, t_grid *grid)
 	t_wall		*temp;
 	t_wall		*wall;
 	t_vector	v;
-	float		allowed_radius = 2.0f;
+	float		allowed_radius = 1.0f;
 
 	temp = NULL;
 	v = grid->hover;

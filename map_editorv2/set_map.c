@@ -20,7 +20,7 @@ char	*set_spawn(t_editor *doom)
 
 	pos = doom->spawn.pos;
 	str = ft_sprintf("type:spawn\tx\ty\tz\tdir\n");
-	temp = ft_sprintf("\t%.1f\t%.1f\t%.1f\n", pos.x, pos.y, pos.z, doom->spawn.direction);
+	temp = ft_sprintf("\t%.1f\t%.1f\t%.1f\t%d\n", pos.x, pos.y, pos.z, doom->spawn.direction);
 	ft_stradd(&str, temp);
 	ft_strdel(&temp);
 	return (str);

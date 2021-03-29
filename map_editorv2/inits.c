@@ -17,9 +17,9 @@ void	window_init(t_editor *doom, t_bui_libui *libui)
 	t_xywh coord;
 
 	coord = ui_init_coords(0, 0, 1920, 1080);
-	//coord = ui_init_coords(0, 0, 1280, 720);
+//	coord = ui_init_coords(0, 0, 1280, 720);
 	char *title = ft_strjoiner("Doom Nukem Map Editor : ", doom->filename, NULL);
-	//doom->window = bui_new_window(libui, title, coord, SDL_WINDOW_RESIZABLE, doom->palette.win);
+//	doom->window = bui_new_window(libui, title, coord, SDL_WINDOW_RESIZABLE, doom->palette.win);
 	doom->window = bui_new_window(libui, title, coord, 0, doom->palette.win);
 	ft_strdel(&title);
 }
@@ -28,9 +28,8 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 {
 	t_xywh coord;
 
-	// New edit window, replace this with the old one after its done.
 	coord = ui_init_coords(500, 500, 1000, 500);
-	editor->new_edit_window = bui_new_window(libui, "New Editor", coord, 0, editor->palette.win);
+	editor->new_edit_window = bui_new_window(libui, "Editor", coord, 0, editor->palette.win);
 	SDL_MinimizeWindow(editor->new_edit_window->win);
 	
 	init_sector_editor(editor);
@@ -91,21 +90,21 @@ void	toolbox_init(t_editor *doom)
 
 	// Selection mode buttons
 	int select_gap = 10;
-	int select_w = 20;
+	int select_w = 32;
 	coord = ui_init_coords(70, 25, 150, 50);
 	editor->select_mode = bui_new_element(editor->toolbox, "Select", coord);
 	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
 		//vertex button
-	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, 20, 20);
+	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
 	editor->select_mode_vertex = bui_new_element(editor->select_mode, "Vertex", coord);
 		//wall button
-	coord = ui_init_coords((1 * (select_w + select_gap)) + select_gap, 20, 20, 20);
+	coord = ui_init_coords((1 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
 	editor->select_mode_wall = bui_new_element(editor->select_mode, "Wall", coord);
 		// sector button
-	coord = ui_init_coords((2 * (select_w + select_gap)) + select_gap, 20, 20, 20);
+	coord = ui_init_coords((2 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
 	editor->select_mode_sector = bui_new_element(editor->select_mode, "Sector", coord);
 		//entity button
-	coord = ui_init_coords((3 * (select_w + select_gap)) + select_gap, 20, 20, 20);
+	coord = ui_init_coords((3 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
 	editor->select_mode_entity = bui_new_element(editor->select_mode, "Entity", coord);
 
 	editor->select_mode_vertex->text_y = -20;
@@ -158,7 +157,7 @@ void	button_init(t_editor *doom)
 	t_editor *editor = doom;
 
 	int gap = 10;
-	int button_w = 20;
+	int button_w = 32;
 
 	coord = ui_init_coords(10, 25, 50, 50);
 	editor->draw_mode = bui_new_element(editor->toolbox, "Draw", coord);
