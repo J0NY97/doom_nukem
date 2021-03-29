@@ -169,6 +169,7 @@ void	read_spawn(t_spawn *spawn, int fd)
 			break ;
 		arr = ft_strsplit(line, '\t');
 		spawn->pos = gfx_new_vector(ft_atoi(arr[0]), ft_atoi(arr[1]), ft_atoi(arr[2]));
+		spawn->direction = ft_atoi(arr[3]);
 		free_array(arr);
 		ft_strdel(&line);
 	}
@@ -260,6 +261,22 @@ void		read_entities(t_editor *doom, int fd)
 	ft_strdel(&line);
 }
 
+void	read_mapinfo(t_editor *editor, int fd)
+{
+	char *line;
+	char **arr;
+
+	while (get_next_line(fd, &line))
+	{
+		if (line[0] == '-')
+			break ;
+		arr = ft_strsplit(line, '\t');
+		editor->scale = ft_atoi(arr[1]);
+		free_array(arr);
+		ft_strdel(&line);
+	}
+}
+
 void		read_map_file(t_editor *doom)
 {
 	int fd;
@@ -271,7 +288,9 @@ void		read_map_file(t_editor *doom)
 	{
 		ft_putstr(line);
 		ft_putchar('\n');
-		if (!(ft_strncmp(line, "type:vertex", 11)))
+		if (!(ft_strncmp(line, "type:map", 8)))
+			read_mapinfo(doom, fd);
+		else if (!(ft_strncmp(line, "type:vertex", 11)))
 			read_vertex(&doom->grid, fd);
 		else if (!(ft_strncmp(line, "type:wall_sprite", 16)))
 			read_sprite(&doom->grid, fd);

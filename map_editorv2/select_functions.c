@@ -112,14 +112,58 @@ void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 	}
 }
 
-void	select_point(t_editor *doom, t_grid *grid, SDL_Event *e)
+// Get the nearest point in a radius of where you clicked.
+void	select_point(t_editor *doom, t_grid *grid)
 {
 	t_point *temp;
+	t_vector temp_pos;
 
-	temp = get_point_from_list(grid, &(t_point){.pos = grid->hover});
+	// 1. check if youre clicking exactly where there is a point, to make this fast.
+	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover});
+	// 2. if theres no point exactly where you clicked. go here
+	if (temp == NULL)
+	{
+		// 3. go through all the points and check if they are inside the radius of the wanted amount.
+		// NOTE: for now returning the first found.
+		// TODO: make this return the closest, it now returns the first found starting from top left.
+		float allowed_radius = 1.0f; // pixels
+		float x = -allowed_radius;
+		float y = -allowed_radius;
+		while (x <= allowed_radius)
+		{
+			while (y <= allowed_radius)
+			{
+				temp_pos = gfx_new_vector(grid->hover.x + x, grid->hover.y + y, grid->hover.z);
+				temp = get_point_from_list(grid->points,
+					&(t_point){
+						.pos = temp_pos
+					});
+				if (temp != NULL)
+				{
+					ft_putstr("Point found at: ");
+					gfx_vector_string(temp_pos);
+					break ;
+				}
+				y += 0.5f;
+			}
+			if (temp != NULL)
+				break ;
+			y = -allowed_radius;
+			x += 0.5f;
+		}
+		if (temp == NULL)
+			return ;
+	}
+	grid->modify_point = temp;
+
+	/* OLD VERSION
+	t_point *temp;
+
+	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover});
 	if (temp == NULL)
 		return ;
 	grid->modify_point = temp;
+	END OLD VERSION */ 
 ft_printf("Point selected.\n");
 }
 
@@ -178,23 +222,90 @@ int		vector_on_wall(t_vector v, t_wall *wall)
 	return (0);
 }
 
-void	selection(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	selection(t_editor *editor, t_grid *grid, SDL_Event *e)
 {
-	if (mouse_pressed(doom->libui, MKEY_LEFT))
+	if (editor->libui->mouse_down_last_frame && mouse_pressed(editor->libui, MKEY_LEFT))
 	{
-		if (grid->modify_wall == NULL && grid->modify_sector == NULL && grid->modify_entity == NULL)
-			select_point(doom, grid, e);
-		if (grid->modify_point == NULL && grid->modify_sector == NULL && grid->modify_entity == NULL)
-			select_wall(doom, grid, e);
-		if (grid->modify_wall == NULL && grid->modify_point == NULL && grid->modify_sector == NULL)
-			select_entity(doom, grid, e);
-		if (grid->modify_wall == NULL && grid->modify_point == NULL && grid->modify_entity == NULL)
-			select_sector(doom, grid, e);
+		// Vertex
+		if (bui_button_toggle(editor->select_mode_vertex))
+			select_point(editor, grid);
+		else
+			editor->grid.modify_point = NULL;
+		// Wall
+		if (bui_button_toggle(editor->select_mode_wall))
+			select_wall(editor, grid);
+		else
+			editor->grid.modify_wall = NULL;
+		// Entity
+		if (bui_button_toggle(editor->select_mode_entity))
+			select_entity(editor, grid);
+		else
+			editor->grid.modify_entity = NULL;
+		// Sector
+		if (bui_button_toggle(editor->select_mode_sector))
+			select_sector(editor, grid);
+		else
+			editor->grid.modify_sector = NULL;
 	}
 }
 
-void	select_wall(t_editor *doom, t_grid *grid, SDL_Event *e)
+// TODO: try to remove the pow()
+float	distance_from_vector_to_wall(t_vector p0, t_wall *wall)
 {
+	t_vector p1;
+	t_vector p2;
+	float	dist;
+
+	p1 = wall->orig->pos;
+	p2 = wall->dest->pos;
+
+	float up = (p2.x - p1.x) * (p1.y - p0.y) - (p1.x - p0.x) * (p2.y - p1.y);
+	float down = sqrt(pow(p2.x - p1.x, 2) + pow(p2.y - p1.y, 2));
+
+	dist = up / down;
+	return (dist);
+}
+
+// @Improvement: if you dont want it to be pixel perfect look into (Point-Line Distance--2-Dimensional)
+// TODO: this function now selects the first wall you come across that is <= allowed radius,
+// 	make it go through all the walls and return the closest wall. 
+void	select_wall(t_editor *doom, t_grid *grid)
+{
+	t_list		*curr;
+	t_wall		*temp;
+	t_wall		*wall;
+	t_vector	v;
+	float		allowed_radius = 2.0f;
+
+	temp = NULL;
+	v = grid->hover;
+	curr = grid->walls;
+	while (curr)
+	{
+		wall = curr->content;
+		float dist = fabs(distance_from_vector_to_wall(v, curr->content));
+		ft_printf("VectorToWall: %.1f\n", dist);
+		if (dist <= allowed_radius)
+		{
+			if (v.x >= fmin(wall->orig->pos.x, wall->dest->pos.x) - allowed_radius &&
+			v.x <= fmax(wall->orig->pos.x, wall->dest->pos.x) + allowed_radius)
+			{
+				if (v.y >= fmin(wall->orig->pos.y, wall->dest->pos.y) - allowed_radius &&
+				v.y <= fmax(wall->orig->pos.y, wall->dest->pos.y) + allowed_radius)
+				{
+					temp = curr->content;
+					break ;
+				}
+			}
+		}
+		curr = curr->next;
+	}
+	if (temp == NULL)
+		return ;
+	doom->grid.modify_sprite = NULL;
+	grid->modify_wall = temp;
+
+	/* OLD VERSION
 	t_list		*curr;
 	t_wall		*temp;
 
@@ -202,7 +313,7 @@ void	select_wall(t_editor *doom, t_grid *grid, SDL_Event *e)
 	curr = grid->walls;
 	while (curr)
 	{
-		// @Improvement: if you dont want it to be pixel perfect look into (Point-Line Distance--2-Dimensional)
+		gfx_vector_string(grid->hover);
 		if (vector_on_wall(grid->hover, curr->content))
 		{
 			temp = curr->content;
@@ -214,6 +325,7 @@ void	select_wall(t_editor *doom, t_grid *grid, SDL_Event *e)
 		return ;
 	doom->grid.modify_sprite = NULL;
 	grid->modify_wall = temp;
+	END OLD VERSION */
 printf("Wall selected.\n");
 }
 
@@ -254,7 +366,7 @@ void	draw_selected_sector(t_editor *doom, t_grid *grid)
 	}
 }
 
-void	select_sector(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	select_sector(t_editor *doom, t_grid *grid)
 {
 	t_list		*curr;
 	t_sector		*temp;
@@ -282,52 +394,48 @@ void	select_sector(t_editor *doom, t_grid *grid, SDL_Event *e)
 ft_printf("Sector selected.\n");
 }
 
-void	select_entity(t_editor *editor, t_grid *grid, SDL_Event *e)
+void	select_entity(t_editor *editor, t_grid *grid)
 {
-	t_list		*curr;
-	t_entity	*temp;
+	t_entity *temp;
+        t_vector temp_pos;
 
-	temp = NULL;
-	curr = grid->entities;
-	while (curr)
-	{
-		t_entity *ent;
-
-		ent = curr->content;
-		if (vector_compare(ent->pos, grid->hover))
-		{
-			temp = ent;
-			break ;
-		}
-		curr = curr->next;
-	}
-	if (temp == NULL)
-		return ;
-	grid->modify_entity = temp;
+        // 1. check if youre clicking exactly where there is a point, to make this fast.
+        temp = get_entity_from_list_at_pos(editor->grid.entities, editor->grid.hover);
+        // 2. if theres no point exactly where you clicked. go here
+        if (temp == NULL)
+        {
+                // 3. go through all the points and check if they are inside the radius of the wanted amount.
+                // NOTE: for now returning the first found.
+                // TODO: make this return the closest, it now returns the first found starting from top left.
+                float allowed_radius = 1.0f; // pixels
+                float x = -allowed_radius;
+                float y = -allowed_radius;
+                while (x <= allowed_radius)
+                {
+                        while (y <= allowed_radius)
+                        {
+                                temp_pos = gfx_new_vector(grid->hover.x + x, grid->hover.y + y, grid->hover.z);
+                                temp = get_entity_from_list_at_pos(editor->grid.entities, temp_pos);
+                                if (temp != NULL)
+                                {
+                                        ft_putstr("Entity found at: ");
+                                        gfx_vector_string(temp_pos);
+                                        break ;
+                                }
+                                y += 0.5f;
+                        }
+                        if (temp != NULL)
+                                break ;
+                        y = -allowed_radius;
+                        x += 0.5f;
+                }
+                if (temp == NULL)
+                        return ;
+        }
+	editor->grid.modify_entity = temp;
 	// TODO: this is temporary fix to the drop being open and automatically making the new edit entity same as the 
 	// 	previous entity you edited.
 	editor->entity_type_drop->drop->toggle = 0;	
-// when entity is chosen you have to populate the values in the edit screen, pretty spaghett but...
-// TODO: you cant edit the text of elements yet, when you can fix this.
-/*
-	char *str;
-
-	str = ft_sprintf("id: %d\n", grid->modify_entity->id);
-	ft_set_text(&doom->option.ent_info_id_text->text, str);
-	ft_strdel(&str);
-
-	str = ft_itoa(grid->modify_entity->max_health);
-	ft_set_text(&doom->option.ent_info_health_text_area->text, str);
-	ft_strdel(&str);
-
-	str = ft_itoa(grid->modify_entity->speed);
-	ft_set_text(&doom->option.ent_info_speed_text_area->text, str);
-	ft_strdel(&str);
-
-	str = ft_itoa(grid->modify_entity->armor);
-	ft_set_text(&doom->option.ent_info_armor_text_area->text, str);
-	ft_strdel(&str);
-	*/
 ft_printf("Entity selected.\n");
 }
 

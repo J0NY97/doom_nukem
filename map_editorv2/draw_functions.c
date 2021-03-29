@@ -12,11 +12,11 @@
 
 #include "editor.h"
 
-t_point		*get_point_from_list(t_grid *grid, t_point *v)
+t_point		*get_point_from_list(t_list *list, t_point *v)
 {
 	t_list *curr;
 
-	curr = grid->points;
+	curr = list;
 	while (curr)
 	{
 		if (vector_compare(((t_point *)curr->content)->pos, (t_vector){v->pos.x, v->pos.y, v->pos.z}))
@@ -171,8 +171,8 @@ void	check_selected(t_editor *doom, t_grid *grid)
 	}
 	// check if there is a vertex already with that x and y, if yes then dont copy it just give it the &
 	ft_printf("Point Magic.\n");
-	temp1 = get_point_from_list(grid, &(t_point){0, grid->selected1});
-	temp2 = get_point_from_list(grid, &(t_point){0, grid->selected2});
+	temp1 = get_point_from_list(grid->points, &(t_point){0, grid->selected1});
+	temp2 = get_point_from_list(grid->points, &(t_point){0, grid->selected2});
 	if (temp1 == NULL)
 	{
 		temp1 = (t_point *)malloc(sizeof(t_point));

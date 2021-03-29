@@ -188,6 +188,20 @@ t_entity_preset	*get_entity_preset_from_list_with_name(t_list *list, char *name)
 	return (NULL);
 }
 
+t_entity	*get_entity_from_list_at_pos(t_list *list, t_vector pos)
+{
+	t_list *curr;
+
+	curr = list;
+	while (curr)
+	{
+		if (vector_compare(pos, ((t_entity *)curr->content)->pos))
+			return (curr->content);
+		curr = curr->next;
+	}
+	return (NULL);
+}
+
 void	remove_from_points(t_list **points, t_point *v)
 {
 	t_list *curr;

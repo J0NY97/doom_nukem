@@ -55,7 +55,8 @@ void	grid_init(t_editor *doom)
 	doom->grid.elem->update = 0;
 
 	doom->grid.hover = EMPTY_VEC;
-	doom->spawn.pos = EMPTY_VEC;
+	doom->spawn.pos = (t_vector) {.x = 0, .y = 0, .z = 0};
+	doom->spawn.direction = 0;
 	doom->grid.selected1 = EMPTY_VEC;
 	doom->grid.selected2 = EMPTY_VEC;
 	doom->grid.modify_wall = NULL;
@@ -91,7 +92,7 @@ void	toolbox_init(t_editor *doom)
 	// Selection mode buttons
 	int select_gap = 10;
 	int select_w = 20;
-	coord = ui_init_coords(70, 25, 200, 50);
+	coord = ui_init_coords(70, 25, 150, 50);
 	editor->select_mode = bui_new_element(editor->toolbox, "Select", coord);
 	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
 		//vertex button
@@ -172,9 +173,17 @@ void	button_init(t_editor *doom)
 	// add draw button to the list of select_buttons
 	add_to_list(&editor->select_mode_buttons, editor->button_draw, sizeof(t_bui_element));
 
-	coord = ui_init_coords(130, 100, 100, 50);
-	doom->button_save = bui_new_element(doom->toolbox, "save", coord);
-	bui_set_element_color(doom->button_save, doom->palette.elem_elem);
+// Other mode
+	coord = ui_init_coords(editor->select_mode->position.x + editor->select_mode->position.w + 10, editor->select_mode->position.y, 50, 50);
+	editor->other_mode = bui_new_element(editor->toolbox, "Other", coord);
+	bui_set_element_color(editor->other_mode, editor->palette.elem_elem);
+
+	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20, button_w, button_w);
+	editor->button_save = bui_new_element(editor->other_mode, "save", coord);
+	editor->button_save->text_y = -20;
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_DEFAULT, "../engine/ui/ui_images/save_button.png");
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_HOVER, "../engine/ui/ui_images/save_button_click.png");
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_CLICK, "../engine/ui/ui_images/save_button_click.png");
 
 // deletion button
 	coord = ui_init_coords(doom->info_area->position.w - 110, 25, 100, 50);

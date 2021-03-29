@@ -16,11 +16,11 @@ char	*set_spawn(t_editor *doom)
 {
 	char	*str;
 	char	*temp;
-	t_vector player;
+	t_vector pos;
 
-	player = doom->spawn.pos;
-	str = ft_sprintf("type:spawn\tx\ty\tz\n");
-	temp = ft_sprintf("\t%.1f\t%.1f\t%.1f\n", player.x, player.y, player.z);
+	pos = doom->spawn.pos;
+	str = ft_sprintf("type:spawn\tx\ty\tz\tdir\n");
+	temp = ft_sprintf("\t%.1f\t%.1f\t%.1f\n", pos.x, pos.y, pos.z, doom->spawn.direction);
 	ft_stradd(&str, temp);
 	ft_strdel(&temp);
 	return (str);
@@ -251,7 +251,7 @@ void	set_map(t_editor *doom)
 	recount_everything(doom);
 
 	divider = ft_strdup("-----------------------------------\n");
-	map = ft_sprintf("type:map\tname\tscale\tvert\twall\twallsprite\tsec\tent\n\t%s\t%d\t%d\t%d\t%d\t%d\t%d\n", doom->filename, 1, doom->grid.point_amount, doom->grid.wall_amount, doom->grid.wall_sprite_amount, doom->grid.sector_amount, doom->grid.entity_amount);
+	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n\t%s\t%d\t%d\t%d\t%d\t%d\n", doom->filename, doom->scale, doom->grid.point_amount, doom->grid.wall_amount, doom->grid.sector_amount, doom->grid.entity_amount);
 	spawn = set_spawn(doom);
 	point = set_point(doom);
 	wall = set_wall(doom);
