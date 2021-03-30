@@ -20,7 +20,7 @@ char	*set_spawn(t_editor *doom)
 
 	pos = doom->spawn.pos;
 	str = ft_sprintf("type:spawn\tx\ty\tz\tdir\n");
-	temp = ft_sprintf("\t%.1f\t%.1f\t%.1f\t%d\n", pos.x, pos.y, pos.z, doom->spawn.direction);
+	temp = ft_sprintf("\t\t%.1f\t%.1f\t%.1f\t%d\n", pos.x, pos.y, pos.z, doom->spawn.direction);
 	ft_stradd(&str, temp);
 	ft_strdel(&temp);
 	return (str);
@@ -74,7 +74,7 @@ char	*set_sprite(t_editor *doom)
 			sprite = curr_sprite->content;
 			// NOTE: if the wall id is not matching to the correct wall, then you have to rethink this,
 			// 	but it should because youre looping in the same order as the set_wall function comes up with ids.
-			temp = ft_sprintf("\t%d\t%d\t%d\t%d\t%d\t%.3f\n", id, wall_id, sprite->coord.x, sprite->coord.y, sprite->sprite_id, sprite->scale);
+			temp = ft_sprintf("\t\t\t%d\t%d\t%d\t%d\t%d\t%.3f\n", id, wall_id, sprite->coord.x, sprite->coord.y, sprite->sprite_id, sprite->scale);
 			// maybe remove this and just add it in the printf, actually no idea if its even faster
 			ft_stradd(&str, temp);
 			ft_strdel(&temp);
