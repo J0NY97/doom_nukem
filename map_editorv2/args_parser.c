@@ -17,6 +17,12 @@
 int	args_parser(t_editor *editor, int ac, char **av)
 {
 	ft_putstr("Parsing args\n");
+	if (ac == 1)
+	{
+		editor->fullpath = ft_strjoiner("./maps/", "default_name", NULL);
+		editor->mapname = ft_strdup("default_name");
+		return (1);
+	}
 	if (ac < 2)
 	{
 		ft_putstr("Usage: ./doom_editor [map_name]\n");
