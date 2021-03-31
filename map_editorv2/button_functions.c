@@ -129,6 +129,14 @@ void	loop_buttons(t_editor *editor)
 {
 	if (bui_button(editor->button_save))
 	{
+		ft_strdel(&editor->fullpath);
+		// TODO: the .doom should be either endless or story, when you have the tickboxes for them.
+		if (bui_button_toggle(editor->endless_tickbox))
+			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".endless");
+		else if (bui_button_toggle(editor->story_tickbox))
+			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".story");
+		else
+			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".doom");
 		set_map(editor);
 	}
 	else if (bui_button(editor->button_add))
@@ -139,6 +147,17 @@ void	loop_buttons(t_editor *editor)
 	{
 		remove_portal(editor, &editor->grid);
 	}
+
+	// Returns 1 when enter is pressed.
+	if (bui_input(editor->map_name_input))
+	{
+ft_printf("Map name was changed from %s ", editor->mapname);
+		ft_strdel(&editor->mapname);
+		editor->mapname = ft_strdup(editor->map_name_input->text);
+ft_printf("to %s.\n", editor->mapname);
+	}
+	only_one_button_toggled_at_a_time(editor->map_type_tickboxes, &editor->active_map_type);
+
 
 	// NOTE: the draw button is in this select_mode_buttons list
 	// the selection mode buttons

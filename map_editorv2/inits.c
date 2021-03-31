@@ -18,7 +18,7 @@ void	window_init(t_editor *doom, t_bui_libui *libui)
 
 	coord = ui_init_coords(0, 0, 1920, 1080);
 //	coord = ui_init_coords(0, 0, 1280, 720);
-	char *title = ft_strjoiner("Doom Nukem Map Editor : ", doom->filename, NULL);
+	char *title = ft_strjoiner("Doom Nukem Map Editor : ", doom->mapname, NULL);
 //	doom->window = bui_new_window(libui, title, coord, SDL_WINDOW_RESIZABLE, doom->palette.win);
 	doom->window = bui_new_window(libui, title, coord, 0, doom->palette.win);
 	ft_strdel(&title);
@@ -91,7 +91,7 @@ void	toolbox_init(t_editor *doom)
 	// Selection mode buttons
 	int select_gap = 10;
 	int select_w = 32;
-	coord = ui_init_coords(70, 25, 150, 50);
+	coord = ui_init_coords(70, 25, 200, 50);
 	editor->select_mode = bui_new_element(editor->toolbox, "Select", coord);
 	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
 		//vertex button
@@ -151,6 +151,24 @@ void	toolbox_init(t_editor *doom)
 	editor->scaler = new_changer_prefab(editor->info_area, "Scale", coord);
 }
 
+t_bui_element	*new_map_type_tickbox(t_bui_element *parent, char *text, t_xywh coord)
+{
+	t_bui_element *tick;
+	t_bui_element *text_elem;
+	t_xywh text_coord;
+
+	text_coord = coord;
+	text_coord.w = 50; 
+	text_elem = bui_new_element(parent, text, text_coord);
+	coord.x += text_coord.w; 
+	tick = bui_new_element(parent, " ", coord);
+	bui_set_element_image_from_path(tick, ELEMENT_DEFAULT, "../engine/ui/ui_images/tick_box_off.png");
+	bui_set_element_image_from_path(tick, ELEMENT_HOVER, "../engine/ui/ui_images/tick_box_hover.png");
+	bui_set_element_image_from_path(tick, ELEMENT_CLICK, "../engine/ui/ui_images/tick_box_on.png");
+
+	return (tick);
+}
+
 void	button_init(t_editor *doom)
 {
 	t_xywh coord;
@@ -173,16 +191,34 @@ void	button_init(t_editor *doom)
 	add_to_list(&editor->select_mode_buttons, editor->button_draw, sizeof(t_bui_element));
 
 // Other mode
-	coord = ui_init_coords(editor->select_mode->position.x + editor->select_mode->position.w + 10, editor->select_mode->position.y, 50, 50);
+	coord = ui_init_coords(editor->draw_mode->position.x, editor->draw_mode->position.y + editor->draw_mode->position.h + 10, 300, 50);
 	editor->other_mode = bui_new_element(editor->toolbox, "Other", coord);
 	bui_set_element_color(editor->other_mode, editor->palette.elem_elem);
-
-	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20, button_w, button_w);
+// Map name input
+	coord = ui_init_coords(gap, 20, 100, 20);
+	editor->map_name_input = bui_new_element(editor->other_mode, editor->mapname, coord);
+	editor->map_name_input->text_x = 5;
+// save button
+	coord = ui_init_coords(editor->map_name_input->position.x + editor->map_name_input->position.w + gap, 20, button_w, button_w);
 	editor->button_save = bui_new_element(editor->other_mode, "save", coord);
 	editor->button_save->text_y = -20;
 	bui_set_element_image_from_path(editor->button_save, ELEMENT_DEFAULT, "../engine/ui/ui_images/save_button.png");
 	bui_set_element_image_from_path(editor->button_save, ELEMENT_HOVER, "../engine/ui/ui_images/save_button_click.png");
 	bui_set_element_image_from_path(editor->button_save, ELEMENT_CLICK, "../engine/ui/ui_images/save_button_click.png");
+// map type tickboxes
+	coord = ui_init_coords(editor->button_save->position.x + editor->button_save->position.w + gap, editor->button_save->position.y - gap, 20, 20);
+	editor->endless_tickbox = new_map_type_tickbox(editor->other_mode, "endless", coord);
+
+	coord = ui_init_coords(editor->button_save->position.x + editor->button_save->position.w + gap, editor->button_save->position.y + gap, 20, 20);
+	editor->story_tickbox = new_map_type_tickbox(editor->other_mode, "story", coord);
+
+	if (ft_strendswith(editor->fullpath, ".story") == 0)
+		editor->active_map_type = editor->story_tickbox;
+	else
+		editor->active_map_type = editor->endless_tickbox;
+	add_to_list(&editor->map_type_tickboxes, editor->endless_tickbox, sizeof(t_bui_element));
+	add_to_list(&editor->map_type_tickboxes, editor->story_tickbox, sizeof(t_bui_element));
+
 
 // deletion button
 	coord = ui_init_coords(doom->info_area->position.w - 110, 25, 100, 50);

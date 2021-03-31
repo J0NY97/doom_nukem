@@ -17,11 +17,11 @@ int	main(int argc, char **argv)
 	t_editor	*doom;
 	t_bui_libui	*libui;
 
-	if (!(doom = (t_editor *)malloc(sizeof(t_editor))))
-		exit (1);
+	doom = malloc(sizeof(t_editor));
 	memset(doom, 0, sizeof(t_editor));
-	if (!(args_parser(&doom->filename, argc, argv)))
-		exit (1);
+
+	if (!(args_parser(doom, argc, argv)))
+		return (1);
 	libui = bui_new_libui();
 	doom->libui = libui;
 	color_palette_init(&doom->palette);

@@ -251,7 +251,7 @@ void	set_map(t_editor *doom)
 	recount_everything(doom);
 
 	divider = ft_strdup("-----------------------------------\n");
-	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n\t%s\t%d\t%d\t%d\t%d\t%d\n", doom->filename, doom->scale, doom->grid.point_amount, doom->grid.wall_amount, doom->grid.sector_amount, doom->grid.entity_amount);
+	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n\t%s\t%d\t%d\t%d\t%d\t%d\n", doom->fullpath, doom->scale, doom->grid.point_amount, doom->grid.wall_amount, doom->grid.sector_amount, doom->grid.entity_amount);
 	spawn = set_spawn(doom);
 	point = set_point(doom);
 	wall = set_wall(doom);
@@ -262,7 +262,7 @@ void	set_map(t_editor *doom)
 	// str = ft_sprintf("%s%s%s%s%s%s%s%s%s%s%s%s", map, divider, spawn, divider, point, divider, wall, divider, sector, divider, entity, divider);
 	str = ft_strjoiner(map, divider, spawn, divider, point, divider, wall, divider, sprite, divider, sector, divider, fandc, divider, entity, divider, NULL);
 
-	fd = creat(doom->filename, S_IRUSR | S_IWUSR);
+	fd = creat(doom->fullpath, S_IRUSR | S_IWUSR);
 	if (fd > -1)
 		ft_fprintf(fd, "%s", str);
 	else

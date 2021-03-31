@@ -282,7 +282,7 @@ void		read_map_file(t_editor *doom)
 	int fd;
 	char *line;
 
-	if ((fd = open(doom->filename, O_RDONLY)) < 0)
+	if ((fd = open(doom->fullpath, O_RDONLY)) < 0)
 		return ;
 	while (get_next_line(fd, &line))
 	{
