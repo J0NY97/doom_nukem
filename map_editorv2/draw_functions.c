@@ -310,6 +310,9 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 	int max_y;
 	int max_x;
 
+	// reset the grid, becaues we have made the libui ignore this element, so we have to control it ourselves
+	fill_surface(grid->elem->active_surface, ((t_bui_window *)grid->elem->parent)->color);	
+	//draw_rect(grid->elem->active_surface, 0, 0, grid->elem->position.w, grid->elem->position.h, ((t_bui_window *)grid->elem->parent)->color, 1);
 	// this draws the grid on the grid view
 		max_y = grid->elem->active_surface->h / grid->gap;
 		max_x = grid->elem->active_surface->w / grid->gap;

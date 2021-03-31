@@ -12,10 +12,24 @@
 
 #include "editor.h"
 
+void	fps_func(t_fps *fps)
+{
+	fps->curr = SDL_GetTicks();
+	fps->count++;
+	if (fps->curr - fps->prev >= 1000)
+	{
+		fps->prev = fps->curr;
+		fps->fps = fps->count;
+		fps->count = 0;
+	}
+}
+
+
 int	main(int argc, char **argv)
 {
 	t_editor	*doom;
 	t_bui_libui	*libui;
+	t_fps		*fps = ft_memalloc(sizeof(t_fps));
 
 	doom = malloc(sizeof(t_editor));
 	memset(doom, 0, sizeof(t_editor));
@@ -49,6 +63,9 @@ int	main(int argc, char **argv)
 	*/
 	while (libui->run)
 	{
+		fps_func(fps);
+		ft_putnbr(fps->fps);
+		ft_putchar('\n');
 
 		draw_grid(doom, &doom->grid);
 		hover_calc(doom, &doom->grid);
