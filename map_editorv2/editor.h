@@ -307,6 +307,8 @@ struct			s_editor
 	t_bui_element *active_direction_button;
 };
 
+// NOTE: this is the function that you call in the other program.
+void			map_editor(t_bui_libui *libui, t_bui_window *win, char *map);
 // Rewrites
 void			edit_window_init(t_editor *editor, t_bui_libui *libui);
 void			init_sector_editor(t_editor *editor);

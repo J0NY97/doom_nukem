@@ -376,6 +376,8 @@ void	draw_sectors(t_editor *doom, t_grid *grid)
 	TTF_Font	*font;
 	char		*str;
 
+	font = TTF_OpenFont("DroidSans.ttf", 20);
+
 	curr = grid->sectors;
 	while (curr)
 	{
@@ -415,15 +417,17 @@ void	draw_sectors(t_editor *doom, t_grid *grid)
 
 		low = gfx_vector_multiply(((t_sector *)curr->content)->lowest_pos, grid->gap);
 		high = gfx_vector_multiply(((t_sector *)curr->content)->highest_pos, grid->gap);
-		font = TTF_OpenFont("../libui/TTF/font.ttf", 20);
-		str = ft_itoa(((t_sector *)curr->content)->id);
-		id_text = TTF_RenderText_Blended(font, str, (SDL_Color){255, 255, 255, 255});
-		SDL_BlitSurface(id_text, NULL, grid->elem->active_surface, &(SDL_Rect){low.x + ((high.x - low.x) / 2), low.y + ((high.y - low.y) / 2), id_text->w, id_text->h});
-		SDL_FreeSurface(id_text);
-		ft_strdel(&str);
-		TTF_CloseFont(font);
+		if (font)
+		{
+			str = ft_itoa(((t_sector *)curr->content)->id);
+			id_text = TTF_RenderText_Blended(font, str, (SDL_Color){255, 255, 255, 255});
+			SDL_BlitSurface(id_text, NULL, grid->elem->active_surface, &(SDL_Rect){low.x + ((high.x - low.x) / 2), low.y + ((high.y - low.y) / 2), id_text->w, id_text->h});
+			SDL_FreeSurface(id_text);
+			ft_strdel(&str);
+		}
 		curr = curr->next;
 	}
+	TTF_CloseFont(font);
 }
 
 void	draw_entities(t_editor *doom, t_grid *grid)

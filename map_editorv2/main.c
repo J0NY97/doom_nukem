@@ -21,10 +21,13 @@ void	fps_func(t_fps *fps)
 		fps->prev = fps->curr;
 		fps->fps = fps->count;
 		fps->count = 0;
+		ft_putnbr(fps->fps);
+		ft_putchar('\n');
 	}
 }
 
 
+// TODO: make this use the map_editor() function.
 int	main(int argc, char **argv)
 {
 	t_editor	*doom;
@@ -64,8 +67,6 @@ int	main(int argc, char **argv)
 	while (libui->run)
 	{
 		fps_func(fps);
-		ft_putnbr(fps->fps);
-		ft_putchar('\n');
 
 		draw_grid(doom, &doom->grid);
 		hover_calc(doom, &doom->grid);
