@@ -101,7 +101,6 @@ ft_printf("Starting to loop!\n");
 	}
 	ft_putstr("[map_editor] Bye!\n");
 	
-	// TODO: make this
 	bui_libui_quit(libui);
 	return ;
 }
