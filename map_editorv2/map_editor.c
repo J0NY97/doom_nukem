@@ -1,14 +1,17 @@
 #include "editor.h"
 
-void	map_editor(t_bui_libui *libui, t_bui_window *win, char *map)
+// NOTE: map_editor makes new window and libui.
+void	map_editor(char *map)
 {
 	t_editor	*editor;
+	t_bui_libui	*libui;
 
 	editor = malloc(sizeof(t_editor));
 	memset(editor, 0, sizeof(t_editor));
 
+	libui = bui_new_libui();
 	editor->libui = libui;
-	editor->window = win;
+	window_init(editor, libui);
 ft_printf("libui done!\n");
 	editor->mapname = ft_strdup(map);
 	editor->fullpath = ft_strjoiner("../../map_editorv2/maps/", editor->mapname, NULL);
@@ -96,6 +99,9 @@ ft_printf("Starting to loop!\n");
 
 		bui_render_the_event(libui);
 	}
-	ft_putstr("Bye!");
+	ft_putstr("[map_editor] Bye!\n");
+	
+	// TODO: make this
+	bui_libui_quit(libui);
 	return ;
 }

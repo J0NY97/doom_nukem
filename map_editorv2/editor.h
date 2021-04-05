@@ -308,7 +308,8 @@ struct			s_editor
 };
 
 // NOTE: this is the function that you call in the other program.
-void			map_editor(t_bui_libui *libui, t_bui_window *win, char *map);
+void			map_editor(char *map);
+void			bui_libui_quit(t_bui_libui *libui);
 // Rewrites
 void			edit_window_init(t_editor *editor, t_bui_libui *libui);
 void			init_sector_editor(t_editor *editor);
