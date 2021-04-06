@@ -64,6 +64,16 @@ t_list	*get_nth_from_list(t_list **list, int index)
 	return (NULL);
 }
 
+void	free_point(void *content, size_t size)
+{
+	ft_putstr("[free_point]\n");
+	if (content == NULL)
+		return ;
+	t_point *point = content;
+
+	free(point);
+}
+
 // NOTE: this is a wall sprite, not the ones in the actual game.
 // 	aka t_sprite found in ../core.h
 t_sprite	*new_sprite(void)
@@ -82,6 +92,16 @@ t_sprite	*new_sprite(void)
 	sprite->coord.h = 0;
 
 	return (sprite);
+}
+
+void	free_sprite(void *content, size_t size)
+{
+	ft_putstr("[free_sprite]\n");
+	if (content == NULL)
+		return ;
+	t_sprite *sprite = content;
+
+	free(sprite);
 }
 
 t_wall		*new_wall(t_point *orig, t_point *dest)
@@ -105,6 +125,19 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 	new_wall->neighbor = -1;
 
 	return (new_wall);
+}
+
+void	free_wall(void *content, size_t size)
+{
+	if (content == NULL)
+		return ;
+	t_wall *wall = content;
+
+	free_point(wall->orig, sizeof(t_point));
+	free_point(wall->dest, sizeof(t_point));
+	if (wall->sprites)
+		ft_lstdel(&wall->sprites, &free_sprite);
+	free(wall);
 }
 
 t_sector	*new_sector(int id)
@@ -135,6 +168,18 @@ t_sector	*new_sector(int id)
 	return (sector);
 }
 
+void	free_sector(void *content, size_t size)
+{
+	if (content == NULL)
+		return ;
+	t_sector *sector = content;
+
+	if (sector->walls)
+		ft_lstdel(&sector->walls, &free_wall);
+	free_point(sector->first_point, sizeof(t_point));
+	free(sector);
+}
+
 t_entity	*new_entity(int id, t_vector pos)
 {
 	t_entity *entity;
@@ -151,6 +196,17 @@ t_entity	*new_entity(int id, t_vector pos)
 	entity->direction = 90;
 	entity->preset = NULL;
 	return (entity);
+}
+
+void	free_entity(void *content, size_t size)
+{
+	if (content == NULL)
+		return ;
+	t_entity *entity = content;
+
+	if (entity->preset)
+		free_entity_preset(entity->preset, sizeof(t_entity_preset));
+	free(entity);
 }
 
 t_entity_preset	*new_entity_preset(void)
@@ -170,6 +226,16 @@ t_entity_preset	*new_entity_preset(void)
 	preset->flying = 0;
 
 	return (preset);
+}
+
+void	free_entity_preset(void *content, size_t size)
+{
+	if (content == NULL)
+		return ;
+	t_entity_preset *ent = content;
+
+	ft_strdel(&ent->name);
+	free(ent);
 }
 
 t_entity_preset	*get_entity_preset_from_list_with_name(t_list *list, char *name)

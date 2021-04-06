@@ -120,5 +120,7 @@ int	main(int argc, char **argv)
 		bui_render_the_event(libui);
 	}
 	ft_putstr("Bye!");
+	editor_free(doom);
+	bui_libui_quit(libui);
 	return (0);
 }

@@ -225,7 +225,7 @@ struct			s_editor
 	t_bui_element *endless_tickbox;
 	t_bui_element *story_tickbox;
 	t_bui_element *active_map_type;
-	t_list *map_type_tickboxes;
+	t_list *map_type_tickboxes; // list of t_bui_element * 
 
 	// New edit window
 	t_bui_window	*new_edit_window;
@@ -309,7 +309,7 @@ struct			s_editor
 
 // NOTE: this is the function that you call in the other program.
 void			map_editor(char *map);
-void			bui_libui_quit(t_bui_libui *libui);
+void			editor_free(t_editor *editor);
 // Rewrites
 void			edit_window_init(t_editor *editor, t_bui_libui *libui);
 void			init_sector_editor(t_editor *editor);
@@ -413,6 +413,13 @@ t_sector		*new_sector(int id);
 t_entity		*new_entity(int id, t_vector pos);
 t_entity_preset		*new_entity_preset(void);
 t_entity_preset		*get_entity_preset_from_list_with_name(t_list *list, char *name);
+void			free_point(void *content, size_t size);
+void			free_sprite(void *content, size_t size);
+void			free_wall(void *content, size_t size);
+void			free_sector(void *content, size_t size);
+void			free_sprite(void *content, size_t size);
+void			free_entity(void *content, size_t size);
+void			free_entity_preset(void *content, size_t size);
 Uint32			random_color(void);
 
 void			set_map(t_editor *doom);

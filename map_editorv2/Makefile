@@ -10,6 +10,7 @@ SRCS = ./main.c \
 	   ../texture.c \
 	   ./help.c \
 	   ./edit_functions.c \
+	   ./free.c \
 	   ../core.c
 OBJS = $(SRCS:.c=.o)
 INCLUDES = -I ../../libft \
