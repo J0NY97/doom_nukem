@@ -14,17 +14,13 @@ void	changer_prefab_free(void *prefab, size_t size)
 void	grid_free(t_grid *grid)
 {
 ft_putstr("[Grid]\n");
-	if (grid->points)
-		ft_lstdel(&grid->points, &free_point);
+	ft_lstdel(&grid->points, &free_point);
 ft_putstr("Points freed.\n");
-	if (grid->walls)
-		ft_lstdel(&grid->walls, &free_wall);
+	ft_lstdel(&grid->walls, &free_wall);
 ft_putstr("Walls freed.\n");
-	if (grid->sectors)
-		ft_lstdel(&grid->sectors, &free_sector);
+	ft_lstdel(&grid->sectors, &free_sector);
 ft_putstr("Sectors freed.\n");
-	if (grid->entities)
-		ft_lstdel(&grid->entities, &free_entity);
+	ft_lstdel(&grid->entities, &free_entity);
 ft_putstr("Entities freed.\n");
 }
 

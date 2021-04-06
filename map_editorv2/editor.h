@@ -8,6 +8,16 @@
 # include "libgfx.h"
 # include "ft_printf.h"
 
+// Check funtion speed.
+/*before
+ clock_gettime(_CLOCK_MONOTONIC, &start);
+
+ * after
+    clock_gettime(_CLOCK_MONOTONIC, &finish);
+    elapsed = (finish.tv_sec - start.tv_sec);
+    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
+    printf("%f\n", elapsed);*/
+
 // TODO: hotkeys for all the buttons.
 //
 // TODO: when in selection mode. ctrl or (drag and highlight) to choose multiple points, walls, sectors, entities for deletion. 
