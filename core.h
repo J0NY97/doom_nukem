@@ -88,7 +88,7 @@ typedef	struct		s_fps
 	float		curr;
 	float		prev;
 	float		avg;
-	TTF_Font	*font;
+	float		delta;
 	int		fps;
 	int		count;
 }					t_fps;
