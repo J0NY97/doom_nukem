@@ -88,9 +88,12 @@ typedef	struct		s_fps
 	float		curr;
 	float		prev;
 	float		avg;
-	float		delta;
 	int		fps;
 	int		count;
+	// Delta
+	float		delta_curr;
+	float		delta_last;
+	float		delta;
 }					t_fps;
 typedef struct	s_ab
 {
