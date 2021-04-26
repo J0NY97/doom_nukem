@@ -2,7 +2,7 @@
 # define CORE_H
 # define SDL_MAIN_HANDLED
 
-# include "libgfx.h"
+# include "../libgfx-windows/libgfx.h"
 //# include "./engine/game/srcs/doom.h"
 # include <time.h>
 

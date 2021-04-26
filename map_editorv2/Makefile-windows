@@ -13,28 +13,28 @@ SRCS = ./main.c \
 	   ./free.c \
 	   ../core.c
 OBJS = $(SRCS:.c=.o)
-INCLUDES = -I ../../libft-windows \
-	   -I ../../ft_printf-windows \
-	   -I ../../better_libui-windows \
-	   -I ../../libgfx-windows \
-	   -I ../../include
-LIB_FOLDERS = -L ../../libft-windows \
-		-L ../../ft_printf-windows \
-		-L ../../better_libui-windows \
-		-L ../../libgfx-windows \
+INCLUDES = -I ../../libft \
+	   -I ../../ft_printf \
+	   -I ../../better_libui \
+	   -I ../../libgfx \
+	   -I ../../include/SDL2
+LIB_FOLDERS = -L ../../libft \
+		-L ../../ft_printf \
+		-L ../../better_libui \
+		-L ../../libgfx \
 		-L ../../lib
 
 LIBS = \
-	../../libgfx-windows/libgfx.a \
-	../../better_libui-windows/better_libui.a \
-	../../ft_printf-windows/libprintf.a \
-	../../libft-windows/libft.a \
+	-l libgfx \
+	-l better_libui \
+	-l libprintf \
+	-l libft \
 	-l SDL2 -l SDL2_ttf -l SDL2_image
 FLAGS = -Wall
 
 all: $(NAME)
 
-$(NAME): $(OBJS)
+$(NAME): $(SRCS)
 	@gcc -o $(NAME)	$(SRCS) $(FLAGS) $(INCLUDES) $(LIB_FOLDERS) $(LIBS)
 	@echo "$(NAME) was successfully created."
 

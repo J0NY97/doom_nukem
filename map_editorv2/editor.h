@@ -3,10 +3,10 @@
 # define SDL_MAIN_HANDLED
 
 # include "../core.h"
-# include "libft.h"
-# include "better_libui.h"
-# include "libgfx.h"
-# include "ft_printf.h"
+# include "../../libft-windows/libft.h"
+# include "../../better_libui-windows/better_libui.h"
+# include "../../libgfx-windows/libgfx.h"
+# include "../../ft_printf-windows/ft_printf.h"
 
 // Check funtion speed.
 /*before
