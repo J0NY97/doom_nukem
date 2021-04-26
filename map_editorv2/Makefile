@@ -31,8 +31,26 @@ LIBS = \
 	../../libft-windows/libft.a \
 	-l SDL2 -l SDL2_ttf -l SDL2_image
 FLAGS = -Wall
+LIBFT = ../../libft-windows
+BETTER_LIBUI = ../../better_libui-windows
+LIBGFX = ../../libgfx-windows
+FT_PRINTF = ../../ft_printf-windows
 
-all: $(NAME)
+all: $(ALL_LIBS) $(NAME)
+
+$(ALL_LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
+
+$(LIBFT):
+	@git clone -q https://github.com/J0NY97/libft-windows.git ../../libft-windows
+
+$(BETTER_LIBUI):
+	@git clone -q https://github.com/J0NY97/better_libui-windows.git ../../better_libui-windows
+
+$(LIBGFX):
+	@git clone -q https://github.com/J0NY97/libgfx-windows.git ../../libgfx-windows
+
+$(FT_PRINTF):
+	@git clone -q https://github.com/J0NY97/ft_printf-windows.git ../../ft_printf-windows
 
 $(NAME): $(OBJS)
 	@gcc -o $(NAME)	$(SRCS) $(FLAGS) $(INCLUDES) $(LIB_FOLDERS) $(LIBS)
