@@ -8,6 +8,13 @@
 # include "../../libgfx-windows/libgfx.h"
 # include "../../ft_printf-windows/ft_printf.h"
 
+// TODO: portal button in the wall edit window. som en tickbox
+//
+// texture
+// < 0  == skybox
+// 0 == monochorme
+// > 0 == textures
+
 // Check funtion speed.
 /*before
  clock_gettime(_CLOCK_MONOTONIC, &start);
