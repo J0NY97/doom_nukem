@@ -13,17 +13,22 @@ SRCS = ./main.c \
 	   ./free.c \
 	   ../core.c
 OBJS = $(SRCS:.c=.o)
-INCLUDES = -I../../libft-windows \
-	   -I../../ft_printf-windows \
-	   -I../../better_libui-windows \
-	   -I../../libgfx-windows \
-	   -I../../include
 
-LIB_FOLDERS = -L../../libft-windows \
-		-L../../ft_printf-windows \
-		-L../../better_libui-windows \
-		-L../../libgfx-windows \
-		-L../../lib
+INCLUDES = \
+	-I../../libft-windows \
+	-I../../ft_printf-windows \
+	-I../../better_libui-windows \
+	-I../../libgfx-windows \
+	-I../../include
+
+LIB_FOLDERS = \
+	-L../../libft-windows \
+	-L../../ft_printf-windows \
+	-L../../better_libui-windows \
+	-L../../libgfx-windows \
+	-L../../lib
+
+LIB = -lSDL2 -lSDL2_ttf -lSDL2_image -llibft.a -llibgfx.a -lbetter_libui.a -llibprintf.a
 
 LIBFT = ../../libft-windows
 BETTER_LIBUI = ../../better_libui-windows
@@ -71,11 +76,23 @@ $(NAME): $(OBJS)
 
 clean:
 	@rm -f $(OBJS)
+	@make -C $(LIBFT) clean
+	@make -C $(LIBGFX) clean
+	@make -C $(BETTER_LIBUI) clean
+	@make -C $(FT_PRINTF) clean
 	@echo "$(NAME) was cleaned."
 
 fclean: clean
 	@rm -f $(NAME)
+	@make -C $(LIBFT) fclean
+	@make -C $(LIBGFX) fclean
+	@make -C $(BETTER_LIBUI) fclean
+	@make -C $(FT_PRINTF) fclean
 
 re: fclean all
+	@make -C $(LIBFT) re
+	@make -C $(LIBGFX) re
+	@make -C $(BETTER_LIBUI) re
+	@make -C $(FT_PRINTF) re
 
 .PHONY: clean, all, re, fclean
