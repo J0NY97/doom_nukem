@@ -71,7 +71,7 @@ $(FT_PRINTF):
 	git clone https://github.com/J0NY97/ft_printf-windows.git $(FT_PRINTF)
 
 $(NAME): $(OBJS)
-	@gcc -o $(NAME)	$(INCLUDES) $(LIB_FOLDERS) $(LIBS) $(SRCS) $(FLAGS)
+	@gcc -o $(NAME)	$(INCLUDES) $(LIB_FOLDERS) $(LIBS) $(OBJS) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:
