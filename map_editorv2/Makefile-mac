@@ -25,14 +25,41 @@ LIB_FOLDERS = -L ../../libft-windows \
 		-L ../../lib
 
 LIBS = \
-	../../libgfx-windows/libgfx.a \
-	../../better_libui-windows/better_libui.a \
-	../../ft_printf-windows/libprintf.a \
-	../../libft-windows/libft.a \
-	-l SDL2 -l SDL2_ttf -l SDL2_image
+	-llibgfx.a \
+	-lbetter_libui.a \
+	-llibprintf.a \
+	-llibft \
+	-lSDL2 -lSDL2_ttf -lSDL2_image
 FLAGS = -Wall
+LIBFT = ../../libft-windows
+BETTER_LIBUI = ../../better_libui-windows
+LIBGFX = ../../libgfx-windows
+FT_PRINTF = ../../ft_printf-windows
 
-all: $(NAME)
+all: $(LIBS) $(NAME)
+
+$(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
+	make -C ../../libft-windows
+	make -C ../../libgfx-windows
+	make -C ../../ft_printf-windows
+	make -C ../../better_libui-windows
+	@printf "all"
+
+$(LIBFT):
+	git clone https://github.com/J0NY97/libft-windows.git ../../libft-windows
+	@printf "libft"
+
+$(BETTER_LIBUI):
+	git clone https://github.com/J0NY97/better_libui-windows.git ../../better_libui-windows
+	@printf "better_libui"
+
+$(LIBGFX):
+	git clone https://github.com/J0NY97/libgfx-windows.git ../../libgfx-windows
+	@printf "libgfx"
+
+$(FT_PRINTF):
+	git clone https://github.com/J0NY97/ft_printf-windows.git ../../ft_printf-windows
+	@printf "ft_printf"
 
 $(NAME): $(OBJS)
 	@gcc -o $(NAME)	$(SRCS) $(FLAGS) $(INCLUDES) $(LIB_FOLDERS) $(LIBS)
