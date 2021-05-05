@@ -10,3 +10,6 @@
 [submodule "libgfx"]
 	path = libgfx
 	url = https://github.com/J0NY97/libgfx.git
+[submodule "game"]
+	path = game
+	url = https://github.com/Epicurius/Doom.git

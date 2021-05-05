@@ -84,9 +84,11 @@ void	remove_portal(t_editor *doom, t_grid *grid)
 int		entity_compare(t_entity *ent, t_entity *ity)
 {
 	if (vector_compare(ent->pos, ity->pos) &&
-		vector_compare(ent->dir, ity->dir) &&
-		ent->type == ity->type && ent->sprite_id == ity->sprite_id)
+		ent->direction == ity->direction &&
+		ft_strcmp(ent->preset->name, ity->preset->name) == 0)
+	{
 		return (1);
+	}
 	return (0);
 }
 
@@ -123,21 +125,49 @@ void	remove_entity_from_list(t_list **entities, t_entity *entity)
 	}
 }
 
-void	loop_buttons(t_editor *doom)
+void	loop_buttons(t_editor *editor)
 {
-// save button
-	if (doom->button_save->state == 1)
+	if (bui_button(editor->button_save))
 	{
-		set_map(doom);
+		ft_strdel(&editor->fullpath);
+		// TODO: the .doom should be either endless or story, when you have the tickboxes for them.
+		if (bui_button_toggle(editor->endless_tickbox))
+			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".endless");
+		else if (bui_button_toggle(editor->story_tickbox))
+			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".story");
+		else
+			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".doom");
+		set_map(editor);
 	}
-	else if (doom->button_add->state == 1)
+	else if (bui_button(editor->button_add))
 	{
-		add_portal(doom, &doom->grid);
+		add_portal(editor, &editor->grid);
 	}
-	else if (doom->button_remove_portal->state == 1)
+	else if (bui_button(editor->button_remove_portal))
 	{
-		remove_portal(doom, &doom->grid);
+		remove_portal(editor, &editor->grid);
 	}
+
+	// Returns 1 when enter is pressed.
+	if (bui_input(editor->map_name_input))
+	{
+ft_printf("Map name was changed from %s ", editor->mapname);
+		ft_strdel(&editor->mapname);
+		editor->mapname = ft_strdup(editor->map_name_input->text);
+ft_printf("to %s.\n", editor->mapname);
+	}
+	only_one_button_toggled_at_a_time(editor->map_type_tickboxes, &editor->active_map_type);
+
+
+	// NOTE: the draw button is in this select_mode_buttons list
+	// the selection mode buttons
+	only_one_button_toggled_at_a_time(editor->select_mode_buttons, &editor->active_select_mode);
+	if (editor->active_select_mode != NULL)
+		bui_button_toggle(editor->active_select_mode);
+
+	// scale changer prefab
+	changer_prefab_events(editor->scaler, &editor->scale, 1);
+	editor->scale = clamp(editor->scale, 1, 64);
 }
 
 void	recount_everything(t_editor *doom)
@@ -148,6 +178,7 @@ void	recount_everything(t_editor *doom)
 	doom->grid.wall_amount = 0;
 	doom->grid.point_amount = 0;
 	doom->grid.entity_amount = 0;
+	doom->grid.wall_sprite_amount = 0;
 	// id = 0;
 	// curr = doom->grid.sectors;
 	// while (curr)
@@ -158,9 +189,18 @@ void	recount_everything(t_editor *doom)
 	// }
 	// doom->grid.sector_amount = id;
 	curr = doom->grid.walls;
+	t_list *curr_sprite;
 	while (curr)
 	{
 		doom->grid.wall_amount++;
+
+		curr_sprite = ((t_wall *)curr->content)->sprites;
+		while (curr_sprite)
+		{
+			doom->grid.wall_sprite_amount++;
+			curr_sprite = curr_sprite->next;
+		}
+
 		curr = curr->next;
 	}
 	curr = doom->grid.points;
@@ -182,12 +222,12 @@ void	recount_everything(t_editor *doom)
 
 void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 {
-	if (doom->button_remove->state == 1)
+	if (bui_button(doom->button_remove))
 	{
 		if (grid->modify_point != NULL)
 		{
 			// Loop through all sectors
-			//	Loop throught all walls in that sector
+			//	Loop through all walls in that sector
 			//	 Check if the point you have selected is in wall
 			//	  Remove that wall from all sectors
 			ft_printf("Starting to remove point.\n");
@@ -222,6 +262,7 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 		}
 		else if (grid->modify_sector != NULL)
 		{
+			ft_putstr("Removing sector.\n");
 			remove_everything_from_list(&grid->modify_sector->walls);
 			remove_from_sectors(&doom->grid.sectors, grid->modify_sector);
 			remove_all_walls_not_a_part_of_a_sector(&grid->walls, &grid->sectors);
@@ -230,6 +271,7 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 		}
 		else if (grid->modify_entity != NULL)
 		{
+			ft_putstr("Removing entity.\n");
 			remove_entity_from_list(&grid->entities, grid->modify_entity);
 		}
 		else
@@ -240,9 +282,9 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 		grid->modify_sector = NULL;
 		grid->modify_entity = NULL;
 	}
-	else if (doom->button_edit->state == 1)
+	else if (bui_button(doom->button_edit))
 	{
-		SDL_RestoreWindow(doom->edit_window->win);
-		SDL_RaiseWindow(doom->edit_window->win);
+		SDL_RestoreWindow(doom->new_edit_window->win);
+		SDL_RaiseWindow(doom->new_edit_window->win);
 	}
 }

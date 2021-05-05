@@ -13,20 +13,26 @@
 #include "editor.h"
 
 // @Improvement: blit everything on the normal sized wall and then finally scale it up -.-
-void	show_wall_render(t_editor *doom, t_grid *grid)
+void	wall_render(t_editor *doom)
 {
+	t_grid *grid;
 	t_wall *wall;
 	t_xywh dim;
 	SDL_Rect	texture;
 	SDL_Rect	temp;
 	SDL_Surface	*scaled_wall;
-	double scale;
-	double	x_axis;
-	double	y_axis;
+	float	scale;
+	float	x_axis;
+	float	y_axis;
 
+	grid = &doom->grid;
 	wall = grid->modify_wall;
 	// get w from the difference from the orig -> dest x
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos);
+	// TODO: figure out what 1 value on the grid is, so that we know how much we have to multiply the dimensions with,
+	// 	pretty sure these are niklas things.
+	
+	// TODO: the "NOTE:" under here, i think that '* x' is the scale of the map...???
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * 10; // NOTE: this '* x', means what one value on the grid is in the game
 	// get h from the sector it is a part of
 	dim.h = 96; // get the sector that the wall is a part of... and then take the height from it
 	// all of these values needs to  have a zoom value depending on which is...
@@ -38,28 +44,38 @@ void	show_wall_render(t_editor *doom, t_grid *grid)
 	// (wall->texture_id)
 	// render wall with the texture
 
-	texture.x = doom->textures[0].position[wall->texture_id][0];
-	texture.y = doom->textures[0].position[wall->texture_id][1];
-	texture.w = doom->textures[0].x_size;
-	texture.h = doom->textures[0].y_size;
+	// TODO: this needs to be taken from somewhere else, maybe take in a t_texture that has all these informations
+	// 	(get texture with id function that takes from t_texture list and returns that surface)
+	// 	get_texture_from_list_with_id();
+	// 	get_texture_with_id_from_list();
+	// 	already in it
+	SDL_Surface *tex = load_image("../engine/ui/ui_images/wallimage.png");
+	texture.x = 0;
+	texture.y = 0;
+	texture.w = tex->w; 
+	texture.h = tex->h;
 
 	// how many of the textures can fit on each axis
-	x_axis = (float)dim.w / (float)doom->textures[0].x_size;
-	y_axis = (float)dim.h / (float)doom->textures[0].y_size;
+	x_axis = (float)dim.w / ((float)texture.w * doom->grid.modify_wall->texture_scale);
+	y_axis = (float)dim.h / ((float)texture.h * doom->grid.modify_wall->texture_scale);
 
-	scale = (doom->option.show_render->surface->w - (dim.x * 2)) / dim.w;
-	scaled_wall = ft_create_rgba_surface(dim.w * scale, dim.h * scale);
-	for (int y = 0; y < y_axis; y++)
+//ft_printf("x_axis amount: %.3f, y amount: %.3f\n", x_axis, y_axis);
+
+	scale = (doom->edit_view_wall->position.w - (dim.x * 2)) / dim.w;
+	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
+	for (int y = 0; y < ceil(y_axis); y++)
 	{
-		for (int x = 0; x < x_axis; x++)
+		for (int x = 0; x < ceil(x_axis); x++)
 		{
-			temp.w = doom->textures[0].x_size * scale;
-			temp.h = doom->textures[0].y_size * scale;
+			temp.w = texture.h * scale * doom->grid.modify_wall->texture_scale;
+			temp.h = texture.w * scale * doom->grid.modify_wall->texture_scale;
 			temp.x = x * temp.w;
 			temp.y = y * temp.h;
-			SDL_BlitScaled(doom->textures[0].surface, &texture, scaled_wall, &temp);
+			SDL_BlitScaled(tex, &texture, scaled_wall, &temp);
 		}
 	}
+	SDL_FreeSurface(tex);
+
 // render the objects placed on the wall
 	t_list *curr;
 	t_sprite *sprite;
@@ -68,221 +84,291 @@ void	show_wall_render(t_editor *doom, t_grid *grid)
 	while (curr)
 	{
 		sprite = curr->content;
-		temp.x = sprite->pos.x;
-		temp.y = sprite->pos.y;
-		temp.w = sprite->w;
-		temp.h = sprite->h;
+
+		// should take this from somewhere else
+		SDL_Surface *temp_sprite = load_image("../engine/ui/ui_images/sprite.jpg");
+
+		temp.x = sprite->coord.x;
+		temp.y = sprite->coord.y;
+		temp.w = temp_sprite->w * sprite->scale;
+		temp.h = temp_sprite->h * sprite->scale;
+
+		sprite->coord.w = temp_sprite->w;
+		sprite->coord.h = temp_sprite->h;
+		SDL_BlitScaled(temp_sprite, NULL, scaled_wall, &temp);
+
+	// TODO: this needs to be niklas blitscaled
+		/* // This might be the way to do this, but before this work i will only use one sprite
 		SDL_BlitScaled(doom->sprites[0].surface,
-					&(SDL_Rect){doom->sprites[0].position[sprite->sprite_id][0],
-								doom->sprites[0].position[sprite->sprite_id][1],
-								doom->sprites[0].x_size,
-								doom->sprites[0].y_size},
-					scaled_wall, &temp);
+			&(SDL_Rect){
+				doom->sprites[0].position[sprite->sprite_id][0],
+				doom->sprites[0].position[sprite->sprite_id][1],
+				doom->sprites[0].x_size,
+				doom->sprites[0].y_size},
+			scaled_wall, &temp);
+			*/
+
 		curr = curr->next;
 	}
-	if (doom->option.modify_sprite != NULL)
+	if (doom->grid.modify_sprite != NULL)
 	{
-		gfx_draw_rect(doom->option.show_render->surface,
-					0xffff0000,
-					(t_xywh){doom->option.modify_sprite->pos.x,
-							doom->option.modify_sprite->pos.y,
-							doom->option.modify_sprite->w,
-							doom->option.modify_sprite->h});
+		draw_rect_border(scaled_wall, 
+				doom->grid.modify_sprite->coord.x,
+				doom->grid.modify_sprite->coord.y,
+				doom->grid.modify_sprite->coord.w * doom->grid.modify_sprite->scale,
+				doom->grid.modify_sprite->coord.h * doom->grid.modify_sprite->scale,
+				0xff0000ff, 3);
 	}
 // finally blit the wall to the surface of the window
-	SDL_BlitSurface(scaled_wall, NULL, doom->option.show_render->surface, &(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
-	gfx_draw_rect(doom->option.show_render->surface, 0xff00ff00, (t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
+	SDL_BlitSurface(scaled_wall, NULL, doom->edit_view_wall->active_surface, &(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
+	gfx_draw_rect(doom->edit_view_wall->active_surface, 0xff00ff00, (t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
 	SDL_FreeSurface(scaled_wall);
 }
 
-
-void	place_sprite_on_wall(t_editor *doom)
+void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
-	t_wall		*wall;
-	t_sprite	*sprite;
+	t_editor *editor;
 
-	sprite = (t_sprite *)malloc(sizeof(t_sprite));
-	wall = doom->grid.modify_wall;
-	sprite->pos = gfx_new_vector(0, 0, 0);
-	sprite->sprite_id = doom->option.selected_sprite;
-	sprite->w = doom->sprites[0].x_size;
-	sprite->h = doom->sprites[0].y_size;
-	printf("%f %f %f %f\n", sprite->pos.x, sprite->pos.y, sprite->w, sprite->h);
-	add_to_list(&wall->sprites, sprite, sizeof(t_sprite));
-}
+	editor = doom;
 
-// @Optimization: ft_set_text needs to be called only ONCE when new wall is selected.
-void	wall_option(t_editor *doom, t_grid *grid, SDL_Event *e)
-{
-	int x;
-	int y;
+	doom->edit_view_wall->show = 1;
+	doom->edit_toolbox_wall->show = 1;
 
-	ft_set_text(&doom->option.title->text, "Wall edit");
-	doom->option.texture_button->render = 1;
-	doom->option.add_button->render = 1;
-	doom->option.show_render->render = 1;
-	if (doom->option.texture_button->state == 1)
+	preset_tab_events(doom->wall_tab);
+
+	// check all the wall texture view elements
+	
+		// texture scale
+	// Note: add and subtract from "t_wall" "texture_scale"
+	if (bui_button(doom->wall_scale_add))
+		doom->grid.modify_wall->texture_scale += 0.1f;
+	else if (bui_button(doom->wall_scale_sub))
+		doom->grid.modify_wall->texture_scale -= 0.1f;
+
+	// TODO:NOTE:IDKK: not sure where i should do this.
+	if (doom->grid.modify_wall->texture_scale < 0.1)
+		doom->grid.modify_wall->texture_scale = 0.1f; 
+	
+	char *scale_value_str = ft_ftoa(doom->grid.modify_wall->texture_scale, 1);
+	bui_change_element_text(doom->wall_scale_value, scale_value_str);
+	ft_strdel(&scale_value_str);
+
+		// wall solidity tick box
+	doom->wall_solid_tick->toggle = doom->grid.modify_wall->solid;
+	if (bui_button(doom->wall_solid_tick))
 	{
-		doom->option.textures->render = 1;
-		texture_buttons(doom, &doom->grid);
-	}
-	else if (doom->option.add_button->state == 1)
-	{
-		doom->option.sprites->render = 1;
-		sprite_buttons(doom, &doom->grid);
-		if (doom->option.selected_sprite != -1)
-		{
-			if (key_pressed(e, SDLK_SPACE))
-			{
-				place_sprite_on_wall(doom);
-			}
-			else if (mouse_hover(e, doom->option.show_render->coord) &&
-					mouse_pressed(e, SDL_BUTTON_LEFT) &&
-					e->button.state == SDL_PRESSED)
-			{
-				SDL_GetMouseState(&x, &y);
-				int view_x = x - doom->option.show_render->coord.x - 50;
-				int view_y = y - doom->option.show_render->coord.y - 50;
-				printf("x  %d y %d\n", view_x, view_y);
-				t_sprite *temp;
-
-				temp = get_sprite_from_list(&doom->grid.modify_wall->sprites, view_x, view_y);
-				if (temp != NULL)
-				{
-					doom->option.modify_sprite = temp;
-				}
-			}
-		}
-	}
-	else
-	{
-		doom->option.selected_sprite = -1;
-	}
-	show_wall_render(doom, grid);
-}
-
-void	sector_option(t_editor *doom, t_grid *grid, SDL_Event *e)
-{
-	ft_set_text(&doom->option.title->text, "Sector edit");
-	t_list *curr;
-	t_sector_edit *temp;
-
-	curr = doom->option.sector_edit_buttons;
-	while (curr)
-	{
-		temp = curr->content;
-		if (ft_strstr(temp->text->text.text, "floor height"))
-			temp->f_amount = &grid->modify_sector->floor_height;
-		else if (ft_strstr(temp->text->text.text, "ceiling height"))
-			temp->f_amount = &grid->modify_sector->ceiling_height;
-		else if (ft_strstr(temp->text->text.text, "gravity"))
-			temp->f_amount = &grid->modify_sector->gravity;
-		else if (ft_strstr(temp->text->text.text, "lighting"))
-			temp->f_amount = &grid->modify_sector->light_level;
-		temp->text->render = 1;
-		temp->sub_button->render = 1;
-		temp->amount->render = 1;
-		temp->add_button->render = 1;
-		if (temp->sub_button->state == 1)
-			*temp->f_amount -= 1;
-		if (temp->add_button->state == 1)
-			*temp->f_amount += 1;
-
-		char *str;
-		if (temp->f_amount == NULL)
-			str = ft_strdup("not set");
+		if (doom->wall_solid_tick->toggle == 1)
+			doom->grid.modify_wall->solid = 0;
 		else
-			str = ft_itoa(*temp->f_amount);
-		ft_set_text(&temp->amount->text, str);
-		ft_strdel(&str);
-		curr = curr->next;
+			doom->grid.modify_wall->solid = 1;
 	}
-}
+	
+	// TODO: first step is to take from the "modify_wall" the "texture_id" and toggle that texture button
+	// TODO: second step is to check for the mouse event on the buttons
+	// TODO: third step is to set the modify_wall texture id with the correct one.
+	// NOTE: i think this is pretty spaghett, not pretty spaghett but pretty spaghett if you know what i mean.
+		// texture buttons
+	char *temp;
 
-void	entity_option(t_editor *doom, t_grid *grid, SDL_Event *e)
-{
-	t_wall_edit *option;
-
-	ft_set_text(&doom->option.title->text, "Entity edit");
-	option = &doom->option;
-	option->ent_sprite_button->render = 1;
-	option->ent_info_button->render = 1;
-	option->ent_render_sprite->render = 1;
-	if (option->ent_info_button->state == 1)
+	temp = ft_itoa(editor->grid.modify_wall->texture_id);
+	if (only_one_button_toggled_at_a_time(doom->wall_texture_buttons, &doom->active_wall_texture))
+	{}
+	else
+		toggle_on_element_with_text(doom->wall_texture_buttons, &doom->active_wall_texture, temp);
+	ft_strdel(&temp);
+	if (editor->active_wall_texture != NULL)
+		editor->grid.modify_wall->texture_id = ft_atoi(editor->active_wall_texture->text);
+		// portal textures
+	temp = ft_itoa(editor->grid.modify_wall->portal_texture_id);
+	if (only_one_button_toggled_at_a_time(editor->portal_texture_buttons, &editor->active_portal_texture))
+	{}
+	else
+		toggle_on_element_with_text(editor->portal_texture_buttons, &editor->active_portal_texture, temp);
+	ft_strdel(&temp);
+	if (editor->active_portal_texture != NULL)
+		editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
+		// wall sprites
+	// TODO: figure out where this should get its texture id
+	temp = ft_itoa(2);
+	if (only_one_button_toggled_at_a_time(editor->wall_sprite_buttons, &editor->active_wall_sprite))
+	{}
+	else
+		toggle_on_element_with_text(editor->wall_sprite_buttons, &editor->active_wall_sprite, temp);
+	ft_strdel(&temp);
+	if (editor->active_wall_sprite != NULL)
 	{
-		option->ent_info_menu->render = 1;
-		grid->modify_entity->max_health = ft_atoi(option->ent_info_health_text_area->text.text);
-		grid->modify_entity->speed = ft_atoi(option->ent_info_speed_text_area->text.text);
-		grid->modify_entity->armor = ft_atoi(option->ent_info_armor_text_area->text.text);
+		// editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
+	}
 
-		t_list *item;
-		int i = 0;
-		item = ((t_drop_down *)option->type_dropdown->info)->items;
-		while (item)
+	// the sprite add button
+	short int chosen_texture = 0;
+	if (editor->active_wall_sprite != NULL)
+		chosen_texture = ft_atoi(editor->active_wall_sprite->text);
+	if (bui_button(doom->add_wall_sprite_button))
+	{
+		// add the sprite to the wall
+		ft_putstr("Adding sprite to wall\n");
+		// 1. get the texture you have chosen from list below;
+		// 	has been done already, aka chosen_texture??
+		// 2. make new sprite,
+		 	t_sprite *sprite = new_sprite();
+		 	sprite->sprite_id = chosen_texture;
+		// 3. add to wall->sprites
+		 	add_to_list(&doom->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
+	}
+	
+	// NOTE: in this function you also render the wall sprites.
+	wall_render(doom);
+
+	// TODO: this doesnt take into account the scale of the sprite, it assumes that the scale is default, which means
+	// 	if you mkae the scale bigger you can only choose the sprite from the top left corner of the sprite, and not
+	// 	the actual whole sprite render. (change the mouse_hover to multiply the position with the scale)
+
+	// Choose the sprite
+	if (mouse_hover(doom->libui, doom->edit_view_wall->position) &&
+	mouse_pressed(doom->libui, MKEY_LEFT))
+	{
+		int view_x = doom->libui->mouse_x - doom->edit_view_wall->position.x - 50;
+		int view_y = doom->libui->mouse_y - doom->edit_view_wall->position.y - 50;
+		t_sprite *temp;
+
+		// Note: this function returns the sprite at that exact location, so you have to give
+		// 	the exact location of where you want it to look if there is a sprite. thus the way you have
+		// 	removed from the mouse_x and y the view location.
+		temp = get_sprite_from_list(&doom->grid.modify_wall->sprites, view_x, view_y);
+		if (temp != NULL)
 		{
-			if (((t_element *)item->content)->state == 1)
-				grid->modify_entity->type = i;
-			item = item->next;
-			i++;
+			ft_putstr("Sprite was successfully selected.\n");
+			doom->grid.modify_sprite = temp;
 		}
-//ft_printf("Entity type: %d\n", grid->modify_entity->type);
 	}
-	else if (option->ent_sprite_button->state == 1)
+	// Move the sprite
+	if (doom->grid.modify_sprite != NULL)
 	{
-		doom->option.ent_sprites->render = 1;
-		entity_sprite_buttons(doom, grid);
+		int move_speed = 5;
+		if (key_pressed(libui, KEY_LEFT))
+			doom->grid.modify_sprite->coord.x -= move_speed;
+		else if (key_pressed(libui, KEY_RIGHT))
+			doom->grid.modify_sprite->coord.x += move_speed;
+		if (key_pressed(libui, KEY_UP))
+			doom->grid.modify_sprite->coord.y -= move_speed;
+		else if (key_pressed(libui, KEY_DOWN))
+			doom->grid.modify_sprite->coord.y += move_speed;
+
+		// the sprite scale buttons
+		// NOTE: might aswell do this here where we are already checking if there is a modify sprite.
+		if (bui_button(doom->sprite_scale_add))
+			doom->grid.modify_sprite->scale += 0.1f;
+		else if (bui_button(doom->sprite_scale_sub))
+			doom->grid.modify_sprite->scale -= 0.1f;
+
+		// TODO:NOTE:IDKK: not sure where i should do this.
+		if (doom->grid.modify_sprite->scale < 0.1)
+			doom->grid.modify_sprite->scale = 0.1f; 
+		
+		char *sprite_scale_value_str = ft_ftoa(doom->grid.modify_sprite->scale, 1);
+		bui_change_element_text(doom->sprite_scale_value, sprite_scale_value_str);
+		ft_strdel(&sprite_scale_value_str);
+		
+		// remove sprite button
+		if (bui_button(doom->remove_wall_sprite_button))
+		{
+			ft_putstr("Removing sprite from wall.\n");
+			// TODO: make function for removing and freeing wall sprite.
+			remove_from_sprites(&editor->grid.modify_wall->sprites, editor->grid.modify_sprite);
+			editor->grid.modify_sprite = NULL;
+		}
 	}
-	// render the sprite on the menu view
-	if (grid->modify_entity->sprite_id < 0 || grid->modify_entity->sprite_id >= doom->entity_sprites[0].max_textures)
-		return ;
-	SDL_BlitSurface(doom->entity_sprites[0].surface,
-					&(SDL_Rect){doom->entity_sprites[0].position[grid->modify_entity->sprite_id][0],
-								doom->entity_sprites[0].position[grid->modify_entity->sprite_id][1],
-								doom->entity_sprites[0].x_size,
-								doom->entity_sprites[0].y_size},
-					doom->option.ent_render_sprite->surface,
-					&(SDL_Rect){0, 0,
-								doom->entity_sprites[0].x_size,
-								doom->entity_sprites[0].y_size});
 }
 
-void	selected_option_menu(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
-	doom->option.texture_button->render = 0;
-	doom->option.textures->render = 0;
-	doom->option.add_button->render = 0;
-	doom->option.sprites->render = 0;
-	doom->option.show_render->render = 0;
-// sector shit
 	t_list *curr;
-	t_sector_edit *temp;
+	t_editor *editor = doom;
 
-	curr = doom->option.sector_edit_buttons;
+	doom->edit_view_sector->show = 1;
+	doom->edit_toolbox_sector->show = 1;
+
+	// Floor and ceiling texture element events
+	char *temp;
+	if (!only_one_button_toggled_at_a_time(editor->floor_texture_buttons, &editor->active_floor_texture))
+	{
+		temp = ft_itoa(editor->grid.modify_sector->floor_texture);
+		toggle_on_element_with_text(editor->floor_texture_buttons, &editor->active_floor_texture, temp);
+		ft_strdel(&temp);
+	}
+	if (!only_one_button_toggled_at_a_time(editor->ceiling_texture_buttons, &editor->active_ceiling_texture))
+	{
+		temp = ft_itoa(editor->grid.modify_sector->ceiling_texture);
+		toggle_on_element_with_text(editor->ceiling_texture_buttons, &editor->active_ceiling_texture, temp);
+		ft_strdel(&temp);
+	}
+	editor->grid.modify_sector->floor_texture = ft_atoi(editor->active_floor_texture->text);
+	editor->grid.modify_sector->ceiling_texture = ft_atoi(editor->active_ceiling_texture->text);
+	// sector editing buttons.
+	changer_prefab_events(editor->floor_height, &grid->modify_sector->floor_height, 1);
+	changer_prefab_events(editor->ceiling_height, &grid->modify_sector->ceiling_height, 1);
+	changer_prefab_events(editor->gravity, &grid->modify_sector->gravity, 1);
+	changer_prefab_events(editor->lighting, &grid->modify_sector->light_level, 1);
+
+	// floor and ceiling
+	changer_prefab_events_float(editor->floor_scale, &grid->modify_sector->floor_texture_scale, 0.1f);
+	changer_prefab_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
+}
+
+void	entity_option(t_editor *editor)
+{
+	if (editor->grid.modify_entity == NULL)
+		return ;
+
+	editor->edit_toolbox_entity->show = 1;
+	editor->edit_view_entity->show = 1;
+
+	// NOTE: when you unselect the entity you should reset the active drop element
+	// 	unfortunately this does so, the element isnt always clicked, only once.
+	// NOTE: if the dropdown menu is open when you select another entity, it will automatically make that
+	// 	the last clicked entity type... bug or feature? ANOTHER NOTE: it doesnt matter if the bass is dropped.
+	if (preset_dropdown_events(editor->entity_type_drop))
+	{}
+	else
+		toggle_on_element_with_text(editor->entity_type_drop->elements, &editor->entity_type_drop->active, editor->grid.modify_entity->preset->name); 
+	if (editor->entity_type_drop->active != NULL)
+	{
+		t_entity_preset *preset = get_entity_preset_from_list_with_name(editor->entity_presets, editor->entity_type_drop->active->text);
+		if (preset != NULL)
+			editor->grid.modify_entity->preset = preset;
+	}
+
+	// direction radio buttons
+	t_list *curr;
+
+	curr = editor->entity_direction_radio_buttons;
 	while (curr)
 	{
-		temp = curr->content;
-		temp->text->render = 0;
-		temp->sub_button->render = 0;
-		temp->amount->render = 0;
-		temp->add_button->render = 0;
+		if (ft_atoi(((t_bui_element *)curr->content)->text) == editor->grid.modify_entity->direction)
+			editor->active_direction_button = curr->content;
 		curr = curr->next;
 	}
-// entity shit
-	doom->option.ent_sprite_button->render = 0;
-	doom->option.ent_sprites->render = 0;
-	doom->option.ent_info_button->render = 0;
-	doom->option.ent_info_menu->render = 0;
-	doom->option.ent_render_sprite->render = 0;
+
+	only_one_button_toggled_at_a_time(editor->entity_direction_radio_buttons, &editor->active_direction_button);
+	editor->grid.modify_entity->direction = ft_atoi(editor->active_direction_button->text);
+}
+
+void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
+{
+	doom->edit_view_sector->show = 0;
+	doom->edit_toolbox_sector->show = 0;
+
+	doom->edit_view_wall->show = 0;
+	doom->edit_toolbox_wall->show = 0;
+
+	doom->edit_toolbox_entity->show = 0;
+	doom->edit_view_entity->show = 0;
+
 	if (grid->modify_wall != NULL)
-		wall_option(doom, grid, e);
+		wall_option(doom, grid, libui);
 	else if (grid->modify_sector != NULL)
-		sector_option(doom, grid, e);
+		sector_option(doom, grid, libui);
 	else if (grid->modify_entity != NULL)
-		entity_option(doom, grid, e);
-	else
-	{
-		ft_set_text(&doom->option.title->text, " "); // reset the text if nothing is selected
-		return ;
-	}
-	doom->option.menu->render = 1;
+		entity_option(doom);
 }

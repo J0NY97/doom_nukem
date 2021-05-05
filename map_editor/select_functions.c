@@ -14,51 +14,43 @@
 
 void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 {
-	int realx;
-	int realy;
-	SDL_Keycode key;
-
 	t_list *curr;
-	float move_x = 0;
-	float move_y = 0;
-	if (key_pressed(e, SDLK_LEFT))
-		move_x = -0.5;
-	if (key_pressed(e, SDLK_RIGHT))
-		move_x = 0.5;
-	if (key_pressed(e, SDLK_UP))
-		move_y = -0.5;
-	if (key_pressed(e, SDLK_DOWN))
-		move_y = 0.5;
+	float move_x = 0.0f;
+	float move_y = 0.0f;
 
-	key = e->key.keysym.sym; // dont remove, is needed for sprite moving
+	if (key_pressed(doom->libui, KEY_LEFT))
+		move_x = -0.5f;
+	else if (key_pressed(doom->libui, KEY_RIGHT))
+		move_x = 0.5f;
+	if (key_pressed(doom->libui, KEY_UP))
+		move_y = -0.5f;
+	else if (key_pressed(doom->libui, KEY_DOWN))
+		move_y = 0.5f;
 	if (grid->modify_point != NULL) // vector movement
 	{
 		grid->modify_point->pos.x += move_x;
 		grid->modify_point->pos.y += move_y;
 	}
-	else if (doom->option.modify_sprite != NULL)
+	else if (doom->grid.modify_sprite != NULL)
 	{
-		if (key == SDLK_LEFT)
-			doom->option.modify_sprite->pos.x -= (double)grid->gap;
-		else if (key == SDLK_RIGHT)
-			doom->option.modify_sprite->pos.x += (double)grid->gap;
-		else if (key == SDLK_UP)
-			doom->option.modify_sprite->pos.y -= (double)grid->gap;
-		else if (key == SDLK_DOWN)
-			doom->option.modify_sprite->pos.y += (double)grid->gap;
-		else if (key == SDLK_KP_PLUS)
+		if (key_pressed(doom->libui, KEY_LEFT))
+			doom->grid.modify_sprite->pos.x -= (double)grid->gap;
+		else if (key_pressed(doom->libui, KEY_RIGHT))
+			doom->grid.modify_sprite->pos.x += (double)grid->gap;
+		else if (key_pressed(doom->libui, KEY_UP))
+			doom->grid.modify_sprite->pos.y -= (double)grid->gap;
+		else if (key_pressed(doom->libui, KEY_DOWN))
+			doom->grid.modify_sprite->pos.y += (double)grid->gap;
+		else if (key_pressed(doom->libui, KPKEY_PLUS))
 		{
-			doom->option.modify_sprite->w += 5.0f;
-			doom->option.modify_sprite->h += 5.0f;
+			doom->grid.modify_sprite->w += 5.0f;
+			doom->grid.modify_sprite->h += 5.0f;
 		}
-		else if (key == SDLK_KP_MINUS)
+		else if (key_pressed(doom->libui, KPKEY_MINUS))
 		{
-			doom->option.modify_sprite->w -= 5.0f;
-			doom->option.modify_sprite->h -= 5.0f;
+			doom->grid.modify_sprite->w -= 5.0f;
+			doom->grid.modify_sprite->h -= 5.0f;
 		}
-		else
-			return ;
-		e->key.keysym.sym = 0;
 	}
 	else if (grid->modify_wall != NULL) // wall movement
 	{
@@ -84,8 +76,9 @@ void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 		grid->modify_entity->pos.x += move_x;
 		grid->modify_entity->pos.y += move_y;
 	}
-	else
+	else if (move_x != 0.0f || move_y != 0.0f)
 	{
+		ft_putstr("are we here\n");
 		t_point *point;
 
 		curr = grid->points;
@@ -109,23 +102,68 @@ void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 
 		doom->spawn.pos.x += move_x;
 		doom->spawn.pos.y += move_y;
-		if (key_pressed(e, SDLK_KP_MINUS))
-			grid->gap = grid->gap - 1 > 0 ? grid->gap - 1 : grid->gap;
-		if (key_pressed(e, SDLK_KP_PLUS))
-			grid->gap += 1;
+	}
+	// scrolling
+	else if (grid->elem->was_hovered_last_frame && doom->libui->mouse_wheel_y != 0)
+	{
+		// TODO: figure out why this cant go under 2... not even 1
+		grid->gap = grid->gap + doom->libui->mouse_wheel_y > 1 ? grid->gap + doom->libui->mouse_wheel_y : 2;
 		ft_printf("gap: %d\n",grid->gap);
 	}
 }
 
-void	select_point(t_editor *doom, t_grid *grid, SDL_Event *e)
+// Get the nearest point in a radius of where you clicked.
+void	select_point(t_editor *doom, t_grid *grid)
 {
-	t_vector real;
+	t_point *temp;
+	t_vector temp_pos;
+
+	// 1. check if youre clicking exactly where there is a point, to make this fast.
+	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover});
+	// 2. if theres no point exactly where you clicked. go here
+	if (temp == NULL)
+	{
+		// 3. go through all the points and check if they are inside the radius of the wanted amount.
+		// NOTE: for now returning the first found.
+		// TODO: make this return the closest, it now returns the first found starting from top left.
+		float allowed_radius = 1.0f; // pixels
+		float x = -allowed_radius;
+		float y = -allowed_radius;
+		while (x <= allowed_radius)
+		{
+			while (y <= allowed_radius)
+			{
+				temp_pos = gfx_new_vector(grid->hover.x + x, grid->hover.y + y, grid->hover.z);
+				temp = get_point_from_list(grid->points,
+					&(t_point){
+						.pos = temp_pos
+					});
+				if (temp != NULL)
+				{
+					ft_putstr("Point found at: ");
+					gfx_vector_string(temp_pos);
+					break ;
+				}
+				y += 0.5f;
+			}
+			if (temp != NULL)
+				break ;
+			y = -allowed_radius;
+			x += 0.5f;
+		}
+		if (temp == NULL)
+			return ;
+	}
+	grid->modify_point = temp;
+
+	/* OLD VERSION
 	t_point *temp;
 
-	temp = get_point_from_list(grid, &(t_point){.pos = grid->hover});
+	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover});
 	if (temp == NULL)
 		return ;
 	grid->modify_point = temp;
+	END OLD VERSION */ 
 ft_printf("Point selected.\n");
 }
 
@@ -139,16 +177,16 @@ void	draw_selected_point(t_editor *doom, t_grid *grid)
 
 	if (grid->modify_point == NULL)
 		return ;
-	gfx_draw_vector(grid->elem->surface, 0xffffae42, 2, gfx_vector_multiply(grid->modify_point->pos, grid->gap));
+	gfx_draw_vector(grid->elem->active_surface, 0xffffae42, 2, gfx_vector_multiply(grid->modify_point->pos, grid->gap));
 	margin = 10;
 	str = ft_sprintf("Selected Vector:\nx %d\ny %d\nconnections: %d\n", (int)grid->modify_point->pos.x, (int)grid->modify_point->pos.y, get_point_connection_amount(&grid->walls, grid->modify_point));
 	font = TTF_OpenFont("../libui/TTF/font.ttf", 20);
-	text = TTF_RenderText_Blended_Wrapped(font, str, hex_to_rgba(0xffffffff), doom->info_area->surface->w - (margin * 2));
+	text = TTF_RenderText_Blended_Wrapped(font, str, (SDL_Color) {255, 255, 255, 255}, doom->info_area->active_surface->w - (margin * 2));
 	temp.x = margin + 100;
 	temp.y = margin;
 	temp.w = text->w;
 	temp.h = text->h;
-	SDL_BlitSurface(text, NULL, doom->info_area->surface, &temp);
+	SDL_BlitSurface(text, NULL, doom->info_area->active_surface, &temp);
 	ft_strdel(&str);
 	TTF_CloseFont(font);
 	SDL_FreeSurface(text);
@@ -175,32 +213,99 @@ int		vector_on_wall(t_vector v, t_wall *wall)
 {
 	if (gfx_vector_dot(v, wall->orig->pos, wall->dest->pos) == 0)
 	{
-		if (v.x >= ft_min(wall->orig->pos.x, wall->dest->pos.x) && v.x <= ft_max(wall->orig->pos.x, wall->dest->pos.x))
+		if (v.x >= fmin(wall->orig->pos.x, wall->dest->pos.x) && v.x <= fmax(wall->orig->pos.x, wall->dest->pos.x))
 		{
-			if (v.y >= ft_min(wall->orig->pos.y, wall->dest->pos.y) && v.y <= ft_max(wall->orig->pos.y, wall->dest->pos.y))
+			if (v.y >= fmin(wall->orig->pos.y, wall->dest->pos.y) && v.y <= fmax(wall->orig->pos.y, wall->dest->pos.y))
 				return (1);
 		}
 	}
 	return (0);
 }
 
-void	selection(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	selection(t_editor *editor, t_grid *grid, SDL_Event *e)
 {
-	if (mouse_pressed(e, SDL_BUTTON_LEFT))
+	if (editor->libui->mouse_down_last_frame && mouse_pressed(editor->libui, MKEY_LEFT))
 	{
-		if (grid->modify_wall == NULL && grid->modify_sector == NULL && grid->modify_entity == NULL)
-			select_point(doom, grid, e);
-		if (grid->modify_point == NULL && grid->modify_sector == NULL && grid->modify_entity == NULL)
-			select_wall(doom, grid, e);
-		if (grid->modify_wall == NULL && grid->modify_point == NULL && grid->modify_sector == NULL)
-			select_entity(doom, grid, e);
-		if (grid->modify_wall == NULL && grid->modify_point == NULL && grid->modify_entity == NULL)
-			select_sector(doom, grid, e);
+		// Vertex
+		if (bui_button_toggle(editor->select_mode_vertex))
+			select_point(editor, grid);
+		else
+			editor->grid.modify_point = NULL;
+		// Wall
+		if (bui_button_toggle(editor->select_mode_wall))
+			select_wall(editor, grid);
+		else
+			editor->grid.modify_wall = NULL;
+		// Entity
+		if (bui_button_toggle(editor->select_mode_entity))
+			select_entity(editor, grid);
+		else
+			editor->grid.modify_entity = NULL;
+		// Sector
+		if (bui_button_toggle(editor->select_mode_sector))
+			select_sector(editor, grid);
+		else
+			editor->grid.modify_sector = NULL;
 	}
 }
 
-void	select_wall(t_editor *doom, t_grid *grid, SDL_Event *e)
+// TODO: try to remove the pow()
+float	distance_from_vector_to_wall(t_vector p0, t_wall *wall)
 {
+	t_vector p1;
+	t_vector p2;
+	float	dist;
+
+	p1 = wall->orig->pos;
+	p2 = wall->dest->pos;
+
+	float up = (p2.x - p1.x) * (p1.y - p0.y) - (p1.x - p0.x) * (p2.y - p1.y);
+	float down = sqrt(ft_pow(p2.x - p1.x, 2) + ft_pow(p2.y - p1.y, 2));
+
+	dist = up / down;
+	return (dist);
+}
+
+// @Improvement: if you dont want it to be pixel perfect look into (Point-Line Distance--2-Dimensional)
+// TODO: this function now selects the first wall you come across that is <= allowed radius,
+// 	make it go through all the walls and return the closest wall. 
+void	select_wall(t_editor *doom, t_grid *grid)
+{
+	t_list		*curr;
+	t_wall		*temp;
+	t_wall		*wall;
+	t_vector	v;
+	float		allowed_radius = 1.0f;
+
+	temp = NULL;
+	v = grid->hover;
+	curr = grid->walls;
+	while (curr)
+	{
+		wall = curr->content;
+		float dist = fabs(distance_from_vector_to_wall(v, curr->content));
+		ft_printf("VectorToWall: %.1f\n", dist);
+		if (dist <= allowed_radius)
+		{
+			if (v.x >= fmin(wall->orig->pos.x, wall->dest->pos.x) - allowed_radius &&
+			v.x <= fmax(wall->orig->pos.x, wall->dest->pos.x) + allowed_radius)
+			{
+				if (v.y >= fmin(wall->orig->pos.y, wall->dest->pos.y) - allowed_radius &&
+				v.y <= fmax(wall->orig->pos.y, wall->dest->pos.y) + allowed_radius)
+				{
+					temp = curr->content;
+					break ;
+				}
+			}
+		}
+		curr = curr->next;
+	}
+	if (temp == NULL)
+		return ;
+	doom->grid.modify_sprite = NULL;
+	grid->modify_wall = temp;
+
+	/* OLD VERSION
 	t_list		*curr;
 	t_wall		*temp;
 
@@ -208,7 +313,7 @@ void	select_wall(t_editor *doom, t_grid *grid, SDL_Event *e)
 	curr = grid->walls;
 	while (curr)
 	{
-		// @Improvement: if you dont want it to be pixel perfect look into (Point-Line Distance--2-Dimensional)
+		gfx_vector_string(grid->hover);
 		if (vector_on_wall(grid->hover, curr->content))
 		{
 			temp = curr->content;
@@ -218,19 +323,14 @@ void	select_wall(t_editor *doom, t_grid *grid, SDL_Event *e)
 	}
 	if (temp == NULL)
 		return ;
-	doom->option.modify_sprite = NULL;
+	doom->grid.modify_sprite = NULL;
 	grid->modify_wall = temp;
+	END OLD VERSION */
 printf("Wall selected.\n");
 }
 
 void	draw_selected_wall(t_editor *doom, t_grid *grid)
 {
-	SDL_Surface *text;
-	SDL_Rect	temp;
-	char		*str;
-	TTF_Font	*font;
-	int			margin;
-
 	if (grid->modify_wall == NULL)
 		return ;
 	t_vector orig = gfx_vector_multiply((t_vector){(grid->modify_wall->orig->pos.x),
@@ -241,21 +341,7 @@ void	draw_selected_wall(t_editor *doom, t_grid *grid)
 	orig.y += 1;
 	dest.x += 1;
 	dest.y += 1;
-	gfx_draw_line(grid->elem->surface, 0xffffae42, orig, dest);
-	margin = 25;
-	str = ft_sprintf("Selected Line:\norig:\tdest:\nx %.1f\tx %.1f\ny %.1f\ty %.1f\n",
-					grid->modify_wall->orig->pos.x, grid->modify_wall->dest->pos.x,
-					grid->modify_wall->orig->pos.y, grid->modify_wall->dest->pos.y);
-	font = TTF_OpenFont("../libui/TTF/font.ttf", 20);
-	text = TTF_RenderText_Blended_Wrapped(font, str, hex_to_rgba(0xffffffff), doom->option.info->surface->w - (margin * 2));
-	temp.x = margin;
-	temp.y = margin;
-	temp.w = text->w;
-	temp.h = text->h;
-	SDL_BlitSurface(text, NULL, doom->option.info->surface, &temp);
-	ft_strdel(&str);
-	TTF_CloseFont(font);
-	SDL_FreeSurface(text);
+	gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
 }
 
 void	draw_selected_sector(t_editor *doom, t_grid *grid)
@@ -275,12 +361,12 @@ void	draw_selected_sector(t_editor *doom, t_grid *grid)
 		orig.y += 1;
 		dest.x += 1;
 		dest.y += 1;
-		gfx_draw_line(grid->elem->surface, 0xffffae42, orig, dest);
+		gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
 		curr_wall = curr_wall->next;
 	}
 }
 
-void	select_sector(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	select_sector(t_editor *doom, t_grid *grid)
 {
 	t_list		*curr;
 	t_sector		*temp;
@@ -293,8 +379,8 @@ void	select_sector(t_editor *doom, t_grid *grid, SDL_Event *e)
 		t_sector *sec;
 
 		sec = curr->content;
-		gfx_draw_vector(grid->elem->surface, 0xffffff00, 3, sec->lowest_pos);
-		gfx_draw_vector(grid->elem->surface, 0xffff00ff, 3, sec->highest_pos);
+		gfx_draw_vector(grid->elem->active_surface, 0xffffff00, 3, sec->lowest_pos);
+		gfx_draw_vector(grid->elem->active_surface, 0xffff00ff, 3, sec->highest_pos);
 		if (gfx_hitbox_square(grid->hover.x, grid->hover.y, (t_xywh){(int)sec->lowest_pos.x, (int)sec->lowest_pos.y, (int)sec->highest_pos.x - (int)sec->lowest_pos.x, (int)sec->highest_pos.y - (int)sec->lowest_pos.y}))
 		{
 			temp = curr->content;
@@ -308,57 +394,48 @@ void	select_sector(t_editor *doom, t_grid *grid, SDL_Event *e)
 ft_printf("Sector selected.\n");
 }
 
-void	select_entity(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	select_entity(t_editor *editor, t_grid *grid)
 {
-	t_list		*curr;
-	t_entity	*temp;
+	t_entity *temp;
+        t_vector temp_pos;
 
-	temp = NULL;
-	curr = grid->entities;
-	while (curr)
-	{
-		t_entity *ent;
-
-		ent = curr->content;
-		if (vector_compare(ent->pos, grid->hover))
-		{
-			temp = ent;
-			break ;
-		}
-		curr = curr->next;
-	}
-	if (temp == NULL)
-		return ;
-	grid->modify_entity = temp;
-// when entity is chosen you have to populate the values in the edit screen, pretty spaghett but...
-	char *str;
-
-	str = ft_sprintf("id: %d\n", grid->modify_entity->id);
-	ft_set_text(&doom->option.ent_info_id_text->text, str);
-	ft_strdel(&str);
-
-	str = ft_itoa(grid->modify_entity->max_health);
-	ft_set_text(&doom->option.ent_info_health_text_area->text, str);
-	ft_strdel(&str);
-
-	str = ft_itoa(grid->modify_entity->speed);
-	ft_set_text(&doom->option.ent_info_speed_text_area->text, str);
-	ft_strdel(&str);
-
-	str = ft_itoa(grid->modify_entity->armor);
-	ft_set_text(&doom->option.ent_info_armor_text_area->text, str);
-	ft_strdel(&str);
-
-	int index = 0;
-	SDL_Event eb;
-	curr = ((t_drop_down *)doom->option.type_dropdown->info)->items;
-	while (curr)
-	{
-		if (index == grid->modify_entity->type)
-			ft_drop_item_function(eb, curr->content);
-		index++;
-		curr = curr->next;
-	}
+        // 1. check if youre clicking exactly where there is a point, to make this fast.
+        temp = get_entity_from_list_at_pos(editor->grid.entities, editor->grid.hover);
+        // 2. if theres no point exactly where you clicked. go here
+        if (temp == NULL)
+        {
+                // 3. go through all the points and check if they are inside the radius of the wanted amount.
+                // NOTE: for now returning the first found.
+                // TODO: make this return the closest, it now returns the first found starting from top left.
+                float allowed_radius = 1.0f; // pixels
+                float x = -allowed_radius;
+                float y = -allowed_radius;
+                while (x <= allowed_radius)
+                {
+                        while (y <= allowed_radius)
+                        {
+                                temp_pos = gfx_new_vector(grid->hover.x + x, grid->hover.y + y, grid->hover.z);
+                                temp = get_entity_from_list_at_pos(editor->grid.entities, temp_pos);
+                                if (temp != NULL)
+                                {
+                                        ft_putstr("Entity found at: ");
+                                        gfx_vector_string(temp_pos);
+                                        break ;
+                                }
+                                y += 0.5f;
+                        }
+                        if (temp != NULL)
+                                break ;
+                        y = -allowed_radius;
+                        x += 0.5f;
+                }
+                if (temp == NULL)
+                        return ;
+        }
+	editor->grid.modify_entity = temp;
+	// TODO: this is temporary fix to the drop being open and automatically making the new edit entity same as the 
+	// 	previous entity you edited.
+	editor->entity_type_drop->drop->toggle = 0;	
 ft_printf("Entity selected.\n");
 }
 
@@ -366,5 +443,5 @@ void	draw_selected_entity(t_editor *doom, t_grid *grid)
 {
 	if (grid->modify_entity == NULL)
 		return ;
-	gfx_draw_vector(grid->elem->surface, 0xffff0000, 8, gfx_vector_multiply(grid->modify_entity->pos, grid->gap));
+	gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 8, gfx_vector_multiply(grid->modify_entity->pos, grid->gap));
 }

@@ -16,11 +16,11 @@ Uint32		random_color(void)
 {
 	Uint32	color;
 
-	color = rgb_to_hex(rand() % 255, rand() % 255, 245, 255);
+	color = rgba_to_hex((t_rgba) {.a = 255, .r = rand() % 255, .g = rand() % 255, .b = 245});
 	ft_printf("generated color: %#x\n", color);
-	printf("generated color: %#x\n", color);
 
-	SDL_Color col = hex_to_rgba(color);
+	t_rgba rgba = hex_to_rgba(color);
+	SDL_Color col = {rgba.r, rgba.g, rgba.b, rgba.a};
 	ft_printf("A:%d R:%d G:%d B:%d\n", col.a,col.r,col.g,col.b);
 	return (color);
 }
@@ -64,6 +64,46 @@ t_list	*get_nth_from_list(t_list **list, int index)
 	return (NULL);
 }
 
+void	free_point(void *content, size_t size)
+{
+	ft_putstr("[free_point]\n");
+	if (content == NULL)
+		return ;
+	t_point *point = content;
+
+	free(point);
+}
+
+// NOTE: this is a wall sprite, not the ones in the actual game.
+// 	aka t_sprite found in ../core.h
+t_sprite	*new_sprite(void)
+{
+	t_sprite *sprite;
+
+	sprite = malloc(sizeof(t_sprite));
+	memset(sprite, 0, sizeof(t_sprite));
+
+	sprite->sprite_id = 0;
+	sprite->scale = 1.0f;
+	// NOT sure if the memset will set these to 0
+	sprite->coord.x = 0;
+	sprite->coord.y = 0;
+	sprite->coord.w = 0;
+	sprite->coord.h = 0;
+
+	return (sprite);
+}
+
+void	free_sprite(void *content, size_t size)
+{
+	ft_putstr("[free_sprite]\n");
+	if (content == NULL)
+		return ;
+	t_sprite *sprite = content;
+
+	free(sprite);
+}
+
 t_wall		*new_wall(t_point *orig, t_point *dest)
 {
 	t_wall *new_wall;
@@ -77,10 +117,27 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 
 	new_wall->dest = dest;
 	new_wall->orig = orig;
+	new_wall->texture_scale = 1;
 	new_wall->texture_id = 0;
+	new_wall->portal_texture_id = 0;
+	new_wall->solid = -1; 
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;
+
 	return (new_wall);
+}
+
+void	free_wall(void *content, size_t size)
+{
+	if (content == NULL)
+		return ;
+	t_wall *wall = content;
+
+	free_point(wall->orig, sizeof(t_point));
+	free_point(wall->dest, sizeof(t_point));
+	if (wall->sprites)
+		ft_lstdel(&wall->sprites, &free_sprite);
+	free(wall);
 }
 
 t_sector	*new_sector(int id)
@@ -101,12 +158,26 @@ t_sector	*new_sector(int id)
 	sector->ceiling_height = 20;
 	sector->floor_texture = 0;
 	sector->ceiling_texture = 0;
+	sector->floor_texture_scale = 1.0f;
+	sector->ceiling_texture_scale = 1.0f;
 	sector->gravity = 9;
 	sector->light_level = 10;
 	sector->lowest_pos = gfx_new_vector(INT_MAX, INT_MAX, INT_MAX);
 	sector->highest_pos = gfx_new_vector(INT_MIN, INT_MIN, INT_MIN);
 	sector->color = random_color();
 	return (sector);
+}
+
+void	free_sector(void *content, size_t size)
+{
+	if (content == NULL)
+		return ;
+	t_sector *sector = content;
+
+	if (sector->walls)
+		ft_lstdel(&sector->walls, &free_wall);
+	free_point(sector->first_point, sizeof(t_point));
+	free(sector);
 }
 
 t_entity	*new_entity(int id, t_vector pos)
@@ -122,13 +193,79 @@ t_entity	*new_entity(int id, t_vector pos)
 	memset(entity, 0, sizeof(t_entity));
 	entity->id = id;
 	entity->pos = pos;
-	entity->dir = gfx_new_vector(10, 10, 0);
-	entity->sprite_id = 0;
-	entity->max_health = 10;
-	entity->speed = 1;
-	entity->armor = 1;
-	entity->type = 2;
+	entity->direction = 90;
+	entity->preset = NULL;
 	return (entity);
+}
+
+void	free_entity(void *content, size_t size)
+{
+	if (content == NULL)
+		return ;
+	t_entity *entity = content;
+
+	if (entity->preset)
+		free_entity_preset(entity->preset, sizeof(t_entity_preset));
+	free(entity);
+}
+
+t_entity_preset	*new_entity_preset(void)
+{
+	t_entity_preset *preset;
+
+	preset = malloc(sizeof(t_entity_preset));
+	memset(preset, 0, sizeof(t_entity_preset));
+
+	preset->name = ft_strdup("Default name");
+	preset->scale = 1;
+	preset->mood = ENTITY_TYPE_NEUTRAL; // e_entity
+	preset->health = -1;
+	preset->damage = -1;
+	preset->speed = -1;
+	preset->attack_style = ENTITY_STYLE_NONE; // e_entity
+	preset->flying = 0;
+
+	return (preset);
+}
+
+void	free_entity_preset(void *content, size_t size)
+{
+	if (content == NULL)
+		return ;
+	t_entity_preset *ent = content;
+
+	ft_strdel(&ent->name);
+	free(ent);
+}
+
+t_entity_preset	*get_entity_preset_from_list_with_name(t_list *list, char *name)
+{
+	t_list *curr;
+	t_entity_preset *preset;
+
+	curr = list;
+	while (curr)
+	{
+		preset = curr->content;
+		if (ft_strcmp(preset->name, name) == 0) 
+			return (preset);
+		curr = curr->next;
+	}
+	return (NULL);
+}
+
+t_entity	*get_entity_from_list_at_pos(t_list *list, t_vector pos)
+{
+	t_list *curr;
+
+	curr = list;
+	while (curr)
+	{
+		if (vector_compare(pos, ((t_entity *)curr->content)->pos))
+			return (curr->content);
+		curr = curr->next;
+	}
+	return (NULL);
 }
 
 void	remove_from_points(t_list **points, t_point *v)
@@ -241,18 +378,70 @@ void	remove_from_walls_non_free(t_list **walls, t_wall *wall)
 	ft_printf("No wall found in that t_list of walls.\n");
 }
 
+int	sprite_compare(t_sprite *bubble, t_sprite *gum)
+{
+	if (bubble->sprite_id == gum->sprite_id &&
+	bubble->coord.x == gum->coord.x &&
+	bubble->coord.y == gum->coord.y &&
+	bubble->coord.w == gum->coord.w &&
+	bubble->coord.h == gum->coord.h &&
+	bubble->scale == gum->scale)
+		return (1);
+	return (0);
+
+}
+
+void	remove_from_sprites(t_list **list, t_sprite *s)
+{
+	t_list *curr;
+	t_list *prev;
+
+	curr = *list;
+	if (curr == NULL)
+		return ;
+	if (sprite_compare(curr->content, s))
+	{
+		*list = curr->next;
+		free(curr->content);
+		free(curr);
+	}
+	else
+	{
+		while (curr)
+		{
+			if (sprite_compare(curr->content, s))
+			{
+				prev->next = curr->next;
+				free(curr->content);
+				free(curr);
+			}
+			else
+				prev = curr;
+			curr = prev->next;
+		}
+	}
+	printf("Sprite removed\n");
+}
+
+
 t_sprite	*get_sprite_from_list(t_list **list, int x, int y)
 {
 	t_list *curr;
-	int i;
+	t_sprite *sprite;
+	int i; // NOTE: this i looks to only be used in the printf
 
 	i = 0;
 	curr = *list;
+
+	ft_printf("Searching for sprite on coords: %d %d\n", x, y);
 	while (curr)
 	{
-		//printf("%d: %d %d %d %d\n", i, ((t_sprite *)curr->content)->pos.x, ((t_sprite *)curr->content)->pos.y, ((t_sprite *)curr->content)->w, ((t_sprite *)curr->content)->h);
-		if (((t_sprite *)curr->content)->pos.x <= x && ((t_sprite *)curr->content)->pos.x + ((t_sprite *)curr->content)->w >= x &&
-			((t_sprite *)curr->content)->pos.y <= y && ((t_sprite *)curr->content)->pos.y + ((t_sprite *)curr->content)->h >= y)
+		sprite = curr->content;
+		ft_printf("%d: %d %d %d %d\n", i, sprite->coord.x, sprite->coord.y, sprite->coord.w, sprite->coord.h);
+		if (sprite->coord.x <= x &&
+		sprite->coord.x + sprite->coord.w >= x &&
+		sprite->coord.y <= y &&
+		sprite->coord.y + sprite->coord.h >= y)
 		{
 			return (curr->content);
 		}
@@ -447,3 +636,4 @@ void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors)
 		wall = wall->next;
 	}
 }
+

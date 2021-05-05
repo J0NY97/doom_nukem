@@ -6,124 +6,236 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2020/09/27 15:42:22 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/05 14:02:31 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "editor.h"
 
-void	window_init(t_editor *doom, t_libui *libui)
-{
-	t_window_info info;
-
-	info.coord = ui_init_coords(0, 0, 1920, 1080);
-	info.title = ft_strjoiner("Doom Nukem Map Editor : ", doom->filename, NULL);
-	info.bg_color = doom->palette.win;
-	doom->window = ft_create_window(libui, info);
-
-	info.coord = ui_init_coords(500, 500, 1500, 750);
-	info.title = ft_strdup("Editor");
-	info.bg_color = doom->palette.win;
-	doom->edit_window = ft_create_window(libui, info);
-	SDL_MinimizeWindow(doom->edit_window->win);
-}
-
-void	grid_init(t_editor *doom)
+void	window_init(t_editor *doom, t_bui_libui *libui)
 {
 	t_xywh coord;
 
-	coord = ui_init_coords(doom->window->surface->w / 4 + 20, 10,
-			(doom->window->surface->w / 4) * 3 - 30, doom->window->surface->h - 20);
-	doom->grid.elem = ui_create_surface(doom->window, coord, NULL);
-	doom->grid.elem->shadow = 0;
-	ft_update_elem_background(doom->grid.elem, doom->palette.win_elem);
+	coord = ui_init_coords(0, 0, 1920, 1080);
+//	coord = ui_init_coords(0, 0, 1280, 720);
+	char *title = ft_strjoiner("Doom Nukem Map Editor : ", doom->mapname, NULL);
+//	doom->window = bui_new_window(libui, title, coord, SDL_WINDOW_RESIZABLE, doom->palette.win);
+	doom->window = bui_new_window(libui, title, coord, 0, doom->palette.win);
+	ft_strdel(&title);
+}
 
-	doom->grid.hover = EMPTY_VEC;
-	doom->spawn.pos = EMPTY_VEC;
-	doom->grid.selected1 = EMPTY_VEC;
-	doom->grid.selected2 = EMPTY_VEC;
-	doom->grid.modify_wall = NULL;
-	doom->grid.modify_point = NULL;
-	doom->grid.modify_sector = NULL;
-	doom->grid.modify_entity = NULL;
-	doom->grid.points = NULL;
-	doom->grid.walls = NULL;
-	doom->grid.sectors = NULL;
-	doom->grid.entities = NULL;
-	doom->grid.gap = 10;
-	doom->grid.point_amount = 0;
-	doom->grid.wall_amount = 0;
-	doom->grid.sector_amount = 0;
-	doom->grid.entity_amount = 0;
-	doom->grid.x = doom->grid.elem->coord.x;
-	doom->grid.y = doom->grid.elem->coord.y;
+void	edit_window_init(t_editor *editor, t_bui_libui *libui)
+{
+	t_xywh coord;
+
+	coord = ui_init_coords(500, 500, 1000, 500);
+	editor->new_edit_window = bui_new_window(libui, "Editor", coord, 0, editor->palette.win);
+	SDL_MinimizeWindow(editor->new_edit_window->win);
+	
+	init_sector_editor(editor);
+	init_wall_editor(editor);
+	init_entity_editor(editor);
+}
+
+void	grid_init(t_editor *editor)
+{
+	t_xywh coord;
+
+	// NOTE: enable this if you dont want the grid to be modular taken from the toolbox size
+/*	coord = ui_init_coords(doom->window->active_surface->w / 6 + 20, 10,
+			(doom->window->active_surface->w / 6) * 5 - 30, doom->window->active_surface->h - 20);
+			*/
+	coord.x = editor->toolbox->position.w + 20;
+	coord.y = 10;
+	coord.w = editor->window->active_surface->w - coord.x - 10;
+	coord.h = editor->window->active_surface->h - 20;
+	editor->grid.elem = bui_new_menu(editor->window, "grid", coord);
+	bui_set_element_color(editor->grid.elem, editor->palette.win_elem);
+	editor->grid.elem->update = 0;
+
+	editor->grid.hover = EMPTY_VEC;
+	editor->spawn.pos = (t_vector) {.x = 0, .y = 0, .z = 0};
+	editor->spawn.direction = 0;
+	editor->grid.selected1 = EMPTY_VEC;
+	editor->grid.selected2 = EMPTY_VEC;
+	editor->grid.modify_wall = NULL;
+	editor->grid.modify_point = NULL;
+	editor->grid.modify_sector = NULL;
+	editor->grid.modify_entity = NULL;
+	editor->grid.points = NULL;
+	editor->grid.walls = NULL;
+	editor->grid.sectors = NULL;
+	editor->grid.entities = NULL;
+	editor->grid.gap = 10;
+	editor->grid.point_amount = 0;
+	editor->grid.wall_amount = 0;
+	editor->grid.sector_amount = 0;
+	editor->grid.entity_amount = 0;
+	editor->grid.x = editor->grid.coords.x;
+	editor->grid.y = editor->grid.coords.y;
+	editor->grid.dimensions = editor->grid.coords;
+
+	// map thingy
+	editor->scale = 1;
 }
 
 void	toolbox_init(t_editor *doom)
 {
+	t_editor *editor = doom;
 	t_xywh coord;
 
-	coord = ui_init_coords(10, 10, doom->window->surface->w / 4, doom->window->surface->h - 20);
-	doom->toolbox = ui_create_surface(doom->window, coord, NULL);
-	doom->toolbox->shadow = 0;
-	ft_update_elem_background(doom->toolbox, doom->palette.win_elem);
+	coord = ui_init_coords(10, 10, doom->window->active_surface->w / 6, doom->window->active_surface->h - 20);
+	doom->toolbox = bui_new_menu(doom->window, "toolbox", coord);
+	bui_set_element_color(doom->toolbox, doom->palette.win_elem);
 
-	coord = ui_init_coords(10, (doom->toolbox->surface->h / 4 + 10), doom->toolbox->surface->w - 20, (doom->toolbox->surface->h / 4) * 3 - 20);
-	doom->info_area = ui_create_surface(doom->window, coord, doom->toolbox);
-	doom->info_area->shadow = 0;
-	ft_update_elem_background(doom->info_area, doom->palette.elem_elem);
+	// Selection mode buttons
+	int select_gap = 10;
+	int select_w = 32;
+	coord = ui_init_coords(70, 25, 200, 50);
+	editor->select_mode = bui_new_element(editor->toolbox, "Select", coord);
+	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
+		//vertex button
+	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
+	editor->select_mode_vertex = bui_new_element(editor->select_mode, "Vertex", coord);
+		//wall button
+	coord = ui_init_coords((1 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
+	editor->select_mode_wall = bui_new_element(editor->select_mode, "Wall", coord);
+		// sector button
+	coord = ui_init_coords((2 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
+	editor->select_mode_sector = bui_new_element(editor->select_mode, "Sector", coord);
+		//entity button
+	coord = ui_init_coords((3 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
+	editor->select_mode_entity = bui_new_element(editor->select_mode, "Entity", coord);
+
+	editor->select_mode_vertex->text_y = -20;
+	editor->select_mode_wall->text_y = -20;
+	editor->select_mode_sector->text_y = -20;
+	editor->select_mode_entity->text_y = -20;
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_DEFAULT, "../ui/ui_images/selection_mode_vertex.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_HOVER, "../ui/ui_images/selection_mode_vertex_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_CLICK, "../ui/ui_images/selection_mode_vertex_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_DEFAULT, "../ui/ui_images/selection_mode_wall.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_HOVER, "../ui/ui_images/selection_mode_wall_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_CLICK, "../ui/ui_images/selection_mode_wall_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_DEFAULT, "../ui/ui_images/selection_mode_sector.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_HOVER, "../ui/ui_images/selection_mode_sector_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_CLICK, "../ui/ui_images/selection_mode_sector_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_DEFAULT, "../ui/ui_images/selection_mode_entity.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_HOVER, "../ui/ui_images/selection_mode_entity_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_CLICK, "../ui/ui_images/selection_mode_entity_click.png", NULL);
+		// putting them in list
+	// NOTE: these are there so that we can use the only one toggled at a time function
+	editor->select_mode_buttons = NULL;
+	editor->active_select_mode = NULL;
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_vertex, sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_wall, sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_sector, sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_entity, sizeof(t_bui_element));
+
+
+	// info area init
+	coord = ui_init_coords(10, (doom->toolbox->position.h / 4 + 10),
+			doom->toolbox->position.w - 20, (doom->toolbox->position.h / 4) * 3 - 20);
+	doom->info_area = bui_new_element(doom->toolbox, "info area", coord);
+	bui_set_element_color(doom->info_area, doom->palette.elem_elem);
+
+	// TODO: put this in a infoarea_init function or something, but remove from this function
+	doom->hover_info = bui_new_element(doom->info_area, "hover info", (t_xywh) {10, 20, 100, 50});
+	bui_set_element_color(doom->hover_info, doom->info_area->color);
+
+	doom->selected_sector_info = bui_new_element(doom->info_area, "selected sector info", (t_xywh) {10, 75, 100, 50});
+	bui_set_element_color(doom->selected_sector_info, doom->info_area->color);
+
+	// new scale changer
+	coord = ui_init_coords(editor->info_area->position.w - 110, 320, 100, 40);
+	editor->scaler = new_changer_prefab(editor->info_area, "Scale", coord);
+}
+
+t_bui_element	*new_map_type_tickbox(t_bui_element *parent, char *text, t_xywh coord)
+{
+	t_bui_element *tick;
+	t_bui_element *text_elem;
+	t_xywh text_coord;
+
+	text_coord = coord;
+	text_coord.w = 50; 
+	text_elem = bui_new_element(parent, text, text_coord);
+	coord.x += text_coord.w; 
+	tick = bui_new_element(parent, " ", coord);
+	bui_set_element_image_from_path(tick, ELEMENT_DEFAULT, "../ui/ui_images/tick_box_off.png", NULL);
+	bui_set_element_image_from_path(tick, ELEMENT_HOVER, "../ui/ui_images/tick_box_hover.png", NULL);
+	bui_set_element_image_from_path(tick, ELEMENT_CLICK, "../ui/ui_images/tick_box_on.png", NULL);
+
+	return (tick);
 }
 
 void	button_init(t_editor *doom)
 {
 	t_xywh coord;
+	t_editor *editor = doom;
 
-	coord = ui_init_coords(25, 25, 100, 50);
-	doom->button_draw = ui_create_button(doom->window, coord, doom->toolbox);
-	doom->button_draw->toggleable = 1;
-	ft_set_text(&doom->button_draw->text, "draw");
-	ft_update_elem_background(doom->button_draw, doom->palette.elem_elem);
-	doom->button_draw->default_state = 1;
+	int gap = 10;
+	int button_w = 32;
 
-	coord = ui_init_coords(150, 25, 100, 50);
-	doom->button_select = ui_create_button(doom->window, coord, doom->toolbox);
-	doom->button_select->toggleable = 1;
-	ft_set_text(&doom->button_select->text, "select");
-	ft_update_elem_background(doom->button_select, doom->palette.elem_elem);
+	coord = ui_init_coords(10, 25, 50, 50);
+	editor->draw_mode = bui_new_element(editor->toolbox, "Draw", coord);
+	bui_set_element_color(editor->draw_mode, editor->palette.elem_elem);
 
-	coord = ui_init_coords(275, 25, 100, 50);
-	doom->button_save = ui_create_button(doom->window, coord, doom->toolbox);
-	doom->button_save->f = &single_click;
-	ft_set_text(&doom->button_save->text, "save");
-	ft_update_elem_background(doom->button_save, doom->palette.elem_elem);
+	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20, button_w, button_w);
+	doom->button_draw = bui_new_element(editor->draw_mode, "draw", coord);
+	doom->button_draw->text_y = -20;
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_DEFAULT, "../ui/ui_images/draw_mode.png", NULL);
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_HOVER, "../ui/ui_images/draw_mode_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_CLICK, "../ui/ui_images/draw_mode_click.png", NULL);
+	// add draw button to the list of select_buttons
+	add_to_list(&editor->select_mode_buttons, editor->button_draw, sizeof(t_bui_element));
+
+// Other mode
+	coord = ui_init_coords(editor->draw_mode->position.x, editor->draw_mode->position.y + editor->draw_mode->position.h + 10, 300, 50);
+	editor->other_mode = bui_new_element(editor->toolbox, "Other", coord);
+	bui_set_element_color(editor->other_mode, editor->palette.elem_elem);
+// Map name input
+	coord = ui_init_coords(gap, 20, 100, 20);
+	editor->map_name_input = bui_new_element(editor->other_mode, editor->mapname, coord);
+	editor->map_name_input->text_x = 5;
+// save button
+	coord = ui_init_coords(editor->map_name_input->position.x + editor->map_name_input->position.w + gap, 20, button_w, button_w);
+	editor->button_save = bui_new_element(editor->other_mode, "save", coord);
+	editor->button_save->text_y = -20;
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_DEFAULT, "../ui/ui_images/save_button.png", NULL);
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_HOVER, "../ui/ui_images/save_button_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_CLICK, "../ui/ui_images/save_button_click.png", NULL);
+// map type tickboxes
+	coord = ui_init_coords(editor->button_save->position.x + editor->button_save->position.w + gap, editor->button_save->position.y - gap, 20, 20);
+	editor->endless_tickbox = new_map_type_tickbox(editor->other_mode, "endless", coord);
+
+	coord = ui_init_coords(editor->button_save->position.x + editor->button_save->position.w + gap, editor->button_save->position.y + gap, 20, 20);
+	editor->story_tickbox = new_map_type_tickbox(editor->other_mode, "story", coord);
+
+	if (ft_strendswith(editor->fullpath, ".story") == 0)
+		editor->active_map_type = editor->story_tickbox;
+	else
+		editor->active_map_type = editor->endless_tickbox;
+	add_to_list(&editor->map_type_tickboxes, editor->endless_tickbox, sizeof(t_bui_element));
+	add_to_list(&editor->map_type_tickboxes, editor->story_tickbox, sizeof(t_bui_element));
+
+
 // deletion button
-	coord = ui_init_coords(doom->info_area->surface->w - 110, 25, 100, 50);
-	doom->button_remove = ui_create_button(doom->window, coord, doom->info_area);
-	doom->button_remove->f = &single_click;
-	doom->button_remove->shadow = 0;
-	ft_set_text(&doom->button_remove->text, "remove");
-	ft_update_elem_background(doom->button_remove, doom->palette.elem_elem_elem);
+	coord = ui_init_coords(doom->info_area->position.w - 110, 25, 100, 50);
+	doom->button_remove = bui_new_element(doom->info_area, "remove", coord);
+	bui_set_element_color(doom->button_remove, doom->palette.elem_elem_elem);
 // edit button
-	coord = ui_init_coords(doom->info_area->surface->w - 110, 100, 100, 50);
-	doom->button_edit = ui_create_button(doom->window, coord, doom->info_area);
-	doom->button_edit->f = &single_click;
-	doom->button_edit->shadow = 0;
-	ft_set_text(&doom->button_edit->text, "edit");
-	ft_update_elem_background(doom->button_edit, doom->palette.elem_elem_elem);
+	coord = ui_init_coords(doom->info_area->position.w - 110, 100, 100, 50);
+	doom->button_edit = bui_new_element(doom->info_area, "edit", coord);
+	bui_set_element_color(doom->button_edit, doom->palette.elem_elem_elem);
 // add button
-	coord = ui_init_coords(doom->info_area->surface->w - 110, 175, 100, 50);
-	doom->button_add = ui_create_button(doom->window, coord, doom->info_area);
-	doom->button_add->f = &single_click;
-	doom->button_add->shadow = 0;
-	ft_set_text(&doom->button_add->text, "add portal");
-	ft_update_elem_background(doom->button_add, doom->palette.elem_elem_elem);
+	coord = ui_init_coords(doom->info_area->position.w - 110, 175, 100, 50);
+	doom->button_add = bui_new_element(doom->info_area, "add portal", coord);
+	bui_set_element_color(doom->button_add, doom->palette.elem_elem_elem);
 // remove button
-	coord = ui_init_coords(doom->info_area->surface->w - 110, 250, 100, 50);
-	doom->button_remove_portal = ui_create_button(doom->window, coord, doom->info_area);
-	doom->button_remove_portal->f = &single_click;
-	doom->button_remove_portal->shadow = 0;
-	ft_set_text(&doom->button_remove_portal->text, "remove portal");
-	ft_update_elem_background(doom->button_remove_portal, doom->palette.elem_elem_elem);
+	coord = ui_init_coords(doom->info_area->position.w - 110, 250, 100, 50);
+	doom->button_remove_portal = bui_new_element(doom->info_area, "remove portal" , coord);
+	bui_set_element_color(doom->button_remove_portal, doom->palette.elem_elem_elem);
 }
 
 void	color_palette_init(t_color_palette *pal)
@@ -132,78 +244,16 @@ void	color_palette_init(t_color_palette *pal)
 	pal->win_elem = 0xff232b2b;
 	pal->elem_elem = 0xff353839;
 	pal->elem_elem_elem = 0xffa6a6a4;
+
+	// These are taken from coolors.co,
+	// which is the reason they may have weird names
+	pal->granny_smith_apple = 0xffadf7b6;
+	pal->peach_crayola = 0xffffc09f;
+	pal->light_blue = 0xffa0ced9;
 }
 
-void	texture_button_init(t_editor *doom)
-{
-	SDL_Surface	 *temp;
-	SDL_Rect	rect;
-	t_xywh coord;
-	int	gap;
-	int i;
-	int size;
-	int x;
-	int y;
-	int amount;
-
-	doom->texture_buttons = (t_element **)malloc(sizeof(t_element *) * doom->textures[0].max_textures);
-	gap = 25;
-	size = 55;
-	i = 0;
-	amount = doom->option.textures->surface->w / (gap + size);
-	rect.w = doom->textures[0].x_size;
-	rect.h = doom->textures[0].y_size;
-	temp = SDL_CreateRGBSurface(0, doom->textures[0].x_size, doom->textures[0].y_size, 32, 0,0,0,0);
-	while (i < doom->textures[0].max_textures)
-	{
-		rect.x = doom->textures[0].position[i][0];
-		rect.y = doom->textures[0].position[i][1];
-		SDL_BlitSurface(doom->textures[0].surface, &rect, temp, NULL);
-		x = (i % amount) * (gap + size) + gap;
-		y = (i / amount) * (gap + size) + gap;
-		coord = ui_init_coords(x, y, size, size);
-		doom->texture_buttons[i] = ui_create_button(doom->edit_window, coord, doom->option.textures);
-		doom->texture_buttons[i]->f = &single_click;
-		ft_set_element_image(doom->texture_buttons[i], temp, NULL);
-		i++;
-	}
-}
-
-void	sprite_button_init(t_editor *doom)
-{
-	SDL_Surface	 *temp;
-	SDL_Rect	rect;
-	t_xywh coord;
-	int	gap;
-	int i;
-	int size;
-	int x;
-	int y;
-	int amount;
-
-	doom->sprite_buttons = (t_element **)malloc(sizeof(t_element *) * doom->sprites[0].max_textures);
-	gap = 25;
-	size = 55;
-	i = 0;
-	amount = doom->option.sprites->surface->w / (gap + size);
-	rect.w = doom->sprites[0].x_size;
-	rect.h = doom->sprites[0].y_size;
-	temp = SDL_CreateRGBSurface(0, doom->sprites[0].x_size, doom->sprites[0].y_size, 32, 0,0,0,0);
-	while (i < doom->sprites[0].max_textures)
-	{
-		rect.x = doom->sprites[0].position[i][0];
-		rect.y = doom->sprites[0].position[i][1];
-		SDL_BlitSurface(doom->sprites[0].surface, &rect, temp, NULL);
-		x = (i % amount) * (gap + size) + gap;
-		y = (i / amount) * (gap + size) + gap;
-		coord = ui_init_coords(x, y, size, size);
-		doom->sprite_buttons[i] = ui_create_button(doom->edit_window, coord, doom->option.sprites);
-		doom->sprite_buttons[i]->f = &single_click;
-		ft_set_element_image(doom->sprite_buttons[i], temp, NULL);
-		i++;
-	}
-}
-
+// TODO: you can probably take from this mallia how to do the texture thingy majig when youre actually making it.
+/*
 void	texture_init(t_editor *doom)
 {
 	load_texture(&doom->textures[0], "../textures/textures.bmp", 64, 64);
@@ -211,354 +261,439 @@ void	texture_init(t_editor *doom)
 
 	texture_button_init(doom);
 }
+*/
 
-void	texture_buttons(t_editor *doom, t_grid *grid)
+t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord)
 {
-	int i;
+	t_xywh temp_coord;
+	t_changer_prefab *prefab;
 
-	if (grid->modify_wall == NULL) // nothing to modify
-		return ;
-	i = 0;
-	while (i < doom->textures[0].max_textures)
-	{
-		if (doom->texture_buttons[i]->state == 1)
-		{
-			grid->modify_wall->texture_id = i;
-			doom->texture_buttons[i]->shadow = 0;
-			doom->texture_buttons[i]->offset_x = 5;
-			doom->texture_buttons[i]->offset_y = 5;
-		}
-		if (grid->modify_wall->texture_id != i)
-		{
-			doom->texture_buttons[i]->shadow = 1;
-			doom->texture_buttons[i]->offset_x = 0;
-			doom->texture_buttons[i]->offset_y = 0;
-		}
-		i++;
-	}
-}
-
-void	sprite_init(t_editor *doom)
-{
-	load_texture(&doom->sprites[0], "../textures/sprite.bmp", 128, 128);
-	split_texture(&doom->sprites[0]);
-
-	sprite_button_init(doom);
-	doom->option.selected_sprite = -1;
-}
-
-void	sprite_buttons(t_editor *doom, t_grid *grid)
-{
-	int i;
-
-	if (grid->modify_wall == NULL) // nothing to modify
-		return ;
-	i = 0;
-	while (i < doom->sprites[0].max_textures)
-	{
-		if (doom->sprite_buttons[i]->state == 1)
-		{
-			doom->option.selected_sprite = i;
-			doom->sprite_buttons[i]->shadow = 0;
-			doom->sprite_buttons[i]->offset_x = 5;
-			doom->sprite_buttons[i]->offset_y = 5;
-		}
-		if (doom->option.selected_sprite != i)
-		{
-			doom->sprite_buttons[i]->shadow = 1;
-			doom->sprite_buttons[i]->offset_x = 0;
-			doom->sprite_buttons[i]->offset_y = 0;
-		}
-		i++;
-	}
-}
-
-void	option_menu_init(t_editor *doom)
-{
-	t_xywh coord;
-	t_wall_edit	*option;
-
-	doom->option.modify_sprite = NULL;
+	prefab = ft_memalloc(sizeof(t_changer_prefab));
 // menu
-	option = &doom->option;
-	coord = ui_init_coords(25, 25, ((doom->edit_window->surface->w / 3) * 2), doom->edit_window->surface->h - (doom->edit_window->surface->h / 4));
-	option->menu = ui_create_surface(doom->edit_window, coord, NULL);
-	option->menu->shadow = 0;
-	ft_update_elem_background(option->menu, doom->palette.elem_elem);
-// title bar
-	coord = ui_init_coords(0, 0, option->menu->surface->w, 20);
-	option->title = ui_create_surface(doom->edit_window, coord, option->menu);
-	option->title->shadow = 0;
-	ft_update_elem_background(option->title, doom->palette.elem_elem_elem);
-	ft_set_text(&option->title->text, "title");
-	ft_set_font(&option->title->text, "../libui/TTF/font.ttf", 20);
-// view
-	option->view = ui_create_surface(doom->edit_window, (t_xywh){25, 45, option->menu->surface->w - 50, option->menu->surface->h - (25 + 45)}, option->menu);
-	option->view->shadow = 0;
-	option->view->render = 0;
-// info
-	option->info = ui_create_surface(doom->edit_window, (t_xywh){25, doom->edit_window->surface->h - (doom->edit_window->surface->h / 4) + 50, option->menu->surface->w, doom->edit_window->surface->h - (doom->edit_window->surface->h - (doom->edit_window->surface->h / 4) + 75)}, NULL);
-	ft_update_elem_background(option->info, doom->palette.elem_elem);
-	option->info->shadow = 0;
-// render
-	option->show_render = ui_create_surface(doom->edit_window, (t_xywh){option->view->coord.x, option->view->coord.y,
-											option->view->coord.w, option->view->coord.h}, option->menu);
-	option->show_render->shadow = 0;
-	option->show_render->render = 0;
-// adding view
-	option->add_view = ui_create_surface(doom->edit_window, (t_xywh){option->menu->coord.x + option->menu->coord.w + 25, 25, doom->edit_window->surface->w - (option->menu->coord.x + option->menu->coord.w) - 50, doom->edit_window->surface->h - 50}, NULL);
-	ft_update_elem_background(option->add_view, doom->palette.elem_elem);
-	option->add_view->shadow = 0;
-// textures
-	option->texture_button = ui_create_button(doom->edit_window, (t_xywh){25, 25, 100, 50}, option->add_view);
-	option->texture_button->shadow = 0;
-	option->texture_button->toggleable = 1;
-	ft_update_elem_background(option->texture_button, doom->palette.elem_elem_elem);
-	ft_set_text(&option->texture_button->text, "textures");
-
-	option->textures = ui_create_surface(doom->edit_window, (t_xywh){25, 100,
-											option->add_view->coord.w - 50, option->add_view->coord.h - 125}, option->add_view);
-	option->textures->shadow = 0;
-	option->textures->render = 0;
-// sprite adding
-	option->add_button = ui_create_button(doom->edit_window, (t_xywh){150, 25, 100, 50}, option->add_view);
-	option->add_button->shadow = 0;
-	option->add_button->toggleable = 1;
-	ft_update_elem_background(option->add_button, doom->palette.elem_elem_elem);
-	ft_set_text(&option->add_button->text, "add sprite");
-
-	option->sprites = ui_create_surface(doom->edit_window, (t_xywh){25, 100,
-											option->add_view->coord.w - 50, option->add_view->coord.h - 125}, option->add_view);
-	option->sprites->shadow = 0;
-	option->sprites->render = 0;
-}
-
-void	add_sector_button_prefab(t_editor *doom, char *str, t_xywh position)
-{
-	t_xywh coord;
-	t_wall_edit *option;
-	t_sector_edit *prefab;
-
-	option = &doom->option;
-	prefab = (t_sector_edit *)malloc(sizeof(t_sector_edit));
-	add_to_list(&option->sector_edit_buttons, prefab, sizeof(t_sector_edit));
-// text
-	prefab->text = ui_create_surface(doom->edit_window, position, option->add_view);
-	ft_update_elem_background(prefab->text, doom->palette.elem_elem);
-	ft_set_text(&prefab->text->text, str);
-	prefab->text->shadow = 0;
-	prefab->text->render = 0;
+	prefab->menu = bui_new_element(parent_menu, title, coord);
 // sub
-	coord = ui_init_coords(175, 0, 50, 50);
-	prefab->sub_button = ui_create_button(doom->edit_window, coord, prefab->text);
-	prefab->sub_button->f = &single_click;
-	ft_update_elem_background(prefab->sub_button, doom->palette.elem_elem_elem);
-	ft_set_text(&prefab->sub_button->text, "-");
-	prefab->sub_button->text.centered = 1;
-	prefab->sub_button->shadow = 0;
-	prefab->sub_button->render = 0;
-// amount
-	coord = ui_init_coords(250, 0, 50, 50);
-	prefab->amount = ui_create_surface(doom->edit_window, coord, prefab->text);
-	prefab->amount->f = &single_click;
-	ft_update_elem_background(prefab->amount, doom->palette.elem_elem);
-	ft_set_text(&prefab->amount->text, "not set");
-	prefab->amount->text.centered = 1;
-	prefab->amount->shadow = 0;
-	prefab->amount->render = 0;
-
-	prefab->f_amount = NULL;
+	temp_coord = ui_init_coords(0, coord.h - 20, 20, 20);
+	prefab->sub_button = bui_new_element(prefab->menu, "-", temp_coord);
 // add
-	coord = ui_init_coords(300, 0, 50, 50);
-	prefab->add_button = ui_create_button(doom->edit_window, coord, prefab->text);
-	prefab->add_button->f = &single_click;
-	ft_update_elem_background(prefab->add_button, doom->palette.elem_elem_elem);
-	ft_set_text(&prefab->add_button->text, "+");
-	prefab->add_button->text.centered = 1;
-	prefab->add_button->shadow = 0;
-	prefab->add_button->render = 0;
+	temp_coord = ui_init_coords(coord.w - 20, coord.h - 20, 20, 20);
+	prefab->add_button = bui_new_element(prefab->menu, "+", temp_coord);
+// value
+	temp_coord.x = prefab->sub_button->position.x + prefab->sub_button->position.w;
+	temp_coord.w = prefab->menu->position.w - temp_coord.x - (prefab->menu->position.w - prefab->add_button->position.x);
+	prefab->value = bui_new_element(prefab->menu, "not set", temp_coord);
+
+	return (prefab);
 }
 
-void	sector_edit_buttons_init(t_editor *doom)
+// TODO: figure out how to do so it only changes the text if you actually clicked either of the buttons.
+// TODO: maybe take in the value you want to change already in the initter. this would leave room for min and max here.
+void	changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount)
 {
-	t_xywh coord;
-	t_wall_edit	*option;
-
-	option = &doom->option;
-
-	coord = ui_init_coords(25, 25, option->add_view->coord.w - 50, 50);
-	add_sector_button_prefab(doom, "floor height", coord);
-
-	coord = ui_init_coords(25, 100, option->add_view->coord.w - 50, 50);
-	add_sector_button_prefab(doom, "ceiling height", coord);
-
-	coord = ui_init_coords(25, 175, option->add_view->coord.w - 50, 50);
-	add_sector_button_prefab(doom, "gravity", coord);
-
-	coord = ui_init_coords(25, 250, option->add_view->coord.w - 50, 50);
-	add_sector_button_prefab(doom, "lighting", coord);
+	char *str = NULL;
+	
+	if (bui_button(changer->add_button))
+		*current_value += change_amount;
+	else if (bui_button(changer->sub_button))
+		*current_value -= change_amount;
+	str = ft_sprintf("%d", *current_value);
+	bui_change_element_text(changer->value, str);
+	ft_strdel(&str);
 }
 
-void	entity_sprite_button_init(t_editor *doom)
+void	changer_prefab_events_float(t_changer_prefab *changer, float *current_value, float change_amount)
 {
-	SDL_Surface	 *temp;
-	SDL_Rect	rect;
-	t_xywh coord;
-	int	gap;
-	int i;
-	int size;
-	int x;
-	int y;
-	int amount;
+	char *str = NULL;
+	
+	if (bui_button(changer->add_button))
+		*current_value += change_amount;
+	else if (bui_button(changer->sub_button))
+		*current_value -= change_amount;
+	str = ft_sprintf("%.1f", *current_value);
+	bui_change_element_text(changer->value, str);
+	ft_strdel(&str);
+}
 
-	doom->entity_sprite_buttons = (t_element **)malloc(sizeof(t_element *) * doom->entity_sprites[0].max_textures);
-	gap = 25;
-	size = 55;
-	i = 0;
-	amount = doom->option.ent_sprites->surface->w / (gap + size);
-	rect.w = doom->entity_sprites[0].x_size;
-	rect.h = doom->entity_sprites[0].y_size;
-	temp = SDL_CreateRGBSurface(0, doom->entity_sprites[0].x_size, doom->entity_sprites[0].y_size, 32, 0,0,0,0);
-	while (i < doom->entity_sprites[0].max_textures)
+void	init_sector_editor(t_editor *editor)
+{
+	t_xywh coord;
+
+	// edit toolbox- and view element
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_sector = bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_view_sector = bui_new_menu(editor->new_edit_window, "New View", coord);
+
+	// floor texture menu
+	coord = ui_init_coords(0, 20,
+			editor->edit_view_sector->position.w * 0.5,
+			editor->edit_view_sector->position.h - 20);
+	editor->sector_floor_menu = bui_new_element(editor->edit_view_sector, "Floor Texture", coord);
+
+	// ceiling texture menu
+	coord = ui_init_coords(editor->edit_view_sector->position.w * 0.5, 20,
+			editor->edit_view_sector->position.w * 0.5,
+			editor->edit_view_sector->position.h - 20);
+	editor->sector_ceiling_menu = bui_new_element(editor->edit_view_sector, "Ceiling Texture", coord);
+	bui_set_element_color(editor->sector_ceiling_menu, 0xff06D6A0);
+
+// TODO: from a texture file take all the textures and make buttons of them and show them on both of the menus above.
+// TODO: NOTE: the ceiling- and floor texture count should be gotten from the same place as where you laod the textures.
+	// this is just a demonstration
+	t_bui_element *temp_elem;
+	char *str;
+	int floor_texture_count = 9;
+	int ceiling_texture_count = 20;
+	int i = 0;
+	
+	int offset_x = 20;
+	int offset_y = 50;
+	int button_gap = 20;
+	int amount_on_x = floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
+	while (i < floor_texture_count)
 	{
-		rect.x = doom->entity_sprites[0].position[i][0];
-		rect.y = doom->entity_sprites[0].position[i][1];
-		SDL_BlitSurface(doom->entity_sprites[0].surface, &rect, temp, NULL);
-		x = (i % amount) * (gap + size) + gap;
-		y = (i / amount) * (gap + size) + gap;
-		coord = ui_init_coords(x, y, size, size);
-		doom->entity_sprite_buttons[i] = ui_create_button(doom->edit_window, coord, doom->option.ent_sprites);
-		doom->entity_sprite_buttons[i]->f = &single_click;
-		ft_set_element_image(doom->entity_sprite_buttons[i], temp, NULL);
+		coord.w = 50;
+		coord.h = 50;
+		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+		str = ft_sprintf("%d", i);
+		temp_elem = bui_new_element(editor->sector_floor_menu, str, coord);
+		ft_strdel(&str);
+		bui_set_element_color(temp_elem, 0xff06D6A0);
+		add_to_list(&editor->floor_texture_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
+	}
+	i = 0;
+	while (i < ceiling_texture_count)
+	{
+		coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
+		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+		str = ft_sprintf("%d", i);
+		temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
+		ft_strdel(&str);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../ui/ui_images/doom.jpg", NULL);
+		add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
+	}
+
+	// Init the ceiling- and floor height... etc. buttons
+	coord.x = 5;
+	coord.w = 100; 
+	coord.h = 40; 
+	coord.y = (25 * 1) + (40 * 0);
+	editor->floor_height = new_changer_prefab(editor->edit_toolbox_sector, "floor height", coord);
+	coord.y = (25 * 2) + (40 * 1);
+	editor->ceiling_height = new_changer_prefab(editor->edit_toolbox_sector, "ceiling height", coord);
+	coord.y = (25 * 3) + (40 * 2);
+	editor->gravity = new_changer_prefab(editor->edit_toolbox_sector, "gravity", coord);
+	coord.y = (25 * 4) + (40 * 3);
+	editor->lighting = new_changer_prefab(editor->edit_toolbox_sector, "lighting", coord);
+
+	// floor & ceiling texture scale
+	coord.y = (25 * 6) + (40 * 5);
+	editor->floor_scale = new_changer_prefab(editor->edit_toolbox_sector, "floor texture scale", coord);
+	coord.y = (25 * 7) + (40 * 6);
+	editor->ceiling_scale = new_changer_prefab(editor->edit_toolbox_sector, "ceiling texture scale", coord);
+
+}
+
+void	init_wall_editor(t_editor *editor)
+{
+	t_xywh coord;
+
+	// edit toolbox- and view element
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_wall = bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_view_wall = bui_new_menu(editor->new_edit_window, "New View", coord);
+	editor->edit_view_wall->update = 0;
+
+	// tabsystem in toolbox
+	coord = ui_init_coords(5, 20, editor->edit_toolbox_wall->position.w - 10, editor->edit_toolbox_wall->position.h - 25);
+	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall, "texture tabs", coord);
+	// Note; if you want to add these tabs youre adding, you have to save them somewhere, [0] is tab button [1] is the view
+	// Note2; it seems that i have planned to make the tab system more dynamic, aka you can have differnece sized buttons
+	// Note3; but yet not made it tho...
+	t_bui_element **elems;
+	
+	elems = preset_tab_add(editor->wall_tab, "Wall Texture");
+	bui_set_element_color(elems[0], editor->palette.light_blue);
+	bui_set_element_color(elems[1], editor->palette.light_blue);
+	editor->wall_texture_view = elems[1]; 
+
+	elems = preset_tab_add(editor->wall_tab, "Portal Texture");
+	bui_set_element_color(elems[0], editor->palette.granny_smith_apple);
+	bui_set_element_color(elems[1], editor->palette.granny_smith_apple);
+	editor->portal_texture_view = elems[1];
+
+	elems = preset_tab_add(editor->wall_tab, "Wall Sprite");
+	bui_set_element_color(elems[0], editor->palette.peach_crayola);
+	bui_set_element_color(elems[1], editor->palette.peach_crayola);
+	editor->wall_sprite_view = elems[1]; 
+
+	// wall textures view elements
+	coord = ui_init_coords(5, 20, 100, 40);
+	editor->wall_scale = bui_new_element(editor->wall_texture_view, "texture scale", coord);
+	bui_set_element_color(editor->wall_scale, 0xff06D6A0);
+
+	coord = ui_init_coords(0, 20, 20, 20);
+	editor->wall_scale_sub = bui_new_element(editor->wall_scale, "-", coord);
+	bui_set_element_color(editor->wall_scale_sub, 0xff06D6A0);
+
+	coord = ui_init_coords(20, 20, 60, 20);
+	editor->wall_scale_value = bui_new_element(editor->wall_scale, "not set", coord);
+	bui_set_element_color(editor->wall_scale_value, 0xff06D6A0);
+	
+	coord = ui_init_coords(80, 20, 20, 20);
+	editor->wall_scale_add = bui_new_element(editor->wall_scale, "+", coord);
+	bui_set_element_color(editor->wall_scale_add, 0xff06D6A0);
+
+	// wall texture solidity tick box
+	coord = ui_init_coords(115, 20, 100, 20);
+	editor->wall_solid = bui_new_element(editor->wall_texture_view, "Solid:", coord);
+	bui_set_element_color(editor->wall_solid, ((t_bui_element *)editor->wall_solid->parent)->color);
+
+	coord = ui_init_coords(40, 0, 20, 20);
+	editor->wall_solid_tick = bui_new_element(editor->wall_solid, " ", coord);
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_DEFAULT, "../ui/ui_images/tick_box_off.png", NULL);
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_HOVER, "../ui/ui_images/tick_box_hover.png", NULL);
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_CLICK, "../ui/ui_images/tick_box_on.png", NULL);
+
+
+	// wall sprite view elements
+	coord = ui_init_coords(5, 20, 50, 20);
+	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "add sprite", coord);
+	bui_set_element_color(editor->add_wall_sprite_button, 0xff06D6A0);
+
+	coord = ui_init_coords(editor->add_wall_sprite_button->position.x + editor->add_wall_sprite_button->position.w + 15, 20, 50, 20);
+	editor->remove_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "remove sprite", coord);
+	bui_set_element_color(editor->remove_wall_sprite_button, 0xff06D6A0);
+
+
+		// wall sprite scale elements
+	coord = ui_init_coords(5, editor->wall_sprite_view->position.h - 45, 100, 40);
+	editor->sprite_scale = bui_new_element(editor->wall_sprite_view, "sprite scale", coord);
+	bui_set_element_color(editor->sprite_scale, 0xff06D6A0);
+
+	coord = ui_init_coords(0, 20, 20, 20);
+	editor->sprite_scale_sub = bui_new_element(editor->sprite_scale, "-", coord);
+	bui_set_element_color(editor->sprite_scale_sub, 0xff06D6A0);
+
+	coord = ui_init_coords(20, 20, 40, 20);
+	editor->sprite_scale_value = bui_new_element(editor->sprite_scale, "not set", coord);
+	bui_set_element_color(editor->sprite_scale_value, 0xff06D6A0);
+
+	coord = ui_init_coords(80, 20, 20, 20);
+	editor->sprite_scale_add = bui_new_element(editor->sprite_scale, "+", coord);
+	bui_set_element_color(editor->sprite_scale_add, 0xff06D6A0);
+
+
+	// TODO: make this modular on the y axis aswell
+	t_bui_element *temp_elem;
+	char *str;
+	int texture_count = 5;
+	int i = 0;
+	int button_w = 50;
+	int button_gap = 15;
+	int offset_x = 5;
+	int offset_y = 70;
+	int amount_on_x;
+
+	// wall texture buttons
+	editor->wall_texture_buttons = NULL;
+	editor->active_wall_texture = NULL;
+
+	amount_on_x = floor(editor->wall_texture_view->position.w / (button_w + button_gap + offset_x));
+	coord.w = button_w;
+	coord.h = button_w;
+	while (i < texture_count)
+	{
+		str = ft_itoa(i);
+		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+		temp_elem = bui_new_element(editor->wall_texture_view, str, coord);
+		ft_strdel(&str);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../ui/ui_images/doom.jpg", NULL);
+		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
+		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
+		add_to_list(&editor->wall_texture_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
+	}
+
+	// portal texture buttons
+	editor->portal_texture_buttons = NULL;
+	editor->active_portal_texture = NULL;
+	offset_y = 50;
+	amount_on_x = floor(editor->portal_texture_view->position.w / (button_w + button_gap + offset_x));
+	texture_count = 10;
+	i = 0;
+	while (i < texture_count)
+	{
+		str = ft_itoa(i);
+		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+		temp_elem = bui_new_element(editor->portal_texture_view, str, coord);
+		ft_strdel(&str);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../ui/ui_images/doom.jpg", NULL);
+		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
+		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
+		add_to_list(&editor->portal_texture_buttons, temp_elem, sizeof(t_bui_element));
+		i++;
+	}
+
+	// wall sprite buttons
+	editor->wall_sprite_buttons = NULL;
+	editor->active_wall_sprite = NULL;
+	amount_on_x = floor(editor->wall_sprite_view->position.w / (button_w + button_gap + offset_x));
+	texture_count = 5;
+	i = 0;
+	while (i < texture_count)
+	{
+		str = ft_itoa(i);
+		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+		temp_elem = bui_new_element(editor->wall_sprite_view, str, coord);
+		ft_strdel(&str);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../ui/ui_images/doom.jpg", NULL);
+		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
+		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
+		add_to_list(&editor->wall_sprite_buttons, temp_elem, sizeof(t_bui_element));
 		i++;
 	}
 }
 
-void	entity_sprite_init(t_editor *doom)
-{
-	load_texture(&doom->entity_sprites[0], "../textures/whiteofficer.bmp", 128, 128);
-	split_texture(&doom->entity_sprites[0]);
-
-	entity_sprite_button_init(doom);
-}
-
-void	entity_sprite_buttons(t_editor *doom, t_grid *grid)
-{
-	int i;
-
-	if (grid->modify_entity == NULL) // nothing to modify
-		return ;
-	i = 0;
-	while (i < doom->entity_sprites[0].max_textures)
-	{
-		if (doom->entity_sprite_buttons[i]->state == 1)
-		{
-			grid->modify_entity->sprite_id = i;
-			doom->entity_sprite_buttons[i]->shadow = 0;
-			doom->entity_sprite_buttons[i]->offset_x = 5;
-			doom->entity_sprite_buttons[i]->offset_y = 5;
-		}
-		if (grid->modify_entity->sprite_id != i)
-		{
-			doom->entity_sprite_buttons[i]->shadow = 1;
-			doom->entity_sprite_buttons[i]->offset_x = 0;
-			doom->entity_sprite_buttons[i]->offset_y = 0;
-		}
-		i++;
-	}
-}
-
-void	entity_edit_button_init(t_editor *doom)
+/*
+ ** Adds a new button at x, y to the prefered list.
+*/
+// TODO: add this to better_libui? this means that the textures should be saved there too.
+// 	but dont add any textures before the dynamic texture path and font path is done.
+// TODO: remove the str, its only for debugging before i actually know how i will get the values  from the buttons for direction.
+void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *str)
 {
 	t_xywh coord;
-	t_wall_edit *option;
+	t_bui_element *radio;
 
-	option = &doom->option;
-/*
-*	"RENDER VIEW"
-*/
-	option->ent_render_sprite = ui_create_surface(doom->edit_window, option->view->coord, option->menu);
-	option->ent_render_sprite->shadow = 0;
-	option->ent_render_sprite->render = 0;
-/*
-* "SPRITE" tab
-*/
-// the button
-	coord = ui_init_coords(25, 25, 100, 50);
-	option->ent_sprite_button = ui_create_button(doom->edit_window, coord, option->add_view);
-	ft_update_elem_background(option->ent_sprite_button, doom->palette.elem_elem_elem);
-	ft_set_text(&option->ent_sprite_button->text, "Sprite");
-	option->ent_sprite_button->text.centered = 1;
-	option->ent_sprite_button->toggleable = 1;
-	option->ent_sprite_button->shadow = 0;
-	option->ent_sprite_button->render = 0;
-// the sprites
-	coord = ui_init_coords(25, 100, option->add_view->coord.w - 50, option->add_view->coord.h - 125);
-	option->ent_sprites = ui_create_surface(doom->edit_window, coord, option->add_view);
-	ft_update_elem_background(option->ent_sprites, 0xffffffff);
-	option->ent_sprites->shadow = 0;
-	option->ent_sprites->render = 0;
-/*
-**	"OTHER" tab
-*/
-	coord = ui_init_coords(150, 25, 100, 50);
-	option->ent_info_button = ui_create_button(doom->edit_window, coord, option->add_view);
-	ft_update_elem_background(option->ent_info_button, doom->palette.elem_elem_elem);
-	ft_set_text(&option->ent_info_button->text, "Other");
-	option->ent_info_button->text.centered = 1;
-	option->ent_info_button->toggleable = 1;
-	option->ent_info_button->shadow = 0;
-	option->ent_info_button->render = 0;
-// the menu;
-	coord = ui_init_coords(25, 125, option->add_view->surface->w - 50, option->add_view->surface->h - 150);
-	option->ent_info_menu = ui_create_surface(doom->edit_window, coord, option->add_view);
-	ft_update_elem_background(option->ent_info_menu, doom->palette.elem_elem);
-	option->ent_info_menu->shadow = 0;
-	option->ent_info_menu->render = 0;
-// id text area
-	coord = ui_init_coords(0, 0, 100, 50);
-	option->ent_info_id_text = ui_create_surface(doom->edit_window, coord, option->ent_info_menu);
-	ft_update_elem_background(option->ent_info_id_text, doom->palette.elem_elem);
-	ft_set_text(&option->ent_info_id_text->text, "id: -1");
-	option->ent_info_id_text->shadow = 0;
-// health text area
-	coord = ui_init_coords(0, 75, 100, 50);
-	option->ent_info_health_text = ui_create_surface(doom->edit_window, coord, option->ent_info_menu);
-	ft_update_elem_background(option->ent_info_health_text, doom->palette.elem_elem);
-	ft_set_text(&option->ent_info_health_text->text, "health:");
-	option->ent_info_health_text->shadow = 0;
-
-	coord = ui_init_coords(100, 75, option->ent_info_menu->coord.w - 100, 50);
-	option->ent_info_health_text_area = ui_create_textarea(doom->edit_window, coord, option->ent_info_menu);
-	option->ent_info_health_text_area->shadow = 0;
-
-// speed text area
-	coord = ui_init_coords(0, 150, 100, 50);
-	option->ent_info_speed_text = ui_create_surface(doom->edit_window, coord, option->ent_info_menu);
-	ft_update_elem_background(option->ent_info_speed_text, doom->palette.elem_elem);
-	ft_set_text(&option->ent_info_speed_text->text, "speed:");
-	option->ent_info_speed_text->shadow = 0;
-
-	coord = ui_init_coords(100, 150, option->ent_info_menu->coord.w - 100, 50);
-	option->ent_info_speed_text_area = ui_create_textarea(doom->edit_window, coord, option->ent_info_menu);
-	option->ent_info_speed_text_area->shadow = 0;
-
-// armor text area
-	coord = ui_init_coords(0, 225, 100, 50);
-	option->ent_info_armor_text = ui_create_surface(doom->edit_window, coord, option->ent_info_menu);
-	ft_update_elem_background(option->ent_info_armor_text, doom->palette.elem_elem);
-	ft_set_text(&option->ent_info_armor_text->text, "armor:");
-	option->ent_info_armor_text->shadow = 0;
-
-	coord = ui_init_coords(100, 225, option->ent_info_menu->coord.w - 100, 50);
-	option->ent_info_armor_text_area = ui_create_textarea(doom->edit_window, coord, option->ent_info_menu);
-	option->ent_info_armor_text_area->shadow = 0;
-// type drop down
-	coord = ui_init_coords(0, 300, 200, 50);
-	option->type_dropdown = ui_create_drop(doom->edit_window, coord, option->ent_info_menu);
-	option->type_dropdown->shadow = 0;
-	ft_set_text(&option->type_dropdown->text, "select type");
-	ft_drop_down_add_item(option->type_dropdown, "neutral");
-	ft_drop_down_add_item(option->type_dropdown, "friendly");
-	ft_drop_down_add_item(option->type_dropdown, "enemy");
+	coord = ui_init_coords(x, y, 15, 15);
+	radio = bui_new_element(parent, str, coord);
+	radio->text_y = -100; // This is because we dont want to display the text, only store it for the map file
+	bui_set_element_color(radio, 0x00);
+	bui_set_element_image_from_path(radio, ELEMENT_DEFAULT,"../ui/ui_images/radio_button_off.png", NULL);
+	bui_set_element_image_from_path(radio, ELEMENT_HOVER,"../ui/ui_images/radio_button_hover.png", NULL);
+	bui_set_element_image_from_path(radio, ELEMENT_CLICK,"../ui/ui_images/radio_button_on.png", NULL);
+	add_to_list(list, radio, sizeof(t_bui_element));
 }
+
+// list is the linked list you will add the t_entity_preset to from path
+// TODO: there are alot of sizeof() maybe store the size somewhere so you dont have to call is 20 times
+// 	might not have a difference sine youre only calling this function when you startup the program.
+// NOTE: first line in the file is just description of the value in that column.
+// TODO: have an int array with all the different descriptions of value  and then take them from there when you store it...
+// 	aka first read the first line and store those value descriptions and store them in an array, hard to explain.
+// 	t.ex "name" = index 0, "scale" = index 1 ...
+void	init_entity_presets(t_list **list, char *path)
+{
+	t_entity_preset *preset;
+	char *line;
+	char **arr;
+	int fd;
+	int i = 0;
+
+	fd = open(path, O_RDONLY);
+	get_next_line(fd, &line);
+	ft_strdel(&line);
+	while (get_next_line(fd, &line))
+	{
+		arr = ft_strsplit(line, '\t');
+		preset = new_entity_preset();
+		preset->name = ft_strdup(arr[0]);
+		preset->scale = ft_atof(arr[1]);
+
+		if (ft_strcmp(arr[2], "hostile") == 0)
+			preset->mood = ENTITY_TYPE_HOSTILE;
+		else if (ft_strcmp(arr[2], "affable") == 0)
+			preset->mood = ENTITY_TYPE_FRIENDLY;
+		else if (ft_strcmp(arr[2], "neutral") == 0)
+			preset->mood = ENTITY_TYPE_NEUTRAL;
+
+		preset->health = ft_atoi(arr[3]);
+		preset->damage = ft_atoi(arr[4]);
+		preset->speed = ft_atoi(arr[5]);
+
+		if (ft_strcmp(arr[6], "melee") == 0)
+			preset->attack_style = ENTITY_STYLE_MELEE;
+		else if (ft_strcmp(arr[6], "ranged") == 0)
+			preset->attack_style = ENTITY_STYLE_RANGED;
+		else
+			preset->attack_style = ENTITY_STYLE_NONE;
+
+		preset->flying = ft_atoi(arr[7]);
+
+		ft_strdel(&line);
+		i++;
+		add_to_list(list, preset, sizeof(t_entity_preset));
+	}
+ft_printf("[init_entity_presets] %d entity presets read.\n", i);
+}
+
+void	init_entity_editor(t_editor *editor)
+{
+	t_xywh coord;
+
+	// Toolbox menu
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_entity = bui_new_menu(editor->new_edit_window, "Entity Toolbox", coord);
+
+	// View menu
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_view_entity = bui_new_menu(editor->new_edit_window, "Entity View", coord);
+
+	// Drop down menu for all the entity preset types
+	coord = ui_init_coords(5, 20, editor->edit_toolbox_entity->position.w - 10, 20);
+	editor->entity_type_drop = bui_new_dropdown_preset(editor->edit_toolbox_entity, "Entity types", coord);
+
+	// adding elements to the drop
+	t_list *curr;
+	t_entity_preset *preset;
+
+	curr = editor->entity_presets;
+	while (curr)
+	{
+		preset = curr->content;
+		preset_dropdown_add_element(editor->entity_type_drop, preset->name);
+		curr = curr->next;
+	}
+
+	// radio buttons for entity direction
+	int start_x = editor->edit_toolbox_entity->position.w * 0.5f - 50; // this -50 == radio_parent->position.w * 0.5 
+	int start_y = editor->edit_toolbox_entity->position.h * 0.5f;
+	coord = ui_init_coords(start_x, start_y, 100, 100);
+	t_bui_element *radio_parent = bui_new_element(editor->edit_toolbox_entity, "direction", coord);
+
+	start_x = radio_parent->position.w * 0.5f - 7; // this -7 == radio_button->position.w * 0.5
+	start_y = 25; 
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			radio_parent, start_x, start_y, "270");
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			radio_parent, start_x + 25, start_y + 25, "0");
+
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			radio_parent, start_x, start_y + 50, "90");
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			radio_parent, start_x - 25, start_y + 25, "180");
+
+}
+
