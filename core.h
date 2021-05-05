@@ -19,70 +19,6 @@ typedef struct	s_texture	t_texture;
 typedef struct	s_game		t_game;
 typedef	struct	s_player	t_player;
 
-// Remove s_xyz and s_doom and uncomment ./engine/game...
-# define W				1920
-typedef struct	s_xyz
-{
-	float	x;
-	float	y;
-	float	z;
-}				t_xyz;
-
-typedef struct		s_wall_a
-{
-	t_xyz			v1;
-	t_xyz			v2;
-	int				texture;
-}			t_wall_a;	
-typedef struct		s_entity_a
-{
-	t_xyz			where;
-	float			dist;
-}					t_entity_a;
-
-typedef struct	s_sector_a
-{
-    float		floor;
-	float		ceil;
-    signed char *neighbors;
-    signed char *textures;
-    unsigned	npoints;
-    t_xyz		*vertex;
-	float		light;
-	float		gravity;
-	short		entity_nb;
-	t_entity_a	entity[10];
-} 				t_sector_a;
-
-typedef struct	s_player_a
-{
-    t_xyz		where;
-    t_xyz		velocity;
-    float		angle;
-	float		anglesin;
-	float		anglecos;
-	float 		yaw;
-	int 		moving;
-	int			falling;
-	int			ground;
-	int			ducking;
-    unsigned	sector;
-}				t_player_a;
-typedef	struct		s_keys
-{
-	int				chr;
-	short			num;
-	int				fnc;
-	int				w;
-	int				a;
-	int				s;
-	int				d;
-	int				t;
-	int				space;
-	int				l_ctrl;
-	int				l_shift;
-	int				tab;
-}					t_keys;
 typedef	struct		s_fps
 {
 	float		curr;
@@ -95,64 +31,6 @@ typedef	struct		s_fps
 	float		delta_last;
 	float		delta;
 }					t_fps;
-typedef struct	s_ab
-{
-	int			a1;
-	int			a2;
-	int			b1;
-	int			b2;
-}				t_ab;
-
-typedef struct	s_height_info //yinfo
-{
-	float		yceil;
-	float		yfloor;
-	float		nyceil;
-	float		nyfloor;
-	t_ab		y;
-	t_ab		ny;
-}				t_height_info;
-
-
-typedef struct	s_doom
-{
-	//window_init
-	int					quit;
-	char				*file;
-	char				*name;
-	SDL_Window			*win;
-	SDL_Surface			*surface;
-	//t_tpool				tpool;
-
-	//read_map
-	t_xyz				*vert;//is redundant after secotors are created
-	t_wall_a				*walls; //temp
-	t_sector_a			*sectors;
-	t_entity_a			*entity;
-	t_player_a			player;
-	unsigned			num_sector;
-	unsigned			num_sectors;
-
-	//Input
-	t_keys				key;
-
-	//random
-	int					start_x;
-	int					end_x;
-	float				yaw;
-	t_fps				fps;
-	short				ytop[W];
-	short				ybottom[W];
-	t_height_info		height_info;
-
-	//Textures
-	SDL_Surface			*texture[5];
-	int					u0;
-	int					u1;
-	SDL_Surface			*imp;
-	t_list *entities;
-
-}		t_doom;
 
 struct	s_point
 {
@@ -298,7 +176,7 @@ struct				s_player
 struct				s_game
 {
 	time_t			timer_start;
-	t_doom			*doom;
+//	t_doom			*doom;
 	t_player		player;
 	t_list			*all_weapons; // list of t_weapons?
 	t_list			*perks; // list of all perks (t_perk *)
