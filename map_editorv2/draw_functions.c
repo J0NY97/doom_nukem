@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2020/09/27 16:30:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/05 13:17:37 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -466,7 +466,8 @@ void	draw_hover_info(t_editor *doom, t_grid *grid)
 	char		*str;
 	
 	str = ft_sprintf("%d, %d\nzoom: %d\n", (int)grid->hover.x, (int)grid->hover.y, (int)grid->gap);
-	bui_set_element_text(doom->hover_info, str, 0, 0, 0xffffffff);
+	doom->hover_info->text_color = 0xffffffff;
+	bui_set_element_text(doom->hover_info, str, 0, 0);
 	ft_strdel(&str);
 }
 
@@ -477,6 +478,7 @@ void	draw_selected_sector_info(t_editor *doom, t_grid *grid)
 	if (grid->modify_sector == NULL)
 		return ;
 	str = ft_sprintf("Sector:\nid: %d\nwalls: %d\n", grid->modify_sector->id, get_sector_wall_amount(grid->modify_sector));
-	bui_set_element_text(doom->selected_sector_info, str, 0, 0, 0xffffffff);
+	doom->selected_sector_info->text_color = 0xffffffff;
+	bui_set_element_text(doom->selected_sector_info, str, 0, 0);
 	ft_strdel(&str);
 }

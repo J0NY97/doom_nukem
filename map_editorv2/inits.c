@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2020/09/27 15:42:22 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/05 13:15:49 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -111,18 +111,18 @@ void	toolbox_init(t_editor *doom)
 	editor->select_mode_wall->text_y = -20;
 	editor->select_mode_sector->text_y = -20;
 	editor->select_mode_entity->text_y = -20;
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_vertex.png");
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_vertex_click.png");
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_vertex_click.png");
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_wall.png");
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_wall_click.png");
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_wall_click.png");
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_sector.png");
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_sector_click.png");
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_sector_click.png");
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_entity.png");
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_entity_click.png");
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_entity_click.png");
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_vertex.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_vertex_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_vertex_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_wall.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_wall_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_wall_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_sector.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_sector_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_sector_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_DEFAULT, "../engine/ui/ui_images/selection_mode_entity.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_HOVER, "../engine/ui/ui_images/selection_mode_entity_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_CLICK, "../engine/ui/ui_images/selection_mode_entity_click.png", NULL);
 		// putting them in list
 	// NOTE: these are there so that we can use the only one toggled at a time function
 	editor->select_mode_buttons = NULL;
@@ -162,9 +162,9 @@ t_bui_element	*new_map_type_tickbox(t_bui_element *parent, char *text, t_xywh co
 	text_elem = bui_new_element(parent, text, text_coord);
 	coord.x += text_coord.w; 
 	tick = bui_new_element(parent, " ", coord);
-	bui_set_element_image_from_path(tick, ELEMENT_DEFAULT, "../engine/ui/ui_images/tick_box_off.png");
-	bui_set_element_image_from_path(tick, ELEMENT_HOVER, "../engine/ui/ui_images/tick_box_hover.png");
-	bui_set_element_image_from_path(tick, ELEMENT_CLICK, "../engine/ui/ui_images/tick_box_on.png");
+	bui_set_element_image_from_path(tick, ELEMENT_DEFAULT, "../engine/ui/ui_images/tick_box_off.png", NULL);
+	bui_set_element_image_from_path(tick, ELEMENT_HOVER, "../engine/ui/ui_images/tick_box_hover.png", NULL);
+	bui_set_element_image_from_path(tick, ELEMENT_CLICK, "../engine/ui/ui_images/tick_box_on.png", NULL);
 
 	return (tick);
 }
@@ -184,9 +184,9 @@ void	button_init(t_editor *doom)
 	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20, button_w, button_w);
 	doom->button_draw = bui_new_element(editor->draw_mode, "draw", coord);
 	doom->button_draw->text_y = -20;
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_DEFAULT, "../engine/ui/ui_images/draw_mode.png");
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_HOVER, "../engine/ui/ui_images/draw_mode_click.png");
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_CLICK, "../engine/ui/ui_images/draw_mode_click.png");
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_DEFAULT, "../engine/ui/ui_images/draw_mode.png", NULL);
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_HOVER, "../engine/ui/ui_images/draw_mode_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_CLICK, "../engine/ui/ui_images/draw_mode_click.png", NULL);
 	// add draw button to the list of select_buttons
 	add_to_list(&editor->select_mode_buttons, editor->button_draw, sizeof(t_bui_element));
 
@@ -202,9 +202,9 @@ void	button_init(t_editor *doom)
 	coord = ui_init_coords(editor->map_name_input->position.x + editor->map_name_input->position.w + gap, 20, button_w, button_w);
 	editor->button_save = bui_new_element(editor->other_mode, "save", coord);
 	editor->button_save->text_y = -20;
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_DEFAULT, "../engine/ui/ui_images/save_button.png");
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_HOVER, "../engine/ui/ui_images/save_button_click.png");
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_CLICK, "../engine/ui/ui_images/save_button_click.png");
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_DEFAULT, "../engine/ui/ui_images/save_button.png", NULL);
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_HOVER, "../engine/ui/ui_images/save_button_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_CLICK, "../engine/ui/ui_images/save_button_click.png", NULL);
 // map type tickboxes
 	coord = ui_init_coords(editor->button_save->position.x + editor->button_save->position.w + gap, editor->button_save->position.y - gap, 20, 20);
 	editor->endless_tickbox = new_map_type_tickbox(editor->other_mode, "endless", coord);
@@ -374,7 +374,7 @@ void	init_sector_editor(t_editor *editor)
 		str = ft_sprintf("%d", i);
 		temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg", NULL);
 		add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
 		i++;
 	}
@@ -461,9 +461,9 @@ void	init_wall_editor(t_editor *editor)
 
 	coord = ui_init_coords(40, 0, 20, 20);
 	editor->wall_solid_tick = bui_new_element(editor->wall_solid, " ", coord);
-	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_DEFAULT, "../engine/ui/ui_images/tick_box_off.png");
-	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_HOVER, "../engine/ui/ui_images/tick_box_hover.png");
-	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_CLICK, "../engine/ui/ui_images/tick_box_on.png");
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_DEFAULT, "../engine/ui/ui_images/tick_box_off.png", NULL);
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_HOVER, "../engine/ui/ui_images/tick_box_hover.png", NULL);
+	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_CLICK, "../engine/ui/ui_images/tick_box_on.png", NULL);
 
 
 	// wall sprite view elements
@@ -519,9 +519,9 @@ void	init_wall_editor(t_editor *editor)
 		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
 		temp_elem = bui_new_element(editor->wall_texture_view, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
-		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg");
-		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg", NULL);
 		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
 		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
 		add_to_list(&editor->wall_texture_buttons, temp_elem, sizeof(t_bui_element));
@@ -542,9 +542,9 @@ void	init_wall_editor(t_editor *editor)
 		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
 		temp_elem = bui_new_element(editor->portal_texture_view, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
-		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg");
-		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg", NULL);
 		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
 		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
 		add_to_list(&editor->portal_texture_buttons, temp_elem, sizeof(t_bui_element));
@@ -564,9 +564,9 @@ void	init_wall_editor(t_editor *editor)
 		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
 		temp_elem = bui_new_element(editor->wall_sprite_view, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg");
-		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg");
-		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg");
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, "../engine/ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, "../engine/ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, "../engine/ui/ui_images/doom.jpg", NULL);
 		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
 		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
 		add_to_list(&editor->wall_sprite_buttons, temp_elem, sizeof(t_bui_element));
@@ -589,9 +589,9 @@ void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *
 	radio = bui_new_element(parent, str, coord);
 	radio->text_y = -100; // This is because we dont want to display the text, only store it for the map file
 	bui_set_element_color(radio, 0x00);
-	bui_set_element_image_from_path(radio, ELEMENT_DEFAULT,"../engine/ui/ui_images/radio_button_off.png");
-	bui_set_element_image_from_path(radio, ELEMENT_HOVER,"../engine/ui/ui_images/radio_button_hover.png");
-	bui_set_element_image_from_path(radio, ELEMENT_CLICK,"../engine/ui/ui_images/radio_button_on.png");
+	bui_set_element_image_from_path(radio, ELEMENT_DEFAULT,"../engine/ui/ui_images/radio_button_off.png", NULL);
+	bui_set_element_image_from_path(radio, ELEMENT_HOVER,"../engine/ui/ui_images/radio_button_hover.png", NULL);
+	bui_set_element_image_from_path(radio, ELEMENT_CLICK,"../engine/ui/ui_images/radio_button_on.png", NULL);
 	add_to_list(list, radio, sizeof(t_bui_element));
 }
 
