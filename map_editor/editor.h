@@ -7,6 +7,7 @@
 # include "../../better_libui-windows/better_libui.h"
 # include "../../libgfx-windows/libgfx.h"
 # include "../../ft_printf-windows/ft_printf.h"
+# include "../path.h"
 
 # define ui_image_path "../ui/ui_images/"
 

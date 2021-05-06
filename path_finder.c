@@ -6,25 +6,40 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/06 12:03:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/06 12:07:58 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/05/06 12:22:14 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stdlib.h"
-#include ""
+#include "../libft-windows/libft.h"
+#include "../ft_printf-windows/ft_printf.h"
 
 int 	main(void)
 {
-	int fd;
-	char *line;
-	int i;
+	int		i;
+	int		fd;
+	char	*line;
+	char	*temp;
 
 	i = -1;
-	fd = open("path.h", O_RDWR);
-	while (++i < 12)
-	{
-		line = get_next_line(fd, &line);
-		free(&line);
-	}
-
+	fd = creat("path.h", O_RDWR);
+	temp = realpath("./", NULL);
+	ft_fprintf(fd, "/* ************************************************************************** */\n\
+/*                                                                            */\n\
+/*                                                        :::      ::::::::   */\n\
+/*   path.h                                             :+:      :+:    :+:   */\n\
+/*                                                    +:+ +:+         +:+     */\n\
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */\n\
+/*                                                +#+#+#+#+#+   +#+           */\n\
+/*   Created: 2021/05/06 12:13:01 by jsalmi            #+#    #+#             */\n\
+/*   Updated: 2021/05/06 12:13:07 by jsalmi           ###   ########.fr       */\n\
+/*                                                                            */\n\
+/* ************************************************************************** */\n\
+\n\
+#ifndef PATH_H\n\
+# define PATH_H\n\
+# define ROOT_PATH \"%s/\"\n#endif", temp);
+	close(fd);
+	free(temp);
+	return (0);
 }
