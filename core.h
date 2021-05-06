@@ -2,11 +2,9 @@
 # define CORE_H
 # define SDL_MAIN_HANDLED
 
-# include "../libgfx-windows/libgfx.h"
+# include "libgfx.h"
 //# include "./engine/game/srcs/doom.h"
 # include <time.h>
-
-# define ROOT_PATH "/Users/jsalmi/Desktop/doom_nukem-windows/"
 
 # define INT_MAX 2147483647
 # define INT_MIN -2147483648
