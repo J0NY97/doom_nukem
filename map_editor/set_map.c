@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2020/09/27 16:30:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/06 14:04:41 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -281,4 +281,6 @@ void	set_map(t_editor *doom)
 	ft_strdel(&sector);
 	ft_strdel(&entity);
 	ft_strdel(&str);
+
+	ft_putstr("Map saved Successfully.\n");
 }
