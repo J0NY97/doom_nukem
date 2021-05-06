@@ -6,6 +6,8 @@
 //# include "./engine/game/srcs/doom.h"
 # include <time.h>
 
+# define ROOT_PATH "/Users/jsalmi/Desktop/doom_nukem-windows/"
+
 # define INT_MAX 2147483647
 # define INT_MIN -2147483648
 # define EMPTY_VEC (t_vector){INT_MAX, INT_MAX, INT_MAX}
