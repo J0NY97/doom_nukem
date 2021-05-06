@@ -6,13 +6,13 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/06 12:03:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/06 12:22:14 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/06 12:52:32 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stdlib.h"
-#include "../libft-windows/libft.h"
-#include "../ft_printf-windows/ft_printf.h"
+#include "libft.h"
+#include "ft_printf.h"
 
 int 	main(void)
 {
@@ -22,7 +22,7 @@ int 	main(void)
 	char	*temp;
 
 	i = -1;
-	fd = creat("path.h", O_RDWR);
+	fd = creat("path.h", S_IRUSR | S_IWUSR);
 	temp = realpath("./", NULL);
 	ft_fprintf(fd, "/* ************************************************************************** */\n\
 /*                                                                            */\n\

@@ -51,8 +51,8 @@ $(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
 	make -C ../libgfx
 	make -C ../better_libui
 
-$(NAME): $(OBJS)
-	@gcc -o $(NAME)	$(INCLUDES) $(LIB_FOLDERS) $(LIBS) $(OBJS) $(FLAGS)
+$(NAME): $(SRCS)
+	@gcc -o $(NAME)	$(INCLUDES) $(LIB_FOLDERS) $(LIBS) $(SRCS) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:

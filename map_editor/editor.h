@@ -3,13 +3,11 @@
 # define SDL_MAIN_HANDLED
 
 # include "../core.h"
-# include "../../libft-windows/libft.h"
-# include "../../better_libui-windows/better_libui.h"
-# include "../../libgfx-windows/libgfx.h"
-# include "../../ft_printf-windows/ft_printf.h"
+# include "libft.h"
+# include "better_libui.h"
+# include "libgfx.h"
+# include "ft_printf.h"
 # include "../path.h"
-
-# define ui_image_path "../ui/ui_images/"
 
 // TODO: portal button in the wall edit window. som en tickbox
 //
