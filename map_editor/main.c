@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/06 12:25:46 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/06 12:41:27 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,7 @@ int	main(int argc, char **argv)
 	grid_init(doom);
 
 	// NOTE: this needs to be called before map getter so that we can put the correct preset in the correct entity
-	char *p = ft_strjoin(ROOT_PATH, "map_editor/entities.preset");
-	ft_putstr(p);
-	init_entity_presets(&doom->entity_presets, p);
-	ft_strdel(&p);
+	init_entity_presets(&doom->entity_presets, ROOT_PATH"map_editor/entities.preset");
 
 	// TODO: figure out better place for this.
 	doom->default_entity = new_entity_preset();
