@@ -1,6 +1,6 @@
 [submodule "libft"]
 	path = libft
-	url = https://github.com/J0NY97/libft.git
+	url = https://github.com/J0NY97/libft-windows.git
 [submodule "libui"]
 	path = libui
 	url = https://github.com/J0NY97/libui.git
@@ -9,7 +9,13 @@
 	url = https://github.com/J0NY97/ft_printf_minimal.git
 [submodule "libgfx"]
 	path = libgfx
-	url = https://github.com/J0NY97/libgfx.git
+	url = https://github.com/J0NY97/libgfx-windows.git
 [submodule "game"]
 	path = game
 	url = https://github.com/Epicurius/Doom.git
+[submodule "better_libui"]
+	path = better_libui
+	url = https://github.com/J0NY97/better_libui-windows.git
+[submodule "ft_printf"]
+	path = ft_printf
+	url = https://github.com/J0NY97/ft_printf-windows.git
