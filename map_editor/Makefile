@@ -27,7 +27,7 @@ LIB_FOLDERS = \
 	-L../libgfx \
 	-L../SDL2/lib
 
-LIB = -lSDL2 -lSDL2_ttf -lSDL2_image -llibft.a -llibgfx.a -lbetter_libui.a -llibprintf.a
+LIB = -lSDL2 -lSDL2_ttf -lSDL2_image -lft -lgfx -lui -lprintf
 
 LIBFT = ../libft
 BETTER_LIBUI = ../better_libui
@@ -36,7 +36,7 @@ FT_PRINTF = ../ft_printf
 
 LIBS = \
 	$(LIBGFX)/libgfx.a \
-	$(BETTER_LIBUI)/better_libui.a \
+	$(BETTER_LIBUI)/libui.a \
 	$(FT_PRINTF)/libprintf.a \
 	$(LIBFT)/libft.a \
 	-lSDL2 -lSDL2_ttf -lSDL2_image
@@ -52,7 +52,7 @@ $(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
 	make -C ../better_libui
 
 $(NAME): $(SRCS)
-	@gcc -o $(NAME)	$(INCLUDES) $(LIB_FOLDERS) $(LIBS) $(SRCS) $(FLAGS)
+	@gcc -o $(NAME)	$(INCLUDES) $(LIB_FOLDERS) $(LIB) $(SRCS) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:
