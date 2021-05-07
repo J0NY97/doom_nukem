@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 11:32:02 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/07 14:18:23 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,7 +114,6 @@ int	main(int argc, char **argv)
 							gfx_vector_multiply(doom->grid.modify_sector->first_point->pos, doom->grid.gap));
 		}
 		draw_hover_info(doom, &doom->grid);
-		draw_selected_sector_info(doom, &doom->grid);
 		loop_buttons(doom);
 
 		bui_render_the_event(libui);

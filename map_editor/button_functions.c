@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 13:59:23 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 11:24:28 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/07 14:46:32 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,6 +57,8 @@ ft_printf("Adding portal\n");
 	{
 		wall_one->neighbor = wall_two_sector;
 		wall_two->neighbor = wall_one_sector;
+		wall_one->solid = 0;
+		wall_two->solid = 0;
 	}
 }
 
@@ -74,7 +76,10 @@ void	remove_portal(t_editor *doom, t_grid *grid)
 		while (w)
 		{
 			if (wall_compare(w->content, grid->modify_wall))
+			{
 				((t_wall *)w->content)->neighbor = -1;
+				((t_wall *)w->content)->solid = 1;
+			}
 			w = w->next;
 		}
 		s = s->next;
@@ -138,14 +143,6 @@ void	loop_buttons(t_editor *editor)
 		else
 			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".doom");
 		set_map(editor);
-	}
-	else if (bui_button(editor->button_add))
-	{
-		add_portal(editor, &editor->grid);
-	}
-	else if (bui_button(editor->button_remove_portal))
-	{
-		remove_portal(editor, &editor->grid);
 	}
 
 	// Returns 1 when enter is pressed.

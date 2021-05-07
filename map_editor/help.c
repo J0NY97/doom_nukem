@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 11:22:04 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/07 14:41:33 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,7 +120,7 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 	new_wall->texture_scale = 1;
 	new_wall->texture_id = 0;
 	new_wall->portal_texture_id = 0;
-	new_wall->solid = -1; 
+	new_wall->solid = 1; 
 	new_wall->portal = -1; 
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;

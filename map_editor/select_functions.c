@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2020/09/27 16:30:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/07 14:42:49 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -167,29 +167,20 @@ void	select_point(t_editor *doom, t_grid *grid)
 ft_printf("Point selected.\n");
 }
 
-void	draw_selected_point(t_editor *doom, t_grid *grid)
+void	draw_selected_point(t_editor *editor, t_grid *grid)
 {
-	SDL_Surface *text;
-	SDL_Rect	temp;
 	char		*str;
-	TTF_Font	*font;
-	int			margin;
 
 	if (grid->modify_point == NULL)
-		return ;
-	gfx_draw_vector(grid->elem->active_surface, 0xffffae42, 2, gfx_vector_multiply(grid->modify_point->pos, grid->gap));
-	margin = 10;
-	str = ft_sprintf("Selected Vector:\nx %d\ny %d\nconnections: %d\n", (int)grid->modify_point->pos.x, (int)grid->modify_point->pos.y, get_point_connection_amount(&grid->walls, grid->modify_point));
-	font = TTF_OpenFont("../libui/TTF/font.ttf", 20);
-	text = TTF_RenderText_Blended_Wrapped(font, str, (SDL_Color) {255, 255, 255, 255}, doom->info_area->active_surface->w - (margin * 2));
-	temp.x = margin + 100;
-	temp.y = margin;
-	temp.w = text->w;
-	temp.h = text->h;
-	SDL_BlitSurface(text, NULL, doom->info_area->active_surface, &temp);
+		str = ft_strdup("Selected Vector: \nNULL");
+	else
+	{
+		str = ft_sprintf("Selected Vector:\nx %d\ny %d\nconnections: %d\n", (int)grid->modify_point->pos.x, (int)grid->modify_point->pos.y, get_point_connection_amount(&grid->walls, grid->modify_point));
+		gfx_draw_vector(grid->elem->active_surface, 0xffffae42, 2, gfx_vector_multiply(grid->modify_point->pos, grid->gap));
+	}
+	editor->selected_vector_info->text_color = 0xffffffff;
+	bui_set_element_text(editor->selected_vector_info, str, 0, 0);
 	ft_strdel(&str);
-	TTF_CloseFont(font);
-	SDL_FreeSurface(text);
 }
 
 int		get_point_connection_amount(t_list **walls, t_point *point)
@@ -246,6 +237,7 @@ void	selection(t_editor *editor, t_grid *grid, SDL_Event *e)
 			select_sector(editor, grid);
 		else
 			editor->grid.modify_sector = NULL;
+		ft_putstr("Selection Done.\n");
 	}
 }
 
@@ -344,26 +336,33 @@ void	draw_selected_wall(t_editor *doom, t_grid *grid)
 	gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
 }
 
-void	draw_selected_sector(t_editor *doom, t_grid *grid)
+void	draw_selected_sector(t_editor *editor, t_grid *grid)
 {
 	t_list *curr_wall;
+	char *str;
 
 	if (grid->modify_sector == NULL)
-		return ;
-	curr_wall = grid->modify_sector->walls;
-	while (curr_wall)
+		str = ft_strdup("Selected Sector: \nNULL");
+	else
 	{
-		t_vector orig = gfx_vector_multiply((t_vector){(((t_wall *)curr_wall->content)->orig->pos.x),
-											(((t_wall *)curr_wall->content)->orig->pos.y), 0}, grid->gap);
-		t_vector dest = gfx_vector_multiply((t_vector){(((t_wall *)curr_wall->content)->dest->pos.x),
-											(((t_wall *)curr_wall->content)->dest->pos.y), 0}, grid->gap);
-		orig.x += 1;
-		orig.y += 1;
-		dest.x += 1;
-		dest.y += 1;
-		gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
-		curr_wall = curr_wall->next;
+		str = ft_sprintf("Selected Sector:\nid: %d\nwalls: %d\n", grid->modify_sector->id, get_sector_wall_amount(grid->modify_sector));	
+		curr_wall = grid->modify_sector->walls;
+		while (curr_wall)
+		{
+			t_vector orig = gfx_vector_multiply((t_vector){(((t_wall *)curr_wall->content)->orig->pos.x),
+												(((t_wall *)curr_wall->content)->orig->pos.y), 0}, grid->gap);
+			t_vector dest = gfx_vector_multiply((t_vector){(((t_wall *)curr_wall->content)->dest->pos.x),
+												(((t_wall *)curr_wall->content)->dest->pos.y), 0}, grid->gap);
+			orig.x += 1;
+			orig.y += 1;
+			dest.x += 1;
+			dest.y += 1;
+			gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
+			curr_wall = curr_wall->next;
+		}
 	}
+	editor->selected_sector_info->text_color = 0xffffffff;
+	bui_set_element_text(editor->selected_sector_info, str, 0, 0);
 }
 
 void	select_sector(t_editor *doom, t_grid *grid)

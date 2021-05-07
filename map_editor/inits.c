@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 11:11:00 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/07 14:29:54 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,9 +146,12 @@ void	toolbox_init(t_editor *doom)
 	doom->selected_sector_info = bui_new_element(doom->info_area, "selected sector info", (t_xywh) {10, 75, 100, 50});
 	bui_set_element_color(doom->selected_sector_info, doom->info_area->color);
 
+	doom->selected_vector_info = bui_new_element(doom->info_area, "selected vector info", (t_xywh) {10, 130, 100, 55});
+	bui_set_element_color(doom->selected_vector_info, doom->info_area->color);
+
 	// new scale changer
 	coord = ui_init_coords(editor->info_area->position.w - 110, 320, 100, 40);
-	editor->scaler = new_changer_prefab(editor->info_area, "Scale", coord);
+	editor->scaler = new_changer_prefab(editor->info_area, "Map Scale", coord);
 }
 
 t_bui_element	*new_map_type_tickbox(t_bui_element *parent, char *text, t_xywh coord)
@@ -228,14 +231,6 @@ void	button_init(t_editor *doom)
 	coord = ui_init_coords(doom->info_area->position.w - 110, 100, 100, 50);
 	doom->button_edit = bui_new_element(doom->info_area, "edit", coord);
 	bui_set_element_color(doom->button_edit, doom->palette.elem_elem_elem);
-// add button
-	coord = ui_init_coords(doom->info_area->position.w - 110, 175, 100, 50);
-	doom->button_add = bui_new_element(doom->info_area, "add portal", coord);
-	bui_set_element_color(doom->button_add, doom->palette.elem_elem_elem);
-// remove button
-	coord = ui_init_coords(doom->info_area->position.w - 110, 250, 100, 50);
-	doom->button_remove_portal = bui_new_element(doom->info_area, "remove portal" , coord);
-	bui_set_element_color(doom->button_remove_portal, doom->palette.elem_elem_elem);
 }
 
 void	color_palette_init(t_color_palette *pal)

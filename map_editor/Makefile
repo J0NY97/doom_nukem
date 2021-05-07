@@ -55,6 +55,12 @@ $(NAME): $(SRCS)
 	@gcc -o $(NAME)	$(INCLUDES) $(LIB_FOLDERS) $(LIB) $(SRCS) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
+fclean_libs:
+	@make -C $(LIBFT) fclean 
+	@make -C $(LIBGFX) fclean
+	@make -C $(BETTER_LIBUI) fclean
+	@make -C $(FT_PRINTF) fclean
+
 clean:
 	@rm -f $(OBJS)
 	@make -C $(LIBFT) clean
@@ -63,17 +69,9 @@ clean:
 	@make -C $(FT_PRINTF) clean
 	@echo "$(NAME) was cleaned."
 
-fclean: clean
+fclean: fclean_libs clean
 	@rm -f $(NAME)
-	@make -C $(LIBFT) fclean
-	@make -C $(LIBGFX) fclean
-	@make -C $(BETTER_LIBUI) fclean
-	@make -C $(FT_PRINTF) fclean
 
-re: fclean all
-	@make -C $(LIBFT) re
-	@make -C $(LIBGFX) re
-	@make -C $(BETTER_LIBUI) re
-	@make -C $(FT_PRINTF) re
-
+re: fclean fclean_libs all
+	
 .PHONY: clean, all, re, fclean

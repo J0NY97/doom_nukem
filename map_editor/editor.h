@@ -181,10 +181,9 @@ struct			s_editor
 	t_bui_element	*button_remove;
 	t_bui_element	*button_save;
 	t_bui_element	*button_edit;
-	t_bui_element	*button_add;
-	t_bui_element	*button_remove_portal;
 	t_bui_element	*hover_info;
 	t_bui_element	*selected_sector_info;
+	t_bui_element	*selected_vector_info;
 
 	// Entity presets
 	t_list *entity_presets; // list of t_entity_preset , you can find it in ../core.h
@@ -407,6 +406,7 @@ void			remove_from_walls_non_free(t_list **walls, t_wall *wall); // use this if 
 void			remove_wall_from_all_sectors(t_list **sectors, t_wall *wall); // use this if you wanna remove the wall from all the sectors that have it
 void   			remove_wall_from_its_sector(t_editor *doom, t_grid *grid, t_wall *wall); // use this if you dont know which sector the wall is a part of.. and only if there is only one sector with that wall
 void			remove_all_non_existing_portals(t_list **sectors);
+int				get_sector_wall_amount(t_sector *sector);
 
 /* Point shit */
 void			remove_all_points_not_a_part_of_a_wall(t_list **points, t_list **walls);
@@ -420,6 +420,8 @@ void			texture_buttons(t_editor *doom, t_grid *grid);
 void			sprite_init(t_editor *doom);
 void			entity_sprite_init(t_editor *doom);
 void			entity_sprite_buttons(t_editor *doom, t_grid *grid);
+void			add_portal(t_editor *doom, t_grid *grid);
+void			remove_portal(t_editor *doom, t_grid *grid);
 
 /*
 ** Help
