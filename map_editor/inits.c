@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/06 12:45:23 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/07 11:11:00 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -460,11 +460,21 @@ void	init_wall_editor(t_editor *editor)
 	bui_set_element_color(editor->wall_solid, ((t_bui_element *)editor->wall_solid->parent)->color);
 
 	coord = ui_init_coords(40, 0, 20, 20);
-	editor->wall_solid_tick = bui_new_element(editor->wall_solid, " ", coord);
+	editor->wall_solid_tick = bui_new_element(editor->wall_solid, NULL, coord);
 	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/tick_box_off.png", NULL);
 	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/tick_box_hover.png", NULL);
 	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
 
+	// wall portal tick box
+	coord = ui_init_coords(115, 40, 100, 20);
+	editor->wall_portal = bui_new_element(editor->wall_texture_view, "Portal:", coord);
+	bui_set_element_color(editor->wall_portal, ((t_bui_element *)editor->wall_portal->parent)->color);
+
+	coord = ui_init_coords(40, 0, 20, 20);
+	editor->wall_portal_tick = bui_new_element(editor->wall_portal, NULL, coord);
+	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/tick_box_off.png", NULL);
+	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/tick_box_hover.png", NULL);
+	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
 
 	// wall sprite view elements
 	coord = ui_init_coords(5, 20, 50, 20);

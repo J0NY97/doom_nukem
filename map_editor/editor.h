@@ -282,6 +282,10 @@ struct			s_editor
 	t_bui_element *wall_solid;
 	t_bui_element *wall_solid_tick;
 
+	// portal tick box for wall
+	t_bui_element *wall_portal;
+	t_bui_element *wall_portal_tick;
+
 	// temporary variable for the current wall sprite youre editing.
 	//t_wall_sprite *active_wall_sprite; // disabled?
 	t_bui_element *sprite_scale;

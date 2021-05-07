@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/06 12:41:27 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/07 11:32:02 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,6 +121,6 @@ int	main(int argc, char **argv)
 	}
 	ft_putstr("Bye!");
 	editor_free(doom);
-	bui_libui_quit(libui);
+//	bui_libui_quit(libui);
 	return (0);
 }

@@ -59,6 +59,7 @@ struct				s_wall
 	short int		texture_id;
 	short int		portal_texture_id;
 	int			solid; // default 1 if wall, default 0 if portal
+	int			portal;
 	t_list			*sprites; // list of t_sprite 
 	int				neighbor;
 };

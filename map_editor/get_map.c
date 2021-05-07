@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2020/10/11 15:27:17 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/05/07 11:36:24 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -283,7 +283,10 @@ void		read_map_file(t_editor *doom)
 	char *line;
 
 	if ((fd = open(doom->fullpath, O_RDONLY)) < 0)
+	{
+		ft_putstr("Couldnt open map.\n");
 		return ;
+	}
 	while (get_next_line(fd, &line))
 	{
 		ft_putstr(line);

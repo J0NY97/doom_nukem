@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2020/09/27 16:30:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/07 11:26:46 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,7 +49,7 @@ void	wall_render(t_editor *doom)
 	// 	get_texture_from_list_with_id();
 	// 	get_texture_with_id_from_list();
 	// 	already in it
-	SDL_Surface *tex = load_image("../engine/ui/ui_images/wallimage.png");
+	SDL_Surface *tex = load_image(ROOT_PATH"ui/ui_images/wallimage.png");
 	texture.x = 0;
 	texture.y = 0;
 	texture.w = tex->w; 
@@ -86,7 +86,7 @@ void	wall_render(t_editor *doom)
 		sprite = curr->content;
 
 		// should take this from somewhere else
-		SDL_Surface *temp_sprite = load_image("../engine/ui/ui_images/sprite.jpg");
+		SDL_Surface *temp_sprite = load_image(ROOT_PATH"ui/ui_images/sprite.jpg");
 
 		temp.x = sprite->coord.x;
 		temp.y = sprite->coord.y;
@@ -162,6 +162,20 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		else
 			doom->grid.modify_wall->solid = 1;
 	}
+
+   //	wall portal tick box
+	if (doom->grid.modify_wall->neighbor != -1)
+		doom->wall_portal_tick->toggle = 1;
+	else
+		doom->wall_portal_tick->toggle = 0;
+	if (bui_button(doom->wall_portal_tick))
+	{
+		if (doom->wall_portal_tick->toggle == 1)
+			remove_portal(editor, &editor->grid);
+		else
+			add_portal(editor, &editor->grid);
+	}
+
 	
 	// TODO: first step is to take from the "modify_wall" the "texture_id" and toggle that texture button
 	// TODO: second step is to check for the mouse event on the buttons
