@@ -94,7 +94,6 @@ ft_printf("Starting to loop!\n");
 							gfx_vector_multiply(editor->grid.modify_sector->first_point->pos, editor->grid.gap));
 		}
 		draw_hover_info(editor, &editor->grid);
-		draw_selected_sector_info(editor, &editor->grid);
 		loop_buttons(editor);
 
 		bui_render_the_event(libui);
