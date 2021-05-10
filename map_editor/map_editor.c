@@ -13,8 +13,13 @@ void	map_editor(char *map)
 	editor->libui = libui;
 
 	editor->fullpath = ft_strdup(map);
-	editor->mapname = ft_strdup(map);
-ft_printf("Map Name set!\n");
+	char **mapname = ft_strsplit(map, '/');
+	int i = 0;
+	while (mapname[i + 1])
+		i++;
+	editor->mapname = ft_strdup(mapname[i]); // at some point remove this.
+	free_array(mapname);
+ft_printf("Map Name set to: %s\n", editor->fullpath);
 
 	window_init(editor, libui);
 ft_printf("libui done!\n");
