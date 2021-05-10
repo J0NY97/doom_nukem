@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/07 11:36:24 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 13:11:29 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,30 +74,6 @@ void	read_vertex(t_grid *grid, int fd)
 									ft_atoi(arr[3]));
 		new_p->id = ft_atoi(arr[0]);
 		add_to_list(&grid->points, new_p, sizeof(t_point));
-		free_array(arr);
-		ft_strdel(&line);
-	}
-	ft_strdel(&line);
-}
-
-void	read_map(t_map *map, int fd)
-{
-	char *line;
-	char **arr;
-	int	w;
-	int h;
-	char *name;
-
-	while (get_next_line(fd, &line))
-	{
-		if (line[0] == '-')
-			break ;
-		arr = ft_strsplit(line, '\t');
-		w = ft_atoi(arr[0]);
-		h = ft_atoi(arr[1]);
-		name = ft_strdup(arr[2]);
-		printf("%d, %d, %s\n", w, h, name);
-		free(name);
 		free_array(arr);
 		ft_strdel(&line);
 	}

@@ -58,30 +58,30 @@ ft_printf("Starting to loop!\n");
 		if (bui_button_toggle(editor->button_draw))
 		{
 			click_calc(editor, &editor->grid);
-			check_selected(editor, &editor->grid);
+			check_selected(&editor->grid);
 		}
 		else
 		{
 			// doom->grid.selected1 = EMPTY_VEC;
 			// doom->grid.selected2 = EMPTY_VEC;
-			selection(editor, &editor->grid, &libui->event);
+			selection(editor, &editor->grid);
 
 			if (editor->grid.modify_wall == NULL) // improtant?
 				editor->grid.modify_sprite = NULL;
-			drag_calc(editor, &editor->grid, &libui->event);
+			drag_calc(editor, &editor->grid);
 			draw_selected_point(editor, &editor->grid);
-			draw_selected_wall(editor, &editor->grid);
+			draw_selected_wall(&editor->grid);
 			draw_selected_sector(editor, &editor->grid);
-			draw_selected_entity(editor, &editor->grid);
+			draw_selected_entity(&editor->grid);
 			selection_mode_buttons(editor, &editor->grid);
 			selected_option_menu(editor, &editor->grid, libui);
 		}
-		unselect_selected(editor, &editor->grid, &libui->event);
+		unselect_selected(editor, &editor->grid);
 		// boundaries(doom, &doom->grid);
-		update_real_dimensions(editor, &editor->grid);
+		update_real_dimensions(&editor->grid);
 		//draw_walls(&doom->grid, &doom->grid.walls, 0xffffffff); // this is just for debugging purposes, to know if you remove a wall it actually is removed.
-		draw_sectors(editor, &editor->grid);
-		draw_points(editor, &editor->grid, editor->grid.points);
+		draw_sectors(&editor->grid);
+		draw_points(&editor->grid, editor->grid.points);
 		draw_entities(editor, &editor->grid);
 		// draw spawn
 		if (!vector_is_empty(editor->spawn.pos))

@@ -6,13 +6,13 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 13:59:23 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 14:46:32 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 13:08:32 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "editor.h"
 
-void	add_portal(t_editor *doom, t_grid *grid)
+void	add_portal(t_grid *grid)
 {
 	t_list *curr_wall;
 	t_list *curr_sec;
@@ -62,7 +62,7 @@ ft_printf("Adding portal\n");
 	}
 }
 
-void	remove_portal(t_editor *doom, t_grid *grid)
+void	remove_portal(t_grid *grid)
 {
 	t_list *s;
 	t_list *w;
@@ -254,7 +254,7 @@ void	selection_mode_buttons(t_editor *doom, t_grid *grid)
 		else if (grid->modify_wall != NULL)
 		{
 			printf("Removing wall.\n");
-			remove_wall_from_its_sector(doom, &doom->grid, grid->modify_wall);
+			remove_wall_from_its_sector(&doom->grid, grid->modify_wall);
 			remove_from_walls(&doom->grid.walls, grid->modify_wall);
 		}
 		else if (grid->modify_sector != NULL)

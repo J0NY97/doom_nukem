@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 14:41:33 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 13:10:17 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,6 +67,7 @@ t_list	*get_nth_from_list(t_list **list, int index)
 void	free_point(void *content, size_t size)
 {
 	ft_putstr("[free_point]\n");
+	(void)size;
 	if (content == NULL)
 		return ;
 	t_point *point = content;
@@ -97,6 +98,7 @@ t_sprite	*new_sprite(void)
 void	free_sprite(void *content, size_t size)
 {
 	ft_putstr("[free_sprite]\n");
+	(void)size;
 	if (content == NULL)
 		return ;
 	t_sprite *sprite = content;
@@ -130,6 +132,7 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 
 void	free_wall(void *content, size_t size)
 {
+	(void)size;
 	if (content == NULL)
 		return ;
 	t_wall *wall = content;
@@ -171,6 +174,7 @@ t_sector	*new_sector(int id)
 
 void	free_sector(void *content, size_t size)
 {
+	(void)size;
 	if (content == NULL)
 		return ;
 	t_sector *sector = content;
@@ -201,6 +205,7 @@ t_entity	*new_entity(int id, t_vector pos)
 
 void	free_entity(void *content, size_t size)
 {
+	(void)size;
 	if (content == NULL)
 		return ;
 	t_entity *entity = content;
@@ -231,6 +236,7 @@ t_entity_preset	*new_entity_preset(void)
 
 void	free_entity_preset(void *content, size_t size)
 {
+	(void)size;
 	if (content == NULL)
 		return ;
 	t_entity_preset *ent = content;
@@ -452,7 +458,7 @@ t_sprite	*get_sprite_from_list(t_list **list, int x, int y)
 	return (NULL);
 }
 
-void   remove_wall_from_its_sector(t_editor *doom, t_grid *grid, t_wall *wall)
+void   remove_wall_from_its_sector(t_grid *grid, t_wall *wall)
 {
 	t_list  *curr_sec;
 	t_list  *curr_wall;
@@ -588,7 +594,7 @@ void			remove_all_non_existing_portals(t_list **sectors)
 			s2 = *sectors;
 			while (s2)
 			{
-				if (((t_wall *)w->content)->neighbor == ((t_sector *)s2->content)->id)
+				if (((t_wall *)w->content)->neighbor == (int)((t_sector *)s2->content)->id)
 					found = 1;
 				s2 = s2->next;
 			}

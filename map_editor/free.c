@@ -4,6 +4,7 @@
 
 void	changer_prefab_free(void *prefab, size_t size)
 {
+	(void)size;
 	t_changer_prefab *pref;
 	pref = prefab;
 

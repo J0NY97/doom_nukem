@@ -6,13 +6,13 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 14:42:49 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 13:05:37 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "editor.h"
 
-void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	drag_calc(t_editor *doom, t_grid *grid)
 {
 	t_list *curr;
 	float move_x = 0.0f;
@@ -113,7 +113,7 @@ void	drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e)
 }
 
 // Get the nearest point in a radius of where you clicked.
-void	select_point(t_editor *doom, t_grid *grid)
+void	select_point(t_grid *grid)
 {
 	t_point *temp;
 	t_vector temp_pos;
@@ -213,13 +213,13 @@ int		vector_on_wall(t_vector v, t_wall *wall)
 	return (0);
 }
 
-void	selection(t_editor *editor, t_grid *grid, SDL_Event *e)
+void	selection(t_editor *editor, t_grid *grid)
 {
 	if (editor->libui->mouse_down_last_frame && mouse_pressed(editor->libui, MKEY_LEFT))
 	{
 		// Vertex
 		if (bui_button_toggle(editor->select_mode_vertex))
-			select_point(editor, grid);
+			select_point(grid);
 		else
 			editor->grid.modify_point = NULL;
 		// Wall
@@ -234,7 +234,7 @@ void	selection(t_editor *editor, t_grid *grid, SDL_Event *e)
 			editor->grid.modify_entity = NULL;
 		// Sector
 		if (bui_button_toggle(editor->select_mode_sector))
-			select_sector(editor, grid);
+			select_sector(grid);
 		else
 			editor->grid.modify_sector = NULL;
 		ft_putstr("Selection Done.\n");
@@ -321,7 +321,7 @@ void	select_wall(t_editor *doom, t_grid *grid)
 printf("Wall selected.\n");
 }
 
-void	draw_selected_wall(t_editor *doom, t_grid *grid)
+void	draw_selected_wall(t_grid *grid)
 {
 	if (grid->modify_wall == NULL)
 		return ;
@@ -365,7 +365,7 @@ void	draw_selected_sector(t_editor *editor, t_grid *grid)
 	bui_set_element_text(editor->selected_sector_info, str, 0, 0);
 }
 
-void	select_sector(t_editor *doom, t_grid *grid)
+void	select_sector(t_grid *grid)
 {
 	t_list		*curr;
 	t_sector		*temp;
@@ -438,7 +438,7 @@ void	select_entity(t_editor *editor, t_grid *grid)
 ft_printf("Entity selected.\n");
 }
 
-void	draw_selected_entity(t_editor *doom, t_grid *grid)
+void	draw_selected_entity(t_grid *grid)
 {
 	if (grid->modify_entity == NULL)
 		return ;

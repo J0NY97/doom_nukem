@@ -42,7 +42,7 @@ LIBS = \
 	$(LIBFT)/libft.a \
 	-lSDL2 -lSDL2_ttf -lSDL2_image
 
-FLAGS = -Wall
+FLAGS = -Wall -Wextra
 
 all: $(LIBS) $(NAME)
 

@@ -353,12 +353,12 @@ void			toolbox_init(t_editor *doom);
 void			button_init(t_editor *doom);
 void			draw_grid(t_editor *doom, t_grid *grid);
 void			click_calc(t_editor *doom, t_grid *grid);
-void			check_selected(t_editor *doom, t_grid *grid);
-void			unselect_selected(t_editor *doom, t_grid *grid, SDL_Event *e);
+void			check_selected(t_grid *grid);
+void			unselect_selected(t_editor *editor, t_grid *grid);
 void			hover_calc(t_editor *doom, t_grid *grid);
-void			draw_sectors(t_editor *doom, t_grid *grid);
+void			draw_sectors(t_grid *grid);
 void			draw_walls(t_grid *grid, t_list **walls, Uint32 color);
-void			draw_points(t_editor *doom, t_grid *grid, t_list *points);
+void			draw_points(t_grid *grid, t_list *points);
 void			draw_entities(t_editor *doom, t_grid *grid);
 void			draw_hover_info(t_editor *doom, t_grid *grid);
 void			draw_selected_sector_info(t_editor *doom, t_grid *grid);
@@ -368,17 +368,17 @@ void			sector_edit_buttons_init(t_editor *doom);
 void			entity_edit_button_init(t_editor *doom);
 void			scale_changer_events(t_bui_libui *libui, t_editor *editor);
 
-void			selection(t_editor *doom, t_grid *grid, SDL_Event *e);
-void			select_point(t_editor *doom, t_grid *grid);
+void			selection(t_editor *doom, t_grid *grid);
+void			select_point(t_grid *grid);
 void			select_wall(t_editor *doom, t_grid *grid);
-void			select_sector(t_editor *doom, t_grid *grid);
+void			select_sector(t_grid *grid);
 void			select_entity(t_editor *doom, t_grid *grid);
 
-void			drag_calc(t_editor *doom, t_grid *grid, SDL_Event *e);
+void			drag_calc(t_editor *doom, t_grid *grid);
 void			draw_selected_point(t_editor *doom, t_grid *grid);
-void			draw_selected_wall(t_editor *doom, t_grid *grid);
+void			draw_selected_wall(t_grid *grid);
 void			draw_selected_sector(t_editor *doom, t_grid *grid);
-void			draw_selected_entity(t_editor *doom, t_grid *grid);
+void			draw_selected_entity(t_grid *grid);
 void			boundaries(t_editor *doom, t_grid *grid);
 void			selection_mode_buttons(t_editor *doom, t_grid *grid);
 void			show_selected_wall_texture(t_editor *doom, t_grid *grid);
@@ -389,7 +389,7 @@ char			*args_parser_v2(int ac, char **av);
 t_point			*get_point_from_list(t_list *list, t_point *v);
 t_wall			*get_wall_from_list(t_list **list, t_point *v1, t_point *v2);
 t_sprite		*get_sprite_from_list(t_list **list, int x, int y);
-void			update_real_dimensions(t_editor *doom, t_grid *grid);
+void			update_real_dimensions(t_grid *grid);
 void			remove_from_walls(t_list **walls, t_wall *wall);
 void			remove_from_points(t_list **points, t_point *v);
 int				vector_in_wall(t_vector v, t_wall *vec);
@@ -405,7 +405,7 @@ void			remove_wall_from_sector(t_sector **sector, t_wall *wall); // use this if 
 void			remove_from_sectors(t_list **sectors, t_sector *sec); // use this if you want to remove t_sector from t_list of t_sectors
 void			remove_from_walls_non_free(t_list **walls, t_wall *wall); // use this if you want to remove the t_wall from a t_list without freeing the actual t_wall
 void			remove_wall_from_all_sectors(t_list **sectors, t_wall *wall); // use this if you wanna remove the wall from all the sectors that have it
-void   			remove_wall_from_its_sector(t_editor *doom, t_grid *grid, t_wall *wall); // use this if you dont know which sector the wall is a part of.. and only if there is only one sector with that wall
+void   			remove_wall_from_its_sector(t_grid *grid, t_wall *wall); // use this if you dont know which sector the wall is a part of.. and only if there is only one sector with that wall
 void			remove_all_non_existing_portals(t_list **sectors);
 int				get_sector_wall_amount(t_sector *sector);
 
@@ -421,8 +421,8 @@ void			texture_buttons(t_editor *doom, t_grid *grid);
 void			sprite_init(t_editor *doom);
 void			entity_sprite_init(t_editor *doom);
 void			entity_sprite_buttons(t_editor *doom, t_grid *grid);
-void			add_portal(t_editor *doom, t_grid *grid);
-void			remove_portal(t_editor *doom, t_grid *grid);
+void			add_portal(t_grid *grid);
+void			remove_portal(t_grid *grid);
 
 /*
 ** Help

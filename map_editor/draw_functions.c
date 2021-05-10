@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 14:18:49 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 12:54:15 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,7 +87,6 @@ int		vector_in_wall(t_vector v, t_wall *vec)
 void	split_wall(t_grid *grid, t_wall *old_wall, t_point *new_vec)
 {
 	t_wall	*temp;
-	t_sector *sec_temp;
 
 	temp = get_wall_from_list(&grid->walls, old_wall->dest, new_vec);
 	if (temp == NULL)
@@ -102,7 +101,7 @@ void	split_wall(t_grid *grid, t_wall *old_wall, t_point *new_vec)
 ft_printf("Wall split.\n");
 }
 
-void	update_real_dimensions(t_editor *doom, t_grid *grid)
+void	update_real_dimensions(t_grid *grid)
 {
 	float	low_x;
 	float	low_y;
@@ -133,7 +132,7 @@ void	update_real_dimensions(t_editor *doom, t_grid *grid)
 	grid->dimensions.h = hi_y * grid->gap;
 }
 
-void	check_selected(t_editor *doom, t_grid *grid)
+void	check_selected(t_grid *grid)
 {
 	t_point *temp1;
 	t_point *temp2;
@@ -266,9 +265,9 @@ void	click_calc(t_editor *doom, t_grid *grid)
 	}
 }
 
-void	unselect_selected(t_editor *doom, t_grid *grid, SDL_Event *e)
+void	unselect_selected(t_editor *editor, t_grid *grid)
 {
-	if (key_pressed(doom->libui, KEY_B))
+	if (key_pressed(editor->libui, KEY_B))
 	{
 		if (grid->modify_sector == NULL) // you can only reset the selected vertices if sector is null which means you havent
 										// started to modify a sector or you have finished modifying it.
@@ -279,7 +278,7 @@ void	unselect_selected(t_editor *doom, t_grid *grid, SDL_Event *e)
 		grid->modify_point = NULL;
 		grid->modify_wall = NULL;
 		grid->modify_entity = NULL;
-		doom->grid.modify_sprite = NULL;
+		editor->grid.modify_sprite = NULL;
 		grid->modify_sector = NULL;
 		ft_putstr("Unselected everything.\n");
 	}
@@ -344,7 +343,7 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 		gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 2, gfx_vector_multiply(grid->modify_sector->first_point->pos, grid->gap));
 }
 
-void	draw_points(t_editor *doom, t_grid *grid, t_list *points)
+void	draw_points(t_grid *grid, t_list *points)
 {
 	t_list *curr;
 
@@ -368,7 +367,7 @@ void	draw_walls(t_grid *grid, t_list **walls, Uint32 color)
 	}
 }
 
-void	draw_sectors(t_editor *doom, t_grid *grid)
+void	draw_sectors(t_grid *grid)
 {
 	t_list *curr;
 	t_list *curr_wall;

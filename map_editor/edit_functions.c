@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 14:43:26 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 13:16:47 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -125,55 +125,51 @@ void	wall_render(t_editor *doom)
 	SDL_FreeSurface(scaled_wall);
 }
 
-void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
+void	wall_option(t_editor *editor, t_bui_libui *libui)
 {
-	t_editor *editor;
+	editor->edit_view_wall->show = 1;
+	editor->edit_toolbox_wall->show = 1;
 
-	editor = doom;
-
-	doom->edit_view_wall->show = 1;
-	doom->edit_toolbox_wall->show = 1;
-
-	preset_tab_events(doom->wall_tab);
+	preset_tab_events(editor->wall_tab);
 
 	// check all the wall texture view elements
 	
 		// texture scale
 	// Note: add and subtract from "t_wall" "texture_scale"
-	if (bui_button(doom->wall_scale_add))
-		doom->grid.modify_wall->texture_scale += 0.1f;
-	else if (bui_button(doom->wall_scale_sub))
-		doom->grid.modify_wall->texture_scale -= 0.1f;
+	if (bui_button(editor->wall_scale_add))
+		editor->grid.modify_wall->texture_scale += 0.1f;
+	else if (bui_button(editor->wall_scale_sub))
+		editor->grid.modify_wall->texture_scale -= 0.1f;
 
 	// TODO:NOTE:IDKK: not sure where i should do this.
-	if (doom->grid.modify_wall->texture_scale < 0.1)
-		doom->grid.modify_wall->texture_scale = 0.1f; 
+	if (editor->grid.modify_wall->texture_scale < 0.1)
+		editor->grid.modify_wall->texture_scale = 0.1f; 
 	
-	char *scale_value_str = ft_ftoa(doom->grid.modify_wall->texture_scale, 1);
-	bui_change_element_text(doom->wall_scale_value, scale_value_str);
+	char *scale_value_str = ft_ftoa(editor->grid.modify_wall->texture_scale, 1);
+	bui_change_element_text(editor->wall_scale_value, scale_value_str);
 	ft_strdel(&scale_value_str);
 
 		// wall solidity tick box
-	doom->wall_solid_tick->toggle = doom->grid.modify_wall->solid;
-	if (bui_button(doom->wall_solid_tick))
+	editor->wall_solid_tick->toggle = editor->grid.modify_wall->solid;
+	if (bui_button(editor->wall_solid_tick))
 	{
-		if (doom->wall_solid_tick->toggle == 1)
-			doom->grid.modify_wall->solid = 0;
+		if (editor->wall_solid_tick->toggle == 1)
+			editor->grid.modify_wall->solid = 0;
 		else
-			doom->grid.modify_wall->solid = 1;
+			editor->grid.modify_wall->solid = 1;
 	}
 
    //	wall portal tick box
-	if (doom->grid.modify_wall->neighbor != -1)
-		doom->wall_portal_tick->toggle = 1;
+	if (editor->grid.modify_wall->neighbor != -1)
+		editor->wall_portal_tick->toggle = 1;
 	else
-		doom->wall_portal_tick->toggle = 0;
-	if (bui_button(doom->wall_portal_tick))
+		editor->wall_portal_tick->toggle = 0;
+	if (bui_button(editor->wall_portal_tick))
 	{
-		if (doom->wall_portal_tick->toggle == 1)
-			remove_portal(editor, &editor->grid);
+		if (editor->wall_portal_tick->toggle == 1)
+			remove_portal(&editor->grid);
 		else
-			add_portal(editor, &editor->grid);
+			add_portal(&editor->grid);
 	}
 
 	
@@ -185,10 +181,10 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	char *temp;
 
 	temp = ft_itoa(editor->grid.modify_wall->texture_id);
-	if (only_one_button_toggled_at_a_time(doom->wall_texture_buttons, &doom->active_wall_texture))
+	if (only_one_button_toggled_at_a_time(editor->wall_texture_buttons, &editor->active_wall_texture))
 	{}
 	else
-		toggle_on_element_with_text(doom->wall_texture_buttons, &doom->active_wall_texture, temp);
+		toggle_on_element_with_text(editor->wall_texture_buttons, &editor->active_wall_texture, temp);
 	ft_strdel(&temp);
 	if (editor->active_wall_texture != NULL)
 		editor->grid.modify_wall->texture_id = ft_atoi(editor->active_wall_texture->text);
@@ -218,7 +214,7 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	short int chosen_texture = 0;
 	if (editor->active_wall_sprite != NULL)
 		chosen_texture = ft_atoi(editor->active_wall_sprite->text);
-	if (bui_button(doom->add_wall_sprite_button))
+	if (bui_button(editor->add_wall_sprite_button))
 	{
 		// add the sprite to the wall
 		ft_putstr("Adding sprite to wall\n");
@@ -228,64 +224,64 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 		 	t_sprite *sprite = new_sprite();
 		 	sprite->sprite_id = chosen_texture;
 		// 3. add to wall->sprites
-		 	add_to_list(&doom->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
+		 	add_to_list(&editor->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
 	}
 	
 	// NOTE: in this function you also render the wall sprites.
-	wall_render(doom);
+	wall_render(editor);
 
 	// TODO: this doesnt take into account the scale of the sprite, it assumes that the scale is default, which means
 	// 	if you mkae the scale bigger you can only choose the sprite from the top left corner of the sprite, and not
 	// 	the actual whole sprite render. (change the mouse_hover to multiply the position with the scale)
 
 	// Choose the sprite
-	if (mouse_hover(doom->libui, doom->edit_view_wall->position) &&
-	mouse_pressed(doom->libui, MKEY_LEFT))
+	if (mouse_hover(editor->libui, editor->edit_view_wall->position) &&
+	mouse_pressed(editor->libui, MKEY_LEFT))
 	{
-		int view_x = doom->libui->mouse_x - doom->edit_view_wall->position.x - 50;
-		int view_y = doom->libui->mouse_y - doom->edit_view_wall->position.y - 50;
+		int view_x = editor->libui->mouse_x - editor->edit_view_wall->position.x - 50;
+		int view_y = editor->libui->mouse_y - editor->edit_view_wall->position.y - 50;
 		t_sprite *temp;
 
 		// Note: this function returns the sprite at that exact location, so you have to give
 		// 	the exact location of where you want it to look if there is a sprite. thus the way you have
 		// 	removed from the mouse_x and y the view location.
-		temp = get_sprite_from_list(&doom->grid.modify_wall->sprites, view_x, view_y);
+		temp = get_sprite_from_list(&editor->grid.modify_wall->sprites, view_x, view_y);
 		if (temp != NULL)
 		{
 			ft_putstr("Sprite was successfully selected.\n");
-			doom->grid.modify_sprite = temp;
+			editor->grid.modify_sprite = temp;
 		}
 	}
 	// Move the sprite
-	if (doom->grid.modify_sprite != NULL)
+	if (editor->grid.modify_sprite != NULL)
 	{
 		int move_speed = 5;
 		if (key_pressed(libui, KEY_LEFT))
-			doom->grid.modify_sprite->coord.x -= move_speed;
+			editor->grid.modify_sprite->coord.x -= move_speed;
 		else if (key_pressed(libui, KEY_RIGHT))
-			doom->grid.modify_sprite->coord.x += move_speed;
+			editor->grid.modify_sprite->coord.x += move_speed;
 		if (key_pressed(libui, KEY_UP))
-			doom->grid.modify_sprite->coord.y -= move_speed;
+			editor->grid.modify_sprite->coord.y -= move_speed;
 		else if (key_pressed(libui, KEY_DOWN))
-			doom->grid.modify_sprite->coord.y += move_speed;
+			editor->grid.modify_sprite->coord.y += move_speed;
 
 		// the sprite scale buttons
 		// NOTE: might aswell do this here where we are already checking if there is a modify sprite.
-		if (bui_button(doom->sprite_scale_add))
-			doom->grid.modify_sprite->scale += 0.1f;
-		else if (bui_button(doom->sprite_scale_sub))
-			doom->grid.modify_sprite->scale -= 0.1f;
+		if (bui_button(editor->sprite_scale_add))
+			editor->grid.modify_sprite->scale += 0.1f;
+		else if (bui_button(editor->sprite_scale_sub))
+			editor->grid.modify_sprite->scale -= 0.1f;
 
 		// TODO:NOTE:IDKK: not sure where i should do this.
-		if (doom->grid.modify_sprite->scale < 0.1)
-			doom->grid.modify_sprite->scale = 0.1f; 
+		if (editor->grid.modify_sprite->scale < 0.1)
+			editor->grid.modify_sprite->scale = 0.1f; 
 		
-		char *sprite_scale_value_str = ft_ftoa(doom->grid.modify_sprite->scale, 1);
-		bui_change_element_text(doom->sprite_scale_value, sprite_scale_value_str);
+		char *sprite_scale_value_str = ft_ftoa(editor->grid.modify_sprite->scale, 1);
+		bui_change_element_text(editor->sprite_scale_value, sprite_scale_value_str);
 		ft_strdel(&sprite_scale_value_str);
 		
 		// remove sprite button
-		if (bui_button(doom->remove_wall_sprite_button))
+		if (bui_button(editor->remove_wall_sprite_button))
 		{
 			ft_putstr("Removing sprite from wall.\n");
 			// TODO: make function for removing and freeing wall sprite.
@@ -295,13 +291,10 @@ void	wall_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	}
 }
 
-void	sector_option(t_editor *doom, t_grid *grid, t_bui_libui *libui)
+void	sector_option(t_editor *editor, t_grid *grid)
 {
-	t_list *curr;
-	t_editor *editor = doom;
-
-	doom->edit_view_sector->show = 1;
-	doom->edit_toolbox_sector->show = 1;
+	editor->edit_view_sector->show = 1;
+	editor->edit_toolbox_sector->show = 1;
 
 	// Floor and ceiling texture element events
 	char *temp;
@@ -380,9 +373,9 @@ void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 	doom->edit_view_entity->show = 0;
 
 	if (grid->modify_wall != NULL)
-		wall_option(doom, grid, libui);
+		wall_option(doom, libui);
 	else if (grid->modify_sector != NULL)
-		sector_option(doom, grid, libui);
+		sector_option(doom, grid);
 	else if (grid->modify_entity != NULL)
 		entity_option(doom);
 }
