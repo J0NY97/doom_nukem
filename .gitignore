@@ -9,3 +9,5 @@ map_editor/maps/*
 SDL2
 ui/dialog
 better_libui/test
+path.h
+a.out
