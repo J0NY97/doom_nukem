@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 14:29:54 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 11:22:02 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -615,9 +615,16 @@ void	init_entity_presets(t_list **list, char *path)
 	int fd;
 	int i = 0;
 
-	fd = open(path, O_RDONLY);
+	if ((fd = open(path, O_RDONLY)) < -1)
+	{
+		ft_printf("Entity preset file: %s, coundlt be opened.\n", path);
+		return ;
+	}
 	get_next_line(fd, &line);
+		ft_putstr("-1");
+		ft_putstr(line);
 	ft_strdel(&line);
+		ft_putstr("0");
 	while (get_next_line(fd, &line))
 	{
 		arr = ft_strsplit(line, '\t');
@@ -645,7 +652,11 @@ void	init_entity_presets(t_list **list, char *path)
 
 		preset->flying = ft_atoi(arr[7]);
 
+		ft_putstr("1");
 		ft_strdel(&line);
+		ft_putstr("2");
+		free_array(arr);
+		ft_putstr("3");
 		i++;
 		add_to_list(list, preset, sizeof(t_entity_preset));
 	}

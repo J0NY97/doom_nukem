@@ -10,6 +10,7 @@ SRCS = ./main.c \
 	   ./help.c \
 	   ./edit_functions.c \
 	   ./free.c \
+	   ./map_editor.c \
 	   ../core.c
 OBJS = $(SRCS:.c=.o)
 

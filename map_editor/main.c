@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/07 14:18:23 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 11:31:58 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,21 @@ void	fps_func(t_fps *fps)
 	}
 }
 
+int main(int argc, char **argv)
+{
+	char *map;
+
+	if (!(map = args_parser_v2(argc, argv)))
+		return (1);
+	map_editor(map);
+	ft_strdel(&map);
+	return (0);
+
+}
 
 // TODO: make this use the map_editor() function.
-int	main(int argc, char **argv)
+/* OLD, dont use this use the new main.
+int	fmain(int argc, char **argv)
 {
 	t_editor	*doom;
 	t_bui_libui	*libui;
@@ -59,11 +71,9 @@ int	main(int argc, char **argv)
 	// New stuff
 	edit_window_init(doom, libui);
 
-	/*
-	texture_init(doom);
-	sprite_init(doom);
-	entity_sprite_init(doom);
-	*/
+	//texture_init(doom);
+//	sprite_init(doom);
+//	entity_sprite_init(doom);
 	while (libui->run)
 	{
 		fps_func(fps);
@@ -123,3 +133,4 @@ int	main(int argc, char **argv)
 //	bui_libui_quit(libui);
 	return (0);
 }
+*/

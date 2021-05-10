@@ -385,6 +385,7 @@ void			show_selected_wall_texture(t_editor *doom, t_grid *grid);
 void			selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui);
 
 int				args_parser(t_editor *editor, int ac, char **av);
+char			*args_parser_v2(int ac, char **av);
 t_point			*get_point_from_list(t_list *list, t_point *v);
 t_wall			*get_wall_from_list(t_list **list, t_point *v1, t_point *v2);
 t_sprite		*get_sprite_from_list(t_list **list, int x, int y);

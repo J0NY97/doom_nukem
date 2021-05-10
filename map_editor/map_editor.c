@@ -11,11 +11,13 @@ void	map_editor(char *map)
 
 	libui = bui_new_libui();
 	editor->libui = libui;
+
+	editor->fullpath = ft_strdup(map);
+	editor->mapname = ft_strdup(map);
+ft_printf("Map Name set!\n");
+
 	window_init(editor, libui);
 ft_printf("libui done!\n");
-	editor->mapname = ft_strdup(map);
-	editor->fullpath = ft_strjoiner("../../map_editorv2/maps/", editor->mapname, NULL);
-ft_printf("Map Name set!\n");
 
 	color_palette_init(&editor->palette);
 ft_printf("palette done!\n");
@@ -28,9 +30,10 @@ ft_printf("Grid done!\n");
 
 	
 	// NOTE: this needs to be called before map getter so that we can put the correct preset in the correct entity
-	init_entity_presets(&editor->entity_presets, "../../map_editorv2/entities.preset");
+	init_entity_presets(&editor->entity_presets, ROOT_PATH"map_editor/entities.preset");
 	// TODO: figure out better place for this.
 	editor->default_entity = new_entity_preset();
+ft_printf("Ntity din dan don!\n");
 	read_map_file(editor); // map getter
 ft_printf("Map Got!\n");
 
@@ -48,6 +51,8 @@ ft_printf("Edit window init.\n");
 ft_printf("Starting to loop!\n");
 	while (libui->run)
 	{
+		bui_event_handler_new(libui);
+		
 		draw_grid(editor, &editor->grid);
 		hover_calc(editor, &editor->grid);
 		if (bui_button_toggle(editor->button_draw))
@@ -94,14 +99,13 @@ ft_printf("Starting to loop!\n");
 							gfx_vector_multiply(editor->grid.modify_sector->first_point->pos, editor->grid.gap));
 		}
 		draw_hover_info(editor, &editor->grid);
-		draw_selected_sector_info(editor, &editor->grid);
 		loop_buttons(editor);
 
-		bui_render_the_event(libui);
+		bui_render_new(libui);
 	}
 	ft_putstr("[map_editor] Bye!\n");
 	
 	editor_free(editor);
-	bui_libui_quit(libui);
+//	bui_libui_quit(libui);
 	return ;
 }
