@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 15:46:18 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 17:30:20 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -87,6 +87,8 @@ t_sprite	*new_sprite(void)
 	sprite->sprite_id = 0;
 	sprite->scale = 1.0f;
 	// NOT sure if the memset will set these to 0
+	sprite->real_x = 0;
+	sprite->real_y = 0;
 	sprite->coord.x = 0;
 	sprite->coord.y = 0;
 	sprite->coord.w = 0;

@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/10 15:46:01 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 17:43:59 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -121,7 +121,9 @@ void	read_sprite(t_grid *grid, int fd)
 		arr = ft_strsplit(line, '\t');
 
 		sprite = new_sprite();
-		sprite->coord = ui_init_coords(ft_atoi(arr[2]), ft_atoi(arr[3]), 64, 64); // the size you should also be here?
+		sprite->real_x = ft_atof(arr[2]);
+		sprite->real_y = ft_atof(arr[3]);
+//		sprite->coord = ui_init_coords(0, 0, 64, 64); // the size you should also be here?
 		sprite->sprite_id = ft_atoi(arr[4]);
 		sprite->scale = ft_atof(arr[5]);
 		wall = get_wall_with_id(grid->walls, ft_atoi(arr[1]));

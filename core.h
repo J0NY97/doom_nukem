@@ -46,6 +46,8 @@ typedef struct	s_sprite
 	short int		sprite_id;
 
 	// New
+	float			real_x;
+	float			real_y;
 	t_xywh			coord;
 	float			scale;
 }				t_sprite;

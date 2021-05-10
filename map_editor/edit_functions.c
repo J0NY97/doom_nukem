@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 15:38:38 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 17:45:42 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	wall_render(t_editor *doom)
 	float	x_axis;
 	float	y_axis;
 
+	// @Improvement: if i at some point return from changer_prefab_events if the value has changed, you can move this there so that it only does it when the map scale changes, which is the only thing that changes the size of the wall you blit on the screen.
+	SDL_FillRect(doom->edit_view_wall->active_surface, &(SDL_Rect){0, 0, doom->edit_view_wall->position.w, doom->edit_view_wall->position.h}, 0xff000000);
 	grid = &doom->grid;
 	wall = grid->modify_wall;
 	// get w from the difference from the orig -> dest x
@@ -32,9 +34,9 @@ void	wall_render(t_editor *doom)
 	// 	pretty sure these are niklas things.
 	
 	// TODO: the "NOTE:" under here, i think that '* x' is the scale of the map...???
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos); //* 10; // NOTE: this '* x', means what one value on the grid is in the game
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * doom->scale; // NOTE: this '* x', means what one value on the grid is in the game
 	// get h from the sector it is a part of
-	dim.h = 96; // get the sector that the wall is a part of... and then take the height from it
+	dim.h = 20; // get the sector that the wall is a part of... and then take the height from it
 	// all of these values needs to  have a zoom value depending on which is...
 	//	more the x or the y so that we can see the whole wall...
 	//	but if you after that want to zoom you can??
@@ -56,8 +58,8 @@ void	wall_render(t_editor *doom)
 	texture.h = tex->h;
 
 	// how many of the textures can fit on each axis
-	x_axis = (float)dim.w / ((float)texture.w * doom->grid.modify_wall->texture_scale);
-	y_axis = (float)dim.h / ((float)texture.h * doom->grid.modify_wall->texture_scale);
+	x_axis = (float)dim.w / (float)doom->grid.modify_wall->texture_scale;
+	y_axis = (float)dim.h / (float)doom->grid.modify_wall->texture_scale;
 
 //ft_printf("x_axis amount: %.3f, y amount: %.3f\n", x_axis, y_axis);
 
@@ -67,8 +69,8 @@ void	wall_render(t_editor *doom)
 	{
 		for (int x = 0; x < ceil(x_axis); x++)
 		{
-			temp.w = texture.h * scale * doom->grid.modify_wall->texture_scale;
-			temp.h = texture.w * scale * doom->grid.modify_wall->texture_scale;
+			temp.w = scale * doom->grid.modify_wall->texture_scale;
+			temp.h = scale * doom->grid.modify_wall->texture_scale;
 			temp.x = x * temp.w;
 			temp.y = y * temp.h;
 			SDL_BlitScaled(tex, &texture, scaled_wall, &temp);
@@ -81,44 +83,35 @@ void	wall_render(t_editor *doom)
 	t_sprite *sprite;
 
 	curr = wall->sprites;
+
+	// should take this from somewhere else
+	SDL_Surface *temp_sprite = load_image(ROOT_PATH"ui/ui_images/sprite.jpg");
 	while (curr)
 	{
 		sprite = curr->content;
 
-		// should take this from somewhere else
-		SDL_Surface *temp_sprite = load_image(ROOT_PATH"ui/ui_images/sprite.jpg");
 
-		temp.x = sprite->coord.x;
-		temp.y = sprite->coord.y;
-		temp.w = temp_sprite->w * sprite->scale;
-		temp.h = temp_sprite->h * sprite->scale;
+		temp.x = scale * sprite->real_x;
+		temp.y = scale * sprite->real_y;
+		temp.w = scale * sprite->scale;
+		temp.h = scale * sprite->scale;
 
-		sprite->coord.w = temp_sprite->w;
-		sprite->coord.h = temp_sprite->h;
+		sprite->coord.x = temp.x;
+		sprite->coord.y = temp.y;
+		sprite->coord.w = temp.w;
+		sprite->coord.h = temp.h;
+
 		SDL_BlitScaled(temp_sprite, NULL, scaled_wall, &temp);
-
-	// TODO: this needs to be niklas blitscaled
-		/* // This might be the way to do this, but before this work i will only use one sprite
-		SDL_BlitScaled(doom->sprites[0].surface,
-			&(SDL_Rect){
-				doom->sprites[0].position[sprite->sprite_id][0],
-				doom->sprites[0].position[sprite->sprite_id][1],
-				doom->sprites[0].x_size,
-				doom->sprites[0].y_size},
-			scaled_wall, &temp);
-			*/
 
 		curr = curr->next;
 	}
+	SDL_FreeSurface(temp_sprite);
+
 	if (doom->grid.modify_sprite != NULL)
 	{
-		draw_rect_border(scaled_wall, 
-				doom->grid.modify_sprite->coord.x,
-				doom->grid.modify_sprite->coord.y,
-				doom->grid.modify_sprite->coord.w * doom->grid.modify_sprite->scale,
-				doom->grid.modify_sprite->coord.h * doom->grid.modify_sprite->scale,
-				0xff0000ff, 3);
+		draw_rect_border(scaled_wall, doom->grid.modify_sprite->coord.x, doom->grid.modify_sprite->coord.y, doom->grid.modify_sprite->coord.w, doom->grid.modify_sprite->coord.h, 0xff0000ff, 3);
 	}
+
 // finally blit the wall to the surface of the window
 	SDL_BlitSurface(scaled_wall, NULL, doom->edit_view_wall->active_surface, &(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
 	gfx_draw_rect(doom->edit_view_wall->active_surface, 0xff00ff00, (t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
@@ -225,6 +218,7 @@ void	wall_option(t_editor *editor, t_bui_libui *libui)
 		 	sprite->sprite_id = chosen_texture;
 		// 3. add to wall->sprites
 		 	add_to_list(&editor->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
+			editor->grid.modify_sprite = sprite;
 	}
 	
 	// NOTE: in this function you also render the wall sprites.
@@ -255,15 +249,15 @@ void	wall_option(t_editor *editor, t_bui_libui *libui)
 	// Move the sprite
 	if (editor->grid.modify_sprite != NULL)
 	{
-		int move_speed = 5;
+		float move_speed = 0.1;
 		if (key_pressed(libui, KEY_LEFT))
-			editor->grid.modify_sprite->coord.x -= move_speed;
+			editor->grid.modify_sprite->real_x -= move_speed;
 		else if (key_pressed(libui, KEY_RIGHT))
-			editor->grid.modify_sprite->coord.x += move_speed;
+			editor->grid.modify_sprite->real_x += move_speed;
 		if (key_pressed(libui, KEY_UP))
-			editor->grid.modify_sprite->coord.y -= move_speed;
+			editor->grid.modify_sprite->real_y -= move_speed;
 		else if (key_pressed(libui, KEY_DOWN))
-			editor->grid.modify_sprite->coord.y += move_speed;
+			editor->grid.modify_sprite->real_y += move_speed;
 
 		// the sprite scale buttons
 		// NOTE: might aswell do this here where we are already checking if there is a modify sprite.

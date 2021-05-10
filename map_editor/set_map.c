@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 15:42:23 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 17:48:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,7 +74,8 @@ char	*set_sprite(t_editor *doom)
 			sprite = curr_sprite->content;
 			// NOTE: if the wall id is not matching to the correct wall, then you have to rethink this,
 			// 	but it should because youre looping in the same order as the set_wall function comes up with ids.
-			temp = ft_sprintf("\t\t\t%d\t%d\t%d\t%d\t%d\t%.3f\n", id, wall_id, sprite->coord.x, sprite->coord.y, sprite->sprite_id, sprite->scale);
+			temp = ft_sprintf("\t\t\t%d\t%d\t%.3f\t%.3f\t%d\t%.3f\n", id, wall_id, sprite->real_x, sprite->real_y, sprite->sprite_id, sprite->scale);
+			ft_putstr(temp);
 			// maybe remove this and just add it in the printf, actually no idea if its even faster
 			ft_stradd(&str, temp);
 			ft_strdel(&temp);
