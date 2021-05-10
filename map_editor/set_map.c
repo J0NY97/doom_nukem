@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/06 14:04:41 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 15:25:09 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ char	*set_sprite(t_editor *doom)
 	t_wall *wall;
 	t_sprite *sprite;
 	char *temp = NULL;
-	char *str = ft_sprintf("type:wall_sprite\tid\twall_id\tx\ty\ttex\tscale\n");
+	char *str = ft_sprintf("type:wsprite\tid\twall_id\tx\ty\ttex\tscale\n");
 	int id = 0;
 	int wall_id = 0;
 

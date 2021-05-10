@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 11:31:58 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 15:21:02 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,6 @@ int main(int argc, char **argv)
 	map_editor(map);
 	ft_strdel(&map);
 	return (0);
-
 }
 
 // TODO: make this use the map_editor() function.

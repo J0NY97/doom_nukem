@@ -13,13 +13,25 @@ void	map_editor(char *map)
 	editor->libui = libui;
 
 	editor->fullpath = ft_strdup(map);
+	// Spaghett way of getting the map name from fullpath
 	char **mapname = ft_strsplit(map, '/');
+	char *final;
 	int i = 0;
 	while (mapname[i + 1])
 		i++;
-	editor->mapname = ft_strdup(mapname[i]); // at some point remove this.
+	if (ft_strendswith(mapname[i], ".endless") == 0)
+		final = ft_strremove(mapname[i], ".endless");
+	else if (ft_strendswith(mapname[i], ".story") == 0)
+		final = ft_strremove(mapname[i], ".story");
+	else if (ft_strendswith(mapname[i], ".doom") == 0)
+		final = ft_strremove(mapname[i], ".doom");
+	else
+		final = ft_strdup(mapname[i]);
+	editor->mapname = ft_strdup(final);
 	free_array(mapname);
-ft_printf("Map Name set to: %s\n", editor->fullpath);
+	// End of spaghett
+	
+ft_printf("Map Name set to: %s, %s\n", editor->mapname, editor->fullpath);
 
 	window_init(editor, libui);
 ft_printf("libui done!\n");
