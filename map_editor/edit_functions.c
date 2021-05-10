@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 13:16:47 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 15:38:38 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	wall_render(t_editor *doom)
 	// 	pretty sure these are niklas things.
 	
 	// TODO: the "NOTE:" under here, i think that '* x' is the scale of the map...???
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * 10; // NOTE: this '* x', means what one value on the grid is in the game
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos); //* 10; // NOTE: this '* x', means what one value on the grid is in the game
 	// get h from the sector it is a part of
 	dim.h = 96; // get the sector that the wall is a part of... and then take the height from it
 	// all of these values needs to  have a zoom value depending on which is...

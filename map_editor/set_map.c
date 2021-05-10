@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 15:25:09 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 15:42:23 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -216,12 +216,12 @@ char	*set_entities(t_editor *doom)
 	char *str;
 
 	e = doom->grid.entities;
-	str = ft_sprintf("type:entity\tid\tx\ty\tz\tname\tdirection\n");
+	str = ft_sprintf("type:entity\tname\tx\ty\tz\tdirection\n");
 	while (e)
 	{
 		ent = e->content;
 		gfx_vector_string(ent->pos);
-		temp = ft_sprintf("\t\t%d\t%.1f\t%.1f\t%.1f\t%s\t%d\n", ent->id, ent->pos.x, ent->pos.y, ent->pos.z, ent->preset->name, ent->direction);
+		temp = ft_sprintf("\t\t%s\t%.1f\t%.1f\t%.1f\t%d\n", ent->preset->name, ent->pos.x, ent->pos.y, ent->pos.z, ent->direction);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		e = e->next;

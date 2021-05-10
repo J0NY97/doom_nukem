@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/10 13:11:29 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/10 15:46:01 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -217,23 +217,26 @@ void		read_entities(t_editor *doom, int fd)
 	t_entity *ent;
 	char *line;
 	char **arr;
+	int id = 0;
 
 	while (get_next_line(fd, &line))
 	{
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		ent = new_entity(ft_atoi(arr[0]), (t_vector){
+		ent = new_entity(id, (t_vector){
 				atof(arr[1]),
 				atof(arr[2]),
 				atof(arr[3])
 			});
-		ent->preset = get_entity_preset_from_list_with_name(doom->entity_presets, arr[4]);
-		ent->direction = ft_atoi(arr[5]);
+		ent->preset = get_entity_preset_from_list_with_name(doom->entity_presets, arr[0]);
+		ent->direction = ft_atoi(arr[4]);
 		add_to_list(&doom->grid.entities, ent, sizeof(t_entity));
 		free_array(arr);
 		ft_strdel(&line);
+		id++;
 	}
+	ft_putstr("[get_map] entiteis reda.d");
 	ft_strdel(&line);
 }
 
@@ -271,13 +274,13 @@ void		read_map_file(t_editor *doom)
 			read_mapinfo(doom, fd);
 		else if (!(ft_strncmp(line, "type:vertex", 11)))
 			read_vertex(&doom->grid, fd);
-		else if (!(ft_strncmp(line, "type:wall_sprite", 16)))
+		else if (!(ft_strncmp(line, "type:wsprite", 12)))
 			read_sprite(&doom->grid, fd);
 		else if (!(ft_strncmp(line, "type:wall", 9)))
 			read_wall(&doom->grid, fd);
 		else if (!(ft_strncmp(line, "type:spawn", 10)))
 			read_spawn(&doom->spawn, fd);
-		else if (!(ft_strncmp(line, "type:sectors", 11)))
+		else if (!(ft_strncmp(line, "type:sector", 11)))
 			read_sectors(doom, fd);
 		else if (!(ft_strncmp(line, "type:f&c", 8)))
 			read_fandc(doom, fd);
