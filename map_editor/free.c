@@ -11,9 +11,16 @@ void	changer_prefab_free(void *prefab, size_t size)
 	free(prefab);
 }
 
+void	rword_free(void *content, size_t size)
+{
+	(void)size;
+	ft_memdel(&content);
+}
+
 // NOTE: dont actually free it because the actual grid is never mallcoed.
 void	grid_free(t_grid *grid)
 {
+/*
 ft_putstr("[Grid]\n");
 	ft_lstdel(&grid->points, &free_point);
 ft_putstr("Points freed.\n");
@@ -23,6 +30,34 @@ ft_putstr("Walls freed.\n");
 ft_putstr("Sectors freed.\n");
 	ft_lstdel(&grid->entities, &free_entity);
 ft_putstr("Entities freed.\n");
+*/
+
+	ft_lstdel(&grid->points, &rword_free);
+	ft_lstdel(&grid->walls, &rword_free);
+	ft_lstdel(&grid->sectors, &rword_free);
+	ft_lstdel(&grid->entities, &rword_free);
+	/*
+	t_list *curr;
+	t_list *rucc;
+	curr = grid->points;
+	while (curr)
+	{
+		rucc = curr->next;
+		free_point(curr->content, 0);
+		ft_lstdelone(&curr, &dummy_free_er);
+		curr = rucc;	
+	}
+
+	curr = grid->points;
+	while (curr)
+	{
+		rucc = curr->next;
+		free_wall(curr->content, 0);
+		ft_lstdelone(&curr, &rword_free);
+		curr = rucc;	
+	}
+	*/
+
 }
 
 void	editor_free(t_editor *editor)

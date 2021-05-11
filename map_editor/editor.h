@@ -342,6 +342,7 @@ void			changer_prefab_events(t_changer_prefab *changer, int *current_value, int 
 void			changer_prefab_events_float(t_changer_prefab *changer, float *current_value, float change_amount);
 void			remove_from_sprites(t_list **list, t_sprite *s);
 t_entity		*get_entity_from_list_at_pos(t_list *list, t_vector pos);
+void			sort_sector_wall_list(t_sector *sector);
 
 void			mode_functions(t_editor *editor);
 void			draw_all_points(SDL_Surface *surface, t_list *points);
@@ -436,7 +437,7 @@ t_wall			*new_wall(t_point *orig, t_point *dest);
 t_sprite		*new_sprite(void);
 t_sector		*new_sector(int id);
 t_entity		*new_entity(int id, t_vector pos);
-t_entity_preset		*new_entity_preset(void);
+t_entity_preset		*new_entity_preset(char *name);
 t_entity_preset		*get_entity_preset_from_list_with_name(t_list *list, char *name);
 void			free_point(void *content, size_t size);
 void			free_sprite(void *content, size_t size);

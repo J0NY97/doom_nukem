@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 15:21:02 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/11 16:09:34 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,7 @@ int main(int argc, char **argv)
 		return (1);
 	map_editor(map);
 	ft_strdel(&map);
+	while (1);
 	return (0);
 }
 

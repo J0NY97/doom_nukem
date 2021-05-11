@@ -49,7 +49,7 @@ ft_printf("Grid done!\n");
 	// NOTE: this needs to be called before map getter so that we can put the correct preset in the correct entity
 	init_entity_presets(&editor->entity_presets, ROOT_PATH"map_editor/entities.preset");
 	// TODO: figure out better place for this.
-	editor->default_entity = new_entity_preset();
+	editor->default_entity = new_entity_preset("default_entity_name");
 ft_printf("Ntity din dan don!\n");
 	read_map_file(editor); // map getter
 ft_printf("Map Got!\n");

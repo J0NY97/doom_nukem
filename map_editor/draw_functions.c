@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 12:54:15 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/11 12:28:12 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,20 +43,6 @@ t_wall		*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
 		curr = curr->next;
 	}
 	return (NULL);
-}
-
-int		wall_in_list(t_wall *wall, t_list *wall_list)
-{
-	t_list *curr;
-
-	curr = wall_list;
-	while (curr)
-	{
-		if (wall_compare(curr->content, wall))
-			return (1);
-		curr = curr->next;
-	}
-	return (0);
 }
 
 // Calculates the amount of walls in a sector

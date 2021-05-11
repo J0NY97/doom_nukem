@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 17:48:36 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/11 12:11:51 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -162,6 +162,8 @@ char	*set_sector(t_editor *doom)
 	while (s)
 	{
 		sec = s->content;
+
+		sort_sector_wall_list(sec);
 
 		temp = ft_sprintf("\t\t%d\t", sec->id);
 		ft_stradd(&str, temp);

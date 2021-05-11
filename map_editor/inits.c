@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 11:22:02 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/11 14:33:03 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -628,8 +628,7 @@ void	init_entity_presets(t_list **list, char *path)
 	while (get_next_line(fd, &line))
 	{
 		arr = ft_strsplit(line, '\t');
-		preset = new_entity_preset();
-		preset->name = ft_strdup(arr[0]);
+		preset = new_entity_preset(arr[0]);
 		preset->scale = ft_atof(arr[1]);
 
 		if (ft_strcmp(arr[2], "hostile") == 0)

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 17:30:20 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/11 16:07:33 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,16 +64,6 @@ t_list	*get_nth_from_list(t_list **list, int index)
 	return (NULL);
 }
 
-void	free_point(void *content, size_t size)
-{
-	ft_putstr("[free_point]\n");
-	(void)size;
-	if (content == NULL)
-		return ;
-	t_point *point = content;
-
-	free(point);
-}
 
 // NOTE: this is a wall sprite, not the ones in the actual game.
 // 	aka t_sprite found in ../core.h
@@ -132,8 +122,16 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 	return (new_wall);
 }
 
+void	free_point(void *content, size_t size)
+{
+	ft_putstr("[free_point]\n");
+	(void)size;
+	ft_memdel(&content);
+}
+
 void	free_wall(void *content, size_t size)
 {
+	ft_putstr("[free_wall]\n");
 	(void)size;
 	if (content == NULL)
 		return ;
@@ -143,7 +141,7 @@ void	free_wall(void *content, size_t size)
 	free_point(wall->dest, sizeof(t_point));
 	if (wall->sprites)
 		ft_lstdel(&wall->sprites, &free_sprite);
-	free(wall);
+	ft_memdel(content);
 }
 
 t_sector	*new_sector(int id)
@@ -176,13 +174,16 @@ t_sector	*new_sector(int id)
 
 void	free_sector(void *content, size_t size)
 {
+	ft_putstr("[free_sector]\n");
 	(void)size;
 	if (content == NULL)
 		return ;
 	t_sector *sector = content;
 
+	ft_putstr("Starting to free walls from sector.\n");
 	if (sector->walls)
 		ft_lstdel(&sector->walls, &free_wall);
+	ft_putstr("All walls from sector freed.\n");
 	free_point(sector->first_point, sizeof(t_point));
 	free(sector);
 }
@@ -217,14 +218,14 @@ void	free_entity(void *content, size_t size)
 	free(entity);
 }
 
-t_entity_preset	*new_entity_preset(void)
+t_entity_preset	*new_entity_preset(char *name)
 {
 	t_entity_preset *preset;
 
 	preset = malloc(sizeof(t_entity_preset));
 	memset(preset, 0, sizeof(t_entity_preset));
 
-	preset->name = ft_strdup("Default name");
+	preset->name = ft_strdup(name);
 	preset->scale = 1;
 	preset->mood = ENTITY_TYPE_NEUTRAL; // e_entity
 	preset->health = -1;
@@ -247,6 +248,7 @@ void	free_entity_preset(void *content, size_t size)
 	free(ent);
 }
 
+// TODO: Get from list if function.
 t_entity_preset	*get_entity_preset_from_list_with_name(t_list *list, char *name)
 {
 	t_list *curr;
@@ -464,7 +466,7 @@ void   remove_wall_from_its_sector(t_grid *grid, t_wall *wall)
 {
 	t_list  *curr_sec;
 	t_list  *curr_wall;
-	t_list  *prev_wall;
+	t_list  *prev_wall = NULL;
 
 	curr_sec = grid->sectors;
 	while (curr_sec)
@@ -608,9 +610,24 @@ void			remove_all_non_existing_portals(t_list **sectors)
 	}
 }
 
+int				wall_in_list(t_wall *wall, t_list *list)
+{
+	t_list *curr;
+
+	curr = list;
+	while (curr)
+	{
+		if (wall_compare(wall, curr->content))
+			return (1);
+		curr = curr->next;
+	}
+	return (0);
+}
 
 int				wall_in_sector(t_wall *wall, t_sector *sector)
 {
+	return (wall_in_list(wall, sector->walls));
+	/* OLD, if the code on top of this doesnt work, uncomment.
 	t_list *curr;
 
 	curr = sector->walls;
@@ -621,6 +638,7 @@ int				wall_in_sector(t_wall *wall, t_sector *sector)
 		curr = curr->next;
 	}
 	return (0);
+	*/
 }
 
 void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors)
@@ -646,3 +664,52 @@ void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors)
 	}
 }
 
+// NOTE: This spaghett has to be added so that niklas renderer can work. 
+//
+// 1. loop through all sectors walls
+// 2. save either wall, and loop through all the walls again and search for a wall with common vertex. that is not itself 
+// 3. when found, check that if its the same vertex aka v1 == v1 or v2 == v2, if not switcheroo.
+// 4. remove all the old walls and set sector - walls to the new lst.
+//
+// NOTE: we always check wall->dest
+void	sort_sector_wall_list(t_sector *sector)
+{
+	t_list *sorted_list = NULL;
+	t_list *rucc;
+	t_wall *wall;
+
+	if (!sector)
+		return ;
+	ft_putstr("didnt return1");
+	if (sector->walls == NULL)
+		return ;
+	ft_putstr("didnt return2");
+	wall = sector->walls->content;
+	add_to_list(&sorted_list, wall, sizeof(t_wall));		
+	rucc = sector->walls;
+	while (rucc)
+	{
+		if ((vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->orig->pos) || vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->dest->pos)) &&
+			!wall_compare(wall, rucc->content)) 
+		{
+			if (vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->dest->pos))
+			{
+				t_point *temp = ((t_wall *)rucc->content)->dest;
+				((t_wall *)rucc->content)->dest = ((t_wall *)rucc->content)->orig;
+				((t_wall *)rucc->content)->orig = temp;
+			}
+			wall = rucc->content;
+			add_to_list(&sorted_list, wall, sizeof(t_wall));
+			if (vector_compare(((t_wall *)sector->walls->content)->orig->pos, wall->dest->pos))
+				break ;
+			rucc = sector->walls;
+		}
+		else
+			rucc = rucc->next;
+	}
+
+	ft_lstdel(&sector->walls, &dummy_free_er);
+	sector->walls = sorted_list;
+
+	ft_putstr("We are done sorting the sector.\n");
+}

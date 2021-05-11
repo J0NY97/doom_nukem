@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 13:05:37 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/11 14:24:19 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -363,6 +363,7 @@ void	draw_selected_sector(t_editor *editor, t_grid *grid)
 	}
 	editor->selected_sector_info->text_color = 0xffffffff;
 	bui_set_element_text(editor->selected_sector_info, str, 0, 0);
+	ft_strdel(&str);
 }
 
 void	select_sector(t_grid *grid)
