@@ -19,7 +19,8 @@ INCLUDES = \
 	-I../ft_printf \
 	-I../better_libui \
 	-I../libgfx \
-	-I../SDL2/includes
+	-I../SDL2/includes \
+	-I../
 
 LIB_FOLDERS = \
 	-L../libft \
@@ -53,11 +54,11 @@ $(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
 	make -C ../better_libui
 
 $(NAME): $(SRCS)
-	@gcc -o $(NAME)	$(INCLUDES) $(LIB_FOLDERS) $(LIB) $(SRCS) $(FLAGS)
+	@gcc -o $(NAME) -g $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(SRCS) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 fclean_libs:
-	@make -C $(LIBFT) fclean 
+	@make -C $(LIBFT) fclean
 	@make -C $(LIBGFX) fclean
 	@make -C $(BETTER_LIBUI) fclean
 	@make -C $(FT_PRINTF) fclean
@@ -74,5 +75,5 @@ fclean: fclean_libs clean
 	@rm -f $(NAME)
 
 re: fclean fclean_libs all
-	
+
 .PHONY: clean, all, re, fclean

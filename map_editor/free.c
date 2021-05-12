@@ -8,7 +8,7 @@ void	changer_prefab_free(void *prefab, size_t size)
 	t_changer_prefab *pref;
 	pref = prefab;
 
-	free(prefab);
+	ft_memdel(prefab);
 }
 
 void	rword_free(void *content, size_t size)
@@ -45,7 +45,7 @@ ft_putstr("Entities freed.\n");
 		rucc = curr->next;
 		free_point(curr->content, 0);
 		ft_lstdelone(&curr, &dummy_free_er);
-		curr = rucc;	
+		curr = rucc;
 	}
 
 	curr = grid->points;
@@ -54,7 +54,7 @@ ft_putstr("Entities freed.\n");
 		rucc = curr->next;
 		free_wall(curr->content, 0);
 		ft_lstdelone(&curr, &rword_free);
-		curr = rucc;	
+		curr = rucc;
 	}
 	*/
 
@@ -68,7 +68,7 @@ void	editor_free(t_editor *editor)
 	changer_prefab_free(editor->scaler, 0);
 
 	grid_free(&editor->grid);
-	
+
 	ft_strdel(&editor->fullpath);
 	ft_strdel(&editor->mapname);
 
@@ -77,9 +77,10 @@ void	editor_free(t_editor *editor)
 	ft_strdel(&editor->map.name);
 	// t_spawn stuff
 	// nothing to do
-	
-	free(editor->sprite_buttons);
-	free(editor->entity_sprite_buttons);
+
+	// NOTE: these 2 lines commented out because currently they are not used.
+	//free(editor->sprite_buttons);
+	//free(editor->entity_sprite_buttons);
 
 	// TODO: this isnt ready so dont know how it will look yet in the mallocer.
 //	ft_lstdel(&editor->all_textures, &editor_texture_free);
@@ -108,4 +109,6 @@ void	editor_free(t_editor *editor)
 	dropdown_preset_free(editor->entity_type_drop, 0);
 
 	ft_lstdel(&editor->entity_direction_radio_buttons, &dummy_free_er);
+
+//	ft_memdel((void **)&editor);
 }

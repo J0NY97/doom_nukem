@@ -2,12 +2,12 @@
 # define EDITOR_H
 # define SDL_MAIN_HANDLED
 
-# include "../core.h"
+# include "core.h"
 # include "libft.h"
 # include "better_libui.h"
 # include "libgfx.h"
 # include "ft_printf.h"
-# include "../path.h"
+# include "path.h"
 
 // TODO: portal button in the wall edit window. som en tickbox
 //
@@ -28,7 +28,7 @@
 
 // TODO: hotkeys for all the buttons.
 //
-// TODO: when in selection mode. ctrl or (drag and highlight) to choose multiple points, walls, sectors, entities for deletion. 
+// TODO: when in selection mode. ctrl or (drag and highlight) to choose multiple points, walls, sectors, entities for deletion.
 //
 // TODO: draw the grid only once on the surface of the grid, and only update it when you zoom.
 //
@@ -206,10 +206,10 @@ struct			s_editor
 	t_spawn		spawn;
 
 	t_texture	sprites[1];
-	t_bui_element	**sprite_buttons;
+//	t_bui_element	**sprite_buttons;
 
 	t_texture	entity_sprites[1];
-	t_bui_element	**entity_sprite_buttons;
+//	t_bui_element	**entity_sprite_buttons;
 
 	// New stuff
 	t_list		*all_textures; // list of t_editor_texture (note: wall, portal and wall_sprite textures take their tex from here)
@@ -242,7 +242,7 @@ struct			s_editor
 	t_bui_element *endless_tickbox;
 	t_bui_element *story_tickbox;
 	t_bui_element *active_map_type;
-	t_list *map_type_tickboxes; // list of t_bui_element * 
+	t_list *map_type_tickboxes; // list of t_bui_element *
 
 	// New edit window
 	t_bui_window	*new_edit_window;
@@ -259,7 +259,7 @@ struct			s_editor
 	t_bui_element *wall_texture_view;
 	t_bui_element *portal_texture_view;
 	t_bui_element *wall_sprite_view;
-	
+
 	// TODO: init the active to null
 	t_list *wall_texture_buttons;	// list of t_bui_element * of the texture buttons for wall
 	t_bui_element *active_wall_texture;
@@ -270,7 +270,7 @@ struct			s_editor
 
 	t_bui_element *add_wall_sprite_button;
 	t_bui_element *remove_wall_sprite_button;
-	
+
 	// Scale for the wall texture. texture_scale, this is here because of search keyword.
 	t_bui_element *wall_scale;
 	t_bui_element *wall_scale_value;
@@ -320,7 +320,7 @@ struct			s_editor
 	// Entity elements
 	// ////////////////
 	t_bui_element *edit_toolbox_entity;
-	t_bui_element *edit_view_entity; 	
+	t_bui_element *edit_view_entity;
 
 	t_preset_dropdown *entity_type_drop;
 

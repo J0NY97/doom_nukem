@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:37:03 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 14:42:28 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/12 12:05:40 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,7 +63,7 @@ char *args_parser_v2(int ac, char **av)
 	ft_putstr("Parsing args\n");
 	if (ac == 1)
 	{
-		map = ft_strjoiner(ROOT_PATH"map_editor/maps/", "default_name", NULL);
+		map = ft_strjoiner(ROOT_PATH"map_editor/maps/", "default_nameq", NULL);
 		return (map);
 	}
 	if (ac < 2)

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/11 16:07:33 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/12 12:18:53 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -215,7 +215,7 @@ void	free_entity(void *content, size_t size)
 
 	if (entity->preset)
 		free_entity_preset(entity->preset, sizeof(t_entity_preset));
-	free(entity);
+	ft_memdel((void **)&entity);
 }
 
 t_entity_preset	*new_entity_preset(char *name)
@@ -245,7 +245,7 @@ void	free_entity_preset(void *content, size_t size)
 	t_entity_preset *ent = content;
 
 	ft_strdel(&ent->name);
-	free(ent);
+	ft_memdel((void **)&ent);
 }
 
 // TODO: Get from list if function.

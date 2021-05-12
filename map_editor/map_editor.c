@@ -28,9 +28,10 @@ void	map_editor(char *map)
 	else
 		final = ft_strdup(mapname[i]);
 	editor->mapname = ft_strdup(final);
+	ft_strdel(&final);
 	free_array(mapname);
 	// End of spaghett
-	
+
 ft_printf("Map Name set to: %s, %s\n", editor->mapname, editor->fullpath);
 
 	window_init(editor, libui);
@@ -45,7 +46,7 @@ ft_printf("button done!\n");
 	grid_init(editor);
 ft_printf("Grid done!\n");
 
-	
+
 	// NOTE: this needs to be called before map getter so that we can put the correct preset in the correct entity
 	init_entity_presets(&editor->entity_presets, ROOT_PATH"map_editor/entities.preset");
 	// TODO: figure out better place for this.
@@ -60,16 +61,14 @@ ft_printf("Map Got!\n");
 	edit_window_init(editor, libui);
 ft_printf("Edit window init.\n");
 
-	/*
-	texture_init(doom);
-	sprite_init(doom);
-	entity_sprite_init(doom);
-	*/
+	//texture_init(doom);
+	//sprite_init(doom);
+	//entity_sprite_init(doom);
 ft_printf("Starting to loop!\n");
 	while (libui->run)
 	{
 		bui_event_handler_new(libui);
-		
+
 		draw_grid(editor, &editor->grid);
 		hover_calc(editor, &editor->grid);
 		if (bui_button_toggle(editor->button_draw))
@@ -121,8 +120,8 @@ ft_printf("Starting to loop!\n");
 		bui_render_new(libui);
 	}
 	ft_putstr("[map_editor] Bye!\n");
-	
+
 	editor_free(editor);
-//	bui_libui_quit(libui);
+	bui_libui_quit(libui);
 	return ;
 }
