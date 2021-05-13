@@ -6,8 +6,7 @@ void	map_editor(char *map)
 	t_editor	*editor;
 	t_bui_libui	*libui;
 
-	editor = malloc(sizeof(t_editor));
-	memset(editor, 0, sizeof(t_editor));
+	editor = ft_memalloc(sizeof(t_editor));
 
 	libui = bui_new_libui();
 	editor->libui = libui;
@@ -55,7 +54,6 @@ ft_printf("Ntity din dan don!\n");
 	read_map_file(editor); // map getter
 ft_printf("Map Got!\n");
 
-	// TODO: why is this the only modify variable that is in the option and not grid ?
 	editor->grid.modify_sprite = NULL;
 	// New stuff
 	edit_window_init(editor, libui);

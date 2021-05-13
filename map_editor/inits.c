@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/11 14:33:03 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/13 13:25:04 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -392,7 +392,6 @@ void	init_sector_editor(t_editor *editor)
 	editor->floor_scale = new_changer_prefab(editor->edit_toolbox_sector, "floor texture scale", coord);
 	coord.y = (25 * 7) + (40 * 6);
 	editor->ceiling_scale = new_changer_prefab(editor->edit_toolbox_sector, "ceiling texture scale", coord);
-
 }
 
 void	init_wall_editor(t_editor *editor)
@@ -416,21 +415,24 @@ void	init_wall_editor(t_editor *editor)
 	// Note2; it seems that i have planned to make the tab system more dynamic, aka you can have differnece sized buttons
 	// Note3; but yet not made it tho...
 	t_bui_element **elems;
-	
+
 	elems = preset_tab_add(editor->wall_tab, "Wall Texture");
 	bui_set_element_color(elems[0], editor->palette.light_blue);
 	bui_set_element_color(elems[1], editor->palette.light_blue);
 	editor->wall_texture_view = elems[1]; 
+	free(elems);
 
 	elems = preset_tab_add(editor->wall_tab, "Portal Texture");
 	bui_set_element_color(elems[0], editor->palette.granny_smith_apple);
 	bui_set_element_color(elems[1], editor->palette.granny_smith_apple);
 	editor->portal_texture_view = elems[1];
+	free(elems);
 
 	elems = preset_tab_add(editor->wall_tab, "Wall Sprite");
 	bui_set_element_color(elems[0], editor->palette.peach_crayola);
 	bui_set_element_color(elems[1], editor->palette.peach_crayola);
 	editor->wall_sprite_view = elems[1]; 
+	free(elems);
 
 	// wall textures view elements
 	coord = ui_init_coords(5, 20, 100, 40);
