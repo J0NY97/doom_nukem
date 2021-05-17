@@ -14,7 +14,7 @@ void	map_editor(char *map)
 	// doesnt work for some reason, it works the first couple times and then nothing.... hello my name is sdl
 //	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
 //	SDL_SetHintWithPriority(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1", SDL_HINT_OVERRIDE);
-	ft_printf("Hint set? %s\n", SDL_GetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH));
+//	ft_printf("Hint set? %s\n", SDL_GetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH));
 
 	editor->libui = libui;
 
