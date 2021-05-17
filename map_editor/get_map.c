@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/10 17:43:59 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/17 13:42:52 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,6 +212,7 @@ void	read_fandc(t_editor *editor, int fd)
 		free_array(arr);
 		ft_strdel(&line);
 	}
+	ft_strdel(&line);
 }
 
 void		read_entities(t_editor *doom, int fd)
@@ -256,6 +257,7 @@ void	read_mapinfo(t_editor *editor, int fd)
 		free_array(arr);
 		ft_strdel(&line);
 	}
+	ft_strdel(&line);
 }
 
 void		read_map_file(t_editor *doom)

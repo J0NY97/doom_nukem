@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/10 17:45:42 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/17 12:43:53 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -120,169 +120,150 @@ void	wall_render(t_editor *doom)
 
 void	wall_option(t_editor *editor, t_bui_libui *libui)
 {
+	char *temp;
+
 	editor->edit_view_wall->show = 1;
 	editor->edit_toolbox_wall->show = 1;
 
 	preset_tab_events(editor->wall_tab);
 
+	// NOTE: the newer way libui functions, is that all the elements will be event handled no matter what,
+	// 		so we have to actually check here if the texture view is open before we use the events to our nytta.
 	// check all the wall texture view elements
-	
-		// texture scale
-	// Note: add and subtract from "t_wall" "texture_scale"
-	if (bui_button(editor->wall_scale_add))
-		editor->grid.modify_wall->texture_scale += 0.1f;
-	else if (bui_button(editor->wall_scale_sub))
-		editor->grid.modify_wall->texture_scale -= 0.1f;
-
-	// TODO:NOTE:IDKK: not sure where i should do this.
-	if (editor->grid.modify_wall->texture_scale < 0.1)
-		editor->grid.modify_wall->texture_scale = 0.1f; 
-	
-	char *scale_value_str = ft_ftoa(editor->grid.modify_wall->texture_scale, 1);
-	bui_change_element_text(editor->wall_scale_value, scale_value_str);
-	ft_strdel(&scale_value_str);
-
-		// wall solidity tick box
-	editor->wall_solid_tick->toggle = editor->grid.modify_wall->solid;
-	if (bui_button(editor->wall_solid_tick))
+	if (editor->wall_texture_view->show == 1)
 	{
-		if (editor->wall_solid_tick->toggle == 1)
-			editor->grid.modify_wall->solid = 0;
+			// texture scale
+		changer_prefab_events_float(editor->texture_scale_changer, &editor->grid.modify_wall->texture_scale, 0.1f);
+			// wall solidity tick box
+		editor->wall_solid_tick->toggle = editor->grid.modify_wall->solid;
+		if (bui_button(editor->wall_solid_tick))
+		{
+			if (editor->wall_solid_tick->toggle == 1)
+				editor->grid.modify_wall->solid = 0;
+			else
+				editor->grid.modify_wall->solid = 1;
+		}
+			// wall portal tick box
+		if (editor->grid.modify_wall->neighbor != -1)
+			editor->wall_portal_tick->toggle = 1;
 		else
-			editor->grid.modify_wall->solid = 1;
-	}
-
-   //	wall portal tick box
-	if (editor->grid.modify_wall->neighbor != -1)
-		editor->wall_portal_tick->toggle = 1;
-	else
-		editor->wall_portal_tick->toggle = 0;
-	if (bui_button(editor->wall_portal_tick))
-	{
-		if (editor->wall_portal_tick->toggle == 1)
-			remove_portal(&editor->grid);
+			editor->wall_portal_tick->toggle = 0;
+		if (bui_button(editor->wall_portal_tick))
+		{
+			if (editor->wall_portal_tick->toggle == 1)
+				remove_portal(&editor->grid);
+			else
+				add_portal(&editor->grid);
+		}
+		// TODO: first step is to take from the "modify_wall" the "texture_id" and toggle that texture button
+		// TODO: second step is to check for the mouse event on the buttons
+		// TODO: third step is to set the modify_wall texture id with the correct one.
+		// NOTE: i think this is pretty spaghett, not pretty spaghett but pretty spaghett if you know what i mean.
+			// texture buttons
+		temp = ft_itoa(editor->grid.modify_wall->texture_id);
+		if (only_one_button_toggled_at_a_time(editor->wall_texture_buttons, &editor->active_wall_texture))
+		{}
 		else
-			add_portal(&editor->grid);
-	}
-
-	
-	// TODO: first step is to take from the "modify_wall" the "texture_id" and toggle that texture button
-	// TODO: second step is to check for the mouse event on the buttons
-	// TODO: third step is to set the modify_wall texture id with the correct one.
-	// NOTE: i think this is pretty spaghett, not pretty spaghett but pretty spaghett if you know what i mean.
-		// texture buttons
-	char *temp;
-
-	temp = ft_itoa(editor->grid.modify_wall->texture_id);
-	if (only_one_button_toggled_at_a_time(editor->wall_texture_buttons, &editor->active_wall_texture))
-	{}
-	else
-		toggle_on_element_with_text(editor->wall_texture_buttons, &editor->active_wall_texture, temp);
-	ft_strdel(&temp);
-	if (editor->active_wall_texture != NULL)
-		editor->grid.modify_wall->texture_id = ft_atoi(editor->active_wall_texture->text);
-		// portal textures
-	temp = ft_itoa(editor->grid.modify_wall->portal_texture_id);
-	if (only_one_button_toggled_at_a_time(editor->portal_texture_buttons, &editor->active_portal_texture))
-	{}
-	else
-		toggle_on_element_with_text(editor->portal_texture_buttons, &editor->active_portal_texture, temp);
-	ft_strdel(&temp);
-	if (editor->active_portal_texture != NULL)
-		editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
-		// wall sprites
-	// TODO: figure out where this should get its texture id
-	temp = ft_itoa(2);
-	if (only_one_button_toggled_at_a_time(editor->wall_sprite_buttons, &editor->active_wall_sprite))
-	{}
-	else
-		toggle_on_element_with_text(editor->wall_sprite_buttons, &editor->active_wall_sprite, temp);
-	ft_strdel(&temp);
-	if (editor->active_wall_sprite != NULL)
+			toggle_on_element_with_text(editor->wall_texture_buttons, &editor->active_wall_texture, temp);
+		ft_strdel(&temp);
+		if (editor->active_wall_texture != NULL)
+			editor->grid.modify_wall->texture_id = ft_atoi(editor->active_wall_texture->text);
+	} ///// !! END OF TEXTURE_VIEW  !! ////
+	else if (editor->portal_texture_view->show == 1)
 	{
-		// editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
-	}
-
-	// the sprite add button
-	short int chosen_texture = 0;
-	if (editor->active_wall_sprite != NULL)
-		chosen_texture = ft_atoi(editor->active_wall_sprite->text);
-	if (bui_button(editor->add_wall_sprite_button))
+			// portal textures
+		temp = ft_itoa(editor->grid.modify_wall->portal_texture_id);
+		if (only_one_button_toggled_at_a_time(editor->portal_texture_buttons, &editor->active_portal_texture))
+		{}
+		else
+			toggle_on_element_with_text(editor->portal_texture_buttons, &editor->active_portal_texture, temp);
+		ft_strdel(&temp);
+		if (editor->active_portal_texture != NULL)
+			editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
+	} // !! END OF PORTAL_TEXUTRE_VIEW !! //
+	else if (editor->wall_sprite_view->show == 1)
 	{
-		// add the sprite to the wall
-		ft_putstr("Adding sprite to wall\n");
-		// 1. get the texture you have chosen from list below;
-		// 	has been done already, aka chosen_texture??
-		// 2. make new sprite,
-		 	t_sprite *sprite = new_sprite();
-		 	sprite->sprite_id = chosen_texture;
-		// 3. add to wall->sprites
-		 	add_to_list(&editor->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
-			editor->grid.modify_sprite = sprite;
-	}
-	
+			// wall sprites
+		// TODO: figure out where this should get its texture id
+		// NOTE: this is the reason why you cant change the wall_sprite texture from 2
+		temp = ft_itoa(2);
+		if (only_one_button_toggled_at_a_time(editor->wall_sprite_buttons, &editor->active_wall_sprite))
+		{}
+		else
+			toggle_on_element_with_text(editor->wall_sprite_buttons, &editor->active_wall_sprite, temp);
+		ft_strdel(&temp);
+		if (editor->active_wall_sprite != NULL)
+		{
+			// editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
+		}
+
+		// the sprite add button
+		short int chosen_texture = 0;
+		if (editor->active_wall_sprite != NULL)
+			chosen_texture = ft_atoi(editor->active_wall_sprite->text);
+		if (bui_button(editor->add_wall_sprite_button))
+		{
+			// add the sprite to the wall
+			ft_putstr("Adding sprite to wall\n");
+			// 1. get the texture you have chosen from list below;
+			// 	has been done already, aka chosen_texture??
+			// 2. make new sprite,
+				t_sprite *sprite = new_sprite();
+				sprite->sprite_id = chosen_texture;
+			// 3. add to wall->sprites
+				add_to_list(&editor->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
+				editor->grid.modify_sprite = sprite;
+		}
+		// TODO: this doesnt take into account the scale of the sprite, it assumes that the scale is default, which means
+		// 	if you mkae the scale bigger you can only choose the sprite from the top left corner of the sprite, and not
+		// 	the actual whole sprite render. (change the mouse_hover to multiply the position with the scale)
+
+		// Choose the sprite
+		if (mouse_hover(editor->libui, editor->edit_view_wall->position) &&
+		mouse_pressed(editor->libui, MKEY_LEFT))
+		{
+			int view_x = editor->libui->mouse_x - editor->edit_view_wall->position.x - 50;
+			int view_y = editor->libui->mouse_y - editor->edit_view_wall->position.y - 50;
+			t_sprite *temp;
+
+			// Note: this function returns the sprite at that exact location, so you have to give
+			// 	the exact location of where you want it to look if there is a sprite. thus the way you have
+			// 	removed from the mouse_x and y the view location.
+			temp = get_sprite_from_list(&editor->grid.modify_wall->sprites, view_x, view_y);
+			if (temp != NULL)
+			{
+				ft_putstr("Sprite was successfully selected.\n");
+				editor->grid.modify_sprite = temp;
+			}
+		}
+		// Move the sprite
+		if (editor->grid.modify_sprite != NULL)
+		{
+			float move_speed = 0.1;
+			if (key_pressed(libui, KEY_LEFT))
+				editor->grid.modify_sprite->real_x -= move_speed;
+			else if (key_pressed(libui, KEY_RIGHT))
+				editor->grid.modify_sprite->real_x += move_speed;
+			if (key_pressed(libui, KEY_UP))
+				editor->grid.modify_sprite->real_y -= move_speed;
+			else if (key_pressed(libui, KEY_DOWN))
+				editor->grid.modify_sprite->real_y += move_speed;
+
+			// the sprite scale changer
+			changer_prefab_events_float(editor->sprite_scale_changer, &editor->grid.modify_sprite->scale, 0.1f);
+			
+			// remove sprite button
+			if (bui_button(editor->remove_wall_sprite_button))
+			{
+				ft_putstr("Removing sprite from wall.\n");
+				// TODO: make function for removing and freeing wall sprite.
+				remove_from_sprites(&editor->grid.modify_wall->sprites, editor->grid.modify_sprite);
+				editor->grid.modify_sprite = NULL;
+			}
+		}
+	} // !! END OF WALL_SPRITE_VIEW !! //
 	// NOTE: in this function you also render the wall sprites.
 	wall_render(editor);
-
-	// TODO: this doesnt take into account the scale of the sprite, it assumes that the scale is default, which means
-	// 	if you mkae the scale bigger you can only choose the sprite from the top left corner of the sprite, and not
-	// 	the actual whole sprite render. (change the mouse_hover to multiply the position with the scale)
-
-	// Choose the sprite
-	if (mouse_hover(editor->libui, editor->edit_view_wall->position) &&
-	mouse_pressed(editor->libui, MKEY_LEFT))
-	{
-		int view_x = editor->libui->mouse_x - editor->edit_view_wall->position.x - 50;
-		int view_y = editor->libui->mouse_y - editor->edit_view_wall->position.y - 50;
-		t_sprite *temp;
-
-		// Note: this function returns the sprite at that exact location, so you have to give
-		// 	the exact location of where you want it to look if there is a sprite. thus the way you have
-		// 	removed from the mouse_x and y the view location.
-		temp = get_sprite_from_list(&editor->grid.modify_wall->sprites, view_x, view_y);
-		if (temp != NULL)
-		{
-			ft_putstr("Sprite was successfully selected.\n");
-			editor->grid.modify_sprite = temp;
-		}
-	}
-	// Move the sprite
-	if (editor->grid.modify_sprite != NULL)
-	{
-		float move_speed = 0.1;
-		if (key_pressed(libui, KEY_LEFT))
-			editor->grid.modify_sprite->real_x -= move_speed;
-		else if (key_pressed(libui, KEY_RIGHT))
-			editor->grid.modify_sprite->real_x += move_speed;
-		if (key_pressed(libui, KEY_UP))
-			editor->grid.modify_sprite->real_y -= move_speed;
-		else if (key_pressed(libui, KEY_DOWN))
-			editor->grid.modify_sprite->real_y += move_speed;
-
-		// the sprite scale buttons
-		// NOTE: might aswell do this here where we are already checking if there is a modify sprite.
-		if (bui_button(editor->sprite_scale_add))
-			editor->grid.modify_sprite->scale += 0.1f;
-		else if (bui_button(editor->sprite_scale_sub))
-			editor->grid.modify_sprite->scale -= 0.1f;
-
-		// TODO:NOTE:IDKK: not sure where i should do this.
-		if (editor->grid.modify_sprite->scale < 0.1)
-			editor->grid.modify_sprite->scale = 0.1f; 
-		
-		char *sprite_scale_value_str = ft_ftoa(editor->grid.modify_sprite->scale, 1);
-		bui_change_element_text(editor->sprite_scale_value, sprite_scale_value_str);
-		ft_strdel(&sprite_scale_value_str);
-		
-		// remove sprite button
-		if (bui_button(editor->remove_wall_sprite_button))
-		{
-			ft_putstr("Removing sprite from wall.\n");
-			// TODO: make function for removing and freeing wall sprite.
-			remove_from_sprites(&editor->grid.modify_wall->sprites, editor->grid.modify_sprite);
-			editor->grid.modify_sprite = NULL;
-		}
-	}
 }
 
 void	sector_option(t_editor *editor, t_grid *grid)

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/11 14:24:19 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/17 16:36:29 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -358,6 +358,11 @@ void	draw_selected_sector(t_editor *editor, t_grid *grid)
 			dest.x += 1;
 			dest.y += 1;
 			gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
+			orig.x -= 2;
+			orig.y -= 2;
+			dest.x -= 2;
+			dest.y -= 2;
+			gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
 			curr_wall = curr_wall->next;
 		}
 	}
@@ -379,9 +384,17 @@ void	select_sector(t_grid *grid)
 		t_sector *sec;
 
 		sec = curr->content;
+
+		// DEBUG
 		gfx_draw_vector(grid->elem->active_surface, 0xffffff00, 3, sec->lowest_pos);
 		gfx_draw_vector(grid->elem->active_surface, 0xffff00ff, 3, sec->highest_pos);
-		if (gfx_hitbox_square(grid->hover.x, grid->hover.y, (t_xywh){(int)sec->lowest_pos.x, (int)sec->lowest_pos.y, (int)sec->highest_pos.x - (int)sec->lowest_pos.x, (int)sec->highest_pos.y - (int)sec->lowest_pos.y}))
+		gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 3, sec->center);
+
+		if (gfx_hitbox_square(grid->hover.x * grid->gap, grid->hover.y * grid->gap,
+				(t_xywh){
+				(int)sec->center.x - (grid->gap * 2), (int)sec->center.y - (grid->gap * 2),
+				grid->gap * 4, grid->gap * 4
+		}))
 		{
 			temp = curr->content;
 			break ;

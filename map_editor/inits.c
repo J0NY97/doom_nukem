@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/13 13:25:04 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/17 16:44:25 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,6 +86,7 @@ void	toolbox_init(t_editor *doom)
 
 	coord = ui_init_coords(10, 10, doom->window->active_surface->w / 6, doom->window->active_surface->h - 20);
 	doom->toolbox = bui_new_menu(doom->window, "toolbox", coord);
+	doom->toolbox->update_state = 0;
 	bui_set_element_color(doom->toolbox, doom->palette.win_elem);
 
 	// Selection mode buttons
@@ -93,6 +94,8 @@ void	toolbox_init(t_editor *doom)
 	int select_w = 32;
 	coord = ui_init_coords(70, 25, 200, 50);
 	editor->select_mode = bui_new_element(editor->toolbox, "Select", coord);
+	editor->select_mode->update_state = 0;
+	bui_set_element_text_font(editor->select_mode, "DroidSans.ttf", editor->select_mode->font_size, 0xffffffff);
 	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
 		//vertex button
 	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
@@ -131,26 +134,33 @@ void	toolbox_init(t_editor *doom)
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_wall, sizeof(t_bui_element));
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_sector, sizeof(t_bui_element));
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_entity, sizeof(t_bui_element));
+}
 
-
+void info_area_init(t_editor *editor)
+{
+	t_xywh coord;
 	// info area init
-	coord = ui_init_coords(10, (doom->toolbox->position.h / 4 + 10),
-			doom->toolbox->position.w - 20, (doom->toolbox->position.h / 4) * 3 - 20);
-	doom->info_area = bui_new_element(doom->toolbox, "info area", coord);
-	bui_set_element_color(doom->info_area, doom->palette.elem_elem);
+	// relative to "other" box, but we can use the coords from the other_mode because its made after this.
+	coord.x = 10;
+	coord.y = 150;//editor->other_mode->position.y + editor->other_mode->position.h + 10;
+	coord.w = editor->toolbox->position.w - 20; 
+	coord.h = 225;//(editor->toolbox->position.h / 4) * 3 - 20;
+	editor->info_area = bui_new_element(editor->toolbox, "info area", coord);
+	editor->info_area->update_state = 0;
+	bui_set_element_color(editor->info_area, editor->palette.elem_elem);
 
 	// TODO: put this in a infoarea_init function or something, but remove from this function
-	doom->hover_info = bui_new_element(doom->info_area, "hover info", (t_xywh) {10, 20, 100, 50});
-	bui_set_element_color(doom->hover_info, doom->info_area->color);
+	editor->hover_info = bui_new_element(editor->info_area, "hover info", (t_xywh) {10, 20, 100, 50});
+	bui_set_element_color(editor->hover_info, editor->info_area->color);
 
-	doom->selected_sector_info = bui_new_element(doom->info_area, "selected sector info", (t_xywh) {10, 75, 100, 50});
-	bui_set_element_color(doom->selected_sector_info, doom->info_area->color);
+	editor->selected_sector_info = bui_new_element(editor->info_area, "selected sector info", (t_xywh) {10, 75, 100, 50});
+	bui_set_element_color(editor->selected_sector_info, editor->info_area->color);
 
-	doom->selected_vector_info = bui_new_element(doom->info_area, "selected vector info", (t_xywh) {10, 130, 100, 55});
-	bui_set_element_color(doom->selected_vector_info, doom->info_area->color);
+	editor->selected_vector_info = bui_new_element(editor->info_area, "selected vector info", (t_xywh) {10, 130, 100, 55});
+	bui_set_element_color(editor->selected_vector_info, editor->info_area->color);
 
 	// new scale changer
-	coord = ui_init_coords(editor->info_area->position.w - 110, 320, 100, 40);
+	coord = ui_init_coords(editor->info_area->position.w - 110, 175, 100, 40);
 	editor->scaler = new_changer_prefab(editor->info_area, "Map Scale", coord);
 }
 
@@ -182,6 +192,8 @@ void	button_init(t_editor *doom)
 
 	coord = ui_init_coords(10, 25, 50, 50);
 	editor->draw_mode = bui_new_element(editor->toolbox, "Draw", coord);
+	editor->draw_mode->update_state = 0;
+	bui_set_element_text_font(editor->draw_mode, "DroidSans.ttf", editor->draw_mode->font_size, 0xffffffff);
 	bui_set_element_color(editor->draw_mode, editor->palette.elem_elem);
 
 	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20, button_w, button_w);
@@ -196,6 +208,8 @@ void	button_init(t_editor *doom)
 // Other mode
 	coord = ui_init_coords(editor->draw_mode->position.x, editor->draw_mode->position.y + editor->draw_mode->position.h + 10, 300, 50);
 	editor->other_mode = bui_new_element(editor->toolbox, "Other", coord);
+	editor->other_mode->update_state = 0;
+	bui_set_element_text_font(editor->other_mode, "DroidSans.ttf", editor->other_mode->font_size, 0xffffffff);
 	bui_set_element_color(editor->other_mode, editor->palette.elem_elem);
 // Map name input
 	coord = ui_init_coords(gap, 20, 100, 20);
@@ -281,7 +295,7 @@ t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_
 }
 
 // TODO: figure out how to do so it only changes the text if you actually clicked either of the buttons.
-// TODO: maybe take in the value you want to change already in the initter. this would leave room for min and max here.
+// 		..be careful, that you will still update the text if the value gets changed somewhere else than here.
 void	changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount)
 {
 	char *str = NULL;
@@ -435,21 +449,12 @@ void	init_wall_editor(t_editor *editor)
 	free(elems);
 
 	// wall textures view elements
-	coord = ui_init_coords(5, 20, 100, 40);
-	editor->wall_scale = bui_new_element(editor->wall_texture_view, "texture scale", coord);
-	bui_set_element_color(editor->wall_scale, 0xff06D6A0);
-
-	coord = ui_init_coords(0, 20, 20, 20);
-	editor->wall_scale_sub = bui_new_element(editor->wall_scale, "-", coord);
-	bui_set_element_color(editor->wall_scale_sub, 0xff06D6A0);
-
-	coord = ui_init_coords(20, 20, 60, 20);
-	editor->wall_scale_value = bui_new_element(editor->wall_scale, "not set", coord);
-	bui_set_element_color(editor->wall_scale_value, 0xff06D6A0);
-	
-	coord = ui_init_coords(80, 20, 20, 20);
-	editor->wall_scale_add = bui_new_element(editor->wall_scale, "+", coord);
-	bui_set_element_color(editor->wall_scale_add, 0xff06D6A0);
+	coord = ui_init_coords(5, 20, 80, 40);
+	editor->texture_scale_changer = new_changer_prefab(editor->wall_texture_view, "texture scale", coord);
+	bui_set_element_color(editor->texture_scale_changer->menu, 0xff06D6A0);
+	bui_set_element_color(editor->texture_scale_changer->sub_button, 0xff06D6A0);
+	bui_set_element_color(editor->texture_scale_changer->value, 0xff06D6A0);
+	bui_set_element_color(editor->texture_scale_changer->add_button, 0xff06D6A0);
 
 	// wall texture solidity tick box
 	coord = ui_init_coords(115, 20, 100, 20);
@@ -474,31 +479,22 @@ void	init_wall_editor(t_editor *editor)
 	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
 
 	// wall sprite view elements
-	coord = ui_init_coords(5, 20, 50, 20);
+	coord = ui_init_coords(95, 20, 80, 20);
 	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "add sprite", coord);
 	bui_set_element_color(editor->add_wall_sprite_button, 0xff06D6A0);
 
-	coord = ui_init_coords(editor->add_wall_sprite_button->position.x + editor->add_wall_sprite_button->position.w + 15, 20, 50, 20);
+	coord = ui_init_coords(95, 40, 80, 20);
 	editor->remove_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "remove sprite", coord);
 	bui_set_element_color(editor->remove_wall_sprite_button, 0xff06D6A0);
 
 
 		// wall sprite scale elements
-	coord = ui_init_coords(5, editor->wall_sprite_view->position.h - 45, 100, 40);
-	editor->sprite_scale = bui_new_element(editor->wall_sprite_view, "sprite scale", coord);
-	bui_set_element_color(editor->sprite_scale, 0xff06D6A0);
-
-	coord = ui_init_coords(0, 20, 20, 20);
-	editor->sprite_scale_sub = bui_new_element(editor->sprite_scale, "-", coord);
-	bui_set_element_color(editor->sprite_scale_sub, 0xff06D6A0);
-
-	coord = ui_init_coords(20, 20, 40, 20);
-	editor->sprite_scale_value = bui_new_element(editor->sprite_scale, "not set", coord);
-	bui_set_element_color(editor->sprite_scale_value, 0xff06D6A0);
-
-	coord = ui_init_coords(80, 20, 20, 20);
-	editor->sprite_scale_add = bui_new_element(editor->sprite_scale, "+", coord);
-	bui_set_element_color(editor->sprite_scale_add, 0xff06D6A0);
+	coord = ui_init_coords(5, 20, 80, 40);
+	editor->sprite_scale_changer = new_changer_prefab(editor->wall_sprite_view, "sprite scale", coord);
+	bui_set_element_color(editor->sprite_scale_changer->menu, 0xff06D6A0);
+	bui_set_element_color(editor->sprite_scale_changer->sub_button, 0xff06D6A0);
+	bui_set_element_color(editor->sprite_scale_changer->value, 0xff06D6A0);
+	bui_set_element_color(editor->sprite_scale_changer->add_button, 0xff06D6A0);
 
 
 	// TODO: make this modular on the y axis aswell
@@ -563,6 +559,7 @@ void	init_wall_editor(t_editor *editor)
 	editor->active_wall_sprite = NULL;
 	amount_on_x = floor(editor->wall_sprite_view->position.w / (button_w + button_gap + offset_x));
 	texture_count = 5;
+	offset_y = 70;
 	i = 0;
 	while (i < texture_count)
 	{

@@ -9,6 +9,13 @@ void	map_editor(char *map)
 	editor = ft_memalloc(sizeof(t_editor));
 
 	libui = bui_new_libui();
+
+	// basically send mouse events when focus change.
+	// doesnt work for some reason, it works the first couple times and then nothing.... hello my name is sdl
+//	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
+//	SDL_SetHintWithPriority(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1", SDL_HINT_OVERRIDE);
+	ft_printf("Hint set? %s\n", SDL_GetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH));
+
 	editor->libui = libui;
 
 	editor->fullpath = ft_strdup(map);
@@ -27,7 +34,7 @@ void	map_editor(char *map)
 	else
 		final = ft_strdup(mapname[i]);
 	editor->mapname = ft_strdup(final);
-	ft_strdel(&final);
+//	ft_strdel(&final); // for some reason you dont have to free this....
 	free_array(mapname);
 	// End of spaghett
 
@@ -36,15 +43,17 @@ ft_printf("Map Name set to: %s, %s\n", editor->mapname, editor->fullpath);
 	window_init(editor, libui);
 ft_printf("libui done!\n");
 
+
 	color_palette_init(&editor->palette);
 ft_printf("palette done!\n");
 	toolbox_init(editor);
 ft_printf("toolbox done!\n");
+	info_area_init(editor);
+ft_printf("Info area done!\n");
 	button_init(editor);
 ft_printf("button done!\n");
 	grid_init(editor);
 ft_printf("Grid done!\n");
-
 
 	// NOTE: this needs to be called before map getter so that we can put the correct preset in the correct entity
 	init_entity_presets(&editor->entity_presets, ROOT_PATH"map_editor/entities.preset");

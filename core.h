@@ -84,8 +84,12 @@ struct				s_sector
 
 	t_point			*first_point;
 	Uint32			color;
+
+	// TODO: remove lowest_pos and highest_pos in the end if they are not used.
 	t_vector		lowest_pos; // these 2 vectors are so you can calculate...
 	t_vector		highest_pos; // ...the middle of the sector.
+
+	t_vector		center; // the center of the sector.
 };
 
 typedef struct		s_weapon

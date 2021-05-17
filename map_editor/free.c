@@ -70,6 +70,9 @@ void	editor_free(t_editor *editor)
 	ft_lstdel(&editor->portal_texture_buttons, &dummy_free_er);
 	ft_lstdel(&editor->wall_sprite_buttons, &dummy_free_er);
 
+	changer_prefab_free(editor->texture_scale_changer, 0);
+	changer_prefab_free(editor->sprite_scale_changer, 0);
+
 	changer_prefab_free(editor->floor_height, 0);
 	changer_prefab_free(editor->ceiling_height, 0);
 	changer_prefab_free(editor->gravity, 0);

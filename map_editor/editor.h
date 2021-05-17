@@ -272,10 +272,7 @@ struct			s_editor
 	t_bui_element *remove_wall_sprite_button;
 
 	// Scale for the wall texture. texture_scale, this is here because of search keyword.
-	t_bui_element *wall_scale;
-	t_bui_element *wall_scale_value;
-	t_bui_element *wall_scale_add;
-	t_bui_element *wall_scale_sub;
+	t_changer_prefab *texture_scale_changer;
 
 	// solidity tick box for wall
 	t_bui_element *wall_solid;
@@ -287,10 +284,7 @@ struct			s_editor
 
 	// temporary variable for the current wall sprite youre editing.
 	//t_wall_sprite *active_wall_sprite; // disabled?
-	t_bui_element *sprite_scale;
-	t_bui_element *sprite_scale_value;
-	t_bui_element *sprite_scale_add;
-	t_bui_element *sprite_scale_sub;
+	t_changer_prefab *sprite_scale_changer;
 
 	///////////////////
 	// Sector elements,
@@ -343,6 +337,7 @@ void			changer_prefab_events_float(t_changer_prefab *changer, float *current_val
 void			remove_from_sprites(t_list **list, t_sprite *s);
 t_entity		*get_entity_from_list_at_pos(t_list *list, t_vector pos);
 void			sort_sector_wall_list(t_sector *sector);
+void			info_area_init(t_editor *editor);
 
 void			mode_functions(t_editor *editor);
 void			draw_all_points(SDL_Surface *surface, t_list *points);

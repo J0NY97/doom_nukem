@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/11 12:28:12 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/05/17 18:28:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -212,7 +212,7 @@ void	click_calc(t_editor *doom, t_grid *grid)
 	t_sector	*sector;
 
 	// NOTE: mouse_down doesnt matter which button can be any of left, middle and right.
-	if (doom->libui->mouse_down && SDL_GetMouseFocus() == doom->window->win)
+	if (doom->libui->mouse_down )//&& SDL_GetMouseFocus() == doom->window->win)
 	{
 		// if the mouse doesnt hover the grid, just gtfo.
 		if (!mouse_hover(doom->libui, (t_xywh) {grid->elem->position.x, grid->elem->position.y,
@@ -297,7 +297,6 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 
 	// reset the grid, becaues we have made the libui ignore this element, so we have to control it ourselves
 	fill_surface(grid->elem->active_surface, ((t_bui_window *)grid->elem->parent)->color);	
-	//draw_rect(grid->elem->active_surface, 0, 0, grid->elem->position.w, grid->elem->position.h, ((t_bui_window *)grid->elem->parent)->color, 1);
 	// this draws the grid on the grid view
 		max_y = grid->elem->active_surface->h / grid->gap;
 		max_x = grid->elem->active_surface->w / grid->gap;
@@ -366,47 +365,35 @@ void	draw_sectors(t_grid *grid)
 	curr = grid->sectors;
 	while (curr)
 	{
-		//draw_walls(grid, &((t_sector *)curr->content)->walls, ((t_sector *)curr->content)->color);
+		float x = 0;
+		float y = 0;
+		int i = 0;
+
 		curr_wall = ((t_sector *)curr->content)->walls;
-		((t_sector *)curr->content)->lowest_pos = gfx_new_vector(INT_MAX, INT_MAX, INT_MAX);
-		((t_sector *)curr->content)->highest_pos = gfx_new_vector(INT_MIN, INT_MIN, INT_MIN);
 		while (curr_wall)
 		{
 			t_vector orig_vec = gfx_vector_multiply(((t_wall *)curr_wall->content)->orig->pos, grid->gap);
 			t_vector dest_vec = gfx_vector_multiply(((t_wall *)curr_wall->content)->dest->pos, grid->gap);
+
+			x += orig_vec.x + dest_vec.x; 
+			y += orig_vec.y + dest_vec.y; 
+			i += 2;
 			if (((t_wall *)curr_wall->content)->neighbor != -1)
 				gfx_draw_line(grid->elem->active_surface, 0xffff0000, orig_vec, dest_vec);
 			else
 				gfx_draw_line(grid->elem->active_surface, ((t_sector *)curr->content)->color, orig_vec, dest_vec);
-			if (((t_wall *)curr_wall->content)->dest->pos.x < ((t_sector *)curr->content)->lowest_pos.x)
-				((t_sector *)curr->content)->lowest_pos.x = ((t_wall *)curr_wall->content)->dest->pos.x;
-			if (((t_wall *)curr_wall->content)->dest->pos.y < ((t_sector *)curr->content)->lowest_pos.y)
-				((t_sector *)curr->content)->lowest_pos.y = ((t_wall *)curr_wall->content)->dest->pos.y;
-			if (((t_wall *)curr_wall->content)->orig->pos.x < ((t_sector *)curr->content)->lowest_pos.x)
-				((t_sector *)curr->content)->lowest_pos.x = ((t_wall *)curr_wall->content)->orig->pos.x;
-			if (((t_wall *)curr_wall->content)->orig->pos.y < ((t_sector *)curr->content)->lowest_pos.y)
-				((t_sector *)curr->content)->lowest_pos.y = ((t_wall *)curr_wall->content)->orig->pos.y;
-
-			if (((t_wall *)curr_wall->content)->dest->pos.x > ((t_sector *)curr->content)->highest_pos.x)
-				((t_sector *)curr->content)->highest_pos.x = ((t_wall *)curr_wall->content)->dest->pos.x;
-			if (((t_wall *)curr_wall->content)->dest->pos.y > ((t_sector *)curr->content)->highest_pos.y)
-				((t_sector *)curr->content)->highest_pos.y = ((t_wall *)curr_wall->content)->dest->pos.y;
-			if (((t_wall *)curr_wall->content)->orig->pos.x > ((t_sector *)curr->content)->highest_pos.x)
-				((t_sector *)curr->content)->highest_pos.x = ((t_wall *)curr_wall->content)->orig->pos.x;
-			if (((t_wall *)curr_wall->content)->orig->pos.y > ((t_sector *)curr->content)->highest_pos.y)
-				((t_sector *)curr->content)->highest_pos.y = ((t_wall *)curr_wall->content)->orig->pos.y;
 			curr_wall = curr_wall->next;
 		}
-		t_vector low;
-		t_vector high;
-
-		low = gfx_vector_multiply(((t_sector *)curr->content)->lowest_pos, grid->gap);
-		high = gfx_vector_multiply(((t_sector *)curr->content)->highest_pos, grid->gap);
+		if (i <= 0)
+			i = 1;
+		x /= i;
+		y /= i;
+		((t_sector *)curr->content)->center = (t_vector) {x, y, 0};
 		if (font)
 		{
 			str = ft_itoa(((t_sector *)curr->content)->id);
 			id_text = TTF_RenderText_Blended(font, str, (SDL_Color){255, 255, 255, 255});
-			SDL_BlitSurface(id_text, NULL, grid->elem->active_surface, &(SDL_Rect){low.x + ((high.x - low.x) / 2), low.y + ((high.y - low.y) / 2), id_text->w, id_text->h});
+			SDL_BlitSurface(id_text, NULL, grid->elem->active_surface, &(SDL_Rect){x - (id_text->w / 2), y - (id_text->h / 2), id_text->w, id_text->h});
 			SDL_FreeSurface(id_text);
 			ft_strdel(&str);
 		}
