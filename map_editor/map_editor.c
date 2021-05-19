@@ -40,15 +40,17 @@ void	map_editor(char *map)
 
 ft_printf("Map Name set to: %s, %s\n", editor->mapname, editor->fullpath);
 
+	color_palette_init(&editor->palette);
+ft_printf("palette done!\n");
 	window_init(editor, libui);
 ft_printf("Main window init.\n");
 	edit_window_init(editor, libui);
 ft_printf("Edit window init.\n");
 
-	bui_set_window_flags(editor->window, BUI_WINDOW_DONT_UPDATE);
 	// TEST
 	// making renderer for the windows, at some point make this an option in the libui, so you dont have to do this
 	// 	separeatly for all the windows manually.
+	bui_set_window_flags(editor->window, BUI_WINDOW_DONT_UPDATE);
 	bui_set_window_flags(editor->window, BUI_WINDOW_DONT_UPDATE);
 	SDL_FreeSurface(editor->window->active_surface);
 	editor->window->active_surface = create_surface(editor->window->position.w, editor->window->position.h);
@@ -59,12 +61,15 @@ ft_printf("Edit window init.\n");
 	editor->new_edit_window->active_surface = create_surface(editor->new_edit_window->position.w, editor->new_edit_window->position.h);
 	SDL_Renderer *edit_window_renderer = SDL_CreateRenderer(editor->new_edit_window->win, -1, SDL_RENDERER_ACCELERATED);
 	// END TEST
+	// NOTE:!!!!!!!!!!!!!! THIS IS SUPER IMPORTANAT  FOR SOME REASON!!!!!!!!!!!!
+	/*
+	*/
+	bui_set_window_color(editor->window, 0xff000000);
+	bui_set_window_color(editor->new_edit_window, 0xff000000);
 
 ft_printf("libui done!\n");
 
 
-	color_palette_init(&editor->palette);
-ft_printf("palette done!\n");
 	toolbox_init(editor);
 ft_printf("toolbox done!\n");
 	info_area_init(editor);
@@ -143,15 +148,17 @@ ft_printf("Starting to loop!\n");
 
 		bui_render_new(libui);
 
+		// TODO: problem: it doesnt clear the surface correctly or something.
+		// TODO: i think in the libui for some reason it will do event handling on stuff thats parent isnt show.
 		// Test
+		/*
+		*/
 		SDL_Texture *texture = SDL_CreateTextureFromSurface(window_renderer, editor->window->active_surface);
-	//	SDL_RenderClear(window_renderer);
 		SDL_RenderCopy(window_renderer, texture, NULL, NULL);
 		SDL_RenderPresent(window_renderer);
 		SDL_DestroyTexture(texture);
 
 		texture = SDL_CreateTextureFromSurface(edit_window_renderer, editor->new_edit_window->active_surface);
-	//	SDL_RenderClear(edit_window_renderer);
 		SDL_RenderCopy(edit_window_renderer, texture, NULL, NULL);
 		SDL_RenderPresent(edit_window_renderer);
 		SDL_DestroyTexture(texture);

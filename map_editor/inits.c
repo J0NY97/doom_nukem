@@ -240,13 +240,18 @@ void	button_init(t_editor *doom)
 
 
 // deletion button
-	coord = ui_init_coords(doom->info_area->position.w - 110, 25, 100, 50);
-	doom->button_remove = bui_new_element(doom->info_area, "remove", coord);
-	bui_set_element_color(doom->button_remove, doom->palette.elem_elem_elem);
+	coord = ui_init_coords(doom->info_area->position.w - 110, 25, 32, 32);
+	doom->button_remove = bui_new_element(doom->info_area, NULL, coord);
+	bui_set_element_image_from_path(editor->button_remove, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/remove_button.png", NULL);
+	bui_set_element_image_from_path(editor->button_remove, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/remove_button_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_remove, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/remove_button_click.png", NULL);
 // edit button
-	coord = ui_init_coords(doom->info_area->position.w - 110, 100, 100, 50);
-	doom->button_edit = bui_new_element(doom->info_area, "edit", coord);
-	bui_set_element_color(doom->button_edit, doom->palette.elem_elem_elem);
+	coord = ui_init_coords(doom->info_area->position.w - 110 + 32 + 10, 25, 32, 32);
+	doom->button_edit = bui_new_element(doom->info_area, NULL, coord);
+	bui_set_element_image_from_path(editor->button_edit, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/edit_button.png", NULL);
+	bui_set_element_image_from_path(editor->button_edit, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/edit_button_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_edit, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/edit_button_click.png", NULL);
+
 }
 
 void	color_palette_init(t_color_palette *pal)
