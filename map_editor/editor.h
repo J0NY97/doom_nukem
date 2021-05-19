@@ -9,22 +9,10 @@
 # include "ft_printf.h"
 # include "path.h"
 
-// TODO: portal button in the wall edit window. som en tickbox
-//
 // texture
 // < 0  == skybox
 // 0 == monochorme
 // > 0 == textures
-
-// Check funtion speed.
-/*before
- clock_gettime(_CLOCK_MONOTONIC, &start);
-
- * after
-    clock_gettime(_CLOCK_MONOTONIC, &finish);
-    elapsed = (finish.tv_sec - start.tv_sec);
-    elapsed += (finish.tv_nsec - start.tv_nsec) / 1000000000.0;
-    printf("%f\n", elapsed);*/
 
 // TODO: hotkeys for all the buttons.
 //

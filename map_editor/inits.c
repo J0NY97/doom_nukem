@@ -12,15 +12,16 @@
 
 #include "editor.h"
 
-void	window_init(t_editor *doom, t_bui_libui *libui)
+void	window_init(t_editor *editor, t_bui_libui *libui)
 {
 	t_xywh coord;
 
 	coord = ui_init_coords(0, 0, 1920, 1080);
 //	coord = ui_init_coords(0, 0, 1280, 720);
-	char *title = ft_strjoiner("Doom Nukem Map Editor : ", doom->mapname, NULL);
+	char *title = ft_strjoiner("Doom Nukem Map Editor : ", editor->mapname, NULL);
 //	doom->window = bui_new_window(libui, title, coord, SDL_WINDOW_RESIZABLE, doom->palette.win);
-	doom->window = bui_new_window(libui, title, coord, 0, doom->palette.win);
+	editor->window = bui_new_window(libui, title, coord, 0);
+	bui_set_window_color(editor->window, editor->palette.win);
 	ft_strdel(&title);
 }
 
@@ -29,7 +30,8 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 	t_xywh coord;
 
 	coord = ui_init_coords(500, 500, 1000, 500);
-	editor->new_edit_window = bui_new_window(libui, "Editor", coord, 0, editor->palette.win);
+	editor->new_edit_window = bui_new_window(libui, "Editor", coord, 0);
+	bui_set_window_color(editor->new_edit_window, editor->palette.win);
 	SDL_MinimizeWindow(editor->new_edit_window->win);
 	
 	init_sector_editor(editor);

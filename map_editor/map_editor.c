@@ -41,6 +41,25 @@ void	map_editor(char *map)
 ft_printf("Map Name set to: %s, %s\n", editor->mapname, editor->fullpath);
 
 	window_init(editor, libui);
+ft_printf("Main window init.\n");
+	edit_window_init(editor, libui);
+ft_printf("Edit window init.\n");
+
+	bui_set_window_flags(editor->window, BUI_WINDOW_DONT_UPDATE);
+	// TEST
+	// making renderer for the windows, at some point make this an option in the libui, so you dont have to do this
+	// 	separeatly for all the windows manually.
+	bui_set_window_flags(editor->window, BUI_WINDOW_DONT_UPDATE);
+	SDL_FreeSurface(editor->window->active_surface);
+	editor->window->active_surface = create_surface(editor->window->position.w, editor->window->position.h);
+	SDL_Renderer *window_renderer = SDL_CreateRenderer(editor->window->win, -1, SDL_RENDERER_ACCELERATED);
+
+	bui_set_window_flags(editor->new_edit_window, BUI_WINDOW_DONT_UPDATE);
+	SDL_FreeSurface(editor->new_edit_window->active_surface);
+	editor->new_edit_window->active_surface = create_surface(editor->new_edit_window->position.w, editor->new_edit_window->position.h);
+	SDL_Renderer *edit_window_renderer = SDL_CreateRenderer(editor->new_edit_window->win, -1, SDL_RENDERER_ACCELERATED);
+	// END TEST
+
 ft_printf("libui done!\n");
 
 
@@ -65,8 +84,6 @@ ft_printf("Map Got!\n");
 
 	editor->grid.modify_sprite = NULL;
 	// New stuff
-	edit_window_init(editor, libui);
-ft_printf("Edit window init.\n");
 
 	//texture_init(doom);
 	//sprite_init(doom);
@@ -125,6 +142,20 @@ ft_printf("Starting to loop!\n");
 		loop_buttons(editor);
 
 		bui_render_new(libui);
+
+		// Test
+		SDL_Texture *texture = SDL_CreateTextureFromSurface(window_renderer, editor->window->active_surface);
+	//	SDL_RenderClear(window_renderer);
+		SDL_RenderCopy(window_renderer, texture, NULL, NULL);
+		SDL_RenderPresent(window_renderer);
+		SDL_DestroyTexture(texture);
+
+		texture = SDL_CreateTextureFromSurface(edit_window_renderer, editor->new_edit_window->active_surface);
+	//	SDL_RenderClear(edit_window_renderer);
+		SDL_RenderCopy(edit_window_renderer, texture, NULL, NULL);
+		SDL_RenderPresent(edit_window_renderer);
+		SDL_DestroyTexture(texture);
+		// end Test
 	}
 	ft_putstr("[map_editor] Bye!\n");
 
