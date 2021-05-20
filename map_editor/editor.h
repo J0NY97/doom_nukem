@@ -320,6 +320,8 @@ struct			s_editor
 	t_bui_element *active_direction_button;
 };
 
+void	fps_func(t_fps *fps);
+
 void	add_text_to_info_box(t_editor *editor, char *text);
 // NOTE: this is the function that you call in the other program.
 void			map_editor(char *map);

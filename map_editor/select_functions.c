@@ -31,6 +31,9 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 		move_y = -0.5f;
 	else if (key_pressed(doom->libui, KEY_DOWN))
 		move_y = 0.5f;
+	// small optimization
+	if (move_x == 0.0f && move_y == 0.0f)
+		return ;
 	if (grid->modify_point != NULL) // vector movement
 	{
 		if (key_pressed(doom->libui, MKEY_RIGHT))
@@ -292,9 +295,6 @@ float	distance_from_vector_to_wall(t_vector p0, t_wall *wall)
 	return (dist);
 }
 
-// @Improvement: if you dont want it to be pixel perfect look into (Point-Line Distance--2-Dimensional)
-// TODO: this function now selects the first wall you come across that is <= allowed radius,
-// 	make it go through all the walls and return the closest wall. 
 void	select_wall(t_editor *doom, t_grid *grid)
 {
 	t_list		*curr;
@@ -331,27 +331,6 @@ void	select_wall(t_editor *doom, t_grid *grid)
 	doom->grid.modify_sprite = NULL;
 	grid->modify_wall = temp;
 
-	/* OLD VERSION
-	t_list		*curr;
-	t_wall		*temp;
-
-	temp = NULL;
-	curr = grid->walls;
-	while (curr)
-	{
-		gfx_vector_string(grid->hover);
-		if (vector_on_wall(grid->hover, curr->content))
-		{
-			temp = curr->content;
-			break ;
-		}
-		curr = curr->next;
-	}
-	if (temp == NULL)
-		return ;
-	doom->grid.modify_sprite = NULL;
-	grid->modify_wall = temp;
-	END OLD VERSION */
 printf("Wall selected.\n");
 }
 

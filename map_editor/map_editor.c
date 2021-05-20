@@ -6,6 +6,7 @@ void	map_editor(char *map)
 	t_editor	*editor;
 	t_bui_libui	*libui;
 
+	t_fps *fps = ft_memalloc(sizeof(t_fps));
 	editor = ft_memalloc(sizeof(t_editor));
 
 	libui = bui_new_libui();
@@ -96,6 +97,7 @@ ft_printf("Map Got!\n");
 ft_printf("Starting to loop!\n");
 	while (libui->run)
 	{
+		fps_func(fps);
 		bui_event_handler_new(libui);
 
 		draw_grid(editor, &editor->grid);
