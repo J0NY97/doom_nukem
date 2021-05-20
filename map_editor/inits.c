@@ -56,6 +56,7 @@ void	grid_init(t_editor *editor)
 	editor->grid.elem->update = 0;
 
 	editor->grid.hover = EMPTY_VEC;
+	editor->grid.last_hover = EMPTY_VEC;
 	editor->spawn.pos = (t_vector) {.x = 0, .y = 0, .z = 0};
 	editor->spawn.direction = 0;
 	editor->grid.selected1 = EMPTY_VEC;
@@ -146,7 +147,7 @@ void info_area_init(t_editor *editor)
 	coord.x = 10;
 	coord.y = 150;//editor->other_mode->position.y + editor->other_mode->position.h + 10;
 	coord.w = editor->toolbox->position.w - 20; 
-	coord.h = 225;//(editor->toolbox->position.h / 4) * 3 - 20;
+	coord.h = 250;//(editor->toolbox->position.h / 4) * 3 - 20;
 	editor->info_area = bui_new_element(editor->toolbox, "info area", coord);
 	editor->info_area->update_state = 0;
 	bui_set_element_color(editor->info_area, editor->palette.elem_elem);
@@ -162,14 +163,24 @@ void info_area_init(t_editor *editor)
 	bui_set_element_color(editor->selected_vector_info, editor->info_area->color);
 
 	// new scale changer
-	coord = ui_init_coords(editor->info_area->position.w - 110, 175, 100, 40);
+	coord = ui_init_coords(editor->info_area->position.w - 110, 100, 100, 40);
 	editor->scaler = new_changer_prefab(editor->info_area, "Map Scale", coord);
+
+	// info text element
+	coord = ui_init_coords(10, 200, editor->info_area->position.w - 20, 40);
+	editor->info_box = bui_new_element(editor->info_area, NULL, coord);
+	editor->info_box->update_state = 0;
+	editor->info_box->text_x = 2;
+	editor->info_box->text_color = 0xffffffff;
+	bui_set_element_color(editor->info_box, editor->info_area->color);
+	bui_set_element_border(editor->info_box, 1, editor->palette.elem_elem_elem);
+	add_text_to_info_box(editor, "testing, should be removed after 5 sec after adding");
 }
 
 t_bui_element	*new_map_type_tickbox(t_bui_element *parent, char *text, t_xywh coord)
 {
 	t_bui_element *tick;
-	t_bui_element *text_elem;
+	t_bui_element *text_elem; // remove if not used in the end.
 	t_xywh text_coord;
 
 	text_coord = coord;

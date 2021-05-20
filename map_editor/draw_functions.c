@@ -280,6 +280,8 @@ void	hover_calc(t_editor *doom, t_grid *grid)
 
 	if (SDL_GetMouseFocus() != doom->window->win)
 		return ;
+	grid->last_hover = grid->hover; 
+
 	SDL_GetMouseState(&x, &y);
 	gap = grid->gap;
 	real_x = (((x - grid->elem->position.x) / (gap / 2)) * (gap / 2)) / gap;

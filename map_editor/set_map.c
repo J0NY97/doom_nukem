@@ -269,7 +269,10 @@ void	set_map(t_editor *doom)
 	if (fd > -1)
 		ft_fprintf(fd, "%s", str);
 	else
+	{
 		ft_printf("Something went wrong with saving the file.\n");
+		add_text_to_info_box(doom, "Something went wrong with saving the map!");
+	}
 	close(fd);
 
 	ft_printf("%s", str);
@@ -286,4 +289,5 @@ void	set_map(t_editor *doom)
 	ft_strdel(&str);
 
 	ft_putstr("Map saved Successfully.\n");
+	ft_printf("to : %s\n", doom->fullpath);
 }

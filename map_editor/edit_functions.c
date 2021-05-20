@@ -17,6 +17,7 @@ void	wall_render(t_editor *doom)
 {
 	t_grid *grid;
 	t_wall *wall;
+	t_sector *sec;
 	t_xywh dim;
 	SDL_Rect	texture;
 	SDL_Rect	temp;
@@ -30,18 +31,17 @@ void	wall_render(t_editor *doom)
 	grid = &doom->grid;
 	wall = grid->modify_wall;
 	// get w from the difference from the orig -> dest x
-	// TODO: figure out what 1 value on the grid is, so that we know how much we have to multiply the dimensions with,
-	// 	pretty sure these are niklas things.
-	
-	// TODO: the "NOTE:" under here, i think that '* x' is the scale of the map...???
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * doom->scale; // NOTE: this '* x', means what one value on the grid is in the game
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * doom->scale; // NOTE: this '* doom->scale', means what one value on the grid is in the game
 	// get h from the sector it is a part of
-	dim.h = 20; // get the sector that the wall is a part of... and then take the height from it
+	// get the sector that the wall is a part of... and then take the height from it
+	sec = get_sector_with_wall(&doom->grid.sectors, wall);
+	dim.h = sec->ceiling_height - sec->floor_height;
 	// all of these values needs to  have a zoom value depending on which is...
 	//	more the x or the y so that we can see the whole wall...
-	//	but if you after that want to zoom you can??
+	//	MAYBE: but if you after that want to zoom you can??
 	dim.x = 50; // offsets
 	dim.y = 50;
+
 	// get texture from the wall selected
 	// (wall->texture_id)
 	// render wall with the texture

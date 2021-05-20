@@ -121,6 +121,7 @@ typedef	struct	s_grid
 
 	// Note: this is like this because its easier when you finally save the points to map file.
 	t_vector	hover; // this is calculating from the coordinate system used in this program.
+	t_vector	last_hover; // last frame grid->hover
 
 	t_xywh		coords;
 	int			x;
@@ -200,6 +201,15 @@ struct			s_editor
 //	t_bui_element	**entity_sprite_buttons;
 
 	// New stuff
+	//////////////////
+	// Info area elements
+	//////////////////
+	t_bui_element *info_box;
+	Uint32 info_box_start_timer;
+	Uint32 info_box_timer; // everytime you add something to the info box, it will replace whatever is in it and reset timer.
+				// otherwise if the timer ends before youa dd new thing, it will jsut remove the current thing.
+
+	// Dont know
 	t_list		*all_textures; // list of t_editor_texture (note: wall, portal and wall_sprite textures take their tex from here)
 	//////////////////
 	// Draw Mode
@@ -310,6 +320,7 @@ struct			s_editor
 	t_bui_element *active_direction_button;
 };
 
+void	add_text_to_info_box(t_editor *editor, char *text);
 // NOTE: this is the function that you call in the other program.
 void			map_editor(char *map);
 void			editor_free(t_editor *editor);
@@ -384,6 +395,7 @@ void			remove_everything_from_list(t_list **list);
 void			recount_everything(t_editor *doom);
 
 /* Sector shit */
+t_sector		*get_sector_with_wall(t_list **sector_list, t_wall *wall);
 void			check_sector_wanter(t_editor *doom, SDL_Event *e);
 void			remove_wall_from_sector(t_sector **sector, t_wall *wall); // use this if you want to remove a specific wall from a specific sector
 void			remove_from_sectors(t_list **sectors, t_sector *sec); // use this if you want to remove t_sector from t_list of t_sectors

@@ -28,53 +28,102 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 		move_y = 0.5f;
 	if (grid->modify_point != NULL) // vector movement
 	{
-		grid->modify_point->pos.x += move_x;
-		grid->modify_point->pos.y += move_y;
+		if (key_pressed(doom->libui, MKEY_RIGHT))
+		{
+			grid->modify_point->pos.x = grid->hover.x;
+			grid->modify_point->pos.y = grid->hover.y;
+		}
+		else
+		{
+			grid->modify_point->pos.x += move_x;
+			grid->modify_point->pos.y += move_y;
+		}
 	}
 	else if (doom->grid.modify_sprite != NULL)
 	{
-		if (key_pressed(doom->libui, KEY_LEFT))
-			doom->grid.modify_sprite->pos.x -= (double)grid->gap;
-		else if (key_pressed(doom->libui, KEY_RIGHT))
-			doom->grid.modify_sprite->pos.x += (double)grid->gap;
-		else if (key_pressed(doom->libui, KEY_UP))
-			doom->grid.modify_sprite->pos.y -= (double)grid->gap;
-		else if (key_pressed(doom->libui, KEY_DOWN))
-			doom->grid.modify_sprite->pos.y += (double)grid->gap;
-		else if (key_pressed(doom->libui, KPKEY_PLUS))
+		if (key_pressed(doom->libui, MKEY_RIGHT))
 		{
-			doom->grid.modify_sprite->w += 5.0f;
-			doom->grid.modify_sprite->h += 5.0f;
+			ft_printf("[Warning] Drag and drop not workings yet!\n");
 		}
-		else if (key_pressed(doom->libui, KPKEY_MINUS))
+		else
 		{
-			doom->grid.modify_sprite->w -= 5.0f;
-			doom->grid.modify_sprite->h -= 5.0f;
+			if (key_pressed(doom->libui, KEY_LEFT))
+				doom->grid.modify_sprite->pos.x -= (double)grid->gap;
+			else if (key_pressed(doom->libui, KEY_RIGHT))
+				doom->grid.modify_sprite->pos.x += (double)grid->gap;
+			else if (key_pressed(doom->libui, KEY_UP))
+				doom->grid.modify_sprite->pos.y -= (double)grid->gap;
+			else if (key_pressed(doom->libui, KEY_DOWN))
+				doom->grid.modify_sprite->pos.y += (double)grid->gap;
+			else if (key_pressed(doom->libui, KPKEY_PLUS))
+			{
+				doom->grid.modify_sprite->w += 5.0f;
+				doom->grid.modify_sprite->h += 5.0f;
+			}
+			else if (key_pressed(doom->libui, KPKEY_MINUS))
+			{
+				doom->grid.modify_sprite->w -= 5.0f;
+				doom->grid.modify_sprite->h -= 5.0f;
+			}
 		}
 	}
 	else if (grid->modify_wall != NULL) // wall movement
 	{
-		grid->modify_wall->orig->pos.x += move_x;
-		grid->modify_wall->dest->pos.x += move_x;
-		grid->modify_wall->orig->pos.y += move_y;
-		grid->modify_wall->dest->pos.y += move_y;
+		if (key_pressed(doom->libui, MKEY_RIGHT)) // Move wall with mouse
+		{
+			grid->modify_wall->orig->pos.x += grid->hover.x - grid->last_hover.x;
+			grid->modify_wall->orig->pos.y += grid->hover.y - grid->last_hover.y;
+			grid->modify_wall->dest->pos.x += grid->hover.x - grid->last_hover.x;
+			grid->modify_wall->dest->pos.y += grid->hover.y - grid->last_hover.y;
+		}
+		else // or move wall with arrow keys.
+		{
+			grid->modify_wall->orig->pos.x += move_x;
+			grid->modify_wall->dest->pos.x += move_x;
+			grid->modify_wall->orig->pos.y += move_y;
+			grid->modify_wall->dest->pos.y += move_y;
+		}
 	}
 	else if (grid->modify_sector != NULL)
 	{
 		curr = grid->modify_sector->walls;
 		while (curr)
 		{
-			((t_wall *)curr->content)->dest->pos.x += move_x;
-			((t_wall *)curr->content)->dest->pos.y += move_y;
-			((t_wall *)curr->content)->orig->pos.x += move_x;
-			((t_wall *)curr->content)->orig->pos.y += move_y;
+			if (key_pressed(doom->libui, MKEY_RIGHT))
+			{
+				((t_wall *)curr->content)->orig->pos.x += (grid->hover.x - grid->last_hover.x) / 2;
+				((t_wall *)curr->content)->orig->pos.y += (grid->hover.y - grid->last_hover.y) / 2;
+				((t_wall *)curr->content)->dest->pos.x += (grid->hover.x - grid->last_hover.x) / 2;
+				((t_wall *)curr->content)->dest->pos.y += (grid->hover.y - grid->last_hover.y) / 2;
+			}
+			else
+			{
+				((t_wall *)curr->content)->dest->pos.x += move_x;
+				((t_wall *)curr->content)->dest->pos.y += move_y;
+				((t_wall *)curr->content)->orig->pos.x += move_x;
+				((t_wall *)curr->content)->orig->pos.y += move_y;
+			}
 			curr = curr->next;
 		}
 	}
 	else if (grid->modify_entity != NULL)
 	{
-		grid->modify_entity->pos.x += move_x;
-		grid->modify_entity->pos.y += move_y;
+		if (key_pressed(doom->libui, MKEY_RIGHT))
+		{
+			// You can click where ever you want and the thing will go there.
+			grid->modify_entity->pos.x = grid->hover.x;
+			grid->modify_entity->pos.y = grid->hover.y;
+			// Relative drag and drop... you can start from where ever you want.
+			/*
+			grid->modify_entity->pos.x += grid->hover.x - grid->last_hover.x;
+			grid->modify_entity->pos.y += grid->hover.y - grid->last_hover.y;
+			*/
+		}
+		else
+		{
+			grid->modify_entity->pos.x += move_x;
+			grid->modify_entity->pos.y += move_y;
+		}
 	}
 	else if (move_x != 0.0f || move_y != 0.0f)
 	{

@@ -713,3 +713,24 @@ void	sort_sector_wall_list(t_sector *sector)
 
 	ft_putstr("We are done sorting the sector.\n");
 }
+
+t_sector	*get_sector_with_wall(t_list **sector_list, t_wall *wall)
+{
+	t_list *curr;
+	t_list *rruc;
+
+	curr = *sector_list;
+	while (curr)
+	{
+		rruc = ((t_sector *)curr->content)->walls;
+		while (rruc)
+		{
+			if (wall_compare(rruc->content, wall))
+				return (curr->content);
+			rruc = rruc->next;
+		}
+		curr = curr->next;
+	}
+	// Weird that there is a wall that isnt a part of a sector.... so if we get here, look into it.
+	return (NULL);
+}

@@ -134,6 +134,10 @@ void	loop_buttons(t_editor *editor)
 {
 	if (bui_button(editor->button_save))
 	{
+		// Doing this here too, if you have forgot to press enter, when editing the name. redundancy, maybe at some point remove it from the input enter pressing.
+		ft_strdel(&editor->mapname);
+		editor->mapname = ft_strdup(editor->map_name_input->text);
+
 		ft_strdel(&editor->fullpath);
 		// TODO: the .doom should be either endless or story, when you have the tickboxes for them.
 		if (bui_button_toggle(editor->endless_tickbox))
@@ -143,6 +147,7 @@ void	loop_buttons(t_editor *editor)
 		else
 			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".doom");
 		set_map(editor);
+		add_text_to_info_box(editor, "Map saved successfully!");
 	}
 
 	// Returns 1 when enter is pressed.
@@ -152,6 +157,7 @@ ft_printf("Map name was changed from %s ", editor->mapname);
 		ft_strdel(&editor->mapname);
 		editor->mapname = ft_strdup(editor->map_name_input->text);
 ft_printf("to %s.\n", editor->mapname);
+		add_text_to_info_box(editor, "Map name changed successfully!");
 	}
 	only_one_button_toggled_at_a_time(editor->map_type_tickboxes, &editor->active_map_type);
 
@@ -165,6 +171,26 @@ ft_printf("to %s.\n", editor->mapname);
 	// scale changer prefab
 	changer_prefab_events(editor->scaler, &editor->scale, 1);
 	editor->scale = clamp(editor->scale, 1, 64);
+
+	// Info area events
+	if (editor->info_box->text && SDL_GetTicks() - editor->info_box_start_timer >= editor->info_box_timer)
+	{
+		t_rgba new_col = hex_to_rgba(editor->info_box->text_color);
+		new_col.a -= 1;
+		editor->info_box->text_color = rgba_to_hex(new_col);
+		bui_change_element_text(editor->info_box, editor->info_box->text);
+		if (new_col.a == 0)
+			bui_remove_element_text(editor->info_box);	
+	}
+	
+}
+
+void	add_text_to_info_box(t_editor *editor, char *text)
+{
+	editor->info_box_start_timer = SDL_GetTicks();
+	editor->info_box_timer = 5000; // milliseconds
+	editor->info_box->text_color = 0x00ffffff;
+	bui_change_element_text(editor->info_box, text);
 }
 
 void	recount_everything(t_editor *doom)
