@@ -18,6 +18,11 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 	float move_x = 0.0f;
 	float move_y = 0.0f;
 
+	if (key_pressed(doom->libui, MKEY_RIGHT))
+	{
+		move_x = grid->hover.x - grid->last_hover.x;
+		move_y = grid->hover.y - grid->last_hover.y;
+	}
 	if (key_pressed(doom->libui, KEY_LEFT))
 		move_x = -0.5f;
 	else if (key_pressed(doom->libui, KEY_RIGHT))
@@ -69,40 +74,20 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 	}
 	else if (grid->modify_wall != NULL) // wall movement
 	{
-		if (key_pressed(doom->libui, MKEY_RIGHT)) // Move wall with mouse
-		{
-			grid->modify_wall->orig->pos.x += grid->hover.x - grid->last_hover.x;
-			grid->modify_wall->orig->pos.y += grid->hover.y - grid->last_hover.y;
-			grid->modify_wall->dest->pos.x += grid->hover.x - grid->last_hover.x;
-			grid->modify_wall->dest->pos.y += grid->hover.y - grid->last_hover.y;
-		}
-		else // or move wall with arrow keys.
-		{
-			grid->modify_wall->orig->pos.x += move_x;
-			grid->modify_wall->dest->pos.x += move_x;
-			grid->modify_wall->orig->pos.y += move_y;
-			grid->modify_wall->dest->pos.y += move_y;
-		}
+		grid->modify_wall->orig->pos.x += move_x;
+		grid->modify_wall->dest->pos.x += move_x;
+		grid->modify_wall->orig->pos.y += move_y;
+		grid->modify_wall->dest->pos.y += move_y;
 	}
 	else if (grid->modify_sector != NULL)
 	{
 		curr = grid->modify_sector->walls;
 		while (curr)
 		{
-			if (key_pressed(doom->libui, MKEY_RIGHT))
-			{
-				((t_wall *)curr->content)->orig->pos.x += (grid->hover.x - grid->last_hover.x) / 2;
-				((t_wall *)curr->content)->orig->pos.y += (grid->hover.y - grid->last_hover.y) / 2;
-				((t_wall *)curr->content)->dest->pos.x += (grid->hover.x - grid->last_hover.x) / 2;
-				((t_wall *)curr->content)->dest->pos.y += (grid->hover.y - grid->last_hover.y) / 2;
-			}
-			else
-			{
-				((t_wall *)curr->content)->dest->pos.x += move_x;
-				((t_wall *)curr->content)->dest->pos.y += move_y;
-				((t_wall *)curr->content)->orig->pos.x += move_x;
-				((t_wall *)curr->content)->orig->pos.y += move_y;
-			}
+			((t_wall *)curr->content)->dest->pos.x += move_x / 2;
+			((t_wall *)curr->content)->dest->pos.y += move_y / 2;
+			((t_wall *)curr->content)->orig->pos.x += move_x / 2;
+			((t_wall *)curr->content)->orig->pos.y += move_y / 2;
 			curr = curr->next;
 		}
 	}
@@ -115,8 +100,8 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 			grid->modify_entity->pos.y = grid->hover.y;
 			// Relative drag and drop... you can start from where ever you want.
 			/*
-			grid->modify_entity->pos.x += grid->hover.x - grid->last_hover.x;
-			grid->modify_entity->pos.y += grid->hover.y - grid->last_hover.y;
+			grid->modify_entity->pos.x += move_x;
+			grid->modify_entity->pos.y += move_y;
 			*/
 		}
 		else
