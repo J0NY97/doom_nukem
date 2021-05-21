@@ -45,8 +45,8 @@ LIBS = \
 
 FLAGS = -Wall -Wextra
 
-#all: $(LIBS) $(NAME)
-all: $(NAME)
+all: $(LIBS) $(NAME)
+#all: $(NAME)
 
 $(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
 	make -C ../libft
@@ -72,7 +72,7 @@ clean:
 	@make -C $(FT_PRINTF) clean
 	@echo "$(NAME) was cleaned."
 
-fclean: fclean_libs clean
+fclean: fclean_libs
 	@rm -f $(NAME)
 
 re: fclean fclean_libs all

@@ -6,7 +6,7 @@ void	map_editor(char *map)
 	t_editor	*editor;
 	t_bui_libui	*libui;
 
-	t_fps *fps = ft_memalloc(sizeof(t_fps));
+//	t_fps *fps = ft_memalloc(sizeof(t_fps));
 	editor = ft_memalloc(sizeof(t_editor));
 
 	libui = bui_new_libui();
@@ -51,20 +51,23 @@ ft_printf("Edit window init.\n");
 	// TEST
 	// making renderer for the windows, at some point make this an option in the libui, so you dont have to do this
 	// 	separeatly for all the windows manually.
-	bui_set_window_flags(editor->window, BUI_WINDOW_DONT_UPDATE);
+	/*
 	bui_set_window_flags(editor->window, BUI_WINDOW_DONT_UPDATE);
 	SDL_FreeSurface(editor->window->active_surface);
 	editor->window->active_surface = create_surface(editor->window->position.w, editor->window->position.h);
-	SDL_Renderer *window_renderer = SDL_CreateRenderer(editor->window->win, -1, SDL_RENDERER_ACCELERATED);
+	SDL_Renderer *window_renderer = SDL_CreateRenderer(editor->window->win, 0, SDL_RENDERER_ACCELERATED);
+
+	ft_printf("%s\n", SDL_GetError());
 
 	bui_set_window_flags(editor->new_edit_window, BUI_WINDOW_DONT_UPDATE);
 	SDL_FreeSurface(editor->new_edit_window->active_surface);
 	editor->new_edit_window->active_surface = create_surface(editor->new_edit_window->position.w, editor->new_edit_window->position.h);
 	SDL_Renderer *edit_window_renderer = SDL_CreateRenderer(editor->new_edit_window->win, -1, SDL_RENDERER_ACCELERATED);
+
+	ft_printf("%s\n", SDL_GetError());
+	*/
 	// END TEST
 	// NOTE:!!!!!!!!!!!!!! THIS IS SUPER IMPORTANAT  FOR SOME REASON!!!!!!!!!!!!
-	/*
-	*/
 	bui_set_window_color(editor->window, 0xff000000);
 	bui_set_window_color(editor->new_edit_window, 0xff000000);
 
@@ -97,7 +100,7 @@ ft_printf("Map Got!\n");
 ft_printf("Starting to loop!\n");
 	while (libui->run)
 	{
-		fps_func(fps);
+		//fps_func(fps);
 		bui_event_handler_new(libui);
 
 		draw_grid(editor, &editor->grid);
@@ -154,7 +157,6 @@ ft_printf("Starting to loop!\n");
 		// TODO: i think in the libui for some reason it will do event handling on stuff thats parent isnt show.
 		// Test
 		/*
-		*/
 		SDL_Texture *texture = SDL_CreateTextureFromSurface(window_renderer, editor->window->active_surface);
 		SDL_RenderCopy(window_renderer, texture, NULL, NULL);
 		SDL_RenderPresent(window_renderer);
@@ -164,6 +166,7 @@ ft_printf("Starting to loop!\n");
 		SDL_RenderCopy(edit_window_renderer, texture, NULL, NULL);
 		SDL_RenderPresent(edit_window_renderer);
 		SDL_DestroyTexture(texture);
+		*/
 		// end Test
 	}
 	ft_putstr("[map_editor] Bye!\n");
