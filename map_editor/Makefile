@@ -45,8 +45,8 @@ LIBS = \
 
 FLAGS = -Wall -Wextra
 
-all: $(LIBS) $(NAME)
-#all: $(NAME)
+#all: $(LIBS) $(NAME)
+all: $(NAME)
 
 $(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
 	make -C ../libft
