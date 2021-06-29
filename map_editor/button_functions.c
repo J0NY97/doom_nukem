@@ -132,14 +132,13 @@ void	remove_entity_from_list(t_list **entities, t_entity *entity)
 
 void	loop_buttons(t_editor *editor)
 {
+	// Other box events.
 	if (bui_button(editor->button_save))
 	{
-		// Doing this here too, if you have forgot to press enter, when editing the name. redundancy, maybe at some point remove it from the input enter pressing.
 		ft_strdel(&editor->mapname);
 		editor->mapname = ft_strdup(editor->map_name_input->text);
 
 		ft_strdel(&editor->fullpath);
-		// TODO: the .doom should be either endless or story, when you have the tickboxes for them.
 		if (bui_button_toggle(editor->endless_tickbox))
 			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".endless");
 		else if (bui_button_toggle(editor->story_tickbox))
@@ -150,7 +149,6 @@ void	loop_buttons(t_editor *editor)
 		add_text_to_info_box(editor, "Map saved successfully!");
 	}
 
-	// Returns 1 when enter is pressed.
 	if (bui_input(editor->map_name_input))
 	{
 ft_printf("Map name was changed from %s ", editor->mapname);
