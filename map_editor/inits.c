@@ -394,6 +394,85 @@ void	changer_prefab_events_float(t_changer_prefab *changer, float *current_value
 	ft_strdel(&str);
 }
 
+void	copy_bxpm_pix_to_surf_pix(t_bxpm *bxpm, SDL_Surface *surface)
+{
+	int i;
+
+	i = 0;
+	while (i < bxpm->pix_nb)
+	{
+		((Uint32 *)surface->pixels)[i] = bxpm->clr[bxpm->pix[i]];
+		i++;
+	}
+}
+
+void	new_floor_texture_button(t_editor *editor, char *bxpm_file, int nth)
+{
+	t_bxpm *bxpm;
+	t_xywh coord;
+	t_bui_element *temp_elem;
+	char *str;
+	int i = nth;
+	
+	int offset_x = 20;
+	int offset_y = 50;
+	int button_gap = 20;
+	int amount_on_x;
+
+	amount_on_x =
+		floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
+	coord.w = 50;
+	coord.h = 50;
+	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+	str = ft_sprintf("%d", i);
+	temp_elem = bui_new_element(editor->sector_floor_menu, str, coord);
+	ft_strdel(&str);
+
+	bxpm = malloc(sizeof(t_bxpm));
+	read_bxpm(bxpm, bxpm_file);
+	SDL_Surface *surface = create_surface(bxpm->w, bxpm->h);
+	copy_bxpm_pix_to_surf_pix(bxpm, surface);
+	SDL_BlitScaled(surface, NULL, temp_elem->surface[0], NULL);
+	SDL_FreeSurface(surface);
+	free(bxpm->pix);
+	free(bxpm->clr);
+	free(bxpm);
+
+	add_to_list(&editor->floor_texture_buttons, temp_elem, sizeof(t_bui_element));
+}
+
+void	new_ceiling_texture_button(t_editor *editor, char *bxpm_file, int nth)
+{
+	t_bxpm *bxpm;
+	t_bui_element *temp_elem;
+	t_xywh coord;
+	int i = nth;
+	int offset_x = 20;
+	int offset_y = 50;
+	int button_gap = 20;
+	int amount_on_x = floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
+	char *str;
+
+	coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
+	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+	str = ft_sprintf("%d", i);
+	temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
+	ft_strdel(&str);
+
+	bxpm = malloc(sizeof(t_bxpm));
+	read_bxpm(bxpm, bxpm_file);
+	SDL_Surface *surface = create_surface(bxpm->w, bxpm->h);
+	copy_bxpm_pix_to_surf_pix(bxpm, surface);
+	SDL_BlitScaled(surface, NULL, temp_elem->surface[0], NULL);
+	SDL_FreeSurface(surface);
+	free(bxpm->pix);
+	free(bxpm->clr);
+	free(bxpm);
+	add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
+}
+
 // DONT want to norme this before the texture thingy majig is done.
 void	init_sector_editor(t_editor *editor)
 {
@@ -431,6 +510,7 @@ void	init_sector_editor(t_editor *editor)
 // TODO: from a texture file take all the textures and make buttons of them and show them on both of the menus above.
 // TODO: NOTE: the ceiling- and floor texture count should be gotten from the same place as where you laod the textures.
 	// this is just a demonstration
+	/*
 	t_bui_element *temp_elem;
 	char *str;
 	int floor_texture_count = 9;
@@ -471,6 +551,13 @@ void	init_sector_editor(t_editor *editor)
 		add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
 		i++;
 	}
+	*/
+	new_floor_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 0);
+	new_floor_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 1);
+
+	new_ceiling_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 0);
+	new_ceiling_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 1);
+	new_ceiling_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 2);
 
 	// Init the ceiling- and floor height... etc. buttons
 	coord.x = 5;

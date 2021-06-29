@@ -11,6 +11,8 @@ SRCS = ./main.c \
 	   ./edit_functions.c \
 	   ./free.c \
 	   ./map_editor.c \
+	   ../game/lib/libbxpm/byte_utils.c \
+	   ../game/lib/libbxpm/read_bxpm.c \
 	   ../core.c
 OBJS = $(SRCS:.c=.o)
 
@@ -20,6 +22,7 @@ INCLUDES = \
 	-I../better_libui \
 	-I../libgfx \
 	-I../SDL2/includes \
+	-I../game/lib/libbxpm \
 	-I../
 
 LIB_FOLDERS = \
