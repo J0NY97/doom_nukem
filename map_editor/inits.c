@@ -15,11 +15,10 @@
 void	window_init(t_editor *editor, t_bui_libui *libui)
 {
 	t_xywh coord;
+	char *title;
 
 	coord = ui_init_coords(0, 0, 1920, 1080);
-//	coord = ui_init_coords(0, 0, 1280, 720);
-	char *title = ft_strjoiner("Doom Nukem Map Editor : ", editor->mapname, NULL);
-//	doom->window = bui_new_window(libui, title, coord, SDL_WINDOW_RESIZABLE, doom->palette.win);
+	title = ft_strjoiner("Doom Nukem Map Editor : ", editor->mapname, NULL);
 	editor->window = bui_new_window(libui, title, coord, 0);
 	bui_set_window_color(editor->window, editor->palette.win);
 	ft_strdel(&title);
@@ -33,20 +32,15 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 	editor->new_edit_window = bui_new_window(libui, "Editor", coord, 0);
 	bui_set_window_color(editor->new_edit_window, editor->palette.win);
 	SDL_MinimizeWindow(editor->new_edit_window->win);
-	
 	init_sector_editor(editor);
 	init_wall_editor(editor);
 	init_entity_editor(editor);
 }
 
-void	grid_init(t_editor *editor)
+void	grid_init1(t_editor *editor)
 {
 	t_xywh coord;
 
-	// NOTE: enable this if you dont want the grid to be modular taken from the toolbox size
-/*	coord = ui_init_coords(doom->window->active_surface->w / 6 + 20, 10,
-			(doom->window->active_surface->w / 6) * 5 - 30, doom->window->active_surface->h - 20);
-			*/
 	coord.x = editor->toolbox->position.w + 20;
 	coord.y = 10;
 	coord.w = editor->window->active_surface->w - coord.x - 10;
@@ -54,11 +48,16 @@ void	grid_init(t_editor *editor)
 	editor->grid.elem = bui_new_menu(editor->window, "grid", coord);
 	bui_set_element_color(editor->grid.elem, editor->palette.win_elem);
 	editor->grid.elem->update = 0;
-
 	editor->grid.hover = EMPTY_VEC;
 	editor->grid.last_hover = EMPTY_VEC;
 	editor->spawn.pos = (t_vector) {.x = 0, .y = 0, .z = 0};
 	editor->spawn.direction = 0;
+	editor->scale = 1;
+}
+
+void	grid_init(t_editor *editor)
+{
+	grid_init1(editor);
 	editor->grid.selected1 = EMPTY_VEC;
 	editor->grid.selected2 = EMPTY_VEC;
 	editor->grid.modify_wall = NULL;
@@ -77,60 +76,85 @@ void	grid_init(t_editor *editor)
 	editor->grid.x = editor->grid.coords.x;
 	editor->grid.y = editor->grid.coords.y;
 	editor->grid.dimensions = editor->grid.coords;
-
-	// map thingy
-	editor->scale = 1;
 }
 
-void	toolbox_init(t_editor *doom)
+void	vertex_button_init(int select_w, int select_gap, t_editor *editor)
 {
-	t_editor *editor = doom;
 	t_xywh coord;
 
-	coord = ui_init_coords(10, 10, doom->window->active_surface->w / 6, doom->window->active_surface->h - 20);
-	doom->toolbox = bui_new_menu(doom->window, "toolbox", coord);
-	doom->toolbox->update_state = 0;
-	bui_set_element_color(doom->toolbox, doom->palette.win_elem);
+	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
+	editor->select_mode_vertex = bui_new_element(editor->select_mode, "Vertex", coord);
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_DEFAULT,
+			ROOT_PATH"ui/ui_images/selection_mode_vertex.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_HOVER,
+			ROOT_PATH"ui/ui_images/selection_mode_vertex_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_CLICK,
+			ROOT_PATH"ui/ui_images/selection_mode_vertex_click.png", NULL);
+}
 
-	// Selection mode buttons
-	int select_gap = 10;
-	int select_w = 32;
+void	wall_button_init(int select_w, int select_gap, t_editor *editor)
+{
+	t_xywh coord;
+
+	coord = ui_init_coords((1 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
+	editor->select_mode_wall = bui_new_element(editor->select_mode, "Wall", coord);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_DEFAULT,
+			ROOT_PATH"ui/ui_images/selection_mode_wall.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_HOVER,
+			ROOT_PATH"ui/ui_images/selection_mode_wall_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_CLICK,
+			ROOT_PATH"ui/ui_images/selection_mode_wall_click.png", NULL);
+}
+
+void	sector_button_init(int select_w, int select_gap, t_editor *editor)
+{
+	t_xywh coord;
+
+	coord = ui_init_coords((2 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
+	editor->select_mode_sector = bui_new_element(editor->select_mode, "Sector", coord);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_DEFAULT,
+			ROOT_PATH"ui/ui_images/selection_mode_sector.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_HOVER,
+			ROOT_PATH"ui/ui_images/selection_mode_sector_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_CLICK,
+			ROOT_PATH"ui/ui_images/selection_mode_sector_click.png", NULL);
+}
+
+void	entity_button_init(int select_w, int select_gap, t_editor *editor)
+{	
+	t_xywh coord;
+
+	coord = ui_init_coords((3 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
+	editor->select_mode_entity = bui_new_element(editor->select_mode, "Entity", coord);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_DEFAULT,
+			ROOT_PATH"ui/ui_images/selection_mode_entity.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_HOVER,
+			ROOT_PATH"ui/ui_images/selection_mode_entity_click.png", NULL);
+	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_CLICK,
+			ROOT_PATH"ui/ui_images/selection_mode_entity_click.png", NULL);
+}
+
+void	selection_mode_buttons_init(t_editor *editor)
+{
+	int select_gap;
+	int select_w;
+	t_xywh coord;
+
+	select_gap = 10;
+	select_w = 32;
 	coord = ui_init_coords(70, 25, 200, 50);
 	editor->select_mode = bui_new_element(editor->toolbox, "Select", coord);
 	editor->select_mode->update_state = 0;
 	bui_set_element_text_font(editor->select_mode, "DroidSans.ttf", editor->select_mode->font_size, 0xffffffff);
 	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
-		//vertex button
-	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
-	editor->select_mode_vertex = bui_new_element(editor->select_mode, "Vertex", coord);
-		//wall button
-	coord = ui_init_coords((1 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
-	editor->select_mode_wall = bui_new_element(editor->select_mode, "Wall", coord);
-		// sector button
-	coord = ui_init_coords((2 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
-	editor->select_mode_sector = bui_new_element(editor->select_mode, "Sector", coord);
-		//entity button
-	coord = ui_init_coords((3 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
-	editor->select_mode_entity = bui_new_element(editor->select_mode, "Entity", coord);
-
+	vertex_button_init(select_w, select_gap, editor);
+	wall_button_init(select_w, select_gap, editor);
+	sector_button_init(select_w, select_gap, editor);
+	entity_button_init(select_w, select_gap, editor);
 	editor->select_mode_vertex->text_y = -20;
 	editor->select_mode_wall->text_y = -20;
 	editor->select_mode_sector->text_y = -20;
 	editor->select_mode_entity->text_y = -20;
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/selection_mode_vertex.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/selection_mode_vertex_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/selection_mode_vertex_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/selection_mode_wall.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/selection_mode_wall_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/selection_mode_wall_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/selection_mode_sector.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/selection_mode_sector_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/selection_mode_sector_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/selection_mode_entity.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/selection_mode_entity_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/selection_mode_entity_click.png", NULL);
-		// putting them in list
-	// NOTE: these are there so that we can use the only one toggled at a time function
 	editor->select_mode_buttons = NULL;
 	editor->active_select_mode = NULL;
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_vertex, sizeof(t_bui_element));
@@ -139,34 +163,36 @@ void	toolbox_init(t_editor *doom)
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_entity, sizeof(t_bui_element));
 }
 
+void	toolbox_init(t_editor *editor)
+{
+	t_xywh coord;
+
+	coord = ui_init_coords(10, 10, editor->window->active_surface->w / 6, editor->window->active_surface->h - 20);
+	editor->toolbox = bui_new_menu(editor->window, "toolbox", coord);
+	editor->toolbox->update_state = 0;
+	bui_set_element_color(editor->toolbox, editor->palette.win_elem);
+	selection_mode_buttons_init(editor);
+}
+
 void info_area_init(t_editor *editor)
 {
 	t_xywh coord;
-	// info area init
-	// relative to "other" box, but we can use the coords from the other_mode because its made after this.
+
 	coord.x = 10;
-	coord.y = 150;//editor->other_mode->position.y + editor->other_mode->position.h + 10;
+	coord.y = 150;
 	coord.w = editor->toolbox->position.w - 20; 
-	coord.h = 250;//(editor->toolbox->position.h / 4) * 3 - 20;
+	coord.h = 250;
 	editor->info_area = bui_new_element(editor->toolbox, "info area", coord);
 	editor->info_area->update_state = 0;
 	bui_set_element_color(editor->info_area, editor->palette.elem_elem);
-
-	// TODO: put this in a infoarea_init function or something, but remove from this function
 	editor->hover_info = bui_new_element(editor->info_area, "hover info", (t_xywh) {10, 20, 100, 50});
 	bui_set_element_color(editor->hover_info, editor->info_area->color);
-
 	editor->selected_sector_info = bui_new_element(editor->info_area, "selected sector info", (t_xywh) {10, 75, 100, 50});
 	bui_set_element_color(editor->selected_sector_info, editor->info_area->color);
-
 	editor->selected_vector_info = bui_new_element(editor->info_area, "selected vector info", (t_xywh) {10, 130, 100, 55});
 	bui_set_element_color(editor->selected_vector_info, editor->info_area->color);
-
-	// new scale changer
 	coord = ui_init_coords(editor->info_area->position.w - 110, 100, 100, 40);
 	editor->scaler = new_changer_prefab(editor->info_area, "Map Scale", coord);
-
-	// info text element
 	coord = ui_init_coords(10, 200, editor->info_area->position.w - 20, 40);
 	editor->info_box = bui_new_element(editor->info_area, NULL, coord);
 	editor->info_box->update_state = 0;
@@ -180,7 +206,7 @@ void info_area_init(t_editor *editor)
 t_bui_element	*new_map_type_tickbox(t_bui_element *parent, char *text, t_xywh coord)
 {
 	t_bui_element *tick;
-	t_bui_element *text_elem; // remove if not used in the end.
+	t_bui_element *text_elem;
 	t_xywh text_coord;
 
 	text_coord = coord;
@@ -191,78 +217,114 @@ t_bui_element	*new_map_type_tickbox(t_bui_element *parent, char *text, t_xywh co
 	bui_set_element_image_from_path(tick, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/tick_box_off.png", NULL);
 	bui_set_element_image_from_path(tick, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/tick_box_hover.png", NULL);
 	bui_set_element_image_from_path(tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
-
 	return (tick);
 }
 
-void	button_init(t_editor *doom)
+void	draw_button_init(int button_w, int gap, t_editor *editor)
 {
 	t_xywh coord;
-	t_editor *editor = doom;
-
-	int gap = 10;
-	int button_w = 32;
-
-	coord = ui_init_coords(10, 25, 50, 50);
-	editor->draw_mode = bui_new_element(editor->toolbox, "Draw", coord);
-	editor->draw_mode->update_state = 0;
-	bui_set_element_text_font(editor->draw_mode, "DroidSans.ttf", editor->draw_mode->font_size, 0xffffffff);
-	bui_set_element_color(editor->draw_mode, editor->palette.elem_elem);
 
 	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20, button_w, button_w);
-	doom->button_draw = bui_new_element(editor->draw_mode, "draw", coord);
-	doom->button_draw->text_y = -20;
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/draw_mode.png", NULL);
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/draw_mode_click.png", NULL);
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/draw_mode_click.png", NULL);
-	// add draw button to the list of select_buttons
+	editor->button_draw = bui_new_element(editor->draw_mode, "draw", coord);
+	editor->button_draw->text_y = -20;
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_DEFAULT,
+			ROOT_PATH"ui/ui_images/draw_mode.png", NULL);
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_HOVER,
+			ROOT_PATH"ui/ui_images/draw_mode_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_draw, ELEMENT_CLICK,
+			ROOT_PATH"ui/ui_images/draw_mode_click.png", NULL);
 	add_to_list(&editor->select_mode_buttons, editor->button_draw, sizeof(t_bui_element));
+}
 
-// Other mode
-	coord = ui_init_coords(editor->draw_mode->position.x, editor->draw_mode->position.y + editor->draw_mode->position.h + 10, 300, 50);
-	editor->other_mode = bui_new_element(editor->toolbox, "Other", coord);
-	editor->other_mode->update_state = 0;
-	bui_set_element_text_font(editor->other_mode, "DroidSans.ttf", editor->other_mode->font_size, 0xffffffff);
-	bui_set_element_color(editor->other_mode, editor->palette.elem_elem);
-// Map name input
-	coord = ui_init_coords(gap, 20, 100, 20);
-	editor->map_name_input = bui_new_element(editor->other_mode, editor->mapname, coord);
-	editor->map_name_input->text_x = 5;
-// save button
-	coord = ui_init_coords(editor->map_name_input->position.x + editor->map_name_input->position.w + gap, 20, button_w, button_w);
-	editor->button_save = bui_new_element(editor->other_mode, "save", coord);
-	editor->button_save->text_y = -20;
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/save_button.png", NULL);
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/save_button_click.png", NULL);
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/save_button_click.png", NULL);
-// map type tickboxes
-	coord = ui_init_coords(editor->button_save->position.x + editor->button_save->position.w + gap, editor->button_save->position.y - gap, 20, 20);
+void	map_type_tickbox_init(int gap, t_editor *editor)
+{
+	t_xywh coord;
+
+	coord = ui_init_coords(editor->button_save->position.x +
+			editor->button_save->position.w + gap,
+			editor->button_save->position.y - gap, 20, 20);
 	editor->endless_tickbox = new_map_type_tickbox(editor->other_mode, "endless", coord);
 
-	coord = ui_init_coords(editor->button_save->position.x + editor->button_save->position.w + gap, editor->button_save->position.y + gap, 20, 20);
+	coord = ui_init_coords(editor->button_save->position.x +
+			editor->button_save->position.w + gap,
+			editor->button_save->position.y + gap, 20, 20);
 	editor->story_tickbox = new_map_type_tickbox(editor->other_mode, "story", coord);
-
 	if (ft_strendswith(editor->fullpath, ".story") == 0)
 		editor->active_map_type = editor->story_tickbox;
 	else
 		editor->active_map_type = editor->endless_tickbox;
 	add_to_list(&editor->map_type_tickboxes, editor->endless_tickbox, sizeof(t_bui_element));
 	add_to_list(&editor->map_type_tickboxes, editor->story_tickbox, sizeof(t_bui_element));
+}
 
+void	button_init_other(int button_w, int gap, t_editor *editor)
+{
+	t_xywh coord;
 
-// deletion button
-	coord = ui_init_coords(doom->info_area->position.w - 110, 25, 32, 32);
-	doom->button_remove = bui_new_element(doom->info_area, NULL, coord);
-	bui_set_element_image_from_path(editor->button_remove, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/remove_button.png", NULL);
-	bui_set_element_image_from_path(editor->button_remove, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/remove_button_click.png", NULL);
-	bui_set_element_image_from_path(editor->button_remove, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/remove_button_click.png", NULL);
-// edit button
-	coord = ui_init_coords(doom->info_area->position.w - 110 + 32 + 10, 25, 32, 32);
-	doom->button_edit = bui_new_element(doom->info_area, NULL, coord);
-	bui_set_element_image_from_path(editor->button_edit, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/edit_button.png", NULL);
-	bui_set_element_image_from_path(editor->button_edit, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/edit_button_click.png", NULL);
-	bui_set_element_image_from_path(editor->button_edit, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/edit_button_click.png", NULL);
+	coord = ui_init_coords(gap, 20, 100, 20);
+	editor->map_name_input = bui_new_element(editor->other_mode, editor->mapname, coord);
+	editor->map_name_input->text_x = 5;
 
+	coord = ui_init_coords(editor->map_name_input->position.x +
+			editor->map_name_input->position.w + gap, 20, button_w, button_w);
+	editor->button_save = bui_new_element(editor->other_mode, "save", coord);
+	editor->button_save->text_y = -20;
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_DEFAULT,
+			ROOT_PATH"ui/ui_images/save_button.png", NULL);
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_HOVER,
+			ROOT_PATH"ui/ui_images/save_button_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_save, ELEMENT_CLICK,
+			ROOT_PATH"ui/ui_images/save_button_click.png", NULL);
+	map_type_tickbox_init(gap, editor);
+}
+
+void	button_init_info_area(t_editor *editor)
+{
+	t_xywh coord;
+
+	coord = ui_init_coords(editor->info_area->position.w - 110, 25, 32, 32);
+	editor->button_remove = bui_new_element(editor->info_area, NULL, coord);
+	bui_set_element_image_from_path(editor->button_remove, ELEMENT_DEFAULT,
+			ROOT_PATH"ui/ui_images/remove_button.png", NULL);
+	bui_set_element_image_from_path(editor->button_remove, ELEMENT_HOVER,
+			ROOT_PATH"ui/ui_images/remove_button_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_remove, ELEMENT_CLICK,
+			ROOT_PATH"ui/ui_images/remove_button_click.png", NULL);
+	coord = ui_init_coords(editor->info_area->position.w - 110 + 32 + 10, 25, 32, 32);
+	editor->button_edit = bui_new_element(editor->info_area, NULL, coord);
+	bui_set_element_image_from_path(editor->button_edit, ELEMENT_DEFAULT,
+			ROOT_PATH"ui/ui_images/edit_button.png", NULL);
+	bui_set_element_image_from_path(editor->button_edit, ELEMENT_HOVER,
+			ROOT_PATH"ui/ui_images/edit_button_click.png", NULL);
+	bui_set_element_image_from_path(editor->button_edit, ELEMENT_CLICK,
+			ROOT_PATH"ui/ui_images/edit_button_click.png", NULL);
+}
+
+void	button_init(t_editor *editor)
+{
+	t_xywh coord;
+	int gap;
+	int button_w;
+
+	gap = 10;
+	button_w = 32;
+	coord = ui_init_coords(10, 25, 50, 50);
+	editor->draw_mode = bui_new_element(editor->toolbox, "Draw", coord);
+	editor->draw_mode->update_state = 0;
+	bui_set_element_text_font(editor->draw_mode, "DroidSans.ttf",
+			editor->draw_mode->font_size, 0xffffffff);
+	bui_set_element_color(editor->draw_mode, editor->palette.elem_elem);
+	draw_button_init(button_w, gap, editor);
+	coord = ui_init_coords(editor->draw_mode->position.x, 
+			editor->draw_mode->position.y +
+			editor->draw_mode->position.h + 10, 300, 50);
+	editor->other_mode = bui_new_element(editor->toolbox, "Other", coord);
+	editor->other_mode->update_state = 0;
+	bui_set_element_text_font(editor->other_mode, "DroidSans.ttf",
+			editor->other_mode->font_size, 0xffffffff);
+	bui_set_element_color(editor->other_mode, editor->palette.elem_elem);
+	button_init_other(button_w, gap, editor);
+	button_init_info_area(editor);
 }
 
 void	color_palette_init(t_color_palette *pal)
@@ -271,9 +333,6 @@ void	color_palette_init(t_color_palette *pal)
 	pal->win_elem = 0xff232b2b;
 	pal->elem_elem = 0xff353839;
 	pal->elem_elem_elem = 0xffa6a6a4;
-
-	// These are taken from coolors.co,
-	// which is the reason they may have weird names
 	pal->granny_smith_apple = 0xffadf7b6;
 	pal->peach_crayola = 0xffffc09f;
 	pal->light_blue = 0xffa0ced9;
@@ -296,28 +355,23 @@ t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_
 	t_changer_prefab *prefab;
 
 	prefab = ft_memalloc(sizeof(t_changer_prefab));
-// menu
 	prefab->menu = bui_new_element(parent_menu, title, coord);
-// sub
 	temp_coord = ui_init_coords(0, coord.h - 20, 20, 20);
 	prefab->sub_button = bui_new_element(prefab->menu, "-", temp_coord);
-// add
 	temp_coord = ui_init_coords(coord.w - 20, coord.h - 20, 20, 20);
 	prefab->add_button = bui_new_element(prefab->menu, "+", temp_coord);
-// value
 	temp_coord.x = prefab->sub_button->position.x + prefab->sub_button->position.w;
-	temp_coord.w = prefab->menu->position.w - temp_coord.x - (prefab->menu->position.w - prefab->add_button->position.x);
+	temp_coord.w = prefab->menu->position.w - temp_coord.x -
+		(prefab->menu->position.w - prefab->add_button->position.x);
 	prefab->value = bui_new_element(prefab->menu, "not set", temp_coord);
-
 	return (prefab);
 }
 
-// TODO: figure out how to do so it only changes the text if you actually clicked either of the buttons.
-// 		..be careful, that you will still update the text if the value gets changed somewhere else than here.
 void	changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount)
 {
-	char *str = NULL;
+	char *str;
 	
+	str = NULL;
 	if (bui_button(changer->add_button))
 		*current_value += change_amount;
 	else if (bui_button(changer->sub_button))
@@ -340,30 +394,38 @@ void	changer_prefab_events_float(t_changer_prefab *changer, float *current_value
 	ft_strdel(&str);
 }
 
+// DONT want to norme this before the texture thingy majig is done.
 void	init_sector_editor(t_editor *editor)
 {
 	t_xywh coord;
 
 	// edit toolbox- and view element
-	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
-	editor->edit_toolbox_sector = bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
-
-	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
-			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f,
 			editor->new_edit_window->position.h - 10);
-	editor->edit_view_sector = bui_new_menu(editor->new_edit_window, "New View", coord);
+	editor->edit_toolbox_sector =
+		bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x +
+			editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w -
+			editor->edit_toolbox_sector->position.w - 15,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_view_sector =
+		bui_new_menu(editor->new_edit_window, "New View", coord);
 
 	// floor texture menu
 	coord = ui_init_coords(0, 20,
 			editor->edit_view_sector->position.w * 0.5,
 			editor->edit_view_sector->position.h - 20);
-	editor->sector_floor_menu = bui_new_element(editor->edit_view_sector, "Floor Texture", coord);
+	editor->sector_floor_menu =
+		bui_new_element(editor->edit_view_sector, "Floor Texture", coord);
 
 	// ceiling texture menu
 	coord = ui_init_coords(editor->edit_view_sector->position.w * 0.5, 20,
 			editor->edit_view_sector->position.w * 0.5,
 			editor->edit_view_sector->position.h - 20);
-	editor->sector_ceiling_menu = bui_new_element(editor->edit_view_sector, "Ceiling Texture", coord);
+	editor->sector_ceiling_menu =
+		bui_new_element(editor->edit_view_sector, "Ceiling Texture", coord);
 	bui_set_element_color(editor->sector_ceiling_menu, 0xff06D6A0);
 
 // TODO: from a texture file take all the textures and make buttons of them and show them on both of the menus above.
@@ -378,7 +440,10 @@ void	init_sector_editor(t_editor *editor)
 	int offset_x = 20;
 	int offset_y = 50;
 	int button_gap = 20;
-	int amount_on_x = floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
+	int amount_on_x;
+
+	amount_on_x =
+		floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
 	while (i < floor_texture_count)
 	{
 		coord.w = 50;
@@ -401,7 +466,8 @@ void	init_sector_editor(t_editor *editor)
 		str = ft_sprintf("%d", i);
 		temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
 		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
+		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT,
+				ROOT_PATH"ui/ui_images/doom.jpg", NULL);
 		add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
 		i++;
 	}
@@ -411,19 +477,27 @@ void	init_sector_editor(t_editor *editor)
 	coord.w = 100; 
 	coord.h = 40; 
 	coord.y = (25 * 1) + (40 * 0);
-	editor->floor_height = new_changer_prefab(editor->edit_toolbox_sector, "floor height", coord);
+	editor->floor_height =
+		new_changer_prefab(editor->edit_toolbox_sector, "floor height", coord);
 	coord.y = (25 * 2) + (40 * 1);
-	editor->ceiling_height = new_changer_prefab(editor->edit_toolbox_sector, "ceiling height", coord);
+	editor->ceiling_height =
+		new_changer_prefab(editor->edit_toolbox_sector, "ceiling height", coord);
 	coord.y = (25 * 3) + (40 * 2);
-	editor->gravity = new_changer_prefab(editor->edit_toolbox_sector, "gravity", coord);
+	editor->gravity =
+		new_changer_prefab(editor->edit_toolbox_sector, "gravity", coord);
 	coord.y = (25 * 4) + (40 * 3);
-	editor->lighting = new_changer_prefab(editor->edit_toolbox_sector, "lighting", coord);
+	editor->lighting =
+		new_changer_prefab(editor->edit_toolbox_sector, "lighting", coord);
 
 	// floor & ceiling texture scale
 	coord.y = (25 * 6) + (40 * 5);
-	editor->floor_scale = new_changer_prefab(editor->edit_toolbox_sector, "floor texture scale", coord);
+	editor->floor_scale =
+		new_changer_prefab(editor->edit_toolbox_sector,
+		"floor texture scale", coord);
 	coord.y = (25 * 7) + (40 * 6);
-	editor->ceiling_scale = new_changer_prefab(editor->edit_toolbox_sector, "ceiling texture scale", coord);
+	editor->ceiling_scale =
+		new_changer_prefab(editor->edit_toolbox_sector,
+		"ceiling texture scale", coord);
 }
 
 void	init_wall_editor(t_editor *editor)
