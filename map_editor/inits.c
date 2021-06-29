@@ -338,17 +338,6 @@ void	color_palette_init(t_color_palette *pal)
 	pal->light_blue = 0xffa0ced9;
 }
 
-// TODO: you can probably take from this mallia how to do the texture thingy majig when youre actually making it.
-/*
-void	texture_init(t_editor *doom)
-{
-	load_texture(&doom->textures[0], "../textures/textures.bmp", 64, 64);
-	split_texture(&doom->textures[0]);
-
-	texture_button_init(doom);
-}
-*/
-
 t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord)
 {
 	t_xywh temp_coord;
@@ -406,59 +395,22 @@ void	copy_bxpm_pix_to_surf_pix(t_bxpm *bxpm, SDL_Surface *surface)
 	}
 }
 
-void	new_floor_texture_button(t_editor *editor, char *bxpm_file, int nth)
-{
-	t_bxpm *bxpm;
-	t_xywh coord;
-	t_bui_element *temp_elem;
-	char *str;
-	int i = nth;
-	
-	int offset_x = 20;
-	int offset_y = 50;
-	int button_gap = 20;
-	int amount_on_x;
-
-	amount_on_x =
-		floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
-	coord.w = 50;
-	coord.h = 50;
-	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
-	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
-	str = ft_sprintf("%d", i);
-	temp_elem = bui_new_element(editor->sector_floor_menu, str, coord);
-	ft_strdel(&str);
-
-	bxpm = malloc(sizeof(t_bxpm));
-	read_bxpm(bxpm, bxpm_file);
-	SDL_Surface *surface = create_surface(bxpm->w, bxpm->h);
-	copy_bxpm_pix_to_surf_pix(bxpm, surface);
-	SDL_BlitScaled(surface, NULL, temp_elem->surface[0], NULL);
-	SDL_FreeSurface(surface);
-	free(bxpm->pix);
-	free(bxpm->clr);
-	free(bxpm);
-
-	add_to_list(&editor->floor_texture_buttons, temp_elem, sizeof(t_bui_element));
-}
-
-void	new_ceiling_texture_button(t_editor *editor, char *bxpm_file, int nth)
+void	new_texture_button(t_bui_element *parent, t_list **list, char *bxpm_file, int i)
 {
 	t_bxpm *bxpm;
 	t_bui_element *temp_elem;
 	t_xywh coord;
-	int i = nth;
 	int offset_x = 20;
 	int offset_y = 50;
 	int button_gap = 20;
-	int amount_on_x = floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
+	int amount_on_x = floor(parent->position.w / (50 + button_gap + offset_x));
 	char *str;
 
 	coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
 	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
 	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
 	str = ft_sprintf("%d", i);
-	temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
+	temp_elem = bui_new_element(parent, str, coord);
 	ft_strdel(&str);
 
 	bxpm = malloc(sizeof(t_bxpm));
@@ -466,104 +418,59 @@ void	new_ceiling_texture_button(t_editor *editor, char *bxpm_file, int nth)
 	SDL_Surface *surface = create_surface(bxpm->w, bxpm->h);
 	copy_bxpm_pix_to_surf_pix(bxpm, surface);
 	SDL_BlitScaled(surface, NULL, temp_elem->surface[0], NULL);
+	SDL_BlitScaled(surface, NULL, temp_elem->surface[1], NULL);
+//	SDL_BlitScaled(surface, NULL, temp_elem->surface[2], NULL);
+	bui_set_element_state_border(temp_elem, 2, 0x0000ff00, ELEMENT_HOVER);
+	bui_set_element_state_border(temp_elem, 2, 0x000000ff, ELEMENT_CLICK);
 	SDL_FreeSurface(surface);
 	free(bxpm->pix);
 	free(bxpm->clr);
 	free(bxpm);
-	add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
+
+	add_to_list(list, temp_elem, sizeof(t_bui_element));
 }
 
-// DONT want to norme this before the texture thingy majig is done.
+
+void	texture_hardcode_init(t_editor *editor)
+{
+	// Floor
+	new_texture_button(editor->sector_floor_menu, &editor->floor_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
+	new_texture_button(editor->sector_floor_menu, &editor->floor_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
+	new_texture_button(editor->sector_floor_menu, &editor->floor_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
+
+	// Ceiling
+	new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
+	new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
+	new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
+	new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 3);
+}
+
 void	init_sector_editor(t_editor *editor)
 {
 	t_xywh coord;
 
-	// edit toolbox- and view element
+	// edit toolbox
 	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f,
 			editor->new_edit_window->position.h - 10);
 	editor->edit_toolbox_sector =
 		bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
-
-	coord = ui_init_coords(editor->edit_toolbox_sector->position.x +
-			editor->edit_toolbox_sector->position.w + 5, 5,
-			editor->new_edit_window->position.w -
-			editor->edit_toolbox_sector->position.w - 15,
-			editor->new_edit_window->position.h - 10);
-	editor->edit_view_sector =
-		bui_new_menu(editor->new_edit_window, "New View", coord);
-
 	// floor texture menu
-	coord = ui_init_coords(0, 20,
-			editor->edit_view_sector->position.w * 0.5,
-			editor->edit_view_sector->position.h - 20);
+	coord = ui_init_coords(coord.x + coord.w + 5, 5,
+			(editor->new_edit_window->position.w - coord.w - 15) * 0.5,
+			editor->new_edit_window->position.h - 10);
 	editor->sector_floor_menu =
-		bui_new_element(editor->edit_view_sector, "Floor Texture", coord);
-
+		bui_new_menu(editor->new_edit_window, "Floor Texture", coord);
 	// ceiling texture menu
-	coord = ui_init_coords(editor->edit_view_sector->position.w * 0.5, 20,
-			editor->edit_view_sector->position.w * 0.5,
-			editor->edit_view_sector->position.h - 20);
+	coord = ui_init_coords(coord.x + coord.w, coord.y,
+			coord.w, coord.h);
 	editor->sector_ceiling_menu =
-		bui_new_element(editor->edit_view_sector, "Ceiling Texture", coord);
+		bui_new_menu(editor->new_edit_window, "Ceiling Texture", coord);
 	bui_set_element_color(editor->sector_ceiling_menu, 0xff06D6A0);
-
-// TODO: from a texture file take all the textures and make buttons of them and show them on both of the menus above.
-// TODO: NOTE: the ceiling- and floor texture count should be gotten from the same place as where you laod the textures.
-	// this is just a demonstration
-	/*
-	t_bui_element *temp_elem;
-	char *str;
-	int floor_texture_count = 9;
-	int ceiling_texture_count = 20;
-	int i = 0;
-	
-	int offset_x = 20;
-	int offset_y = 50;
-	int button_gap = 20;
-	int amount_on_x;
-
-	amount_on_x =
-		floor(editor->sector_floor_menu->position.w / (50 + button_gap + offset_x));
-	while (i < floor_texture_count)
-	{
-		coord.w = 50;
-		coord.h = 50;
-		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
-		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
-		str = ft_sprintf("%d", i);
-		temp_elem = bui_new_element(editor->sector_floor_menu, str, coord);
-		ft_strdel(&str);
-		bui_set_element_color(temp_elem, 0xff06D6A0);
-		add_to_list(&editor->floor_texture_buttons, temp_elem, sizeof(t_bui_element));
-		i++;
-	}
-	i = 0;
-	while (i < ceiling_texture_count)
-	{
-		coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
-		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
-		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
-		str = ft_sprintf("%d", i);
-		temp_elem = bui_new_element(editor->sector_ceiling_menu, str, coord);
-		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT,
-				ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		add_to_list(&editor->ceiling_texture_buttons, temp_elem, sizeof(t_bui_element));
-		i++;
-	}
-	*/
-	new_floor_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 0);
-	new_floor_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 1);
-
-	new_ceiling_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 0);
-	new_ceiling_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 1);
-	new_ceiling_texture_button(editor, ROOT_PATH"map_editor/wood.bxpm", 2);
-
+	// textures
+	texture_hardcode_init(editor);
 	// Init the ceiling- and floor height... etc. buttons
-	coord.x = 5;
-	coord.w = 100; 
-	coord.h = 40; 
-	coord.y = (25 * 1) + (40 * 0);
+	
+	coord = ui_init_coords(5, (25 * 1) + (40 * 0), 100, 40);
 	editor->floor_height =
 		new_changer_prefab(editor->edit_toolbox_sector, "floor height", coord);
 	coord.y = (25 * 2) + (40 * 1);
@@ -575,7 +482,6 @@ void	init_sector_editor(t_editor *editor)
 	coord.y = (25 * 4) + (40 * 3);
 	editor->lighting =
 		new_changer_prefab(editor->edit_toolbox_sector, "lighting", coord);
-
 	// floor & ceiling texture scale
 	coord.y = (25 * 6) + (40 * 5);
 	editor->floor_scale =
@@ -587,182 +493,173 @@ void	init_sector_editor(t_editor *editor)
 		"ceiling texture scale", coord);
 }
 
-void	init_wall_editor(t_editor *editor)
+void	new_wall_texture_button(t_bui_element *parent, t_list **list, char *bxpm_file, int i)
+{
+	t_bxpm *bxpm;
+	t_bui_element *temp_elem;
+	t_xywh coord;
+	char *str;
+
+	int button_w = 50;
+	int button_gap = 15;
+	int offset_x = 5;
+	int offset_y = 70;
+	int amount_on_x = floor(parent->position.w / (button_w + button_gap + offset_x));
+	
+	coord = ui_init_coords(0, 0, button_w, button_w);
+	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
+	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+	str = ft_itoa(i);
+	temp_elem = bui_new_element(parent, str, coord);
+	ft_strdel(&str);
+
+	bxpm = malloc(sizeof(t_bxpm));
+	read_bxpm(bxpm, bxpm_file);
+	SDL_Surface *surface = create_surface(bxpm->w, bxpm->h);
+	copy_bxpm_pix_to_surf_pix(bxpm, surface);
+	SDL_BlitScaled(surface, NULL, temp_elem->surface[0], NULL);
+	SDL_BlitScaled(surface, NULL, temp_elem->surface[1], NULL);
+	SDL_BlitScaled(surface, NULL, temp_elem->surface[2], NULL);
+	SDL_FreeSurface(surface);
+	free(bxpm->pix);
+	free(bxpm->clr);
+	free(bxpm);
+
+	draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
+	draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
+
+	add_to_list(list, temp_elem, sizeof(t_bui_element));
+}
+
+void	tabsystem_wall_editor_init(t_editor *editor)
 {
 	t_xywh coord;
-
-	// edit toolbox- and view element
-	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
-	editor->edit_toolbox_wall = bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
-
-	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
-			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
-			editor->new_edit_window->position.h - 10);
-	editor->edit_view_wall = bui_new_menu(editor->new_edit_window, "New View", coord);
-	editor->edit_view_wall->update = 0;
-
-	// tabsystem in toolbox
-	coord = ui_init_coords(5, 20, editor->edit_toolbox_wall->position.w - 10, editor->edit_toolbox_wall->position.h - 25);
-	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall, "texture tabs", coord);
-	// Note; if you want to add these tabs youre adding, you have to save them somewhere, [0] is tab button [1] is the view
-	// Note2; it seems that i have planned to make the tab system more dynamic, aka you can have differnece sized buttons
-	// Note3; but yet not made it tho...
 	t_bui_element **elems;
 
+	coord = ui_init_coords(5, 20, editor->edit_toolbox_wall->position.w - 10, editor->edit_toolbox_wall->position.h - 25);
+	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall, "texture tabs", coord);
 	elems = preset_tab_add(editor->wall_tab, "Wall Texture");
 	bui_set_element_color(elems[0], editor->palette.light_blue);
 	bui_set_element_color(elems[1], editor->palette.light_blue);
 	editor->wall_texture_view = elems[1]; 
 	free(elems);
-
 	elems = preset_tab_add(editor->wall_tab, "Portal Texture");
 	bui_set_element_color(elems[0], editor->palette.granny_smith_apple);
 	bui_set_element_color(elems[1], editor->palette.granny_smith_apple);
 	editor->portal_texture_view = elems[1];
 	free(elems);
-
 	elems = preset_tab_add(editor->wall_tab, "Wall Sprite");
 	bui_set_element_color(elems[0], editor->palette.peach_crayola);
 	bui_set_element_color(elems[1], editor->palette.peach_crayola);
 	editor->wall_sprite_view = elems[1]; 
 	free(elems);
+}
 
-	// wall textures view elements
+void	wall_tab_init(t_editor *editor)
+{
+	t_xywh coord;
+
 	coord = ui_init_coords(5, 20, 80, 40);
 	editor->texture_scale_changer = new_changer_prefab(editor->wall_texture_view, "texture scale", coord);
 	bui_set_element_color(editor->texture_scale_changer->menu, 0xff06D6A0);
 	bui_set_element_color(editor->texture_scale_changer->sub_button, 0xff06D6A0);
 	bui_set_element_color(editor->texture_scale_changer->value, 0xff06D6A0);
 	bui_set_element_color(editor->texture_scale_changer->add_button, 0xff06D6A0);
-
-	// wall texture solidity tick box
 	coord = ui_init_coords(115, 20, 100, 20);
 	editor->wall_solid = bui_new_element(editor->wall_texture_view, "Solid:", coord);
 	bui_set_element_color(editor->wall_solid, ((t_bui_element *)editor->wall_solid->parent)->color);
-
 	coord = ui_init_coords(40, 0, 20, 20);
 	editor->wall_solid_tick = bui_new_element(editor->wall_solid, NULL, coord);
 	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/tick_box_off.png", NULL);
 	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/tick_box_hover.png", NULL);
 	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
+}
 
-	// wall portal tick box
+void	portal_tab_init(t_editor *editor)
+{
+	t_xywh coord;
+
 	coord = ui_init_coords(115, 40, 100, 20);
 	editor->wall_portal = bui_new_element(editor->wall_texture_view, "Portal:", coord);
 	bui_set_element_color(editor->wall_portal, ((t_bui_element *)editor->wall_portal->parent)->color);
-
 	coord = ui_init_coords(40, 0, 20, 20);
 	editor->wall_portal_tick = bui_new_element(editor->wall_portal, NULL, coord);
 	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/tick_box_off.png", NULL);
 	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/tick_box_hover.png", NULL);
 	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
+}
 
-	// wall sprite view elements
+void	wall_sprite_tab_init(t_editor *editor)
+{
+	t_xywh coord;
+
 	coord = ui_init_coords(95, 20, 80, 20);
 	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "add sprite", coord);
 	bui_set_element_color(editor->add_wall_sprite_button, 0xff06D6A0);
-
 	coord = ui_init_coords(95, 40, 80, 20);
 	editor->remove_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "remove sprite", coord);
 	bui_set_element_color(editor->remove_wall_sprite_button, 0xff06D6A0);
-
-
-		// wall sprite scale elements
 	coord = ui_init_coords(5, 20, 80, 40);
 	editor->sprite_scale_changer = new_changer_prefab(editor->wall_sprite_view, "sprite scale", coord);
 	bui_set_element_color(editor->sprite_scale_changer->menu, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->sub_button, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->value, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->add_button, 0xff06D6A0);
-
-
-	// TODO: make this modular on the y axis aswell
-	t_bui_element *temp_elem;
-	char *str;
-	int texture_count = 5;
-	int i = 0;
-	int button_w = 50;
-	int button_gap = 15;
-	int offset_x = 5;
-	int offset_y = 70;
-	int amount_on_x;
-
-	// wall texture buttons
-	editor->wall_texture_buttons = NULL;
-	editor->active_wall_texture = NULL;
-
-	amount_on_x = floor(editor->wall_texture_view->position.w / (button_w + button_gap + offset_x));
-	coord.w = button_w;
-	coord.h = button_w;
-	while (i < texture_count)
-	{
-		str = ft_itoa(i);
-		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
-		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
-		temp_elem = bui_new_element(editor->wall_texture_view, str, coord);
-		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
-		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
-		add_to_list(&editor->wall_texture_buttons, temp_elem, sizeof(t_bui_element));
-		i++;
-	}
-
-	// portal texture buttons
-	editor->portal_texture_buttons = NULL;
-	editor->active_portal_texture = NULL;
-	offset_y = 50;
-	amount_on_x = floor(editor->portal_texture_view->position.w / (button_w + button_gap + offset_x));
-	texture_count = 10;
-	i = 0;
-	while (i < texture_count)
-	{
-		str = ft_itoa(i);
-		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
-		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
-		temp_elem = bui_new_element(editor->portal_texture_view, str, coord);
-		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
-		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
-		add_to_list(&editor->portal_texture_buttons, temp_elem, sizeof(t_bui_element));
-		i++;
-	}
-
-	// wall sprite buttons
-	editor->wall_sprite_buttons = NULL;
-	editor->active_wall_sprite = NULL;
-	amount_on_x = floor(editor->wall_sprite_view->position.w / (button_w + button_gap + offset_x));
-	texture_count = 5;
-	offset_y = 70;
-	i = 0;
-	while (i < texture_count)
-	{
-		str = ft_itoa(i);
-		coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
-		coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
-		temp_elem = bui_new_element(editor->wall_sprite_view, str, coord);
-		ft_strdel(&str);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		bui_set_element_image_from_path(temp_elem, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/doom.jpg", NULL);
-		draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
-		draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
-		add_to_list(&editor->wall_sprite_buttons, temp_elem, sizeof(t_bui_element));
-		i++;
-	}
 }
 
-/*
- ** Adds a new button at x, y to the prefered list.
-*/
-// TODO: add this to better_libui? this means that the textures should be saved there too.
-// 	but dont add any textures before the dynamic texture path and font path is done.
-// TODO: remove the str, its only for debugging before i actually know how i will get the values  from the buttons for direction.
+void	wall_texture_buttons_init(t_editor *editor)
+{
+	editor->wall_texture_buttons = NULL;
+	editor->active_wall_texture = NULL;
+	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
+	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
+	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
+	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 3);
+	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 4);
+}
+
+void	portal_texture_buttons_init(t_editor *editor)
+{
+	editor->portal_texture_buttons = NULL;
+	editor->active_portal_texture = NULL;
+	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
+	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
+	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
+	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 3);
+	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 4);
+}
+
+void	wall_sprite_texture_buttons_init(t_editor *editor)
+{
+	editor->wall_sprite_buttons = NULL;
+	editor->active_wall_sprite = NULL;
+	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
+	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
+	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
+	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 3);
+	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 4);
+}
+
+void	init_wall_editor(t_editor *editor)
+{
+	t_xywh coord;
+
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_wall = bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_view_wall = bui_new_menu(editor->new_edit_window, "New View", coord);
+	editor->edit_view_wall->update = 0;
+	tabsystem_wall_editor_init(editor);
+	wall_tab_init(editor);
+	wall_texture_buttons_init(editor);
+	portal_tab_init(editor);
+	portal_texture_buttons_init(editor);
+	wall_sprite_tab_init(editor);
+	wall_sprite_texture_buttons_init(editor);
+}
+
 void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *str)
 {
 	t_xywh coord;
@@ -778,13 +675,6 @@ void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *
 	add_to_list(list, radio, sizeof(t_bui_element));
 }
 
-// list is the linked list you will add the t_entity_preset to from path
-// TODO: there are alot of sizeof() maybe store the size somewhere so you dont have to call is 20 times
-// 	might not have a difference sine youre only calling this function when you startup the program.
-// NOTE: first line in the file is just description of the value in that column.
-// TODO: have an int array with all the different descriptions of value  and then take them from there when you store it...
-// 	aka first read the first line and store those value descriptions and store them in an array, hard to explain.
-// 	t.ex "name" = index 0, "scale" = index 1 ...
 void	init_entity_presets(t_list **list, char *path)
 {
 	t_entity_preset *preset;
@@ -799,10 +689,7 @@ void	init_entity_presets(t_list **list, char *path)
 		return ;
 	}
 	get_next_line(fd, &line);
-		ft_putstr("-1");
-		ft_putstr(line);
 	ft_strdel(&line);
-		ft_putstr("0");
 	while (get_next_line(fd, &line))
 	{
 		arr = ft_strsplit(line, '\t');
@@ -829,11 +716,8 @@ void	init_entity_presets(t_list **list, char *path)
 
 		preset->flying = ft_atoi(arr[7]);
 
-		ft_putstr("1");
 		ft_strdel(&line);
-		ft_putstr("2");
 		free_array(arr);
-		ft_putstr("3");
 		i++;
 		add_to_list(list, preset, sizeof(t_entity_preset));
 	}

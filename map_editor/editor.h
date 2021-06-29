@@ -289,7 +289,6 @@ struct			s_editor
 	// Sector elements,
 	///////////////////
 	t_bui_element	*edit_toolbox_sector;
-	t_bui_element	*edit_view_sector;
 
 	// toolbox sector edit buttons
 	t_changer_prefab	*floor_height;

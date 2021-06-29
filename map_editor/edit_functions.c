@@ -268,7 +268,8 @@ void	wall_option(t_editor *editor, t_bui_libui *libui)
 
 void	sector_option(t_editor *editor, t_grid *grid)
 {
-	editor->edit_view_sector->show = 1;
+	editor->sector_ceiling_menu->show = 1;
+	editor->sector_floor_menu->show = 1;
 	editor->edit_toolbox_sector->show = 1;
 
 	// Floor and ceiling texture element events
@@ -338,7 +339,8 @@ void	entity_option(t_editor *editor)
 
 void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
-	doom->edit_view_sector->show = 0;
+	doom->sector_ceiling_menu->show = 0;
+	doom->sector_floor_menu->show = 0;
 	doom->edit_toolbox_sector->show = 0;
 
 	doom->edit_view_wall->show = 0;
