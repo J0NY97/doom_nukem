@@ -212,9 +212,6 @@ void	free_entity(void *content, size_t size)
 	if (content == NULL)
 		return ;
 	t_entity *entity = content;
-
-	if (entity->preset)
-		free_entity_preset(entity->preset, sizeof(t_entity_preset));
 	ft_memdel((void **)&entity);
 }
 
@@ -513,12 +510,10 @@ void	remove_from_sectors(t_list **sectors, t_sector *sec)
 	t_list *prev;
 
 	curr = *sectors;
-	if (curr == NULL)
-		return ;
-	if (sector_compare(curr->content, sec))
+	if (curr && sector_compare(curr->content, sec))
 	{
 		*sectors = curr->next;
-		free(curr->content);
+		free_sector(curr->content, 0);
 		free(curr);
 		return ;
 	}
@@ -529,7 +524,7 @@ void	remove_from_sectors(t_list **sectors, t_sector *sec)
 			if (sector_compare(curr->content, sec))
 			{
 				prev->next = curr->next;
-				free(curr->content);
+				free_sector(curr->content, 0);
 				free(curr);
 				return ;
 			}
@@ -538,9 +533,7 @@ void	remove_from_sectors(t_list **sectors, t_sector *sec)
 			curr = prev->next;
 		}
 	}
-	printf("Sector removed\n");
 }
-
 
 void	remove_everything_from_list(t_list **list)
 {

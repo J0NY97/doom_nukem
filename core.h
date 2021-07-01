@@ -123,7 +123,7 @@ typedef	struct		s_perk
 // 	aka mood, name ,speed, health...
 struct				s_entity
 {
-	unsigned int	id;
+	unsigned int	id; // might be useless
 	t_vector		pos;
 	int			direction; // in degrees 
 	t_entity_preset			*preset;
