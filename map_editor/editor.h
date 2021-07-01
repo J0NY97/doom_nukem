@@ -10,6 +10,12 @@
 # include "path.h"
 # include "bxpm.h"
 
+//////////////////////
+// ENTITY TODO
+// ///////////////////
+// entity viewn skall visa hela texturen av selected entity.
+// i editor windown.
+
 // texture
 // < 0  == skybox
 // 0 == monochorme
@@ -150,6 +156,8 @@ typedef	struct	s_grid
 	int		wall_sprite_amount;
 	// t_list		*portals;
 	t_xywh			dimensions;
+
+	TTF_Font	*font;
 }				t_grid;
 
 typedef	struct		s_changer_prefab
@@ -318,6 +326,14 @@ struct			s_editor
 
 	t_list	*entity_direction_radio_buttons; // list of t_bui_element, these are the "radio" buttons for the direction of entity
 	t_bui_element *active_direction_button;
+
+	/////////////////////
+	// TEXTURES // added in functioin ; load_all_texture() / inits.c / line 68
+	/////////////////////
+	SDL_Surface **texture_textures;
+	int	texture_amount;
+	SDL_Surface **sprite_textures;
+	int	sprite_amount;
 };
 
 void	fps_func(t_fps *fps);
@@ -345,6 +361,7 @@ void			draw_all_points(SDL_Surface *surface, t_list *points);
 
 void			color_palette_init(t_color_palette *pal);
 void			window_init(t_editor *doom, t_bui_libui *libui);
+void			grid_init1(t_editor *doom);
 void			grid_init(t_editor *doom);
 void			toolbox_init(t_editor *doom);
 void			button_init(t_editor *doom);
@@ -425,17 +442,19 @@ void			remove_portal(t_grid *grid);
 /*
 ** Help
 */
+int			get_list_len(t_list **list);
 int				vector_is_empty(t_vector v);
 int				vector_compare(t_vector v1, t_vector v2);
 int				wall_compare(t_wall *v1, t_wall *v2);
 void			add_to_list(t_list **list, void *new_v, size_t size);
 t_list			*get_nth_from_list(t_list **list, int index);
+t_point			*new_point(t_vector pos);
 t_wall			*new_wall(t_point *orig, t_point *dest);
 t_sprite		*new_sprite(void);
 t_sector		*new_sector(int id);
 t_entity		*new_entity(int id, t_vector pos);
 t_entity_preset		*new_entity_preset(char *name);
-t_entity_preset		*get_entity_preset_from_list_with_name(t_list *list, char *name);
+t_entity_preset		*get_entity_preset_with_name(t_list *list, char *name);
 void			free_point(void *content, size_t size);
 void			free_sprite(void *content, size_t size);
 void			free_wall(void *content, size_t size);

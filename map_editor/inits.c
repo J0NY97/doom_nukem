@@ -37,6 +37,51 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 	init_entity_editor(editor);
 }
 
+static void	copy_bxpm_pix_to_surf_pix(t_bxpm *bxpm, SDL_Surface *surface)
+{
+	int i;
+
+	i = 0;
+	while (i < bxpm->pix_nb)
+	{
+		((Uint32 *)surface->pixels)[i] = bxpm->clr[bxpm->pix[i]];
+		i++;
+	}
+}
+
+static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
+{
+	SDL_Surface	*surface;
+	t_bxpm		*bxpm;
+
+	bxpm = malloc(sizeof(t_bxpm));
+	int result = read_bxpm(bxpm, bxpm_file);
+	ft_printf("%d\n", result);
+	surface = create_surface(bxpm->w, bxpm->h);
+	copy_bxpm_pix_to_surf_pix(bxpm, surface);
+	free(bxpm->pix);
+	free(bxpm->clr);
+	free(bxpm);
+	return (surface);
+}
+
+static void	load_all_textures(t_editor *editor)
+{
+	editor->texture_amount = 2;
+	editor->texture_textures = malloc(sizeof(SDL_Surface *) * editor->texture_amount);
+	editor->texture_textures[0] = load_bxpm_to_surface(ROOT_PATH"map_editor/wood.bxpm");
+	editor->texture_textures[1] = load_bxpm_to_surface(ROOT_PATH"map_editor/steel.bxpm");
+}
+
+static void	load_all_sprites(t_editor *editor)
+{
+	editor->sprite_amount = 2;
+	editor->sprite_textures = malloc(sizeof(SDL_Surface *) * editor->sprite_amount);
+	editor->sprite_textures[0] = load_bxpm_to_surface(ROOT_PATH"map_editor/wood.bxpm");
+	editor->sprite_textures[1] = load_bxpm_to_surface(ROOT_PATH"map_editor/steel.bxpm");
+}
+
+
 void	grid_init1(t_editor *editor)
 {
 	t_xywh coord;
@@ -53,11 +98,12 @@ void	grid_init1(t_editor *editor)
 	editor->spawn.pos = (t_vector) {.x = 0, .y = 0, .z = 0};
 	editor->spawn.direction = 0;
 	editor->scale = 1;
+	editor->grid.font = TTF_OpenFont("DroidSans.ttf", 20);
 }
 
 void	grid_init(t_editor *editor)
 {
-	grid_init1(editor);
+	ft_putstr("0");
 	editor->grid.selected1 = EMPTY_VEC;
 	editor->grid.selected2 = EMPTY_VEC;
 	editor->grid.modify_wall = NULL;
@@ -76,6 +122,8 @@ void	grid_init(t_editor *editor)
 	editor->grid.x = editor->grid.coords.x;
 	editor->grid.y = editor->grid.coords.y;
 	editor->grid.dimensions = editor->grid.coords;
+	load_all_textures(editor);
+	load_all_sprites(editor);
 }
 
 void	vertex_button_init(int select_w, int select_gap, t_editor *editor)
@@ -383,21 +431,8 @@ void	changer_prefab_events_float(t_changer_prefab *changer, float *current_value
 	ft_strdel(&str);
 }
 
-void	copy_bxpm_pix_to_surf_pix(t_bxpm *bxpm, SDL_Surface *surface)
+void	new_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *texture, int i)
 {
-	int i;
-
-	i = 0;
-	while (i < bxpm->pix_nb)
-	{
-		((Uint32 *)surface->pixels)[i] = bxpm->clr[bxpm->pix[i]];
-		i++;
-	}
-}
-
-void	new_texture_button(t_bui_element *parent, t_list **list, char *bxpm_file, int i)
-{
-	t_bxpm *bxpm;
 	t_bui_element *temp_elem;
 	t_xywh coord;
 	int offset_x = 20;
@@ -406,43 +441,32 @@ void	new_texture_button(t_bui_element *parent, t_list **list, char *bxpm_file, i
 	int amount_on_x = floor(parent->position.w / (50 + button_gap + offset_x));
 	char *str;
 
-	coord = ui_init_coords(i * 20 + (i * 50), 50, 50, 50);
+	coord = ui_init_coords(0, 0, 50, 50);
 	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
 	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
 	str = ft_sprintf("%d", i);
 	temp_elem = bui_new_element(parent, str, coord);
 	ft_strdel(&str);
 
-	bxpm = malloc(sizeof(t_bxpm));
-	read_bxpm(bxpm, bxpm_file);
-	SDL_Surface *surface = create_surface(bxpm->w, bxpm->h);
-	copy_bxpm_pix_to_surf_pix(bxpm, surface);
-	SDL_BlitScaled(surface, NULL, temp_elem->surface[0], NULL);
-	SDL_BlitScaled(surface, NULL, temp_elem->surface[1], NULL);
-//	SDL_BlitScaled(surface, NULL, temp_elem->surface[2], NULL);
-	bui_set_element_state_border(temp_elem, 2, 0x0000ff00, ELEMENT_HOVER);
-	bui_set_element_state_border(temp_elem, 2, 0x000000ff, ELEMENT_CLICK);
-	SDL_FreeSurface(surface);
-	free(bxpm->pix);
-	free(bxpm->clr);
-	free(bxpm);
+	SDL_BlitScaled(texture, NULL, temp_elem->surface[0], NULL);
+	SDL_BlitScaled(texture, NULL, temp_elem->surface[1], NULL);
+	SDL_BlitScaled(texture, NULL, temp_elem->surface[2], NULL);
+	bui_set_element_state_border(temp_elem, 2, 0xff00ff00, ELEMENT_HOVER);
+	bui_set_element_state_border(temp_elem, 2, 0xff00ffff, ELEMENT_CLICK);
 
 	add_to_list(list, temp_elem, sizeof(t_bui_element));
 }
 
 
-void	texture_hardcode_init(t_editor *editor)
+void	texture_buttons_init(t_editor *editor)
 {
+	for (int i = 0; i < editor->texture_amount; i++)
+	{
 	// Floor
-	new_texture_button(editor->sector_floor_menu, &editor->floor_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
-	new_texture_button(editor->sector_floor_menu, &editor->floor_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
-	new_texture_button(editor->sector_floor_menu, &editor->floor_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
-
-	// Ceiling
-	new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
-	new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
-	new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
-	new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 3);
+		new_texture_button(editor->sector_floor_menu, &editor->floor_texture_buttons, editor->texture_textures[i], i);
+	// Ceilinog
+		new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, editor->texture_textures[i], i);
+	}
 }
 
 void	init_sector_editor(t_editor *editor)
@@ -467,7 +491,7 @@ void	init_sector_editor(t_editor *editor)
 		bui_new_menu(editor->new_edit_window, "Ceiling Texture", coord);
 	bui_set_element_color(editor->sector_ceiling_menu, 0xff06D6A0);
 	// textures
-	texture_hardcode_init(editor);
+	texture_buttons_init(editor);
 	// Init the ceiling- and floor height... etc. buttons
 	
 	coord = ui_init_coords(5, (25 * 1) + (40 * 0), 100, 40);
@@ -493,9 +517,8 @@ void	init_sector_editor(t_editor *editor)
 		"ceiling texture scale", coord);
 }
 
-void	new_wall_texture_button(t_bui_element *parent, t_list **list, char *bxpm_file, int i)
+void	new_wall_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *texture, int i)
 {
-	t_bxpm *bxpm;
 	t_bui_element *temp_elem;
 	t_xywh coord;
 	char *str;
@@ -513,17 +536,9 @@ void	new_wall_texture_button(t_bui_element *parent, t_list **list, char *bxpm_fi
 	temp_elem = bui_new_element(parent, str, coord);
 	ft_strdel(&str);
 
-	bxpm = malloc(sizeof(t_bxpm));
-	read_bxpm(bxpm, bxpm_file);
-	SDL_Surface *surface = create_surface(bxpm->w, bxpm->h);
-	copy_bxpm_pix_to_surf_pix(bxpm, surface);
-	SDL_BlitScaled(surface, NULL, temp_elem->surface[0], NULL);
-	SDL_BlitScaled(surface, NULL, temp_elem->surface[1], NULL);
-	SDL_BlitScaled(surface, NULL, temp_elem->surface[2], NULL);
-	SDL_FreeSurface(surface);
-	free(bxpm->pix);
-	free(bxpm->clr);
-	free(bxpm);
+	SDL_BlitScaled(texture, NULL, temp_elem->surface[0], NULL);
+	SDL_BlitScaled(texture, NULL, temp_elem->surface[1], NULL);
+	SDL_BlitScaled(texture, NULL, temp_elem->surface[2], NULL);
 
 	draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
 	draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
@@ -611,33 +626,25 @@ void	wall_texture_buttons_init(t_editor *editor)
 {
 	editor->wall_texture_buttons = NULL;
 	editor->active_wall_texture = NULL;
-	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
-	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
-	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
-	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 3);
-	new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 4);
+	for (int i = 0; i < editor->texture_amount; i++)
+		new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, editor->texture_textures[i], i);
 }
 
+// If you have different portal textures than texture textures you have to make struct in editor and then load them and then edit this function to use those textures instead of texture textures.
 void	portal_texture_buttons_init(t_editor *editor)
 {
 	editor->portal_texture_buttons = NULL;
 	editor->active_portal_texture = NULL;
-	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
-	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
-	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
-	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 3);
-	new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, ROOT_PATH"map_editor/wood.bxpm", 4);
+	for (int i = 0; i < editor->texture_amount; i++)
+		new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, editor->texture_textures[i], i);
 }
 
 void	wall_sprite_texture_buttons_init(t_editor *editor)
 {
 	editor->wall_sprite_buttons = NULL;
 	editor->active_wall_sprite = NULL;
-	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 0);
-	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 1);
-	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 2);
-	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 3);
-	new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, ROOT_PATH"map_editor/wood.bxpm", 4);
+	for (int i = 0; i < editor->sprite_amount; i++)
+		new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, editor->texture_textures[i], i);
 }
 
 void	init_wall_editor(t_editor *editor)

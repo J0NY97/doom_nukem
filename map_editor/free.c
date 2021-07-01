@@ -5,7 +5,6 @@
 void	changer_prefab_free(void *prefab, size_t size)
 {
 	(void)size;
-
 	ft_memdel((void **)&prefab);
 }
 
@@ -30,6 +29,7 @@ void	grid_free(t_grid *grid)
 	ft_lstdel(&grid->walls, &rword_free);
 	ft_lstdel(&grid->sectors, &rword_free);
 	ft_lstdel(&grid->entities, &rword_free);
+	TTF_CloseFont(grid->font);
 }
 
 void	editor_free(t_editor *editor)
@@ -84,6 +84,11 @@ void	editor_free(t_editor *editor)
 	dropdown_preset_free(editor->entity_type_drop, 0);
 
 	ft_lstdel(&editor->entity_direction_radio_buttons, &dummy_free_er);
+
+	// remove all textures
+	for (int i = 0; i < editor->texture_amount; i++)
+		SDL_FreeSurface(editor->texture_textures[i]);
+	free(editor->texture_textures);
 
 	ft_memdel((void **)&editor);
 }

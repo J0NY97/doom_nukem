@@ -12,55 +12,54 @@
 
 #include "editor.h"
 
-Uint32		random_color(void)
+Uint32	random_color(void)
 {
-	Uint32	color;
+	Uint32		color;
 
-	color = rgba_to_hex((t_rgba) {.a = 255, .r = rand() % 255, .g = rand() % 255, .b = 245});
-	ft_printf("generated color: %#x\n", color);
-
-	t_rgba rgba = hex_to_rgba(color);
-	SDL_Color col = {rgba.r, rgba.g, rgba.b, rgba.a};
-	ft_printf("A:%d R:%d G:%d B:%d\n", col.a,col.r,col.g,col.b);
+	color = rgba_to_hex((t_rgba) {
+			.a = 255, .r = rand() % 255,
+			.g = rand() % 255, .b = 245});
 	return (color);
 }
 
-int			vector_is_empty(t_vector v)
+int	vector_is_empty(t_vector v)
 {
 	return (vector_compare(v, EMPTY_VEC));
 }
 
-int			vector_compare(t_vector v1, t_vector v2)
+int	vector_compare(t_vector v1, t_vector v2)
 {
-	if ((int)v1.x == (int)v2.x && (int)v1.y == (int)v2.y && (int)v1.z == (int)v2.z)
+	if ((int)v1.x == (int)v2.x &&
+	(int)v1.y == (int)v2.y &&
+	(int)v1.z == (int)v2.z)
 		return (1);
 	return (0);
 }
 
-int			wall_compare(t_wall *v1, t_wall *v2)
+int	wall_compare(t_wall *v1, t_wall *v2)
 {
-	if ((vector_compare(v1->dest->pos, v2->dest->pos) && vector_compare(v1->orig->pos, v2->orig->pos)) ||
-		(vector_compare(v1->orig->pos, v2->dest->pos) && vector_compare(v1->dest->pos, v2->orig->pos)))
-	{
+	if ((vector_compare(v1->dest->pos, v2->dest->pos) &&
+	vector_compare(v1->orig->pos, v2->orig->pos)) ||
+	(vector_compare(v1->orig->pos, v2->dest->pos) &&
+	vector_compare(v1->dest->pos, v2->orig->pos)))
 		return (1);
-	}
 	return (0);
 }
 
 t_list	*get_nth_from_list(t_list **list, int index)
 {
-	t_list *curr;
-	int count;
+	int	count;
+	t_list	*curr;
 
 	curr = *list;
-    count = 0;
-    while (curr)
+	count = 0;
+	while (curr)
 	{
-        if (count == index)
-            return (curr);
-        count++;
-        curr = curr->next;
-    }
+		if (count == index)
+			return (curr);
+		count++;
+		curr = curr->next;
+	}
 	return (NULL);
 }
 
@@ -73,32 +72,39 @@ t_sprite	*new_sprite(void)
 
 	sprite = malloc(sizeof(t_sprite));
 	memset(sprite, 0, sizeof(t_sprite));
-
 	sprite->sprite_id = 0;
 	sprite->scale = 1.0f;
-	// NOT sure if the memset will set these to 0
 	sprite->real_x = 0;
 	sprite->real_y = 0;
 	sprite->coord.x = 0;
 	sprite->coord.y = 0;
 	sprite->coord.w = 0;
 	sprite->coord.h = 0;
-
 	return (sprite);
 }
 
 void	free_sprite(void *content, size_t size)
 {
 	ft_putstr("[free_sprite]\n");
+	t_sprite *sprite;
+
 	(void)size;
 	if (content == NULL)
 		return ;
-	t_sprite *sprite = content;
-
+	sprite = content;
 	free(sprite);
 }
 
-t_wall		*new_wall(t_point *orig, t_point *dest)
+t_point	*new_point(t_vector pos)
+{
+	t_point *point;
+
+	point = malloc(sizeof(t_point));
+	point->pos = pos;
+	return (point);
+}
+
+t_wall	*new_wall(t_point *orig, t_point *dest)
 {
 	t_wall *new_wall;
 
@@ -108,7 +114,6 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 		return (NULL);
 	}
 	memset(new_wall, 0, sizeof(t_wall));
-
 	new_wall->dest = dest;
 	new_wall->orig = orig;
 	new_wall->texture_scale = 1;
@@ -118,7 +123,6 @@ t_wall		*new_wall(t_point *orig, t_point *dest)
 	new_wall->portal = -1; 
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;
-
 	return (new_wall);
 }
 
@@ -246,7 +250,7 @@ void	free_entity_preset(void *content, size_t size)
 }
 
 // TODO: Get from list if function.
-t_entity_preset	*get_entity_preset_from_list_with_name(t_list *list, char *name)
+t_entity_preset	*get_entity_preset_with_name(t_list *list, char *name)
 {
 	t_list *curr;
 	t_entity_preset *preset;
