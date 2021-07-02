@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/18 11:44:11 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/02 07:22:55 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,11 @@ static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
 
 	bxpm = malloc(sizeof(t_bxpm));
 	int result = read_bxpm(bxpm, bxpm_file);
-	ft_printf("%d\n", result);
+	if (!result)
+	{
+		ft_printf("Couldnt open file: %s\n", bxpm_file);
+		return (NULL);
+	}
 	surface = create_surface(bxpm->w, bxpm->h);
 	copy_bxpm_pix_to_surf_pix(bxpm, surface);
 	free(bxpm->pix);
@@ -69,16 +73,16 @@ static void	load_all_textures(t_editor *editor)
 {
 	editor->texture_amount = 2;
 	editor->texture_textures = malloc(sizeof(SDL_Surface *) * editor->texture_amount);
-	editor->texture_textures[0] = load_bxpm_to_surface(ROOT_PATH"map_editor/wood.bxpm");
-	editor->texture_textures[1] = load_bxpm_to_surface(ROOT_PATH"map_editor/steel.bxpm");
+	editor->texture_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
+	editor->texture_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/alfred.bxpm");
 }
 
 static void	load_all_sprites(t_editor *editor)
 {
 	editor->sprite_amount = 2;
 	editor->sprite_textures = malloc(sizeof(SDL_Surface *) * editor->sprite_amount);
-	editor->sprite_textures[0] = load_bxpm_to_surface(ROOT_PATH"map_editor/wood.bxpm");
-	editor->sprite_textures[1] = load_bxpm_to_surface(ROOT_PATH"map_editor/steel.bxpm");
+	editor->sprite_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
+	editor->sprite_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/alfred.bxpm");
 }
 
 
@@ -451,8 +455,8 @@ void	new_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *textu
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[0], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[1], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[2], NULL);
-	bui_set_element_state_border(temp_elem, 2, 0xff00ff00, ELEMENT_HOVER);
-	bui_set_element_state_border(temp_elem, 2, 0xff00ffff, ELEMENT_CLICK);
+	//bui_set_element_state_border(temp_elem, 2, 0xff00ff00, ELEMENT_HOVER);
+	//bui_set_element_state_border(temp_elem, 2, 0xff00ffff, ELEMENT_CLICK);
 
 	add_to_list(list, temp_elem, sizeof(t_bui_element));
 }
