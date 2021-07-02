@@ -23,7 +23,6 @@ t_point	*get_point_with_id(t_list *points, unsigned int id)
 			return (curr->content);
 		curr = curr->next;
 	}
-ft_putstr("[get_point_with_id] no point with that id.\n");
 	return (NULL);
 }
 
@@ -38,7 +37,6 @@ t_wall	*get_wall_with_id(t_list *walls, unsigned int id)
 			return (curr->content);
 		curr = curr->next;
 	}
-ft_putstr("[get_wall_with_id] no wall with that id.\n");
 	return (NULL);
 }
 
@@ -53,14 +51,13 @@ t_sector *get_sector_with_id(t_list *sectors, unsigned int id)
 			return (curr->content);
 		curr = curr->next;
 	}
-ft_putstr("[get_sector_with_id] no sector with that id.\n");
 	return (NULL);
 }
 
 void	read_vertex(t_grid *grid, int fd)
 {
-	char *line;
-	char **arr;
+	char	*line;
+	char	**arr;
 	t_point	*new_p;
 
 	while (get_next_line(fd, &line))
@@ -70,8 +67,8 @@ void	read_vertex(t_grid *grid, int fd)
 		arr = ft_strsplit(line, '\t');
 		new_p = (t_point *)malloc(sizeof(t_point));
 		new_p->pos = gfx_new_vector(ft_atoi(arr[1]),
-									ft_atoi(arr[2]),
-									ft_atoi(arr[3]));
+				ft_atoi(arr[2]),
+				ft_atoi(arr[3]));
 		new_p->id = ft_atoi(arr[0]);
 		add_to_list(&grid->points, new_p, sizeof(t_point));
 		free_array(arr);
@@ -91,11 +88,11 @@ void	read_wall(t_grid *grid, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		new_w = new_wall(get_point_with_id(grid->points, ft_atoi(arr[1])),
-				get_point_with_id(grid->points, ft_atoi(arr[2])));
+		new_w = new_wall(get_point_with_id(grid->points,
+				ft_atoi(arr[1])),
+				get_point_with_id(grid->points,
+				ft_atoi(arr[2])));
 		new_w->id = ft_atoi(arr[0]);
-		//new_w->orig = get_point_with_id(grid->points, ft_atoi(arr[1]));
-		//new_w->dest = get_point_with_id(grid->points, ft_atoi(arr[2]));
 		new_w->texture_id = ft_atoi(arr[3]);
 		new_w->portal_texture_id = ft_atoi(arr[4]);
 		new_w->texture_scale = ft_atof(arr[5]);
@@ -109,31 +106,27 @@ void	read_wall(t_grid *grid, int fd)
 
 void	read_sprite(t_grid *grid, int fd)
 {
-	char *line;
-	char **arr;
-	t_sprite *sprite;
-	t_wall *wall;
+	char		*line;
+	char		**arr;
+	t_wall		*wall;
+	t_sprite	*sprite;
 
 	while (get_next_line(fd, &line))
 	{
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-
 		sprite = new_sprite();
 		sprite->real_x = ft_atof(arr[2]);
 		sprite->real_y = ft_atof(arr[3]);
-//		sprite->coord = ui_init_coords(0, 0, 64, 64); // the size you should also be here?
 		sprite->sprite_id = ft_atoi(arr[4]);
 		sprite->scale = ft_atof(arr[5]);
 		wall = get_wall_with_id(grid->walls, ft_atoi(arr[1]));
 		add_to_list(&wall->sprites, sprite, sizeof(t_sprite));
-
 		free_array(arr);
 		ft_strdel(&line);
 	}
 	ft_strdel(&line);
-
 }
 
 void	read_spawn(t_spawn *spawn, int fd)
@@ -146,7 +139,10 @@ void	read_spawn(t_spawn *spawn, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		spawn->pos = gfx_new_vector(ft_atoi(arr[0]), ft_atoi(arr[1]), ft_atoi(arr[2]));
+		spawn->pos = gfx_new_vector(
+				ft_atoi(arr[0]),
+				ft_atoi(arr[1]),
+				ft_atoi(arr[2]));
 		spawn->direction = ft_atoi(arr[3]);
 		free_array(arr);
 		ft_strdel(&line);
@@ -156,11 +152,12 @@ void	read_spawn(t_spawn *spawn, int fd)
 
 void	read_sectors(t_editor *doom, int fd)
 {
-	t_sector *sect;
-	char *line;
-	char **arr;
-	char **walls;
-	char **neighbor;
+	int i;
+	char		*line;
+	char		**arr;
+	char		**walls;
+	char		**neighbor;
+	t_sector	*sect;
 
 	while (get_next_line(fd, &line))
 	{
@@ -171,7 +168,7 @@ void	read_sectors(t_editor *doom, int fd)
 		sect->id = ft_atoi(arr[0]);
 		walls = ft_strsplit(arr[1], ' ');
 		neighbor = ft_strsplit(arr[2], ' ');
-		int i = 0;
+		i = 0;
 		while (walls[i] != 0)
 		{
 			add_to_list(&sect->walls, get_wall_with_id(doom->grid.walls, ft_atoi(walls[i])), sizeof(t_wall));
@@ -191,16 +188,18 @@ void	read_sectors(t_editor *doom, int fd)
 
 void	read_fandc(t_editor *editor, int fd)
 {
-	char *line;
-	char **arr;
-	t_sector *sec;
+	char		*line;
+	char		**arr;
+	t_sector	*sec;
 
 	while (get_next_line(fd, &line))
 	{
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		if ((sec = get_sector_with_id(editor->grid.sectors, ft_atoi(arr[1]))) == NULL)
+		sec = get_sector_with_id(editor->grid.sectors,
+			ft_atoi(arr[1]));
+		if (sec == NULL)
 			continue ;
 		sec->floor_height = ft_atoi(arr[2]);
 		sec->ceiling_height = ft_atoi(arr[3]);
@@ -217,11 +216,12 @@ void	read_fandc(t_editor *editor, int fd)
 
 void		read_entities(t_editor *doom, int fd)
 {
-	t_entity *ent;
-	char *line;
-	char **arr;
-	int id = 0;
+	int		id;
+	char		*line;
+	char		**arr;
+	t_entity	*ent;
 
+	id = 0;
 	while (get_next_line(fd, &line))
 	{
 		if (line[0] == '-')
@@ -230,16 +230,16 @@ void		read_entities(t_editor *doom, int fd)
 		ent = new_entity(id, (t_vector){
 				atof(arr[1]),
 				atof(arr[2]),
-				atof(arr[3])
-			});
-		ent->preset = get_entity_preset_from_list_with_name(doom->entity_presets, arr[0]);
+				atof(arr[3])});
+		ent->preset =
+			get_entity_preset_with_name(doom->entity_presets,
+			arr[0]);
 		ent->direction = ft_atoi(arr[4]);
 		add_to_list(&doom->grid.entities, ent, sizeof(t_entity));
 		free_array(arr);
 		ft_strdel(&line);
 		id++;
 	}
-	ft_putstr("[get_map] entiteis reda.d");
 	ft_strdel(&line);
 }
 
@@ -262,8 +262,8 @@ void	read_mapinfo(t_editor *editor, int fd)
 
 void		read_map_file(t_editor *doom)
 {
-	int fd;
-	char *line;
+	int	fd;
+	char	*line;
 
 	if ((fd = open(doom->fullpath, O_RDONLY)) < 0)
 	{
@@ -272,8 +272,6 @@ void		read_map_file(t_editor *doom)
 	}
 	while (get_next_line(fd, &line))
 	{
-		ft_putstr(line);
-		ft_putchar('\n');
 		if (!(ft_strncmp(line, "type:map", 8)))
 			read_mapinfo(doom, fd);
 		else if (!(ft_strncmp(line, "type:vertex", 11)))

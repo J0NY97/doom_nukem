@@ -184,36 +184,30 @@ void	wall_option(t_editor *editor, t_bui_libui *libui)
 	else if (editor->wall_sprite_view->show == 1)
 	{
 			// wall sprites
-		// TODO: figure out where this should get its texture id
-		// NOTE: this is the reason why you cant change the wall_sprite texture from 2
-		temp = ft_itoa(2);
-		if (only_one_button_toggled_at_a_time(editor->wall_sprite_buttons, &editor->active_wall_sprite))
-		{}
-		else
-			toggle_on_element_with_text(editor->wall_sprite_buttons, &editor->active_wall_sprite, temp);
-		ft_strdel(&temp);
-		if (editor->active_wall_sprite != NULL)
-		{
-			// editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
-		}
-
-		// the sprite add button
-		short int chosen_texture = 0;
-		if (editor->active_wall_sprite != NULL)
-			chosen_texture = ft_atoi(editor->active_wall_sprite->text);
+		/// adding
 		if (bui_button(editor->add_wall_sprite_button))
 		{
-			// add the sprite to the wall
-			ft_putstr("Adding sprite to wall\n");
-			// 1. get the texture you have chosen from list below;
-			// 	has been done already, aka chosen_texture??
-			// 2. make new sprite,
-				t_sprite *sprite = new_sprite();
-				sprite->sprite_id = chosen_texture;
-			// 3. add to wall->sprites
-				add_to_list(&editor->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
-				editor->grid.modify_sprite = sprite;
+			t_sprite *sprite;
+
+			sprite = new_sprite();
+			sprite->sprite_id = 0; // default 0 texture
+			add_to_list(&editor->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
+			editor->grid.modify_sprite = sprite;
 		}
+
+		// the button change thingy
+		if (editor->grid.modify_sprite != NULL)
+		{
+			temp = ft_itoa(editor->grid.modify_sprite->sprite_id);
+			if (only_one_button_toggled_at_a_time(editor->wall_sprite_buttons, &editor->active_wall_sprite))
+			{}
+			else
+				toggle_on_element_with_text(editor->wall_sprite_buttons, &editor->active_wall_sprite, temp);
+			ft_strdel(&temp);
+			if (editor->active_wall_sprite != NULL)
+				editor->grid.modify_sprite->sprite_id = ft_atoi(editor->active_wall_sprite->text);
+		}
+	
 		// TODO: this doesnt take into account the scale of the sprite, it assumes that the scale is default, which means
 		// 	if you mkae the scale bigger you can only choose the sprite from the top left corner of the sprite, and not
 		// 	the actual whole sprite render. (change the mouse_hover to multiply the position with the scale)
@@ -268,11 +262,11 @@ void	wall_option(t_editor *editor, t_bui_libui *libui)
 
 void	sector_option(t_editor *editor, t_grid *grid)
 {
-	editor->edit_view_sector->show = 1;
-	editor->edit_toolbox_sector->show = 1;
-
-	// Floor and ceiling texture element events
 	char *temp;
+
+	editor->sector_ceiling_menu->show = 1;
+	editor->sector_floor_menu->show = 1;
+	editor->edit_toolbox_sector->show = 1;
 	if (!only_one_button_toggled_at_a_time(editor->floor_texture_buttons, &editor->active_floor_texture))
 	{
 		temp = ft_itoa(editor->grid.modify_sector->floor_texture);
@@ -287,17 +281,16 @@ void	sector_option(t_editor *editor, t_grid *grid)
 	}
 	editor->grid.modify_sector->floor_texture = ft_atoi(editor->active_floor_texture->text);
 	editor->grid.modify_sector->ceiling_texture = ft_atoi(editor->active_ceiling_texture->text);
-	// sector editing buttons.
 	changer_prefab_events(editor->floor_height, &grid->modify_sector->floor_height, 1);
 	changer_prefab_events(editor->ceiling_height, &grid->modify_sector->ceiling_height, 1);
 	changer_prefab_events(editor->gravity, &grid->modify_sector->gravity, 1);
 	changer_prefab_events(editor->lighting, &grid->modify_sector->light_level, 1);
-
-	// floor and ceiling
 	changer_prefab_events_float(editor->floor_scale, &grid->modify_sector->floor_texture_scale, 0.1f);
 	changer_prefab_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
 }
 
+// NOTE:
+// fix when youre keeping entities.
 void	entity_option(t_editor *editor)
 {
 	if (editor->grid.modify_entity == NULL)
@@ -316,7 +309,7 @@ void	entity_option(t_editor *editor)
 		toggle_on_element_with_text(editor->entity_type_drop->elements, &editor->entity_type_drop->active, editor->grid.modify_entity->preset->name); 
 	if (editor->entity_type_drop->active != NULL)
 	{
-		t_entity_preset *preset = get_entity_preset_from_list_with_name(editor->entity_presets, editor->entity_type_drop->active->text);
+		t_entity_preset *preset = get_entity_preset_with_name(editor->entity_presets, editor->entity_type_drop->active->text);
 		if (preset != NULL)
 			editor->grid.modify_entity->preset = preset;
 	}
@@ -338,7 +331,8 @@ void	entity_option(t_editor *editor)
 
 void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
-	doom->edit_view_sector->show = 0;
+	doom->sector_ceiling_menu->show = 0;
+	doom->sector_floor_menu->show = 0;
 	doom->edit_toolbox_sector->show = 0;
 
 	doom->edit_view_wall->show = 0;

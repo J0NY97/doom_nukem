@@ -11,6 +11,8 @@ SRCS = ./main.c \
 	   ./edit_functions.c \
 	   ./free.c \
 	   ./map_editor.c \
+	   ../game/lib/libbxpm/byte_utils.c \
+	   ../game/lib/libbxpm/read_bxpm.c \
 	   ../core.c
 OBJS = $(SRCS:.c=.o)
 
@@ -20,6 +22,7 @@ INCLUDES = \
 	-I../better_libui \
 	-I../libgfx \
 	-I../SDL2/includes \
+	-I../game/lib/libbxpm \
 	-I../
 
 LIB_FOLDERS = \
@@ -49,20 +52,20 @@ FLAGS = -Wall -Wextra
 all: $(NAME)
 
 $(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
-	make -C ../libft
-	make -C ../ft_printf
-	make -C ../libgfx
-	make -C ../better_libui
+	mingw32-make -C ../libft
+	mingw32-make -C ../ft_printf
+	mingw32-make -C ../libgfx
+	mingw32-make -C ../better_libui
 
 $(NAME): $(SRCS)
 	@gcc -g -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 fclean_libs:
-	@make -C $(LIBFT) fclean
-	@make -C $(LIBGFX) fclean
-	@make -C $(BETTER_LIBUI) fclean
-	@make -C $(FT_PRINTF) fclean
+	@mingw32-make -C $(LIBFT) fclean
+	@mingw32-make -C $(LIBGFX) fclean
+	@mingw32-make -C $(BETTER_LIBUI) fclean
+	@mingw32-make -C $(FT_PRINTF) fclean
 
 clean:
 	@rm -f $(OBJS)
@@ -75,6 +78,6 @@ clean:
 fclean: fclean_libs
 	@rm -f $(NAME)
 
-re: fclean fclean_libs all
+re: fclean fclean_libs $(LIBS) all
 
 .PHONY: clean, all, re, fclean

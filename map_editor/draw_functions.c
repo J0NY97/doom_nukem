@@ -45,22 +45,6 @@ t_wall		*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
 	return (NULL);
 }
 
-// Calculates the amount of walls in a sector
-int		get_sector_wall_amount(t_sector *sector)
-{
-	t_list *wall;
-	int i;
-
-	i = 0;
-	wall = sector->walls;
-	while (wall)
-	{
-		i++;
-		wall = wall->next;
-	}
-	return (i);
-}
-
 // NOTE: Not to confuse with vector_on_line, which is vector math,
 // 	this just checks if t_vector *v is either vec->dest or ->orig
 int		vector_in_wall(t_vector v, t_wall *vec)
@@ -87,7 +71,7 @@ void	split_wall(t_grid *grid, t_wall *old_wall, t_point *new_vec)
 ft_printf("Wall split.\n");
 }
 
-void	update_real_dimensions(t_grid *grid)
+void	update_real_dimensions(t_grid *grid) // the yellowish lines
 {
 	float	low_x;
 	float	low_y;
@@ -102,20 +86,34 @@ void	update_real_dimensions(t_grid *grid)
 	curr = grid->points;
 	while (curr)
 	{
-		if (((t_point *)curr->content)->pos.x < low_x)
-			low_x = ((t_point *)curr->content)->pos.x;
-		if (((t_point *)curr->content)->pos.y < low_y)
-			low_y = ((t_point *)curr->content)->pos.y;
-		if (((t_point *)curr->content)->pos.x > hi_x)
-			hi_x = ((t_point *)curr->content)->pos.x;
-		if (((t_point *)curr->content)->pos.y > hi_y)
-			hi_y = ((t_point *)curr->content)->pos.y;
+		low_x = min(((t_point *)curr->content)->pos.x, low_x);
+		low_y = min(((t_point *)curr->content)->pos.y, low_y);
+		hi_x = max(((t_point *)curr->content)->pos.x, hi_x);
+		hi_y = max(((t_point *)curr->content)->pos.y, hi_y);
 		curr = curr->next;
 	}
 	grid->dimensions.x = low_x * grid->gap;
 	grid->dimensions.y = low_y * grid->gap;
 	grid->dimensions.w = hi_x * grid->gap;
 	grid->dimensions.h = hi_y * grid->gap;
+}
+
+t_point	*get_point_from_wall_in_sector(t_sector *sector, t_point *v)
+{
+	t_wall *w;
+	t_list *wall;
+
+	wall = sector->walls;
+	while (wall)
+	{
+		w = wall->content;
+		if (vector_compare(w->orig->pos, v->pos))
+			return (w->orig);	
+		else if (vector_compare(w->dest->pos, v->pos))
+			return (w->dest);
+		wall = wall->next;
+	}
+	return (NULL);
 }
 
 void	check_selected(t_grid *grid)
@@ -127,75 +125,35 @@ void	check_selected(t_grid *grid)
 	temp1 = NULL;
 	temp2 = NULL;
 	temp_wall = NULL;
-	// if you have made a sector and want to add a point to the wall somewhere
-	if (!vector_is_empty(grid->selected1) &&
-		vector_is_empty(grid->selected2) &&
-		grid->modify_sector != NULL && grid->modify_sector->first_point == NULL)
-	{
-		t_list *curr = grid->modify_sector->walls;
-		while (curr)
-		{
-			if (vector_on_wall(grid->selected1, curr->content))
-			{
-				temp1 = (t_point *)malloc(sizeof(t_point));
-				temp1->pos = grid->selected1;
-				add_to_list(&grid->points, temp1, sizeof(t_point));
-				split_wall(grid, curr->content, temp1);
-				grid->selected1 = EMPTY_VEC;
-				break ;
-			}
-			curr = curr->next;
-		}
+	if (vector_is_empty(grid->selected2)) // seg faults if removed.
 		return ;
-	}
-	if (vector_is_empty(grid->selected1) || vector_is_empty(grid->selected2))
-	{
-		if (!vector_is_empty(grid->selected1))
-			gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 1, gfx_vector_multiply(grid->selected1, grid->gap));
-		return ;
-	}
-	// check if there is a vertex already with that x and y, if yes then dont copy it just give it the &
 	ft_printf("Point Magic.\n");
-	temp1 = get_point_from_list(grid->points, &(t_point){0, grid->selected1});
-	temp2 = get_point_from_list(grid->points, &(t_point){0, grid->selected2});
+	temp1 = get_point_from_wall_in_sector(grid->modify_sector, &(t_point){0, grid->selected1});
+	temp2 = get_point_from_wall_in_sector(grid->modify_sector, &(t_point){0, grid->selected2});
 	if (temp1 == NULL)
 	{
-		temp1 = (t_point *)malloc(sizeof(t_point));
-		temp1->pos = gfx_new_vector(grid->selected1.x, grid->selected1.y, grid->selected1.z);
+		temp1 = new_point((t_vector){grid->selected1.x, grid->selected1.y, grid->selected1.z});
 		add_to_list(&grid->points, temp1, sizeof(t_point));
 	}
 	if (temp2 == NULL)
 	{
-		temp2 = (t_point *)malloc(sizeof(t_point));
-		temp2->pos = gfx_new_vector(grid->selected2.x, grid->selected2.y, grid->selected2.z);
+		temp2 = new_point((t_vector){grid->selected2.x, grid->selected2.y, grid->selected2.z});
 		add_to_list(&grid->points, temp2, sizeof(t_point));
 	}
 	// check if a wall with that same points is in the sector walls, if yes then give it the &
 	ft_printf("Wall magic.\n");
 	temp_wall = get_wall_from_list(&grid->modify_sector->walls, temp1, temp2); // enable this to not make duplicate walls
-	if (temp_wall == NULL)
+	if (temp_wall == NULL) // make new wall
 	{
-		// decide if you wanna split or not
-		// only do it if the wall youre adding a vector to
-		// is a part of the sector youre editing.
-		t_list *curr = grid->modify_sector->walls;
-		while (curr)
-		{
-			if (vector_on_wall(temp1->pos, curr->content))
-				split_wall(grid, curr->content, temp1);
-			if (vector_on_wall(temp2->pos, curr->content))
-				split_wall(grid, curr->content, temp2);
-			curr = curr->next;
-		}
 		temp_wall = new_wall(temp1, temp2);
 		add_to_list(&grid->walls, temp_wall, sizeof(t_wall));
 		add_to_list(&grid->modify_sector->walls, temp_wall, sizeof(t_wall));
 	}
 	if (grid->modify_sector->first_point == NULL)
 		grid->modify_sector->first_point = temp1;
-	if (vector_compare(grid->modify_sector->first_point->pos, temp_wall->dest->pos))
+	if (vector_compare(grid->modify_sector->first_point->pos, temp_wall->dest->pos)) // check if you end up on the first point to stop drawing sector.
 	{
-		grid->modify_sector->first_point = NULL; // this might have some problems in the future if you dont make it NULL
+		grid->modify_sector->first_point = NULL; // this might have some problems in the future if you dont make it NULL, what do you mean "might"?!
 		grid->modify_sector = NULL;
 		grid->selected1 = EMPTY_VEC;
 		grid->selected2 = EMPTY_VEC;
@@ -207,25 +165,22 @@ void	check_selected(t_grid *grid)
 	ft_printf("Wall was added!\n");
 }
 
-void	click_calc(t_editor *doom, t_grid *grid)
+void	click_calc(t_editor *editor, t_grid *grid)
 {
 	t_sector	*sector;
+	t_entity	*entity;
 
-	// NOTE: mouse_down doesnt matter which button can be any of left, middle and right.
-	if (doom->libui->mouse_down )//&& SDL_GetMouseFocus() == doom->window->win)
+	if (editor->libui->mouse_down)
 	{
-		// if the mouse doesnt hover the grid, just gtfo.
-		if (!mouse_hover(doom->libui, (t_xywh) {grid->elem->position.x, grid->elem->position.y,
-		grid->elem->position.x + grid->elem->position.w, grid->elem->position.y + grid->elem->position.h}))
+		if (!mouse_hover(editor->libui, (t_xywh) {
+		grid->elem->position.x, grid->elem->position.y,
+		grid->elem->position.w, grid->elem->position.h}))
 			return ;
-
-		// FUNNY: if you remove the mouse down last frame it will just draw endlessly :D
-		//	"if (mouse_pressed(doom->libui, MKEY_LEFT))"
-		if (doom->libui->mouse_down_last_frame && mouse_pressed(doom->libui, MKEY_LEFT))
+		if (editor->libui->mouse_down_last_frame &&
+		mouse_pressed(editor->libui, MKEY_LEFT))
 		{
 			if (grid->modify_sector == NULL)
 			{
-				ft_printf("Making new sector\n");
 				sector = new_sector(grid->sector_amount++);
 				add_to_list(&grid->sectors, sector, sizeof(t_sector));
 				grid->modify_sector = sector;
@@ -235,19 +190,14 @@ void	click_calc(t_editor *doom, t_grid *grid)
 			else if (!vector_compare(grid->selected1, grid->hover))
 				grid->selected2 = grid->hover;
 		}
-		else if (doom->libui->mouse_down_last_frame && mouse_pressed(doom->libui, MKEY_RIGHT))
+		else if (editor->libui->mouse_down_last_frame &&
+		mouse_pressed(editor->libui, MKEY_RIGHT))
 		{
-			ft_putstr("Placed new entity.\n");
-			t_entity *entity;
-
 			entity = new_entity(grid->entity_amount++, grid->hover);
 			add_to_list(&grid->entities, entity, sizeof(t_entity));
 		}
-		else if (mouse_pressed(doom->libui, MKEY_MIDDLE))
-		{
-			ft_putstr("Place spawn point.\n");
-			doom->spawn.pos = grid->hover;
-		}
+		else if (mouse_pressed(editor->libui, MKEY_MIDDLE))
+			editor->spawn.pos = grid->hover;
 	}
 }
 
@@ -255,18 +205,13 @@ void	unselect_selected(t_editor *editor, t_grid *grid)
 {
 	if (key_pressed(editor->libui, KEY_B))
 	{
-		if (grid->modify_sector == NULL) // you can only reset the selected vertices if sector is null which means you havent
-										// started to modify a sector or you have finished modifying it.
-		{
-			grid->selected1 = EMPTY_VEC;
-			grid->selected2 = EMPTY_VEC;
-		}
+		grid->selected1 = EMPTY_VEC;
+		grid->selected2 = EMPTY_VEC;
 		grid->modify_point = NULL;
 		grid->modify_wall = NULL;
 		grid->modify_entity = NULL;
 		editor->grid.modify_sprite = NULL;
 		grid->modify_sector = NULL;
-		ft_putstr("Unselected everything.\n");
 	}
 }
 
@@ -287,7 +232,24 @@ void	hover_calc(t_editor *doom, t_grid *grid)
 	real_x = (((x - grid->elem->position.x) / (gap / 2)) * (gap / 2)) / gap;
 	real_y = (((y - grid->elem->position.y) / (gap / 2)) * (gap / 2)) / gap;
 	grid->hover = gfx_new_vector(real_x, real_y, 0);
-	gfx_draw_vector(grid->elem->active_surface, 0xffffffff, 1, gfx_vector_multiply(grid->hover, grid->gap));
+	gfx_draw_vector(grid->elem->active_surface, 0xffffffff, 1,
+		gfx_vector_multiply(grid->hover, grid->gap));
+}
+
+void	draw_dimensions(t_grid *grid)
+{
+	gfx_draw_line(grid->elem->active_surface, 0xff999966,
+		(t_vector){0, grid->dimensions.y, 0},
+		(t_vector){grid->elem->active_surface->w, grid->dimensions.y, 0});
+	gfx_draw_line(grid->elem->active_surface, 0xff999966,
+		(t_vector){grid->dimensions.x, 0, 0},
+		(t_vector){grid->dimensions.x, grid->elem->active_surface->h, 0});
+	gfx_draw_line(grid->elem->active_surface, 0xff999966,
+		(t_vector){0, grid->dimensions.h, 0},
+		(t_vector){grid->elem->active_surface->w, grid->dimensions.h, 0});
+	gfx_draw_line(grid->elem->active_surface, 0xff999966,
+		(t_vector){grid->dimensions.w, 0, 0},
+		(t_vector){grid->dimensions.w, grid->elem->active_surface->h, 0});
 }
 
 void	draw_grid(t_editor *doom, t_grid *grid)
@@ -297,37 +259,26 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 	int max_y;
 	int max_x;
 
-	// reset the grid, becaues we have made the libui ignore this element, so we have to control it ourselves
 	fill_surface(grid->elem->active_surface, ((t_bui_window *)grid->elem->parent)->color);	
-	// this draws the grid on the grid view
-		max_y = grid->elem->active_surface->h / grid->gap;
-		max_x = grid->elem->active_surface->w / grid->gap;
-		y = 0;
-		while (y < max_y)
-		{	
-			gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem, (t_vector){0, y * grid->gap, 0}, (t_vector){grid->elem->active_surface->w, y * grid->gap, 0});
-			y++;
-		}
-		x = 0;
-		while (x < max_x)
-		{
-			gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem, (t_vector){x * grid->gap, 0, 0}, (t_vector){x * grid->gap, grid->elem->active_surface->h, 0});
-			x++;
-		}
-//ft_printf("Grid drawn\n");
-	// the dimensions
-	gfx_draw_line(grid->elem->active_surface, 0xff999966, (t_vector){0, grid->dimensions.y, 0},
-												(t_vector){grid->elem->active_surface->w, grid->dimensions.y, 0});
-	gfx_draw_line(grid->elem->active_surface, 0xff999966, (t_vector){grid->dimensions.x, 0, 0},
-												(t_vector){grid->dimensions.x, grid->elem->active_surface->h, 0});
-
-	gfx_draw_line(grid->elem->active_surface, 0xff999966, (t_vector){0, grid->dimensions.h, 0},
-												(t_vector){grid->elem->active_surface->w, grid->dimensions.h, 0});
-	gfx_draw_line(grid->elem->active_surface, 0xff999966, (t_vector){grid->dimensions.w, 0, 0},
-												(t_vector){grid->dimensions.w, grid->elem->active_surface->h, 0});
-// the sector first point
-	if (grid->modify_sector != NULL && grid->modify_sector->first_point != NULL)
-		gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 2, gfx_vector_multiply(grid->modify_sector->first_point->pos, grid->gap));
+	max_y = grid->elem->active_surface->h / grid->gap;
+	max_x = grid->elem->active_surface->w / grid->gap;
+	y = 0;
+	while (y < max_y)
+	{	
+		gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem,
+			(t_vector){0, y * grid->gap, 0},
+			(t_vector){grid->elem->active_surface->w, y * grid->gap, 0});
+		y++;
+	}
+	x = 0;
+	while (x < max_x)
+	{
+		gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem,
+			(t_vector){x * grid->gap, 0, 0},
+			(t_vector){x * grid->gap, grid->elem->active_surface->h, 0});
+		x++;
+	}
+	draw_dimensions(grid);
 }
 
 void	draw_points(t_grid *grid, t_list *points)
@@ -337,9 +288,20 @@ void	draw_points(t_grid *grid, t_list *points)
 	curr = points;
 	while (curr)
 	{
-		gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 1, gfx_vector_multiply(((t_point *)curr->content)->pos, grid->gap));
+		gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 1,
+			gfx_vector_multiply(((t_point *)curr->content)->pos, grid->gap));
 		curr = curr->next;
 	}
+}
+
+void	draw_wall(t_wall *wall, t_grid *grid, Uint32 color) // grid is needed for both gap and surface
+{
+	t_vector orig_vec;
+	t_vector dest_vec;
+
+	orig_vec = gfx_vector_multiply(wall->orig->pos, grid->gap);
+	dest_vec = gfx_vector_multiply(wall->dest->pos, grid->gap);
+	gfx_draw_line(grid->elem->active_surface, color, orig_vec, dest_vec);
 }
 
 void	draw_walls(t_grid *grid, t_list **walls, Uint32 color)
@@ -349,63 +311,86 @@ void	draw_walls(t_grid *grid, t_list **walls, Uint32 color)
 	curr = *walls;
 	while (curr)
 	{
-		gfx_draw_line(grid->elem->active_surface, color, ((t_wall *)curr->content)->orig->pos, ((t_wall *)curr->content)->dest->pos);
+		gfx_draw_line(grid->elem->active_surface, color,
+			((t_wall *)curr->content)->orig->pos,
+			((t_wall *)curr->content)->dest->pos);
 		curr = curr->next;
 	}
+}
+
+void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
+{
+	char		*str;
+	SDL_Surface	*id_text;
+
+	sector->center = (t_vector) {x, y, 0};
+	if (grid->font)
+	{
+		str = ft_itoa(sector->id);
+		id_text = TTF_RenderText_Blended(grid->font, str,
+			(SDL_Color){255, 255, 255, 255});
+		SDL_BlitSurface(id_text, NULL, grid->elem->active_surface,
+			&(SDL_Rect){x - (id_text->w / 2), y - (id_text->h / 2),
+			id_text->w, id_text->h});
+		SDL_FreeSurface(id_text);
+		ft_strdel(&str);
+	}
+}
+
+// NOTE:
+// if this function seg faults, you have to check that the get_list_len returns something that is not 0
+void	draw_sector(t_sector *sector, t_grid *grid)
+{
+	int	i;
+	float	x;
+	float	y;
+	t_list	*wall;
+	t_wall	*w;
+
+	x = 0;
+	y = 0;
+	wall = sector->walls;
+	while (wall)
+	{
+		w = wall->content;
+		x += (w->orig->pos.x + w->dest->pos.x) * grid->gap; 
+		y += (w->orig->pos.y + w->dest->pos.y) * grid->gap; 
+		if (((t_wall *)wall->content)->neighbor != -1)
+			draw_wall(wall->content, grid, 0xffff0000);
+		else
+			draw_wall(wall->content, grid, sector->color);
+		wall = wall->next;
+	}
+	i = get_list_len(&sector->walls) * 2;
+	x /= i;
+	y /= i;
+	draw_sector_number(sector, grid, x, y);
 }
 
 void	draw_sectors(t_grid *grid)
 {
 	t_list *curr;
-	t_list *curr_wall;
-	SDL_Surface *id_text;
-	TTF_Font	*font;
-	char		*str;
-
-	font = TTF_OpenFont("DroidSans.ttf", 20);
 
 	curr = grid->sectors;
 	while (curr)
 	{
-		float x = 0;
-		float y = 0;
-		int i = 0;
-
-		curr_wall = ((t_sector *)curr->content)->walls;
-		while (curr_wall)
-		{
-			t_vector orig_vec = gfx_vector_multiply(((t_wall *)curr_wall->content)->orig->pos, grid->gap);
-			t_vector dest_vec = gfx_vector_multiply(((t_wall *)curr_wall->content)->dest->pos, grid->gap);
-
-			x += orig_vec.x + dest_vec.x; 
-			y += orig_vec.y + dest_vec.y; 
-			i += 2;
-			if (((t_wall *)curr_wall->content)->neighbor != -1)
-				gfx_draw_line(grid->elem->active_surface, 0xffff0000, orig_vec, dest_vec);
-			else
-				gfx_draw_line(grid->elem->active_surface, ((t_sector *)curr->content)->color, orig_vec, dest_vec);
-			curr_wall = curr_wall->next;
-		}
-		if (i <= 0)
-			i = 1;
-		x /= i;
-		y /= i;
-		((t_sector *)curr->content)->center = (t_vector) {x, y, 0};
-		if (font)
-		{
-			str = ft_itoa(((t_sector *)curr->content)->id);
-			id_text = TTF_RenderText_Blended(font, str, (SDL_Color){255, 255, 255, 255});
-			SDL_BlitSurface(id_text, NULL, grid->elem->active_surface, &(SDL_Rect){x - (id_text->w / 2), y - (id_text->h / 2), id_text->w, id_text->h});
-			SDL_FreeSurface(id_text);
-			ft_strdel(&str);
-		}
+		draw_sector(curr->content, grid);
 		curr = curr->next;
 	}
-	TTF_CloseFont(font);
+	if (grid->modify_sector != NULL &&
+	grid->modify_sector->first_point != NULL)
+		gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 2,
+		gfx_vector_multiply(grid->modify_sector->first_point->pos,
+		grid->gap));
 }
 
+// NOTE:
+// fix this after you have decided if you event want the entities.
 void	draw_entities(t_editor *doom, t_grid *grid)
 {
+	float		angle;
+	float		dx;
+	float		dy;
 	t_list		*curr;
 	t_entity	*entity;
 	t_vector	pos;
@@ -424,13 +409,11 @@ void	draw_entities(t_editor *doom, t_grid *grid)
 			gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 3, pos);
 		else if (entity->preset->mood == ENTITY_TYPE_NEUTRAL)
 			gfx_draw_vector(grid->elem->active_surface, 0xff0000ff, 3, pos);
-
-		float angle = entity->direction * (M_PI / 180);
-		float dx = cos(angle) * 10.0f;
-		float dy = sin(angle) * 10.0f;
+		angle = entity->direction * (M_PI / 180);
+		dx = cos(angle) * 10.0f;
+		dy = sin(angle) * 10.0f;
 		t_vector dir_pos = gfx_new_vector(dx + pos.x, dy + pos.y, 0);
 		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 1, dir_pos);
-
 		curr = curr->next;
 	}
 }
@@ -439,7 +422,8 @@ void	draw_hover_info(t_editor *doom, t_grid *grid)
 {
 	char		*str;
 	
-	str = ft_sprintf("%d, %d\nzoom: %d\n", (int)grid->hover.x, (int)grid->hover.y, (int)grid->gap);
+	str = ft_sprintf("%d, %d\nzoom: %d\n", (int)grid->hover.x,
+		(int)grid->hover.y, (int)grid->gap);
 	doom->hover_info->text_color = 0xffffffff;
 	bui_set_element_text(doom->hover_info, str, 0, 0);
 	ft_strdel(&str);

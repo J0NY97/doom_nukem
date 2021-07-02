@@ -41,6 +41,8 @@ void	map_editor(char *map)
 
 ft_printf("Map Name set to: %s, %s\n", editor->mapname, editor->fullpath);
 
+	grid_init(editor);
+ft_printf("Grid done!\n");
 	color_palette_init(&editor->palette);
 ft_printf("palette done!\n");
 	window_init(editor, libui);
@@ -80,8 +82,8 @@ ft_printf("toolbox done!\n");
 ft_printf("Info area done!\n");
 	button_init(editor);
 ft_printf("button done!\n");
-	grid_init(editor);
-ft_printf("Grid done!\n");
+	grid_init1(editor);
+ft_printf("Grid1 done!\n");
 
 	// NOTE: this needs to be called before map getter so that we can put the correct preset in the correct entity
 	init_entity_presets(&editor->entity_presets, ROOT_PATH"map_editor/entities.preset");
