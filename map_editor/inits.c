@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/02 07:22:55 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/02 10:26:18 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -455,8 +455,8 @@ void	new_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *textu
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[0], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[1], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[2], NULL);
-	//bui_set_element_state_border(temp_elem, 2, 0xff00ff00, ELEMENT_HOVER);
-	//bui_set_element_state_border(temp_elem, 2, 0xff00ffff, ELEMENT_CLICK);
+	bui_set_element_state_border(temp_elem, 2, 0xff00ff00, ELEMENT_HOVER);
+	bui_set_element_state_border(temp_elem, 2, 0xff00ffff, ELEMENT_CLICK);
 
 	add_to_list(list, temp_elem, sizeof(t_bui_element));
 }
