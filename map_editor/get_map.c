@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/17 13:42:52 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/02 09:37:08 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,10 +140,10 @@ void	read_spawn(t_spawn *spawn, int fd)
 			break ;
 		arr = ft_strsplit(line, '\t');
 		spawn->pos = gfx_new_vector(
-				ft_atoi(arr[0]),
 				ft_atoi(arr[1]),
-				ft_atoi(arr[2]));
-		spawn->direction = ft_atoi(arr[3]);
+				ft_atoi(arr[2]),
+				ft_atoi(arr[3]));
+		spawn->direction = ft_atoi(arr[4]);
 		free_array(arr);
 		ft_strdel(&line);
 	}
@@ -198,16 +198,15 @@ void	read_fandc(t_editor *editor, int fd)
 			break ;
 		arr = ft_strsplit(line, '\t');
 		sec = get_sector_with_id(editor->grid.sectors,
-			ft_atoi(arr[1]));
+			ft_atoi(arr[0]));
 		if (sec == NULL)
 			continue ;
-		sec->floor_height = ft_atoi(arr[2]);
-		sec->ceiling_height = ft_atoi(arr[3]);
-		sec->floor_texture = ft_atoi(arr[4]);
-		sec->ceiling_texture = ft_atoi(arr[5]);
-		sec->floor_texture_scale = ft_atof(arr[6]);
-		sec->ceiling_texture_scale = ft_atof(arr[7]);
-
+		sec->floor_height = ft_atoi(arr[1]);
+		sec->ceiling_height = ft_atoi(arr[2]);
+		sec->floor_texture = ft_atoi(arr[3]);
+		sec->ceiling_texture = ft_atoi(arr[4]);
+		sec->floor_texture_scale = ft_atof(arr[5]);
+		sec->ceiling_texture_scale = ft_atof(arr[6]);
 		free_array(arr);
 		ft_strdel(&line);
 	}
@@ -227,13 +226,13 @@ void		read_entities(t_editor *doom, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		ent = new_entity(id, (t_vector){
-				atof(arr[1]),
+		ent = new_entity(ft_atoi(arr[0]), (t_vector){
 				atof(arr[2]),
-				atof(arr[3])});
+				atof(arr[3]),
+				atof(arr[4])});
 		ent->preset =
 			get_entity_preset_with_name(doom->entity_presets,
-			arr[0]);
+			arr[1]);
 		ent->direction = ft_atoi(arr[4]);
 		add_to_list(&doom->grid.entities, ent, sizeof(t_entity));
 		free_array(arr);
@@ -253,7 +252,7 @@ void	read_mapinfo(t_editor *editor, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		editor->scale = ft_atoi(arr[1]);
+		editor->scale = ft_atoi(arr[2]);
 		free_array(arr);
 		ft_strdel(&line);
 	}
