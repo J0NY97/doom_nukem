@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/02 09:37:08 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/02 12:08:02 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,7 +18,7 @@ t_point	*get_point_with_id(t_list *points, unsigned int id)
 
 	curr = points;
 	while (curr)
-	{
+{
 		if (((t_point *)curr->content)->id == id)
 			return (curr->content);
 		curr = curr->next;
@@ -64,11 +64,13 @@ void	read_vertex(t_grid *grid, int fd)
 	{
 		if (line[0] == '-')
 			break ;
+		ft_putstr(line);
+		ft_putstr("\n");
 		arr = ft_strsplit(line, '\t');
 		new_p = (t_point *)malloc(sizeof(t_point));
 		new_p->pos = gfx_new_vector(ft_atoi(arr[1]),
 				ft_atoi(arr[2]),
-				ft_atoi(arr[3]));
+				0);
 		new_p->id = ft_atoi(arr[0]);
 		add_to_list(&grid->points, new_p, sizeof(t_point));
 		free_array(arr);
@@ -203,11 +205,12 @@ void	read_fandc(t_editor *editor, int fd)
 			continue ;
 		sec->floor_height = ft_atoi(arr[1]);
 		sec->ceiling_height = ft_atoi(arr[2]);
-		sec->floor_texture = ft_atoi(arr[3]);
-		sec->ceiling_texture = ft_atoi(arr[4]);
+		sec->floor_texture = 1; //ft_atoi(arr[3]);
+		sec->ceiling_texture = 1; //ft_atoi(arr[4]);
 		sec->floor_texture_scale = ft_atof(arr[5]);
 		sec->ceiling_texture_scale = ft_atof(arr[6]);
 		free_array(arr);
+		ft_printf("%d %d\n", sec->floor_height, sec->ceiling_height);
 		ft_strdel(&line);
 	}
 	ft_strdel(&line);
@@ -271,6 +274,8 @@ void		read_map_file(t_editor *doom)
 	}
 	while (get_next_line(fd, &line))
 	{
+		ft_putstr(line);
+		ft_putchar('\n');
 		if (!(ft_strncmp(line, "type:map", 8)))
 			read_mapinfo(doom, fd);
 		else if (!(ft_strncmp(line, "type:vertex", 11)))
@@ -288,6 +293,7 @@ void		read_map_file(t_editor *doom)
 		else if (!(ft_strncmp(line, "type:entity", 10)))
 			read_entities(doom, fd);
 		ft_strdel(&line);
+		ft_putstr("read");
 	}
 	close(fd);
 	free(line);
