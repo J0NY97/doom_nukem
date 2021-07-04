@@ -1,8 +1,0 @@
-Draw Mode:
-Left Click - draw new vector.
-Right Click - new entity.
-Middle Click - drag and drop spawn.
-
-Select Mode:
-Left Click - Select Depending on the selection mode.
-Right Click - drag and drop.

@@ -12,42 +12,14 @@
 
 #include "editor.h"
 
-void	drag_calc(t_editor *doom, t_grid *grid)
+void	movement(t_editor *doom, t_grid *grid, int move_x, int move_y)
 {
 	t_list *curr;
-	float move_x = 0.0f;
-	float move_y = 0.0f;
 
-	if (key_pressed(doom->libui, MKEY_RIGHT))
+	if (grid->modify_point != NULL)
 	{
-		move_x = grid->hover.x - grid->last_hover.x;
-		move_y = grid->hover.y - grid->last_hover.y;
-	}
-	if (key_pressed(doom->libui, KEY_LEFT))
-		move_x = -0.5f;
-	else if (key_pressed(doom->libui, KEY_RIGHT))
-		move_x = 0.5f;
-	if (key_pressed(doom->libui, KEY_UP))
-		move_y = -0.5f;
-	else if (key_pressed(doom->libui, KEY_DOWN))
-		move_y = 0.5f;
-	// small optimization , that breaks scrolling...
-	/*
-	if (move_x == 0.0f && move_y == 0.0f)
-		return ;
-		*/
-	if (grid->modify_point != NULL) // vector movement
-	{
-		if (key_pressed(doom->libui, MKEY_RIGHT))
-		{
-			grid->modify_point->pos.x = grid->hover.x;
-			grid->modify_point->pos.y = grid->hover.y;
-		}
-		else
-		{
-			grid->modify_point->pos.x += move_x;
-			grid->modify_point->pos.y += move_y;
-		}
+		grid->modify_point->pos.x = grid->hover.x;
+		grid->modify_point->pos.y = grid->hover.y;
 	}
 	else if (doom->grid.modify_sprite != NULL)
 	{
@@ -65,19 +37,9 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 				doom->grid.modify_sprite->pos.y -= (double)grid->gap;
 			else if (key_pressed(doom->libui, KEY_DOWN))
 				doom->grid.modify_sprite->pos.y += (double)grid->gap;
-			else if (key_pressed(doom->libui, KPKEY_PLUS))
-			{
-				doom->grid.modify_sprite->w += 5.0f;
-				doom->grid.modify_sprite->h += 5.0f;
-			}
-			else if (key_pressed(doom->libui, KPKEY_MINUS))
-			{
-				doom->grid.modify_sprite->w -= 5.0f;
-				doom->grid.modify_sprite->h -= 5.0f;
-			}
 		}
 	}
-	else if (grid->modify_wall != NULL) // wall movement
+	else if (grid->modify_wall != NULL)
 	{
 		grid->modify_wall->orig->pos.x += move_x;
 		grid->modify_wall->dest->pos.x += move_x;
@@ -98,26 +60,11 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 	}
 	else if (grid->modify_entity != NULL)
 	{
-		if (key_pressed(doom->libui, MKEY_RIGHT))
-		{
-			// You can click where ever you want and the thing will go there.
-			grid->modify_entity->pos.x = grid->hover.x;
-			grid->modify_entity->pos.y = grid->hover.y;
-			// Relative drag and drop... you can start from where ever you want.
-			/*
-			grid->modify_entity->pos.x += move_x;
-			grid->modify_entity->pos.y += move_y;
-			*/
-		}
-		else
-		{
-			grid->modify_entity->pos.x += move_x;
-			grid->modify_entity->pos.y += move_y;
-		}
+		grid->modify_entity->pos.x = grid->hover.x;
+		grid->modify_entity->pos.y = grid->hover.y;
 	}
-	else if (move_x != 0.0f || move_y != 0.0f)
+	else if (move_x != 0.0f || move_y != 0.0f) // moving whole map
 	{
-		ft_putstr("are we here\n");
 		t_point *point;
 
 		curr = grid->points;
@@ -142,13 +89,28 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 		doom->spawn.pos.x += move_x;
 		doom->spawn.pos.y += move_y;
 	}
-	// scrolling
-	else if (grid->elem->was_hovered_last_frame && doom->libui->mouse_wheel_y != 0)
+}
+
+void	drag_calc(t_editor *editor, t_grid *grid)
+{
+	float move_x;
+	float move_y;
+
+	move_x = 0.0f;
+	move_y = 0.0f;
+	if (key_pressed(editor->libui, MKEY_RIGHT))
 	{
-		// TODO: figure out why this cant go under 2... not even 1
-		grid->gap = grid->gap + doom->libui->mouse_wheel_y > 1 ? grid->gap + doom->libui->mouse_wheel_y : 2;
-		ft_printf("gap: %d\n",grid->gap);
+		move_x = grid->hover.x - grid->last_hover.x;
+		move_y = grid->hover.y - grid->last_hover.y;
 	}
+	// scrolling
+	// TOOD: clamp this so we get rid of the ternary
+	if (grid->elem->was_hovered_last_frame && editor->libui->mouse_wheel_y != 0)
+		grid->gap = grid->gap + editor->libui->mouse_wheel_y > 1 ? grid->gap + editor->libui->mouse_wheel_y : 2;
+	// small optimization
+	if (move_x == 0.0f && move_y == 0.0f)
+		return ;
+	movement(editor, grid, move_x, move_y);
 }
 
 // Get the nearest point in a radius of where you clicked.
@@ -158,7 +120,7 @@ void	select_point(t_grid *grid)
 	t_vector temp_pos;
 
 	// 1. check if youre clicking exactly where there is a point, to make this fast.
-	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover});
+	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover}); // this is needed! dont remove.
 	// 2. if theres no point exactly where you clicked. go here
 	if (temp == NULL)
 	{
@@ -194,58 +156,56 @@ void	select_point(t_grid *grid)
 			return ;
 	}
 	grid->modify_point = temp;
-
-	/* OLD VERSION
-	t_point *temp;
-
-	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover});
-	if (temp == NULL)
-		return ;
-	grid->modify_point = temp;
-	END OLD VERSION */ 
 ft_printf("Point selected.\n");
 }
 
 void	draw_selected_point(t_editor *editor, t_grid *grid)
 {
-	char		*str;
+	char	*str;
 
 	if (grid->modify_point == NULL)
 		str = ft_strdup("Selected Vector: \nNULL");
 	else
 	{
-		str = ft_sprintf("Selected Vector:\nx %d\ny %d\nconnections: %d\n", (int)grid->modify_point->pos.x, (int)grid->modify_point->pos.y, get_point_connection_amount(&grid->walls, grid->modify_point));
-		gfx_draw_vector(grid->elem->active_surface, 0xffffae42, 2, gfx_vector_multiply(grid->modify_point->pos, grid->gap));
+		str = ft_sprintf("Selected Vector:\nx %d\ny %d\nconnections: %d\n",
+			(int)grid->modify_point->pos.x,
+			(int)grid->modify_point->pos.y,
+			get_point_connection_amount(&grid->walls, grid->modify_point));
+		gfx_draw_vector(grid->elem->active_surface, 0xffffae42, 2,
+			gfx_vector_multiply(grid->modify_point->pos, grid->gap));
 	}
 	editor->selected_vector_info->text_color = 0xffffffff;
 	bui_set_element_text(editor->selected_vector_info, str, 0, 0);
 	ft_strdel(&str);
 }
 
-int		get_point_connection_amount(t_list **walls, t_point *point)
+int	get_point_connection_amount(t_list **walls, t_point *point)
 {
 	t_list	*curr;
-	int		amount;
+	int	amount;
 
 	curr = *walls;
 	amount = 0;
 	while (curr)
 	{
-		if (vector_compare(((t_wall *)curr->content)->dest->pos, point->pos) ||
-			vector_compare(((t_wall *)curr->content)->orig->pos, point->pos))
+		if (vector_compare(((t_wall *)curr->content)->dest->pos,
+			point->pos) || vector_compare(
+			((t_wall *)curr->content)->orig->pos, point->pos))
 			amount++;
 		curr = curr->next;
 	}
 	return (amount);
 }
 
-int		vector_on_wall(t_vector v, t_wall *wall)
+int	vector_on_wall(t_vector v, t_wall *wall)
 {
 	if (gfx_vector_dot(v, wall->orig->pos, wall->dest->pos) == 0)
 	{
-		if (v.x >= fmin(wall->orig->pos.x, wall->dest->pos.x) && v.x <= fmax(wall->orig->pos.x, wall->dest->pos.x))
+		if (v.x >= fmin(wall->orig->pos.x, wall->dest->pos.x)
+			&& v.x <= fmax(wall->orig->pos.x, wall->dest->pos.x))
 		{
-			if (v.y >= fmin(wall->orig->pos.y, wall->dest->pos.y) && v.y <= fmax(wall->orig->pos.y, wall->dest->pos.y))
+			if (v.y >= fmin(wall->orig->pos.y, wall->dest->pos.y)
+			&& v.y <= fmax(wall->orig->pos.y, wall->dest->pos.y))
 				return (1);
 		}
 	}
@@ -280,18 +240,20 @@ void	selection(t_editor *editor, t_grid *grid)
 	}
 }
 
-// TODO: try to remove the pow()
 float	distance_from_vector_to_wall(t_vector p0, t_wall *wall)
 {
-	t_vector p1;
-	t_vector p2;
-	float	dist;
+	t_vector	p1;
+	t_vector	p2;
+	float		dist;
+	float		up;
+	float		down;
 
 	p1 = wall->orig->pos;
 	p2 = wall->dest->pos;
 
-	float up = (p2.x - p1.x) * (p1.y - p0.y) - (p1.x - p0.x) * (p2.y - p1.y);
-	float down = sqrt(ft_pow(p2.x - p1.x, 2) + ft_pow(p2.y - p1.y, 2));
+	up = (p2.x - p1.x) * (p1.y - p0.y)
+			- (p1.x - p0.x) * (p2.y - p1.y);
+	down = sqrt(ft_pow(p2.x - p1.x, 2) + ft_pow(p2.y - p1.y, 2));
 
 	dist = up / down;
 	return (dist);
@@ -303,23 +265,27 @@ void	select_wall(t_editor *doom, t_grid *grid)
 	t_wall		*temp;
 	t_wall		*wall;
 	t_vector	v;
-	float		allowed_radius = 1.0f;
+	float		allowed_radius;
+	float		dist;
 
+	allowed_radius = 1.0f;
 	temp = NULL;
 	v = grid->hover;
 	curr = grid->walls;
 	while (curr)
 	{
 		wall = curr->content;
-		float dist = fabs(distance_from_vector_to_wall(v, curr->content));
-		ft_printf("VectorToWall: %.1f\n", dist);
+		dist = fabs(distance_from_vector_to_wall(v, curr->content));
 		if (dist <= allowed_radius)
 		{
-			if (v.x >= fmin(wall->orig->pos.x, wall->dest->pos.x) - allowed_radius &&
-			v.x <= fmax(wall->orig->pos.x, wall->dest->pos.x) + allowed_radius)
+			if (v.x >= fmin(wall->orig->pos.x, wall->dest->pos.x)
+			- allowed_radius && v.x <= fmax(wall->orig->pos.x,
+			wall->dest->pos.x) + allowed_radius)
 			{
-				if (v.y >= fmin(wall->orig->pos.y, wall->dest->pos.y) - allowed_radius &&
-				v.y <= fmax(wall->orig->pos.y, wall->dest->pos.y) + allowed_radius)
+				if (v.y >= fmin(wall->orig->pos.y,
+				wall->dest->pos.y) - allowed_radius && v.y
+				<= fmax(wall->orig->pos.y,
+				wall->dest->pos.y) + allowed_radius)
 				{
 					temp = curr->content;
 					break ;
@@ -332,51 +298,49 @@ void	select_wall(t_editor *doom, t_grid *grid)
 		return ;
 	doom->grid.modify_sprite = NULL;
 	grid->modify_wall = temp;
-
 printf("Wall selected.\n");
 }
 
 void	draw_selected_wall(t_grid *grid)
 {
+	t_vector orig;
+	t_vector dest;
+
 	if (grid->modify_wall == NULL)
 		return ;
-	t_vector orig = gfx_vector_multiply((t_vector){(grid->modify_wall->orig->pos.x),
-											(grid->modify_wall->orig->pos.y), 0}, grid->gap);
-	t_vector dest = gfx_vector_multiply((t_vector){(grid->modify_wall->dest->pos.x),
-											(grid->modify_wall->dest->pos.y), 0}, grid->gap);
-	orig.x += 1;
-	orig.y += 1;
-	dest.x += 1;
-	dest.y += 1;
+	orig = gfx_vector_multiply((t_vector){(grid->modify_wall->orig->pos.x),
+			(grid->modify_wall->orig->pos.y), 0}, grid->gap);
+	dest = gfx_vector_multiply((t_vector){(grid->modify_wall->dest->pos.x),
+			(grid->modify_wall->dest->pos.y), 0}, grid->gap);
+	orig = gfx_vector_add(orig, 1);
+	dest = gfx_vector_add(dest, 1);
 	gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
 }
 
 void	draw_selected_sector(t_editor *editor, t_grid *grid)
 {
 	t_list *curr_wall;
+	t_wall *wall;
+	t_vector orig;
+	t_vector dest;
 	char *str;
 
 	if (grid->modify_sector == NULL)
 		str = ft_strdup("Selected Sector: \nNULL");
 	else
 	{
-		str = ft_sprintf("Selected Sector:\nid: %d\nwalls: %d\n", grid->modify_sector->id, get_list_len(&grid->modify_sector->walls));	
+		str = ft_sprintf("Selected Sector:\nid: %d\nwalls: %d\n",
+			grid->modify_sector->id,
+			get_list_len(&grid->modify_sector->walls));
 		curr_wall = grid->modify_sector->walls;
 		while (curr_wall)
 		{
-			t_vector orig = gfx_vector_multiply((t_vector){(((t_wall *)curr_wall->content)->orig->pos.x),
-												(((t_wall *)curr_wall->content)->orig->pos.y), 0}, grid->gap);
-			t_vector dest = gfx_vector_multiply((t_vector){(((t_wall *)curr_wall->content)->dest->pos.x),
-												(((t_wall *)curr_wall->content)->dest->pos.y), 0}, grid->gap);
-			orig.x += 1;
-			orig.y += 1;
-			dest.x += 1;
-			dest.y += 1;
+			wall = curr_wall->content;
+			orig = gfx_vector_add(gfx_vector_multiply(wall->orig->pos, grid->gap), 1);
+			dest = gfx_vector_add(gfx_vector_multiply(wall->dest->pos, grid->gap), 1);
 			gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
-			orig.x -= 2;
-			orig.y -= 2;
-			dest.x -= 2;
-			dest.y -= 2;
+			orig = gfx_vector_sub(orig, 2);
+			dest = gfx_vector_sub(dest, 2);
 			gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
 			curr_wall = curr_wall->next;
 		}
@@ -415,6 +379,7 @@ void	select_sector(t_grid *grid)
 ft_printf("Sector selected.\n");
 }
 
+// Basically same as select_point... when you have that normed, you can easily norme this.
 void	select_entity(t_editor *editor, t_grid *grid)
 {
 	t_entity *temp;
@@ -464,5 +429,6 @@ void	draw_selected_entity(t_grid *grid)
 {
 	if (grid->modify_entity == NULL)
 		return ;
-	gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 8, gfx_vector_multiply(grid->modify_entity->pos, grid->gap));
+	gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 8,
+		gfx_vector_multiply(grid->modify_entity->pos, grid->gap));
 }
