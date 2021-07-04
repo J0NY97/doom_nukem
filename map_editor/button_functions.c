@@ -52,6 +52,8 @@ void	add_portal(t_grid *grid)
 		}
 		sec = sec->next;
 	}
+	if (wall_two_sec == -1)
+		return ;
 	other->neighbor = wall_one_sec;
 	grid->modify_wall->neighbor = wall_two_sec;
 	if (other->neighbor != -1) other->solid = 0;
@@ -127,10 +129,8 @@ void	other_box_events(t_editor *editor)
 	// Input
 	if (bui_input(editor->map_name_input))
 	{
-ft_printf("Map name was changed from %s ", editor->mapname);
 		ft_strdel(&editor->mapname);
 		editor->mapname = ft_strdup(editor->map_name_input->text);
-ft_printf("to %s.\n", editor->mapname);
 		add_text_to_info_box(editor, "Map name changed successfully!");
 	}
 	// Save Button
@@ -138,42 +138,47 @@ ft_printf("to %s.\n", editor->mapname);
 	{
 		ft_strdel(&editor->mapname);
 		editor->mapname = ft_strdup(editor->map_name_input->text);
-
 		ft_strdel(&editor->fullpath);
 		if (bui_button_toggle(editor->endless_tickbox))
-			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".endless");
+			editor->fullpath = ft_sprintf("./maps/%s%s",
+					editor->mapname, ".endless");
 		else if (bui_button_toggle(editor->story_tickbox))
-			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".story");
+			editor->fullpath = ft_sprintf("./maps/%s%s",
+					editor->mapname, ".story");
 		else
-			editor->fullpath = ft_sprintf("./maps/%s%s", editor->mapname, ".doom");
+			editor->fullpath = ft_sprintf("./maps/%s%s",
+					editor->mapname, ".doom");
 		set_map(editor);
 		add_text_to_info_box(editor, "Map saved successfully!");
 	}
 	// Tickboxes
-	only_one_button_toggled_at_a_time(editor->map_type_tickboxes, &editor->active_map_type);
+	only_one_button_toggled_at_a_time(editor->map_type_tickboxes,
+		&editor->active_map_type);
 }
 
 void	loop_buttons(t_editor *editor)
 {
-	other_box_events(editor);
+	t_rgba new_col;
 
+	other_box_events(editor);
 	// NOTE: the draw button is in this select_mode_buttons list
 	// the selection mode buttons
-	only_one_button_toggled_at_a_time(editor->select_mode_buttons, &editor->active_select_mode);
+	only_one_button_toggled_at_a_time(editor->select_mode_buttons,
+		&editor->active_select_mode);
 	if (editor->active_select_mode != NULL)
 		bui_button_toggle(editor->active_select_mode);
-
 	// scale changer prefab
 	changer_prefab_events(editor->scaler, &editor->scale, 1);
 	editor->scale = clamp(editor->scale, 1, 64);
-
 	// Info area events
-	if (editor->info_box->text && SDL_GetTicks() - editor->info_box_start_timer >= editor->info_box_timer)
+	if (editor->info_box->text && SDL_GetTicks()
+	- editor->info_box_start_timer >= editor->info_box_timer)
 	{
-		t_rgba new_col = hex_to_rgba(editor->info_box->text_color);
+		new_col = hex_to_rgba(editor->info_box->text_color);
 		new_col.a -= 1;
 		editor->info_box->text_color = rgba_to_hex(new_col);
-		bui_change_element_text(editor->info_box, editor->info_box->text);
+		bui_change_element_text(editor->info_box,
+			editor->info_box->text);
 		if (new_col.a == 0)
 			bui_remove_element_text(editor->info_box);	
 	}
@@ -225,13 +230,10 @@ void	recount_everything(t_editor *editor)
 		}
 		curr = curr->next;
 	}
-	ft_printf("Sectors: %d\nWalls: %d\nVertices: %d\n", editor->grid.sector_amount, editor->grid.wall_amount, editor->grid.point_amount);
-	ft_putstr("everything recounted\n");
 }
 
 void	remove_selected_point_from_all_walls_and_sectors(t_editor *editor)
 {
-	ft_printf("Starting to remove point.\n");
 	t_list *wall;
 	t_list *sec;
 	t_grid *grid;
