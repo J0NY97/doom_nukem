@@ -89,6 +89,10 @@ void	editor_free(t_editor *editor)
 	for (int i = 0; i < editor->texture_amount; i++)
 		SDL_FreeSurface(editor->texture_textures[i]);
 	free(editor->texture_textures);
+	// remove all sprite textures
+	for (int i = 0; i < editor->sprite_amount; i++)
+		SDL_FreeSurface(editor->sprite_textures[i]);
+	free(editor->sprite_textures);
 
 	ft_memdel((void **)&editor);
 }
