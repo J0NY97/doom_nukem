@@ -31,9 +31,11 @@ void	drag_calc(t_editor *doom, t_grid *grid)
 		move_y = -0.5f;
 	else if (key_pressed(doom->libui, KEY_DOWN))
 		move_y = 0.5f;
-	// small optimization
+	// small optimization , that breaks scrolling...
+	/*
 	if (move_x == 0.0f && move_y == 0.0f)
 		return ;
+		*/
 	if (grid->modify_point != NULL) // vector movement
 	{
 		if (key_pressed(doom->libui, MKEY_RIGHT))
