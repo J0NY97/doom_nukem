@@ -46,7 +46,16 @@ void	wall_render(t_editor *doom)
 	dim.y = 50;
 
 	// render wall with the texture
-	temp_texture = doom->texture_textures[wall->texture_id];
+	if (wall->texture_id < 0 || wall->texture_id >= doom->texture_amount) // this is just to check that the wall has a texture id between 0 and the maximum loaded textures, otherwise sgflt
+	{
+		// TODO: instaed of doing this every time should we do this in the getter, or if it once comes here you just put the texture id to default value and not just select the default id texture every loop.
+		ft_putstr("[wall_render]\n");
+		ft_printf("[Error] Wall Texture ID : %d is not valid!\n", wall->texture_id);
+		ft_putstr("Defaulting to texture id : 0\n");
+		temp_texture = doom->texture_textures[0];
+	}
+	else
+		temp_texture = doom->texture_textures[wall->texture_id];
 	texture.x = 0;
 	texture.y = 0;
 	texture.w = temp_texture->w; 
