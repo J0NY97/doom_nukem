@@ -19,6 +19,7 @@ void	wall_render(t_editor *doom)
 	t_wall *wall;
 	t_sector *sec;
 	t_xywh dim;
+	SDL_Surface	*temp_texture;
 	SDL_Rect	texture;
 	SDL_Rect	temp;
 	SDL_Surface	*scaled_wall;
@@ -26,8 +27,10 @@ void	wall_render(t_editor *doom)
 	float	x_axis;
 	float	y_axis;
 
-	// @Improvement: if i at some point return from changer_prefab_events if the value has changed, you can move this there so that it only does it when the map scale changes, which is the only thing that changes the size of the wall you blit on the screen.
-	SDL_FillRect(doom->edit_view_wall->active_surface, &(SDL_Rect){0, 0, doom->edit_view_wall->position.w, doom->edit_view_wall->position.h}, 0xff000000);
+	SDL_FillRect(doom->edit_view_wall->active_surface,
+		&(SDL_Rect){0, 0,
+		doom->edit_view_wall->position.w,
+		doom->edit_view_wall->position.h}, 0xff000000);
 	grid = &doom->grid;
 	wall = grid->modify_wall;
 	// get w from the difference from the orig -> dest x
@@ -39,82 +42,65 @@ void	wall_render(t_editor *doom)
 	// all of these values needs to  have a zoom value depending on which is...
 	//	more the x or the y so that we can see the whole wall...
 	//	MAYBE: but if you after that want to zoom you can??
-	dim.x = 50; // offsets
+	dim.x = 50; // offsets, because of the position of the wall on the surface of the view element.
 	dim.y = 50;
 
-	// get texture from the wall selected
-	// (wall->texture_id)
 	// render wall with the texture
-
-	// TODO: this needs to be taken from somewhere else, maybe take in a t_texture that has all these informations
-	// 	(get texture with id function that takes from t_texture list and returns that surface)
-	// 	get_texture_from_list_with_id();
-	// 	get_texture_with_id_from_list();
-	// 	already in it
-	SDL_Surface *tex = load_image(ROOT_PATH"ui/ui_images/wallimage.png");
+	temp_texture = doom->texture_textures[wall->texture_id];
 	texture.x = 0;
 	texture.y = 0;
-	texture.w = tex->w; 
-	texture.h = tex->h;
+	texture.w = temp_texture->w; 
+	texture.h = temp_texture->h;
 
 	// how many of the textures can fit on each axis
-	x_axis = (float)dim.w / (float)doom->grid.modify_wall->texture_scale;
-	y_axis = (float)dim.h / (float)doom->grid.modify_wall->texture_scale;
-
-//ft_printf("x_axis amount: %.3f, y amount: %.3f\n", x_axis, y_axis);
+	x_axis = ceil((float)dim.w / (float)doom->grid.modify_wall->texture_scale);
+	y_axis = ceil((float)dim.h / (float)doom->grid.modify_wall->texture_scale);
 
 	scale = (doom->edit_view_wall->position.w - (dim.x * 2)) / dim.w;
 	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
-	for (int y = 0; y < ceil(y_axis); y++)
+	for (int y = 0; y < y_axis; y++)
 	{
-		for (int x = 0; x < ceil(x_axis); x++)
+		for (int x = 0; x < x_axis; x++)
 		{
 			temp.w = scale * doom->grid.modify_wall->texture_scale;
 			temp.h = scale * doom->grid.modify_wall->texture_scale;
 			temp.x = x * temp.w;
 			temp.y = y * temp.h;
-			SDL_BlitScaled(tex, &texture, scaled_wall, &temp);
+			SDL_BlitScaled(temp_texture, &texture, scaled_wall, &temp);
 		}
 	}
-	SDL_FreeSurface(tex);
 
 // render the objects placed on the wall
-	t_list *curr;
-	t_sprite *sprite;
+	t_list		*curr;
+	t_sprite	*sprite;
+	SDL_Surface	*temp_sprite;
 
 	curr = wall->sprites;
-
-	// should take this from somewhere else
-	SDL_Surface *temp_sprite = load_image(ROOT_PATH"ui/ui_images/sprite.jpg");
+	if (curr)
+		temp_sprite =
+			doom->sprite_textures[grid->modify_sprite->sprite_id];
 	while (curr)
 	{
 		sprite = curr->content;
-
-
-		temp.x = scale * sprite->real_x;
-		temp.y = scale * sprite->real_y;
-		temp.w = scale * sprite->scale;
-		temp.h = scale * sprite->scale;
-
-		sprite->coord.x = temp.x;
-		sprite->coord.y = temp.y;
-		sprite->coord.w = temp.w;
-		sprite->coord.h = temp.h;
-
-		SDL_BlitScaled(temp_sprite, NULL, scaled_wall, &temp);
-
+		sprite->coord = ui_init_coords(
+			scale * sprite->real_x, scale * sprite->real_y,
+			scale * sprite->scale, scale * sprite->scale);
+		SDL_BlitScaled(temp_sprite, NULL, scaled_wall, &(SDL_Rect){
+			sprite->coord.x, sprite->coord.y,
+			sprite->coord.w, sprite->coord.h});
 		curr = curr->next;
 	}
-	SDL_FreeSurface(temp_sprite);
-
 	if (doom->grid.modify_sprite != NULL)
-	{
-		draw_rect_border(scaled_wall, doom->grid.modify_sprite->coord.x, doom->grid.modify_sprite->coord.y, doom->grid.modify_sprite->coord.w, doom->grid.modify_sprite->coord.h, 0xff0000ff, 3);
-	}
+		draw_rect_border(scaled_wall, doom->grid.modify_sprite->coord.x,
+			doom->grid.modify_sprite->coord.y,
+			doom->grid.modify_sprite->coord.w,
+			doom->grid.modify_sprite->coord.h, 0xff0000ff, 2);
 
 // finally blit the wall to the surface of the window
-	SDL_BlitSurface(scaled_wall, NULL, doom->edit_view_wall->active_surface, &(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
-	gfx_draw_rect(doom->edit_view_wall->active_surface, 0xff00ff00, (t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
+	SDL_BlitSurface(scaled_wall, NULL, doom->edit_view_wall->active_surface,
+		&(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
+	gfx_draw_rect(doom->edit_view_wall->active_surface, 0xff00ff00,
+		(t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
 	SDL_FreeSurface(scaled_wall);
 }
 

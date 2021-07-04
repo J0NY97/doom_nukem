@@ -12,34 +12,35 @@
 
 #include "editor.h"
 
-t_point		*get_point_from_list(t_list *list, t_point *v)
+t_point	*get_point_from_list(t_list *list, t_point *v)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = list;
 	while (curr)
 	{
-		if (vector_compare(((t_point *)curr->content)->pos, (t_vector){v->pos.x, v->pos.y, v->pos.z}))
+		if (vector_compare(((t_point *)curr->content)->pos,
+		(t_vector){v->pos.x, v->pos.y, v->pos.z}))
 			return (curr->content);
 		curr = curr->next;
 	}
 	return (NULL);
 }
 
-t_wall		*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
+t_wall	*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
 {
-	t_list *curr;
-	t_wall *wall;
+	t_list	*curr;
+	t_wall	*wall;
 
 	curr = *list;
 	while (curr)
 	{
 		wall = curr->content;
-		if ((vector_compare(wall->orig->pos, v1->pos) && vector_compare(wall->dest->pos, v2->pos)) ||
-			(vector_compare(wall->orig->pos, v2->pos) && vector_compare(wall->dest->pos, v1->pos)))
-		{
+		if ((vector_compare(wall->orig->pos, v1->pos)
+		&& vector_compare(wall->dest->pos, v2->pos))
+		|| (vector_compare(wall->orig->pos, v2->pos)
+		&& vector_compare(wall->dest->pos, v1->pos)))
 			return (curr->content);
-		}
 		curr = curr->next;
 	}
 	return (NULL);
@@ -47,13 +48,15 @@ t_wall		*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
 
 // NOTE: Not to confuse with vector_on_line, which is vector math,
 // 	this just checks if t_vector *v is either vec->dest or ->orig
-int		vector_in_wall(t_vector v, t_wall *vec)
+int	vector_in_wall(t_vector v, t_wall *vec)
 {
-	if (vector_compare(v, vec->orig->pos) || vector_compare(v, vec->dest->pos))
+	if (vector_compare(v, vec->orig->pos)
+	|| vector_compare(v, vec->dest->pos))
 		return (1);
 	return (0);
 }
 
+// This function isnt used anywhere, so remove it when you have decided that that is gonna be kept so.
 void	split_wall(t_grid *grid, t_wall *old_wall, t_point *new_vec)
 {
 	t_wall	*temp;
@@ -100,8 +103,8 @@ void	update_real_dimensions(t_grid *grid) // the yellowish lines
 
 t_point	*get_point_from_wall_in_sector(t_sector *sector, t_point *v)
 {
-	t_wall *w;
-	t_list *wall;
+	t_wall	*w;
+	t_list	*wall;
 
 	wall = sector->walls;
 	while (wall)
@@ -118,9 +121,9 @@ t_point	*get_point_from_wall_in_sector(t_sector *sector, t_point *v)
 
 void	check_selected(t_grid *grid)
 {
-	t_point *temp1;
-	t_point *temp2;
-	t_wall *temp_wall;
+	t_point	*temp1;
+	t_point	*temp2;
+	t_wall	*temp_wall;
 
 	temp1 = NULL;
 	temp2 = NULL;
@@ -128,16 +131,18 @@ void	check_selected(t_grid *grid)
 	if (vector_is_empty(grid->selected2)) // seg faults if removed.
 		return ;
 	ft_printf("Point Magic.\n");
-	temp1 = get_point_from_wall_in_sector(grid->modify_sector, &(t_point){0, grid->selected1});
-	temp2 = get_point_from_wall_in_sector(grid->modify_sector, &(t_point){0, grid->selected2});
+	temp1 = get_point_from_wall_in_sector(grid->modify_sector,
+			&(t_point){0, grid->selected1});
+	temp2 = get_point_from_wall_in_sector(grid->modify_sector,
+			&(t_point){0, grid->selected2});
 	if (temp1 == NULL)
 	{
-		temp1 = new_point((t_vector){grid->selected1.x, grid->selected1.y, grid->selected1.z});
+		temp1 = new_point(grid->selected1);
 		add_to_list(&grid->points, temp1, sizeof(t_point));
 	}
 	if (temp2 == NULL)
 	{
-		temp2 = new_point((t_vector){grid->selected2.x, grid->selected2.y, grid->selected2.z});
+		temp2 = new_point(grid->selected2);
 		add_to_list(&grid->points, temp2, sizeof(t_point));
 	}
 	// check if a wall with that same points is in the sector walls, if yes then give it the &
@@ -240,44 +245,45 @@ void	draw_dimensions(t_grid *grid)
 {
 	gfx_draw_line(grid->elem->active_surface, 0xff999966,
 		(t_vector){0, grid->dimensions.y, 0},
-		(t_vector){grid->elem->active_surface->w, grid->dimensions.y, 0});
+		(t_vector){grid->elem->active_surface->w,
+		grid->dimensions.y, 0});
 	gfx_draw_line(grid->elem->active_surface, 0xff999966,
 		(t_vector){grid->dimensions.x, 0, 0},
-		(t_vector){grid->dimensions.x, grid->elem->active_surface->h, 0});
+		(t_vector){grid->dimensions.x,
+		grid->elem->active_surface->h, 0});
 	gfx_draw_line(grid->elem->active_surface, 0xff999966,
 		(t_vector){0, grid->dimensions.h, 0},
-		(t_vector){grid->elem->active_surface->w, grid->dimensions.h, 0});
+		(t_vector){grid->elem->active_surface->w,
+		grid->dimensions.h, 0});
 	gfx_draw_line(grid->elem->active_surface, 0xff999966,
 		(t_vector){grid->dimensions.w, 0, 0},
-		(t_vector){grid->dimensions.w, grid->elem->active_surface->h, 0});
+		(t_vector){grid->dimensions.w,
+		grid->elem->active_surface->h, 0});
 }
 
 void	draw_grid(t_editor *doom, t_grid *grid)
 {
-	int x;
-	int y;
-	int max_y;
-	int max_x;
+	int i;
+	int max;
 
-	fill_surface(grid->elem->active_surface, ((t_bui_window *)grid->elem->parent)->color);	
-	max_y = grid->elem->active_surface->h / grid->gap;
-	max_x = grid->elem->active_surface->w / grid->gap;
-	y = 0;
-	while (y < max_y)
-	{	
-		gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem,
-			(t_vector){0, y * grid->gap, 0},
-			(t_vector){grid->elem->active_surface->w, y * grid->gap, 0});
-		y++;
-	}
-	x = 0;
-	while (x < max_x)
-	{
-		gfx_draw_line(grid->elem->active_surface, doom->palette.elem_elem,
-			(t_vector){x * grid->gap, 0, 0},
-			(t_vector){x * grid->gap, grid->elem->active_surface->h, 0});
-		x++;
-	}
+	fill_surface(grid->elem->active_surface,
+		((t_bui_window *)grid->elem->parent)->color);	
+	i = -1;
+	max = grid->elem->active_surface->h / grid->gap;
+	while (i++ < max)
+		gfx_draw_line(grid->elem->active_surface,
+			doom->palette.elem_elem,
+			(t_vector){0, i * grid->gap, 0},
+			(t_vector){grid->elem->active_surface->w,
+			i * grid->gap, 0});
+	i = -1;
+	max = grid->elem->active_surface->w / grid->gap;
+	while (i++ < max)
+		gfx_draw_line(grid->elem->active_surface,
+			doom->palette.elem_elem,
+			(t_vector){i * grid->gap, 0, 0},
+			(t_vector){i * grid->gap,
+			grid->elem->active_surface->h, 0});
 	draw_dimensions(grid);
 }
 
@@ -289,7 +295,8 @@ void	draw_points(t_grid *grid, t_list *points)
 	while (curr)
 	{
 		gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 1,
-			gfx_vector_multiply(((t_point *)curr->content)->pos, grid->gap));
+			gfx_vector_multiply(((t_point *)curr->content)->pos,
+			grid->gap));
 		curr = curr->next;
 	}
 }
@@ -420,7 +427,7 @@ void	draw_entities(t_editor *doom, t_grid *grid)
 
 void	draw_hover_info(t_editor *doom, t_grid *grid)
 {
-	char		*str;
+	char	*str;
 	
 	str = ft_sprintf("%d, %d\nzoom: %d\n", (int)grid->hover.x,
 		(int)grid->hover.y, (int)grid->gap);
