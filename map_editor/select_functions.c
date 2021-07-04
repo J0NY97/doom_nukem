@@ -389,27 +389,20 @@ void	draw_selected_sector(t_editor *editor, t_grid *grid)
 void	select_sector(t_grid *grid)
 {
 	t_list		*curr;
-	t_sector		*temp;
+	t_sector	*temp;
+	t_sector	*sec;
 
 	temp = NULL;
-
 	curr = grid->sectors;
 	while (curr)
 	{
-		t_sector *sec;
-
 		sec = curr->content;
-
-		// DEBUG
-		gfx_draw_vector(grid->elem->active_surface, 0xffffff00, 3, sec->lowest_pos);
-		gfx_draw_vector(grid->elem->active_surface, 0xffff00ff, 3, sec->highest_pos);
-		gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 3, sec->center);
-
-		if (gfx_hitbox_square(grid->hover.x * grid->gap, grid->hover.y * grid->gap,
-				(t_xywh){
-				(int)sec->center.x - (grid->gap * 2), (int)sec->center.y - (grid->gap * 2),
-				grid->gap * 4, grid->gap * 4
-		}))
+		if (gfx_hitbox_square(
+			grid->elem->libui->mouse_x - grid->elem->position.x,
+			grid->elem->libui->mouse_y - grid->elem->position.y,
+			(t_xywh){(int)sec->center.x - (grid->gap),
+			(int)sec->center.y - (grid->gap),
+			grid->gap * 2, grid->gap * 2}))
 		{
 			temp = curr->content;
 			break ;
