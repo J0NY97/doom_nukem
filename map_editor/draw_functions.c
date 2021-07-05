@@ -63,7 +63,8 @@ void	split_wall(t_grid *grid, t_wall *old_wall, t_point *new_vec)
 
 	temp = get_wall_from_list(&grid->walls, old_wall->dest, new_vec);
 	if (temp == NULL)
-		temp = get_wall_from_list(&grid->walls, old_wall->orig, new_vec);
+		temp = get_wall_from_list(&grid->walls,
+			old_wall->orig, new_vec);
 	if (temp != NULL)
 		return ;
 	temp = new_wall(old_wall->dest, new_vec);
@@ -71,7 +72,6 @@ void	split_wall(t_grid *grid, t_wall *old_wall, t_point *new_vec)
 	old_wall->dest = new_vec;
 	if (grid->modify_sector != NULL)
 		add_to_list(&grid->modify_sector->walls, temp, sizeof(t_wall));
-ft_printf("Wall split.\n");
 }
 
 void	update_real_dimensions(t_grid *grid) // the yellowish lines
@@ -130,7 +130,6 @@ void	check_selected(t_grid *grid)
 	temp_wall = NULL;
 	if (vector_is_empty(grid->selected2)) // seg faults if removed.
 		return ;
-	ft_printf("Point Magic.\n");
 	temp1 = get_point_from_wall_in_sector(grid->modify_sector,
 			&(t_point){0, grid->selected1});
 	temp2 = get_point_from_wall_in_sector(grid->modify_sector,
@@ -146,7 +145,6 @@ void	check_selected(t_grid *grid)
 		add_to_list(&grid->points, temp2, sizeof(t_point));
 	}
 	// check if a wall with that same points is in the sector walls, if yes then give it the &
-	ft_printf("Wall magic.\n");
 	temp_wall = get_wall_from_list(&grid->modify_sector->walls, temp1, temp2); // enable this to not make duplicate walls
 	if (temp_wall == NULL) // make new wall
 	{
@@ -156,18 +154,15 @@ void	check_selected(t_grid *grid)
 	}
 	if (grid->modify_sector->first_point == NULL)
 		grid->modify_sector->first_point = temp1;
-	if (vector_compare(grid->modify_sector->first_point->pos, temp_wall->dest->pos)) // check if you end up on the first point to stop drawing sector.
+	if (grid->modify_sector->first_point == temp_wall->dest) // check if you end up on the first point to stop drawing sector.
 	{
-		grid->modify_sector->first_point = NULL; // this might have some problems in the future if you dont make it NULL, what do you mean "might"?!
+		grid->modify_sector->first_point = NULL;
 		grid->modify_sector = NULL;
 		grid->selected1 = EMPTY_VEC;
 		grid->selected2 = EMPTY_VEC;
-		ft_printf("Sector done!\n");
 	}
-	// It shouldnt have any difference if you make the selected1 the selected2 because it should be what it should before it comes here
 	grid->selected1 = grid->selected2;
 	grid->selected2 = EMPTY_VEC;
-	ft_printf("Wall was added!\n");
 }
 
 void	click_calc(t_editor *editor, t_grid *grid)
@@ -175,35 +170,32 @@ void	click_calc(t_editor *editor, t_grid *grid)
 	t_sector	*sector;
 	t_entity	*entity;
 
-	if (editor->libui->mouse_down)
+	if (!mouse_hover(editor->libui, (t_xywh) {
+	grid->elem->position.x, grid->elem->position.y,
+	grid->elem->position.w, grid->elem->position.h}))
+		return ;
+	if (editor->libui->mouse_down_last_frame &&
+	mouse_pressed(editor->libui, MKEY_LEFT))
 	{
-		if (!mouse_hover(editor->libui, (t_xywh) {
-		grid->elem->position.x, grid->elem->position.y,
-		grid->elem->position.w, grid->elem->position.h}))
-			return ;
-		if (editor->libui->mouse_down_last_frame &&
-		mouse_pressed(editor->libui, MKEY_LEFT))
+		if (grid->modify_sector == NULL)
 		{
-			if (grid->modify_sector == NULL)
-			{
-				sector = new_sector(grid->sector_amount++);
-				add_to_list(&grid->sectors, sector, sizeof(t_sector));
-				grid->modify_sector = sector;
-			}
-			if (vector_is_empty(grid->selected1))
-				grid->selected1 = grid->hover;
-			else if (!vector_compare(grid->selected1, grid->hover))
-				grid->selected2 = grid->hover;
+			sector = new_sector(grid->sector_amount++);
+			add_to_list(&grid->sectors, sector, sizeof(t_sector));
+			grid->modify_sector = sector;
 		}
-		else if (editor->libui->mouse_down_last_frame &&
-		mouse_pressed(editor->libui, MKEY_RIGHT))
-		{
-			entity = new_entity(grid->entity_amount++, grid->hover);
-			add_to_list(&grid->entities, entity, sizeof(t_entity));
-		}
-		else if (mouse_pressed(editor->libui, MKEY_MIDDLE))
-			editor->spawn.pos = grid->hover;
+		if (vector_is_empty(grid->selected1))
+			grid->selected1 = grid->hover;
+		else if (!vector_compare(grid->selected1, grid->hover))
+			grid->selected2 = grid->hover;
 	}
+	else if (editor->libui->mouse_down_last_frame &&
+	mouse_pressed(editor->libui, MKEY_RIGHT))
+	{
+		entity = new_entity(grid->entity_amount++, grid->hover);
+		add_to_list(&grid->entities, entity, sizeof(t_entity));
+	}
+	else if (mouse_pressed(editor->libui, MKEY_MIDDLE))
+		editor->spawn.pos = grid->hover;
 }
 
 void	unselect_selected(t_editor *editor, t_grid *grid)
@@ -411,16 +403,20 @@ void	draw_entities(t_editor *doom, t_grid *grid)
 		pos = gfx_vector_multiply(entity->pos, grid->gap);
 		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 6, pos);
 		if (entity->preset->mood == ENTITY_TYPE_HOSTILE)
-			gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 3, pos);
+			gfx_draw_vector(grid->elem->active_surface,
+				0xffff0000, 3, pos);
 		else if (entity->preset->mood == ENTITY_TYPE_FRIENDLY)
-			gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 3, pos);
+			gfx_draw_vector(grid->elem->active_surface,
+				0xff00ff00, 3, pos);
 		else if (entity->preset->mood == ENTITY_TYPE_NEUTRAL)
-			gfx_draw_vector(grid->elem->active_surface, 0xff0000ff, 3, pos);
+			gfx_draw_vector(grid->elem->active_surface,
+				0xff0000ff, 3, pos);
 		angle = entity->direction * (M_PI / 180);
 		dx = cos(angle) * 10.0f;
 		dy = sin(angle) * 10.0f;
 		t_vector dir_pos = gfx_new_vector(dx + pos.x, dy + pos.y, 0);
-		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 1, dir_pos);
+		gfx_draw_vector(grid->elem->active_surface,
+			0xffaaab5d, 1, dir_pos);
 		curr = curr->next;
 	}
 }

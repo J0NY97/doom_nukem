@@ -20,8 +20,6 @@ void	add_portal(t_grid *grid)
 	int wall_one_sec;
 	int wall_two_sec;
 
-	if (grid->modify_wall == NULL) // could be useless; function only called in the wall_option function that already has this
-		return ;
 	wall_one_sec = -1;
 	wall_two_sec = -1;
 	sec = grid->sectors;
@@ -40,14 +38,6 @@ void	add_portal(t_grid *grid)
 					wall_two_sec = ((t_sector *)sec->content)->id;
 				}
 			}
-			/* IMPORTANT: its not worth doing this here because of norme.
-			 * This would be a good thing to have so we dont have to loop through all the sectors and walls,
-			 * even tho we have already found both walls we need.
-			 * But norme doesnt like extra lines in functions, so somewhere you have to get rid of them....
-			 * and ive decided this, because everything else is needed......
-			if (wall_one_sec != -1 && wall_two_sec != -1)
-				break;
-			*/
 			wall = wall->next;
 		}
 		sec = sec->next;
@@ -207,6 +197,21 @@ int	get_list_len(t_list **list)
 	return (i);
 }
 
+void	re_id_sectors(t_list **sectors)
+{
+	t_list	*curr;
+	int	id;
+
+	id = 0;
+	curr = *sectors;
+	while (curr)
+	{
+		((t_sector *)curr->content)->id = id;
+		curr = curr->next;
+		id++;	
+	}
+}
+
 void	recount_everything(t_editor *editor)
 {
 	ft_putstr("[recount_everything]\n");
@@ -214,6 +219,7 @@ void	recount_everything(t_editor *editor)
 	t_list *curr_sprite;
 
 	editor->grid.sector_amount = get_list_len(&editor->grid.sectors);
+	re_id_sectors(&editor->grid.sectors);
 	editor->grid.wall_amount = 0;
 	editor->grid.point_amount = get_list_len(&editor->grid.points);
 	editor->grid.entity_amount = get_list_len(&editor->grid.entities);
@@ -240,15 +246,16 @@ void	remove_selected_point_from_all_walls_and_sectors(t_editor *editor)
 
 	grid = &editor->grid;
 	wall = grid->walls;
-	while (wall) // 1. search for a wall with that point.
+	while (wall)
 	{
-		if (vector_in_wall(grid->modify_point->pos, wall->content)) // 2. if point in wall.
+		if (vector_in_wall(grid->modify_point->pos, wall->content))
 		{
-			ft_printf("Point with that vector found in a wall.\n");
 			sec = grid->sectors;
-			while (sec) // 3. search sec with that wall and remove the wall from sec.
+			while (sec)
 			{
-				remove_from_walls_non_free(&((t_sector *)sec->content)->walls, wall->content);
+				remove_from_walls_non_free(
+					&((t_sector *)sec->content)->walls,
+					wall->content);
 				sec = sec->next;
 			}
 			remove_from_walls(&grid->walls, wall->content);
@@ -258,12 +265,11 @@ void	remove_selected_point_from_all_walls_and_sectors(t_editor *editor)
 			wall = wall->next;
 	}
 	remove_from_points(&editor->grid.points, grid->modify_point);
-	add_text_to_info_box(editor, "Removed vertex successfully.");
 }
 
-void	remove_all_non_existing_sectors(t_editor *editor) // basically all sectors with no walls left.
+// Removes all sectors that have no walls left.
+void	remove_all_non_existing_sectors(t_editor *editor)
 {
-	ft_putstr("[remove all non existing sectors]");
 	t_list *sec;
 	t_sector *sector;
 
@@ -275,16 +281,14 @@ void	remove_all_non_existing_sectors(t_editor *editor) // basically all sectors 
 		if (sector && get_list_len(&sector->walls) == 0)
 			remove_from_sectors(&editor->grid.sectors, sector);
 	}
-	ft_putstr("All non existing sectors removed.\n");
 }
 
 void	remove_all_lonely_points(t_editor *editor)
 {
-	ft_putstr("[remove_all_lonely_points]\n");
-	t_list *p;
-	t_list *wall;
-	t_point *point;
-	int found;
+	t_list	*p;
+	t_list	*wall;
+	t_point	*point;
+	int	found;
 
 	found = 0;
 	p = editor->grid.points;
@@ -305,7 +309,6 @@ void	remove_all_lonely_points(t_editor *editor)
 		if (found == 0)
 			remove_from_points(&editor->grid.points, point);
 	}
-	ft_putstr("All lonely points removed.\n");
 }
 
 void	selection_mode_buttons(t_editor *editor, t_grid *grid)
@@ -331,8 +334,8 @@ void	selection_mode_buttons(t_editor *editor, t_grid *grid)
 			remove_entity_from_list(&grid->entities, grid->modify_entity);
 		else
 			return ;
-		remove_all_non_existing_sectors(editor); // basically all sectors with no walls left.
-		remove_all_lonely_points(editor); // all points that are just floating around alone.
+		remove_all_non_existing_sectors(editor);
+		remove_all_lonely_points(editor);
 		recount_everything(editor);
 		grid->modify_point = NULL;
 		grid->modify_wall = NULL;
