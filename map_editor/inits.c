@@ -21,6 +21,7 @@ void	window_init(t_editor *editor, t_bui_libui *libui)
 	title = ft_strjoiner("Doom Nukem Map Editor : ", editor->mapname, NULL);
 	editor->window = bui_new_window(libui, title, coord, 0);
 	bui_set_window_color(editor->window, editor->palette.win);
+	bui_set_window_icon(editor->window, ROOT_PATH"ui/ui_images/damage.png");
 	ft_strdel(&title);
 }
 
@@ -544,8 +545,12 @@ void	new_wall_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[1], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[2], NULL);
 
-	draw_rect_border(temp_elem->surface[ELEMENT_CLICK], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff00ff00, 5);
-	draw_rect_border(temp_elem->surface[ELEMENT_HOVER], 0, 0, temp_elem->position.w, temp_elem->position.h, 0xff0000ff, 5);
+	draw_rect_border(temp_elem->surface[ELEMENT_CLICK],
+		(t_xywh){0, 0, temp_elem->position.w, temp_elem->position.h},
+		0xff00ff00, 5);
+	draw_rect_border(temp_elem->surface[ELEMENT_HOVER],
+		(t_xywh){0, 0, temp_elem->position.w, temp_elem->position.h},
+		0xff0000ff, 5);
 
 	add_to_list(list, temp_elem, sizeof(t_bui_element));
 }

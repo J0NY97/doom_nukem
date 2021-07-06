@@ -100,10 +100,11 @@ void	wall_render(t_editor *doom)
 		curr = curr->next;
 	}
 	if (doom->grid.modify_sprite != NULL)
-		draw_rect_border(scaled_wall, doom->grid.modify_sprite->coord.x,
+		draw_rect_border(scaled_wall,
+			(t_xywh){doom->grid.modify_sprite->coord.x,
 			doom->grid.modify_sprite->coord.y,
 			doom->grid.modify_sprite->coord.w,
-			doom->grid.modify_sprite->coord.h, 0xff0000ff, 2);
+			doom->grid.modify_sprite->coord.h}, 0xff0000ff, 2);
 
 // finally blit the wall to the surface of the window
 	SDL_BlitSurface(scaled_wall, NULL, doom->edit_view_wall->active_surface,
