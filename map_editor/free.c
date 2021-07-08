@@ -78,8 +78,11 @@ void	editor_free(t_editor *editor)
 	changer_prefab_free(editor->floor_scale, 0);
 	changer_prefab_free(editor->ceiling_scale, 0);
 
+	/*
 	ft_lstdel(&editor->ceiling_texture_buttons, &dummy_free_er);
 	ft_lstdel(&editor->floor_texture_buttons, &dummy_free_er);
+	*/
+	ft_lstdel(&editor->sector_texture_buttons, &dummy_free_er);
 
 	dropdown_preset_free(editor->entity_type_drop, 0);
 

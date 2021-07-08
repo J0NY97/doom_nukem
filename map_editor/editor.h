@@ -308,13 +308,16 @@ struct			s_editor
 	t_changer_prefab	*ceiling_scale;
 
 	// sector editing stuff
-	t_bui_element	*sector_ceiling_menu;
-	t_bui_element	*sector_floor_menu;
-	t_list		*ceiling_texture_buttons; // list of t_bui_element * of the texture buttons for ceiling
-	t_list		*floor_texture_buttons;	  // list of t_bui_element * of the texture buttons for floor
+	t_bui_element	*sector_texture_menu;
+	t_list		*sector_texture_buttons; // list of t_bui_element * of the texture buttons
 	t_bui_element	*active_floor_texture;
 	t_bui_element	*active_ceiling_texture;
+	t_bui_element	*floor_texture_title;
+	t_bui_element	*ceiling_texture_title;
 
+	// slope thingy majig
+	t_bui_element	*slope_edit_menu;
+	t_bui_element	*slope_sector;
 
 	///////////////////
 	// Entity elements

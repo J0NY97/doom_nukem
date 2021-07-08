@@ -256,24 +256,76 @@ void	wall_option(t_editor *editor, t_bui_libui *libui)
 	wall_render(editor);
 }
 
+t_wall	*get_longest_wall_from_list(t_list *list)
+{
+	t_list	*curr;
+	t_wall	*wall;
+	t_wall	*long_wall;
+	int	temp_dist;
+	int	curr_longest;
+
+	curr = list;
+	curr_longest = -2147483648;
+	long_wall = NULL;
+	while (curr)
+	{
+		wall = curr->content;
+		temp_dist = gfx_distance(wall->orig->pos, wall->dest->pos);
+		if (temp_dist > curr_longest)
+		{
+			curr_longest = temp_dist;
+			long_wall = wall;
+		}
+		curr = curr->next;
+	}
+	return (long_wall);
+}
+
 void	sector_option(t_editor *editor, t_grid *grid)
 {
-	char *temp;
+	char *ceil_tex;
+	char *floor_tex;
 
-	editor->sector_ceiling_menu->show = 1;
-	editor->sector_floor_menu->show = 1;
+	editor->sector_texture_menu->show = 1;
 	editor->edit_toolbox_sector->show = 1;
-	if (!only_one_button_toggled_at_a_time(editor->floor_texture_buttons, &editor->active_floor_texture))
+	editor->slope_edit_menu->show = 1;
+
+	// manually event handle these buttons.
+	t_list	*curr;
+
+	ceil_tex = ft_itoa(editor->grid.modify_sector->ceiling_texture);
+	floor_tex = ft_itoa(editor->grid.modify_sector->floor_texture);
+	editor->active_ceiling_texture =
+		bui_get_element_with_text_from_list(editor->sector_texture_buttons, ceil_tex);
+	editor->active_floor_texture =
+		bui_get_element_with_text_from_list(editor->sector_texture_buttons, floor_tex);
+	curr = editor->sector_texture_buttons;
+	while (curr)
 	{
-		temp = ft_itoa(editor->grid.modify_sector->floor_texture);
-		toggle_on_element_with_text(editor->floor_texture_buttons, &editor->active_floor_texture, temp);
-		ft_strdel(&temp);
+		if (((t_bui_element *)curr->content)->was_clicked_last_frame)
+		{
+			if (mouse_pressed(editor->libui, MKEY_LEFT))
+				editor->active_floor_texture = curr->content;
+			else if (mouse_pressed(editor->libui, MKEY_RIGHT))
+				editor->active_ceiling_texture = curr->content;
+		}
+		curr = curr->next;
 	}
-	if (!only_one_button_toggled_at_a_time(editor->ceiling_texture_buttons, &editor->active_ceiling_texture))
+	t_xywh	c;
+
+	if (editor->active_floor_texture)
 	{
-		temp = ft_itoa(editor->grid.modify_sector->ceiling_texture);
-		toggle_on_element_with_text(editor->ceiling_texture_buttons, &editor->active_ceiling_texture, temp);
-		ft_strdel(&temp);
+		c = ui_init_coords(0, 0,
+			editor->active_floor_texture->active_surface->w,
+			editor->active_floor_texture->active_surface->h);
+		draw_rect_border(editor->active_floor_texture->active_surface, c, 0xff0000ff, 2);
+	}
+	if (editor->active_ceiling_texture)
+	{
+		c = ui_init_coords(2, 2,
+			editor->active_ceiling_texture->active_surface->w - 4,
+			editor->active_ceiling_texture->active_surface->h - 4);
+		draw_rect_border(editor->active_ceiling_texture->active_surface, c, 0xff00ff00, 2);
 	}
 	editor->grid.modify_sector->floor_texture = ft_atoi(editor->active_floor_texture->text);
 	editor->grid.modify_sector->ceiling_texture = ft_atoi(editor->active_ceiling_texture->text);
@@ -283,6 +335,49 @@ void	sector_option(t_editor *editor, t_grid *grid)
 	changer_prefab_events(editor->lighting, &grid->modify_sector->light_level, 1);
 	changer_prefab_events_float(editor->floor_scale, &grid->modify_sector->floor_texture_scale, 0.1f);
 	changer_prefab_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
+
+	// draw the sector and event handle the wall choosing.
+	// TODO: figureo ut how to fit any size of sector on the small element.
+	t_wall	*long_wall;
+	t_wall	*wall;
+	float	long_wall_dist;
+	float	scale_ratio;
+
+	curr = editor->grid.modify_sector->walls;
+	long_wall = get_longest_wall_from_list(curr);
+	long_wall_dist = gfx_distance(long_wall->orig->pos, long_wall->dest->pos);
+	scale_ratio = editor->slope_sector->position.h / long_wall_dist;
+
+	t_vector a = gfx_vector_divide(editor->grid.modify_sector->center, editor->grid.gap);
+	float dist_to_middle_x = (editor->slope_sector->position.w / 2) - a.x;
+	float dist_to_middle_y = (editor->slope_sector->position.h / 2) - a.y;
+	t_vector new_orig; 
+	t_vector new_dest;
+	while (curr)
+	{
+		wall = curr->content;
+
+		new_orig = wall->orig->pos;
+		new_dest = wall->dest->pos;
+
+		new_orig = (t_vector){new_orig.x - a.x, new_orig.y - a.y, 0};
+		new_orig = gfx_vector_multiply(new_orig, scale_ratio);
+		new_orig = (t_vector){new_orig.x + a.x, new_orig.y + a.y, 0};
+
+		new_dest = (t_vector){new_dest.x - a.x, new_dest.y - a.y, 0};
+		new_dest = gfx_vector_multiply(new_dest, scale_ratio);
+		new_dest = (t_vector){new_dest.x + a.x, new_dest.y + a.y, 0};
+
+		new_orig.x += dist_to_middle_x;
+		new_orig.y += dist_to_middle_y;
+		new_dest.x += dist_to_middle_x;
+		new_dest.y += dist_to_middle_y;
+		
+		gfx_draw_line(editor->slope_sector->active_surface,
+		editor->grid.modify_sector->color,
+		new_orig, new_dest);
+		curr = curr->next;
+	}
 }
 
 // NOTE:
@@ -327,9 +422,9 @@ void	entity_option(t_editor *editor)
 
 void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
 {
-	doom->sector_ceiling_menu->show = 0;
-	doom->sector_floor_menu->show = 0;
+	doom->sector_texture_menu->show = 0;
 	doom->edit_toolbox_sector->show = 0;
+	doom->slope_edit_menu->show = 0;
 
 	doom->edit_view_wall->show = 0;
 	doom->edit_toolbox_wall->show = 0;

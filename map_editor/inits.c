@@ -465,12 +465,10 @@ void	new_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *textu
 
 void	texture_buttons_init(t_editor *editor)
 {
+	editor->sector_texture_buttons = NULL;
 	for (int i = 0; i < editor->texture_amount; i++)
 	{
-	// Floor
-		new_texture_button(editor->sector_floor_menu, &editor->floor_texture_buttons, editor->texture_textures[i], i);
-	// Ceilinog
-		new_texture_button(editor->sector_ceiling_menu, &editor->ceiling_texture_buttons, editor->texture_textures[i], i);
+		new_texture_button(editor->sector_texture_menu, &editor->sector_texture_buttons, editor->texture_textures[i], i);
 	}
 }
 
@@ -483,22 +481,26 @@ void	init_sector_editor(t_editor *editor)
 			editor->new_edit_window->position.h - 10);
 	editor->edit_toolbox_sector =
 		bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+	bui_set_element_color(editor->edit_toolbox_sector, editor->palette.elem_elem_elem);
 	// floor texture menu
 	coord = ui_init_coords(coord.x + coord.w + 5, 5,
 			(editor->new_edit_window->position.w - coord.w - 15) * 0.5,
 			editor->new_edit_window->position.h - 10);
-	editor->sector_floor_menu =
-		bui_new_menu(editor->new_edit_window, "Floor Texture", coord);
-	// ceiling texture menu
-	coord = ui_init_coords(coord.x + coord.w, coord.y,
-			coord.w, coord.h);
-	editor->sector_ceiling_menu =
-		bui_new_menu(editor->new_edit_window, "Ceiling Texture", coord);
-	bui_set_element_color(editor->sector_ceiling_menu, 0xff06D6A0);
+	editor->sector_texture_menu =
+		bui_new_menu(editor->new_edit_window, "Sector Texture Menu", coord);
+	bui_set_element_color(editor->sector_texture_menu, editor->palette.elem_elem_elem);
 	// textures
 	texture_buttons_init(editor);
+	// floor and ceiling texture title
+	coord = ui_init_coords(editor->sector_texture_menu->position.w - 100, 0, 50, 20);
+	editor->floor_texture_title = 
+		bui_new_element(editor->sector_texture_menu, "Floor", coord);
+	bui_set_element_color(editor->floor_texture_title, 0xff0000ff);
+	coord = ui_init_coords(editor->sector_texture_menu->position.w - 50, 0, 50, 20);
+	editor->ceiling_texture_title = 
+		bui_new_element(editor->sector_texture_menu, "Ceiling", coord);
+	bui_set_element_color(editor->ceiling_texture_title, 0xff00ff00);
 	// Init the ceiling- and floor height... etc. buttons
-	
 	coord = ui_init_coords(5, (25 * 1) + (40 * 0), 100, 40);
 	editor->floor_height =
 		new_changer_prefab(editor->edit_toolbox_sector, "floor height", coord);
@@ -520,6 +522,18 @@ void	init_sector_editor(t_editor *editor)
 	editor->ceiling_scale =
 		new_changer_prefab(editor->edit_toolbox_sector,
 		"ceiling texture scale", coord);
+	// slope edit menu
+	coord.x = editor->sector_texture_menu->position.x + editor->sector_texture_menu->position.w + 5;
+	coord.y = 5;
+	coord.w = editor->new_edit_window->position.w - editor->sector_texture_menu->position.w - editor->edit_toolbox_sector->position.w - 20;
+	coord.h = editor->new_edit_window->position.h - 10;
+	editor->slope_edit_menu =
+		bui_new_menu(editor->new_edit_window, "Slope Edit", coord);
+	bui_set_element_color(editor->slope_edit_menu, editor->palette.elem_elem_elem);
+	// show sector
+	coord = ui_init_coords(10, 20, editor->slope_edit_menu->position.w - 20, editor->slope_edit_menu->position.h * 0.5);
+	editor->slope_sector =
+		bui_new_element(editor->slope_edit_menu, "Sector", coord);
 }
 
 void	new_wall_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *texture, int i)
