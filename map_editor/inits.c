@@ -50,7 +50,7 @@ static void	copy_bxpm_pix_to_surf_pix(t_bxpm *bxpm, SDL_Surface *surface)
 	}
 }
 
-static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
+SDL_Surface	*load_bxpm_to_surface(char *bxpm_file)
 {
 	SDL_Surface	*surface;
 	t_bxpm		*bxpm;
@@ -72,9 +72,9 @@ static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
 
 static void	load_all_textures(t_editor *editor)
 {
-	ft_printf("szeof %d %d %d\n", sizeof(Uint32), sizeof(uint32_t), sizeof(unsigned short));
-	editor->texture_amount = 7;
-//	editor->texture_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->texture_amount);
+	editor->texture_amount = 4;
+	editor->texture_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->texture_amount);
+	/*
 	editor->texture_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood1.bxpm");
 	editor->texture_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/steel.bxpm");
 	editor->texture_textures[2] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wall_panel.bxpm");
@@ -82,6 +82,11 @@ static void	load_all_textures(t_editor *editor)
 	editor->texture_textures[4] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor_test.bxpm");
 	editor->texture_textures[5] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor_test(1).bxpm");
 	editor->texture_textures[6] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
+	*/
+	editor->texture_textures[0] = load_image(GAME_PATH"resources/BMP/wood.bmp");
+	editor->texture_textures[1] = load_image(GAME_PATH"resources/BMP/steel.bmp");
+	editor->texture_textures[2] = load_image(GAME_PATH"resources/BMP/wall_panel.bmp");
+	editor->texture_textures[3] = load_image(GAME_PATH"resources/BMP/tile_floor.bmp");
 }
 
 static void	load_all_sprites(t_editor *editor)

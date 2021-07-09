@@ -341,8 +341,7 @@ struct			s_editor
 	/////////////////////
 	// TEXTURES // added in functioin ; load_all_texture() / inits.c / line 68
 	/////////////////////
-//	SDL_Surface **texture_textures; // these are used for wall_textures, portal_textures, floor- & ceiling textures and wall sprite textures.
-	SDL_Surface *texture_textures[7];
+	SDL_Surface **texture_textures; // these are used for wall_textures, portal_textures, floor- & ceiling textures and wall sprite textures.
 	int	texture_amount;
 	SDL_Surface **sprite_textures; // these are used for the entity textures
 	int	sprite_amount;
@@ -475,6 +474,7 @@ void			free_sprite(void *content, size_t size);
 void			free_entity(void *content, size_t size);
 void			free_entity_preset(void *content, size_t size);
 Uint32			random_color(void);
+SDL_Surface		*load_bxpm_to_surface(char *bxpm_file);
 
 void			set_map(t_editor *doom);
 void			read_map_file(t_editor *doom);

@@ -52,26 +52,6 @@ ft_printf("Main window init.\n");
 	edit_window_init(editor, libui);
 ft_printf("Edit window init.\n");
 
-	// TEST
-	// making renderer for the windows, at some point make this an option in the libui, so you dont have to do this
-	// 	separeatly for all the windows manually.
-	/*
-	bui_set_window_flags(editor->window, BUI_WINDOW_DONT_UPDATE);
-	SDL_FreeSurface(editor->window->active_surface);
-	editor->window->active_surface = create_surface(editor->window->position.w, editor->window->position.h);
-	SDL_Renderer *window_renderer = SDL_CreateRenderer(editor->window->win, 0, SDL_RENDERER_ACCELERATED);
-
-	ft_printf("%s\n", SDL_GetError());
-
-	bui_set_window_flags(editor->new_edit_window, BUI_WINDOW_DONT_UPDATE);
-	SDL_FreeSurface(editor->new_edit_window->active_surface);
-	editor->new_edit_window->active_surface = create_surface(editor->new_edit_window->position.w, editor->new_edit_window->position.h);
-	SDL_Renderer *edit_window_renderer = SDL_CreateRenderer(editor->new_edit_window->win, -1, SDL_RENDERER_ACCELERATED);
-
-	ft_printf("%s\n", SDL_GetError());
-	*/
-	// END TEST
-	// NOTE:!!!!!!!!!!!!!! THIS IS SUPER IMPORTANAT  FOR SOME REASON!!!!!!!!!!!!
 	bui_set_window_color(editor->window, 0xff000000);
 	bui_set_window_color(editor->new_edit_window, 0xff000000);
 
@@ -152,22 +132,6 @@ ft_printf("Starting to loop!\n");
 		loop_buttons(editor);
 
 		bui_render_new(libui);
-
-		// TODO: problem: it doesnt clear the surface correctly or something.
-		// TODO: i think in the libui for some reason it will do event handling on stuff thats parent isnt show.
-		// Test
-		/*
-		SDL_Texture *texture = SDL_CreateTextureFromSurface(window_renderer, editor->window->active_surface);
-		SDL_RenderCopy(window_renderer, texture, NULL, NULL);
-		SDL_RenderPresent(window_renderer);
-		SDL_DestroyTexture(texture);
-
-		texture = SDL_CreateTextureFromSurface(edit_window_renderer, editor->new_edit_window->active_surface);
-		SDL_RenderCopy(edit_window_renderer, texture, NULL, NULL);
-		SDL_RenderPresent(edit_window_renderer);
-		SDL_DestroyTexture(texture);
-		*/
-		// end Test
 	}
 	ft_putstr("[map_editor] Bye!\n");
 
