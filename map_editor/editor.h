@@ -341,7 +341,8 @@ struct			s_editor
 	/////////////////////
 	// TEXTURES // added in functioin ; load_all_texture() / inits.c / line 68
 	/////////////////////
-	SDL_Surface **texture_textures; // these are used for wall_textures, portal_textures, floor- & ceiling textures and wall sprite textures.
+//	SDL_Surface **texture_textures; // these are used for wall_textures, portal_textures, floor- & ceiling textures and wall sprite textures.
+	SDL_Surface *texture_textures[7];
 	int	texture_amount;
 	SDL_Surface **sprite_textures; // these are used for the entity textures
 	int	sprite_amount;

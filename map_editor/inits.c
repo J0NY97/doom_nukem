@@ -55,15 +55,14 @@ static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
 	SDL_Surface	*surface;
 	t_bxpm		*bxpm;
 
-	bxpm = malloc(sizeof(t_bxpm));
-	int result = read_bxpm(bxpm, bxpm_file);
-	if (!result)
+	bxpm = ft_memalloc(sizeof(t_bxpm));
+	if (!read_bxpm(bxpm, bxpm_file))
 	{
 		ft_printf("Couldnt open file: %s\n", bxpm_file);
 		return (NULL);
 	}
 	surface = create_surface(bxpm->w, bxpm->h);
-	ft_printf("%d %d\n", bxpm->w, bxpm->h);
+	ft_printf("%d %d %d\n", bxpm->w, bxpm->h, bxpm->bpp);
 	copy_bxpm_pix_to_surf_pix(bxpm, surface);
 	free(bxpm->pix);
 	free(bxpm->clr);
@@ -73,17 +72,22 @@ static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
 
 static void	load_all_textures(t_editor *editor)
 {
-	editor->texture_amount = 3;
-	editor->texture_textures = malloc(sizeof(SDL_Surface *) * editor->texture_amount);
-	editor->texture_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
+	ft_printf("szeof %d %d %d\n", sizeof(Uint32), sizeof(uint32_t), sizeof(unsigned short));
+	editor->texture_amount = 7;
+//	editor->texture_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->texture_amount);
+	editor->texture_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood1.bxpm");
 	editor->texture_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/steel.bxpm");
 	editor->texture_textures[2] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wall_panel.bxpm");
+	editor->texture_textures[3] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor.bxpm");
+	editor->texture_textures[4] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor_test.bxpm");
+	editor->texture_textures[5] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor_test(1).bxpm");
+	editor->texture_textures[6] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
 }
 
 static void	load_all_sprites(t_editor *editor)
 {
 	editor->sprite_amount = 2;
-	editor->sprite_textures = malloc(sizeof(SDL_Surface *) * editor->sprite_amount);
+	editor->sprite_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->sprite_amount);
 	editor->sprite_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/spooky.bxpm");
 	editor->sprite_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/alfred.bxpm");
 }
