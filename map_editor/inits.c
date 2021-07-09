@@ -73,14 +73,11 @@ static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
 
 static void	load_all_textures(t_editor *editor)
 {
-	editor->texture_amount = 6;
+	editor->texture_amount = 3;
 	editor->texture_textures = malloc(sizeof(SDL_Surface *) * editor->texture_amount);
 	editor->texture_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
 	editor->texture_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/steel.bxpm");
 	editor->texture_textures[2] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wall_panel.bxpm");
-	editor->texture_textures[3] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor.bxpm");
-	editor->texture_textures[4] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/pump-0.bxpm");
-	editor->texture_textures[5] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/shotgun-1.bxpm");
 }
 
 static void	load_all_sprites(t_editor *editor)
