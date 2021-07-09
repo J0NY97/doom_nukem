@@ -3,6 +3,7 @@
 // NOTE: map_editor makes new window and libui.
 void	map_editor(char *map)
 {
+	ft_printf("%d", sizeof(unsigned char));
 	t_editor	*editor;
 	t_bui_libui	*libui;
 

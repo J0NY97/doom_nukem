@@ -298,6 +298,8 @@ void	sector_option(t_editor *editor, t_grid *grid)
 		bui_get_element_with_text_from_list(editor->sector_texture_buttons, ceil_tex);
 	editor->active_floor_texture =
 		bui_get_element_with_text_from_list(editor->sector_texture_buttons, floor_tex);
+	ft_strdel(&ceil_tex);
+	ft_strdel(&floor_tex);
 	curr = editor->sector_texture_buttons;
 	while (curr)
 	{
