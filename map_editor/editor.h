@@ -318,6 +318,14 @@ struct			s_editor
 	// slope thingy majig
 	t_bui_element	*slope_edit_menu;
 	t_bui_element	*slope_sector;
+		// floor
+	t_bui_element	*slope_floor_title;
+	t_changer_prefab *slope_floor_wall_changer;
+	t_changer_prefab *slope_floor_angle_changer;
+		// ceiling
+	t_bui_element	*slope_ceiling_title;
+	t_changer_prefab *slope_ceiling_wall_changer;
+	t_changer_prefab *slope_ceiling_angle_changer;
 
 	///////////////////
 	// Entity elements

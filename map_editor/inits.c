@@ -534,6 +534,42 @@ void	init_sector_editor(t_editor *editor)
 	coord = ui_init_coords(10, 20, editor->slope_edit_menu->position.w - 20, editor->slope_edit_menu->position.h * 0.5);
 	editor->slope_sector =
 		bui_new_element(editor->slope_edit_menu, "Sector", coord);
+	// wall changer
+	// floor
+	coord = ui_init_coords(10, editor->slope_sector->position.y + editor->slope_sector->position.h + 10,
+		100, 20);
+	editor->slope_floor_title = bui_new_element(editor->slope_edit_menu, "Floor", coord);
+	bui_set_element_color(editor->slope_floor_title, 0xff0000ff);
+
+	coord = ui_init_coords(editor->slope_floor_title->position.x,
+		editor->slope_floor_title->position.y + editor->slope_floor_title->position.h + 10,
+		100, 40);
+	editor->slope_floor_wall_changer = new_changer_prefab(editor->slope_edit_menu, "Wall ID", coord);
+	bui_change_element_text(editor->slope_floor_wall_changer->sub_button, "<");
+	bui_change_element_text(editor->slope_floor_wall_changer->add_button, ">");
+
+	coord = ui_init_coords(
+		editor->slope_floor_wall_changer->menu->position.x + editor->slope_floor_wall_changer->menu->position.w + 10,
+		editor->slope_floor_wall_changer->menu->position.y, 100, 40);
+	editor->slope_floor_angle_changer = new_changer_prefab(editor->slope_edit_menu, "Slope Angle", coord);
+	// ceiling
+	coord = ui_init_coords(10,
+		editor->slope_floor_wall_changer->menu->position.y + editor->slope_floor_wall_changer->menu->position.h + 10,
+		100, 20);
+	editor->slope_ceiling_title = bui_new_element(editor->slope_edit_menu, "Ceiling", coord);
+	bui_set_element_color(editor->slope_ceiling_title, 0xff00ff00);
+
+	coord = ui_init_coords(editor->slope_ceiling_title->position.x,
+		editor->slope_ceiling_title->position.y + editor->slope_ceiling_title->position.h + 10,
+		100, 40);
+	editor->slope_ceiling_wall_changer = new_changer_prefab(editor->slope_edit_menu, "Wall ID", coord);
+	bui_change_element_text(editor->slope_ceiling_wall_changer->sub_button, "<");
+	bui_change_element_text(editor->slope_ceiling_wall_changer->add_button, ">");
+
+	coord = ui_init_coords(
+		editor->slope_ceiling_wall_changer->menu->position.x + editor->slope_ceiling_wall_changer->menu->position.w + 10,
+		editor->slope_ceiling_wall_changer->menu->position.y, 100, 40);
+	editor->slope_ceiling_angle_changer = new_changer_prefab(editor->slope_edit_menu, "Slope Angle", coord);
 }
 
 void	new_wall_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *texture, int i)

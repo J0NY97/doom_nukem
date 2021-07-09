@@ -361,11 +361,11 @@ void	sector_option(t_editor *editor, t_grid *grid)
 		new_dest = wall->dest->pos;
 
 		new_orig = (t_vector){new_orig.x - a.x, new_orig.y - a.y, 0};
-		new_orig = gfx_vector_multiply(new_orig, scale_ratio);
+		new_orig = gfx_vector_multiply(new_orig, scale_ratio - 1);
 		new_orig = (t_vector){new_orig.x + a.x, new_orig.y + a.y, 0};
 
 		new_dest = (t_vector){new_dest.x - a.x, new_dest.y - a.y, 0};
-		new_dest = gfx_vector_multiply(new_dest, scale_ratio);
+		new_dest = gfx_vector_multiply(new_dest, scale_ratio - 1);
 		new_dest = (t_vector){new_dest.x + a.x, new_dest.y + a.y, 0};
 
 		new_orig.x += dist_to_middle_x;
@@ -378,6 +378,78 @@ void	sector_option(t_editor *editor, t_grid *grid)
 		new_orig, new_dest);
 		curr = curr->next;
 	}
+	// the changers.
+	t_wall *temp_wall; 
+	// floor wall id changer
+	changer_prefab_events(editor->slope_floor_wall_changer, &editor->grid.modify_sector->floor_slope_wall_id, 1);
+	// NOTE: you cant use clamp, because you want it to wrap around.
+	int wall_amount = get_list_len(&editor->grid.modify_sector->walls);
+	if (editor->grid.modify_sector->floor_slope_wall_id >= wall_amount)
+		editor->grid.modify_sector->floor_slope_wall_id = 0;
+	else if (editor->grid.modify_sector->floor_slope_wall_id < 0)
+		editor->grid.modify_sector->floor_slope_wall_id = wall_amount - 1;
+	temp_wall = get_nth_from_list(&editor->grid.modify_sector->walls, editor->grid.modify_sector->floor_slope_wall_id)->content;
+
+	new_orig = temp_wall->orig->pos;
+	new_dest = temp_wall->dest->pos;
+
+	new_orig = (t_vector){new_orig.x - a.x, new_orig.y - a.y, 0};
+	new_orig = gfx_vector_multiply(new_orig, scale_ratio - 1.5f);
+	new_orig = (t_vector){new_orig.x + a.x, new_orig.y + a.y, 0};
+
+	new_dest = (t_vector){new_dest.x - a.x, new_dest.y - a.y, 0};
+	new_dest = gfx_vector_multiply(new_dest, scale_ratio - 1.5f);
+	new_dest = (t_vector){new_dest.x + a.x, new_dest.y + a.y, 0};
+
+	new_orig.x += dist_to_middle_x;
+	new_orig.y += dist_to_middle_y;
+	new_dest.x += dist_to_middle_x;
+	new_dest.y += dist_to_middle_y;
+
+	gfx_draw_line(editor->slope_sector->active_surface,
+	0xff0000ff,
+	new_orig, new_dest);
+
+	// ceiling wall id changer
+	changer_prefab_events(editor->slope_ceiling_wall_changer, &editor->grid.modify_sector->ceiling_slope_wall_id, 1);
+	if (editor->grid.modify_sector->ceiling_slope_wall_id >= wall_amount)
+		editor->grid.modify_sector->ceiling_slope_wall_id = 0;
+	else if (editor->grid.modify_sector->ceiling_slope_wall_id < 0)
+		editor->grid.modify_sector->ceiling_slope_wall_id = wall_amount - 1;
+	temp_wall = get_nth_from_list(&editor->grid.modify_sector->walls, editor->grid.modify_sector->ceiling_slope_wall_id)->content;
+
+	new_orig = temp_wall->orig->pos;
+	new_dest = temp_wall->dest->pos;
+
+	new_orig = (t_vector){new_orig.x - a.x, new_orig.y - a.y, 0};
+	new_orig = gfx_vector_multiply(new_orig, scale_ratio - 0.5f);
+	new_orig = (t_vector){new_orig.x + a.x, new_orig.y + a.y, 0};
+
+	new_dest = (t_vector){new_dest.x - a.x, new_dest.y - a.y, 0};
+	new_dest = gfx_vector_multiply(new_dest, scale_ratio - 0.5f);
+	new_dest = (t_vector){new_dest.x + a.x, new_dest.y + a.y, 0};
+
+	new_orig.x += dist_to_middle_x;
+	new_orig.y += dist_to_middle_y;
+	new_dest.x += dist_to_middle_x;
+	new_dest.y += dist_to_middle_y;
+
+	gfx_draw_line(editor->slope_sector->active_surface,
+	0xff00ff00,
+	new_orig, new_dest);
+
+	// floor slope angle changer
+	changer_prefab_events(editor->slope_floor_angle_changer, &editor->grid.modify_sector->floor_slope, 1);
+	if (editor->grid.modify_sector->floor_slope >= 91)
+		editor->grid.modify_sector->floor_slope = 0;
+	else if (editor->grid.modify_sector->floor_slope < 0)
+		editor->grid.modify_sector->floor_slope = 90;
+	// ceiling slope angle changer
+	changer_prefab_events(editor->slope_ceiling_angle_changer, &editor->grid.modify_sector->ceiling_slope, 1);
+	if (editor->grid.modify_sector->ceiling_slope >= 91)
+		editor->grid.modify_sector->ceiling_slope = 0;
+	else if (editor->grid.modify_sector->ceiling_slope < 0)
+		editor->grid.modify_sector->ceiling_slope = 90;
 }
 
 // NOTE:
