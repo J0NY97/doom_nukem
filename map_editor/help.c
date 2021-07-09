@@ -223,18 +223,9 @@ t_entity_preset	*new_entity_preset(char *name)
 {
 	t_entity_preset *preset;
 
-	preset = malloc(sizeof(t_entity_preset));
-	memset(preset, 0, sizeof(t_entity_preset));
-
+	preset = ft_memalloc(sizeof(t_entity_preset));
 	preset->name = ft_strdup(name);
-	preset->scale = 1;
-	preset->mood = ENTITY_TYPE_NEUTRAL; // e_entity
-	preset->health = -1;
-	preset->damage = -1;
-	preset->speed = -1;
-	preset->attack_style = ENTITY_STYLE_NONE; // e_entity
-	preset->flying = 0;
-
+	preset->mood = ENTITY_TYPE_NEUTRAL;
 	return (preset);
 }
 

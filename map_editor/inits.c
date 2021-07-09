@@ -40,7 +40,7 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 
 static void	copy_bxpm_pix_to_surf_pix(t_bxpm *bxpm, SDL_Surface *surface)
 {
-	int i;
+	int	i;
 
 	i = 0;
 	while (i < bxpm->pix_nb)
@@ -63,6 +63,7 @@ static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
 		return (NULL);
 	}
 	surface = create_surface(bxpm->w, bxpm->h);
+	ft_printf("%d %d\n", bxpm->w, bxpm->h);
 	copy_bxpm_pix_to_surf_pix(bxpm, surface);
 	free(bxpm->pix);
 	free(bxpm->clr);
@@ -72,17 +73,21 @@ static SDL_Surface *load_bxpm_to_surface(char *bxpm_file)
 
 static void	load_all_textures(t_editor *editor)
 {
-	editor->texture_amount = 2;
+	editor->texture_amount = 6;
 	editor->texture_textures = malloc(sizeof(SDL_Surface *) * editor->texture_amount);
 	editor->texture_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
-	editor->texture_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/alfred.bxpm");
+	editor->texture_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/steel.bxpm");
+	editor->texture_textures[2] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wall_panel.bxpm");
+	editor->texture_textures[3] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor.bxpm");
+	editor->texture_textures[4] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/pump-0.bxpm");
+	editor->texture_textures[5] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/shotgun-1.bxpm");
 }
 
 static void	load_all_sprites(t_editor *editor)
 {
 	editor->sprite_amount = 2;
 	editor->sprite_textures = malloc(sizeof(SDL_Surface *) * editor->sprite_amount);
-	editor->sprite_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
+	editor->sprite_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/spooky.bxpm");
 	editor->sprite_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/alfred.bxpm");
 }
 
@@ -108,7 +113,6 @@ void	grid_init1(t_editor *editor)
 
 void	grid_init(t_editor *editor)
 {
-	ft_putstr("0");
 	editor->grid.selected1 = EMPTY_VEC;
 	editor->grid.selected2 = EMPTY_VEC;
 	editor->grid.modify_wall = NULL;
@@ -129,6 +133,8 @@ void	grid_init(t_editor *editor)
 	editor->grid.dimensions = editor->grid.coords;
 	load_all_textures(editor);
 	load_all_sprites(editor);
+	init_entity_presets(&editor->entity_presets);
+	editor->default_entity = new_entity_preset("default_entity_name");
 }
 
 void	vertex_button_init(int select_w, int select_gap, t_editor *editor)
@@ -465,10 +471,16 @@ void	new_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *textu
 
 void	texture_buttons_init(t_editor *editor)
 {
+	int	i;
+
+	i = 0;
 	editor->sector_texture_buttons = NULL;
-	for (int i = 0; i < editor->texture_amount; i++)
+	while (i < editor->texture_amount)
 	{
-		new_texture_button(editor->sector_texture_menu, &editor->sector_texture_buttons, editor->texture_textures[i], i);
+		new_texture_button(editor->sector_texture_menu,
+			&editor->sector_texture_buttons,
+			editor->texture_textures[i], i);
+		i++;
 	}
 }
 
@@ -702,7 +714,7 @@ void	wall_sprite_texture_buttons_init(t_editor *editor)
 {
 	editor->wall_sprite_buttons = NULL;
 	editor->active_wall_sprite = NULL;
-	for (int i = 0; i < editor->sprite_amount; i++)
+	for (int i = 0; i < editor->texture_amount; i++)
 		new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, editor->texture_textures[i], i);
 }
 
@@ -741,53 +753,14 @@ void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *
 	add_to_list(list, radio, sizeof(t_bui_element));
 }
 
-void	init_entity_presets(t_list **list, char *path)
+void	init_entity_presets(t_list **list)
 {
-	t_entity_preset *preset;
-	char *line;
-	char **arr;
-	int fd;
-	int i = 0;
+//	t_entity_preset *preset;
 
-	if ((fd = open(path, O_RDONLY)) < -1)
-	{
-		ft_printf("Entity preset file: %s, coundlt be opened.\n", path);
-		return ;
-	}
-	get_next_line(fd, &line);
-	ft_strdel(&line);
-	while (get_next_line(fd, &line))
-	{
-		arr = ft_strsplit(line, '\t');
-		preset = new_entity_preset(arr[0]);
-		preset->scale = ft_atof(arr[1]);
-
-		if (ft_strcmp(arr[2], "hostile") == 0)
-			preset->mood = ENTITY_TYPE_HOSTILE;
-		else if (ft_strcmp(arr[2], "affable") == 0)
-			preset->mood = ENTITY_TYPE_FRIENDLY;
-		else if (ft_strcmp(arr[2], "neutral") == 0)
-			preset->mood = ENTITY_TYPE_NEUTRAL;
-
-		preset->health = ft_atoi(arr[3]);
-		preset->damage = ft_atoi(arr[4]);
-		preset->speed = ft_atoi(arr[5]);
-
-		if (ft_strcmp(arr[6], "melee") == 0)
-			preset->attack_style = ENTITY_STYLE_MELEE;
-		else if (ft_strcmp(arr[6], "ranged") == 0)
-			preset->attack_style = ENTITY_STYLE_RANGED;
-		else
-			preset->attack_style = ENTITY_STYLE_NONE;
-
-		preset->flying = ft_atoi(arr[7]);
-
-		ft_strdel(&line);
-		free_array(arr);
-		i++;
-		add_to_list(list, preset, sizeof(t_entity_preset));
-	}
-ft_printf("[init_entity_presets] %d entity presets read.\n", i);
+	add_to_list(list, new_entity_preset("Alfred"), sizeof(t_entity_preset));
+	add_to_list(list, new_entity_preset("Spooky"), sizeof(t_entity_preset));
+	add_to_list(list, new_entity_preset("Rift"), sizeof(t_entity_preset));
+	ft_printf("[init_entity_presets]\n");	
 }
 
 void	init_entity_editor(t_editor *editor)

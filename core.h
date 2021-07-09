@@ -139,13 +139,7 @@ struct				s_entity
 struct				s_entity_preset
 {
 	char			*name;
-	float			scale;
 	int			mood;
-	int			health;
-	int			damage;
-	int			speed;
-	int			attack_style;
-	int			flying;
 };
 
 struct				s_texture

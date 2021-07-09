@@ -1,9 +1,0 @@
-name		scale	mood	health	damage	speed	attack_style	flying
-Alfred		1.0	hostile	10	10	10	melee		1
-Fred		1.0	hostile	10	10	10	melee		0
-Carlos		1.0	hostile	10	10	10	ranged		0
-Shopkeeper	1.0	affable	-1	-1	-1	-1		0
-Healthbox	1.0	neutral	-1	-1	-1	-1		0
-Ammobox		1.0	neutral	-1	-1	-1	-1		0
-Niklas		1.0	hostile	100	-50	10	ranged		0
-Rift		1.0	neutral	100	0	0	-1		1

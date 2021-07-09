@@ -197,16 +197,16 @@ struct			s_editor
 // bui_elements
 	t_bui_element	*button_draw;
 	t_color_palette	palette;
-	t_texture	textures[1];
-	t_bui_element	**texture_buttons;
+//	t_texture	textures[1];
+//	t_bui_element	**texture_buttons;
 
 	t_map		map;
 	t_spawn		spawn;
 
-	t_texture	sprites[1];
+//	t_texture	sprites[1];
 //	t_bui_element	**sprite_buttons;
 
-	t_texture	entity_sprites[1];
+//	t_texture	entity_sprites[1];
 //	t_bui_element	**entity_sprite_buttons;
 
 	// New stuff
@@ -341,9 +341,9 @@ struct			s_editor
 	/////////////////////
 	// TEXTURES // added in functioin ; load_all_texture() / inits.c / line 68
 	/////////////////////
-	SDL_Surface **texture_textures;
+	SDL_Surface **texture_textures; // these are used for wall_textures, portal_textures, floor- & ceiling textures and wall sprite textures.
 	int	texture_amount;
-	SDL_Surface **sprite_textures;
+	SDL_Surface **sprite_textures; // these are used for the entity textures
 	int	sprite_amount;
 };
 
@@ -358,7 +358,7 @@ void			edit_window_init(t_editor *editor, t_bui_libui *libui);
 void			init_sector_editor(t_editor *editor);
 void			init_wall_editor(t_editor *editor);
 void			init_entity_editor(t_editor *doom);
-void			init_entity_presets(t_list **list, char *path);
+void			init_entity_presets(t_list **list);
 t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord);
 void			changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount);
 void			changer_prefab_events_float(t_changer_prefab *changer, float *current_value, float change_amount);

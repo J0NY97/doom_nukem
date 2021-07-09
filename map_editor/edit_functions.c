@@ -85,12 +85,11 @@ void	wall_render(t_editor *doom)
 	SDL_Surface	*temp_sprite;
 
 	curr = wall->sprites;
-	if (curr)
-		temp_sprite =
-			doom->sprite_textures[grid->modify_sprite->sprite_id];
 	while (curr)
 	{
 		sprite = curr->content;
+		temp_sprite =
+			doom->texture_textures[sprite->sprite_id];
 		sprite->coord = ui_init_coords(
 			scale * sprite->real_x, scale * sprite->real_y,
 			scale * sprite->scale, scale * sprite->scale);
@@ -440,16 +439,16 @@ void	sector_option(t_editor *editor, t_grid *grid)
 
 	// floor slope angle changer
 	changer_prefab_events(editor->slope_floor_angle_changer, &editor->grid.modify_sector->floor_slope, 1);
-	if (editor->grid.modify_sector->floor_slope >= 91)
-		editor->grid.modify_sector->floor_slope = 0;
-	else if (editor->grid.modify_sector->floor_slope < 0)
-		editor->grid.modify_sector->floor_slope = 90;
+	if (editor->grid.modify_sector->floor_slope > 45)
+		editor->grid.modify_sector->floor_slope = -45;
+	else if (editor->grid.modify_sector->floor_slope < -45)
+		editor->grid.modify_sector->floor_slope = 45;
 	// ceiling slope angle changer
 	changer_prefab_events(editor->slope_ceiling_angle_changer, &editor->grid.modify_sector->ceiling_slope, 1);
-	if (editor->grid.modify_sector->ceiling_slope >= 91)
-		editor->grid.modify_sector->ceiling_slope = 0;
-	else if (editor->grid.modify_sector->ceiling_slope < 0)
-		editor->grid.modify_sector->ceiling_slope = 90;
+	if (editor->grid.modify_sector->ceiling_slope > 45)
+		editor->grid.modify_sector->ceiling_slope = -45;
+	else if (editor->grid.modify_sector->ceiling_slope < -45)
+		editor->grid.modify_sector->ceiling_slope = 45;
 }
 
 // NOTE:
