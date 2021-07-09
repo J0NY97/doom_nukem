@@ -192,6 +192,7 @@ void	read_fandc(t_editor *editor, int fd)
 {
 	char		*line;
 	char		**arr;
+	char		**slope_arr;
 	t_sector	*sec;
 
 	while (get_next_line(fd, &line))
@@ -209,8 +210,13 @@ void	read_fandc(t_editor *editor, int fd)
 		sec->ceiling_texture = 1; //ft_atoi(arr[4]);
 		sec->floor_texture_scale = ft_atof(arr[5]);
 		sec->ceiling_texture_scale = ft_atof(arr[6]);
+		slope_arr = ft_strsplit(arr[7], ' ');
+		sec->floor_slope_wall_id = ft_atoi(slope_arr[0]);
+		sec->floor_slope = ft_atoi(slope_arr[1]);
+		sec->ceiling_slope_wall_id = ft_atoi(slope_arr[2]);
+		sec->ceiling_slope = ft_atoi(slope_arr[3]);
 		free_array(arr);
-		ft_printf("%d %d\n", sec->floor_height, sec->ceiling_height);
+		free_array(slope_arr);
 		ft_strdel(&line);
 	}
 	ft_strdel(&line);

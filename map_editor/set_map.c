@@ -126,7 +126,7 @@ char	*set_fandc(t_editor *editor)
 	t_sector *sec;
 	int id;
 
-	str = ft_sprintf("type:f&c\tid\tsec_id\tf_height\tc_height\tf_tex\tc_tex\tf_scale\tc_scale\n");
+	str = ft_sprintf("type:f&c\tid\tsec_id\tf_height\tc_height\tf_tex\tc_tex\tf_scale\tc_scale\tslope\n");
 	id = 0;
 	s = editor->grid.sectors;
 	while (s)
@@ -135,7 +135,9 @@ char	*set_fandc(t_editor *editor)
 
 		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.1f\t%.1f\t%d %d %d %d\n",
 				sec->id, sec->floor_height, sec->ceiling_height, sec->floor_texture, sec->ceiling_texture,
-				sec->floor_texture_scale, sec->ceiling_texture_scale, 0, 0, 0, 0);
+				sec->floor_texture_scale, sec->ceiling_texture_scale,
+				sec->floor_slope_wall_id, sec->floor_slope,
+				sec->ceiling_slope_wall_id, sec->ceiling_slope);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 
