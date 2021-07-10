@@ -56,7 +56,9 @@ SDL_Surface	*load_bxpm_to_surface(char *bxpm_file)
 	t_bxpm		*bxpm;
 
 	bxpm = ft_memalloc(sizeof(t_bxpm));
-	if (!read_bxpm(bxpm, bxpm_file))
+	int result = read_bxpm(bxpm, bxpm_file);
+	ft_printf("%d\n", result);
+	if (result != 1)
 	{
 		ft_printf("Couldnt open file: %s\n", bxpm_file);
 		return (NULL);
@@ -72,9 +74,8 @@ SDL_Surface	*load_bxpm_to_surface(char *bxpm_file)
 
 static void	load_all_textures(t_editor *editor)
 {
-	editor->texture_amount = 4;
+	editor->texture_amount = 7;
 	editor->texture_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->texture_amount);
-	/*
 	editor->texture_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood1.bxpm");
 	editor->texture_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/steel.bxpm");
 	editor->texture_textures[2] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wall_panel.bxpm");
@@ -82,11 +83,12 @@ static void	load_all_textures(t_editor *editor)
 	editor->texture_textures[4] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor_test.bxpm");
 	editor->texture_textures[5] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor_test(1).bxpm");
 	editor->texture_textures[6] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
-	*/
+	/*
 	editor->texture_textures[0] = load_image(GAME_PATH"resources/BMP/wood.bmp");
 	editor->texture_textures[1] = load_image(GAME_PATH"resources/BMP/steel.bmp");
 	editor->texture_textures[2] = load_image(GAME_PATH"resources/BMP/wall_panel.bmp");
 	editor->texture_textures[3] = load_image(GAME_PATH"resources/BMP/tile_floor.bmp");
+	*/
 }
 
 static void	load_all_sprites(t_editor *editor)
@@ -632,22 +634,33 @@ void	tabsystem_wall_editor_init(t_editor *editor)
 	t_xywh coord;
 	t_bui_element **elems;
 
-	coord = ui_init_coords(5, 20, editor->edit_toolbox_wall->position.w - 10, editor->edit_toolbox_wall->position.h - 25);
-	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall, "texture tabs", coord);
+	coord = ui_init_coords(5, 20,
+		editor->edit_toolbox_wall->position.w - 10,
+		editor->edit_toolbox_wall->position.h - 25);
+	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall,
+		"texture tabs", coord);
+	bui_set_element_color(editor->wall_tab->tabsystem, ((t_bui_element *)editor->wall_tab->tabsystem->parent)->color);
+	bui_set_element_flags(editor->wall_tab->tabsystem, BUI_ELEMENT_DONT_UPDATE_STATE);
 	elems = preset_tab_add(editor->wall_tab, "Wall Texture");
 	bui_set_element_color(elems[0], editor->palette.light_blue);
 	bui_set_element_color(elems[1], editor->palette.light_blue);
 	editor->wall_texture_view = elems[1]; 
+	bui_set_element_flags(editor->wall_texture_view,
+		BUI_ELEMENT_DONT_UPDATE_STATE);
 	free(elems);
 	elems = preset_tab_add(editor->wall_tab, "Portal Texture");
 	bui_set_element_color(elems[0], editor->palette.granny_smith_apple);
 	bui_set_element_color(elems[1], editor->palette.granny_smith_apple);
 	editor->portal_texture_view = elems[1];
+	bui_set_element_flags(editor->portal_texture_view,
+		BUI_ELEMENT_DONT_UPDATE_STATE);
 	free(elems);
 	elems = preset_tab_add(editor->wall_tab, "Wall Sprite");
 	bui_set_element_color(elems[0], editor->palette.peach_crayola);
 	bui_set_element_color(elems[1], editor->palette.peach_crayola);
 	editor->wall_sprite_view = elems[1]; 
+	bui_set_element_flags(editor->wall_sprite_view,
+		BUI_ELEMENT_DONT_UPDATE_STATE);
 	free(elems);
 }
 
@@ -843,6 +856,7 @@ void	init_entity_editor(t_editor *editor)
 		* 0.20f, editor->new_edit_window->position.h - 10);
 	editor->edit_toolbox_entity = bui_new_menu(editor->new_edit_window,
 		"Entity Toolbox", coord);
+	bui_set_element_color(editor->edit_toolbox_entity, editor->palette.elem_elem_elem);
 	// View menu
 	coord = ui_init_coords(editor->edit_toolbox_sector->position.x
 		+ editor->edit_toolbox_sector->position.w + 5, 5,
@@ -851,6 +865,7 @@ void	init_entity_editor(t_editor *editor)
 		editor->new_edit_window->position.h - 10);
 	editor->edit_view_entity = bui_new_menu(editor->new_edit_window,
 		"Entity View", coord);
+	bui_set_element_color(editor->edit_view_entity, editor->palette.elem_elem_elem);
 	// Drop down menu for all the entity preset types
 	coord = ui_init_coords(5, 20,
 		editor->edit_toolbox_entity->position.w - 10, 20);
@@ -861,6 +876,8 @@ void	init_entity_editor(t_editor *editor)
 		- 50, editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
 	editor->edit_entity_direction = bui_new_element(
 		editor->edit_toolbox_entity, "direction", coord);
+	bui_set_element_color(editor->edit_entity_direction, editor->palette.elem_elem);
+	bui_set_element_text_color(editor->edit_entity_direction, 0xffffffff);
 	// adding stuff to the parents
 	add_to_entity_editor(editor);
 }
