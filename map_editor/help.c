@@ -226,6 +226,7 @@ t_entity_preset	*new_entity_preset(char *name)
 	preset = ft_memalloc(sizeof(t_entity_preset));
 	preset->name = ft_strdup(name);
 	preset->mood = ENTITY_TYPE_NEUTRAL;
+	preset->texture = NULL;
 	return (preset);
 }
 

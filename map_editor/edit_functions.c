@@ -453,34 +453,24 @@ void	sector_option(t_editor *editor, t_grid *grid)
 		editor->grid.modify_sector->ceiling_slope = 45;
 }
 
-// NOTE:
-// fix when youre keeping entities.
 void	entity_option(t_editor *editor)
 {
+	t_list	*curr;
+
 	if (editor->grid.modify_entity == NULL)
 		return ;
-
 	editor->edit_toolbox_entity->show = 1;
 	editor->edit_view_entity->show = 1;
-
-	// NOTE: when you unselect the entity you should reset the active drop element
-	// 	unfortunately this does so, the element isnt always clicked, only once.
-	// NOTE: if the dropdown menu is open when you select another entity, it will automatically make that
-	// 	the last clicked entity type... bug or feature? ANOTHER NOTE: it doesnt matter if the bass is dropped.
-	if (preset_dropdown_events(editor->entity_type_drop))
-	{}
-	else
-		toggle_on_element_with_text(editor->entity_type_drop->elements, &editor->entity_type_drop->active, editor->grid.modify_entity->preset->name); 
+	// dorp
+	editor->entity_type_drop->active = bui_get_element_with_text_from_list(editor->entity_type_drop->elements,
+		editor->grid.modify_entity->preset->name);
+	preset_dropdown_events(editor->entity_type_drop);
 	if (editor->entity_type_drop->active != NULL)
 	{
-		t_entity_preset *preset = get_entity_preset_with_name(editor->entity_presets, editor->entity_type_drop->active->text);
-		if (preset != NULL)
-			editor->grid.modify_entity->preset = preset;
+		editor->grid.modify_entity->preset = get_entity_preset_with_name(editor->entity_presets,
+			editor->entity_type_drop->active->text);
 	}
-
 	// direction radio buttons
-	t_list *curr;
-
 	curr = editor->entity_direction_radio_buttons;
 	while (curr)
 	{
@@ -488,9 +478,22 @@ void	entity_option(t_editor *editor)
 			editor->active_direction_button = curr->content;
 		curr = curr->next;
 	}
-
 	only_one_button_toggled_at_a_time(editor->entity_direction_radio_buttons, &editor->active_direction_button);
 	editor->grid.modify_entity->direction = ft_atoi(editor->active_direction_button->text);
+	// draw selected entity
+	if (!editor->grid.modify_entity->preset->texture)
+		return ;
+	SDL_Surface *ent_tex = editor->grid.modify_entity->preset->texture;
+	SDL_Surface *dst_surf = editor->edit_view_entity->active_surface;
+	SDL_Rect rect;
+	float w_ratio = (float)dst_surf->w / (float)ent_tex->w;
+	float h_ratio = (float)dst_surf->h / (float)ent_tex->h;
+	float aspect = ft_fmin(w_ratio, h_ratio);
+	rect.w = ent_tex->w * aspect;
+	rect.h = ent_tex->h * aspect;
+	rect.x = (dst_surf->w - rect.w) / 2;
+	rect.y = (dst_surf->h - rect.h) / 2;
+	SDL_BlitScaled(editor->grid.modify_entity->preset->texture, NULL, editor->edit_view_entity->active_surface, &rect);
 }
 
 void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)

@@ -405,19 +405,22 @@ void	color_palette_init(t_color_palette *pal)
 
 t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord)
 {
-	t_xywh temp_coord;
-	t_changer_prefab *prefab;
+	t_changer_prefab	*prefab;
+	t_xywh			temp_coord;
 
 	prefab = ft_memalloc(sizeof(t_changer_prefab));
 	prefab->menu = bui_new_element(parent_menu, title, coord);
+	bui_set_element_flags(prefab->menu, BUI_ELEMENT_DONT_UPDATE_STATE);
 	temp_coord = ui_init_coords(0, coord.h - 20, 20, 20);
 	prefab->sub_button = bui_new_element(prefab->menu, "-", temp_coord);
 	temp_coord = ui_init_coords(coord.w - 20, coord.h - 20, 20, 20);
 	prefab->add_button = bui_new_element(prefab->menu, "+", temp_coord);
-	temp_coord.x = prefab->sub_button->position.x + prefab->sub_button->position.w;
+	temp_coord.x = prefab->sub_button->position.x
+		+ prefab->sub_button->position.w;
 	temp_coord.w = prefab->menu->position.w - temp_coord.x -
 		(prefab->menu->position.w - prefab->add_button->position.x);
 	prefab->value = bui_new_element(prefab->menu, "not set", temp_coord);
+	bui_set_element_flags(prefab->value, BUI_ELEMENT_DONT_UPDATE_STATE);
 	return (prefab);
 }
 
@@ -552,6 +555,7 @@ void	init_sector_editor(t_editor *editor)
 	coord = ui_init_coords(10, 20, editor->slope_edit_menu->position.w - 20, editor->slope_edit_menu->position.h * 0.5);
 	editor->slope_sector =
 		bui_new_element(editor->slope_edit_menu, "Sector", coord);
+	bui_set_element_flags(editor->slope_sector, BUI_ELEMENT_DONT_UPDATE_STATE);
 	// wall changer
 	// floor
 	coord = ui_init_coords(10, editor->slope_sector->position.y + editor->slope_sector->position.h + 10,
@@ -761,11 +765,24 @@ void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *
 
 void	init_entity_presets(t_list **list)
 {
-//	t_entity_preset *preset;
+	t_entity_preset *preset;
 
-	add_to_list(list, new_entity_preset("Alfred"), sizeof(t_entity_preset));
-	add_to_list(list, new_entity_preset("Spooky"), sizeof(t_entity_preset));
-	add_to_list(list, new_entity_preset("Rift"), sizeof(t_entity_preset));
+	preset = new_entity_preset("Alfred");
+	preset->texture = load_image(GAME_PATH"resources/BMP/alfred.bmp");
+	add_to_list(list, preset, sizeof(t_entity_preset));
+
+	preset = new_entity_preset("Spooky");
+	preset->texture = load_image(GAME_PATH"resources/BMP/spooky.bmp");
+	add_to_list(list, preset, sizeof(t_entity_preset));
+
+	preset = new_entity_preset("Rift");
+	preset->texture = load_image(GAME_PATH"resources/BMP/rift.bmp");
+	add_to_list(list, preset, sizeof(t_entity_preset));
+
+	preset = new_entity_preset("Something");
+	preset->texture = load_image(GAME_PATH"resources/BMP/wood.bmp");
+	add_to_list(list, new_entity_preset("Something"), sizeof(t_entity_preset));
+
 	ft_printf("[init_entity_presets]\n");	
 }
 

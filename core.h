@@ -140,6 +140,7 @@ struct				s_entity_preset
 {
 	char			*name;
 	int			mood;
+	SDL_Surface		*texture;
 };
 
 struct				s_texture
