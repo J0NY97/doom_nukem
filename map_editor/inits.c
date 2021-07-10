@@ -714,6 +714,10 @@ void	wall_sprite_tab_init(t_editor *editor)
 	bui_set_element_color(editor->sprite_scale_changer->sub_button, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->value, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->add_button, 0xff06D6A0);
+	coord = ui_init_coords(0, 0, 50, 20);
+	editor->sprite_changer = new_changer_prefab(editor->wall_sprite_view,
+		"Wall Sprite ID", coord);
+	editor->selected_sprite = 0;
 }
 
 void	wall_texture_buttons_init(t_editor *editor)

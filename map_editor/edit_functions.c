@@ -42,8 +42,8 @@ void	wall_render(t_editor *editor)
 	else
 		temp_texture = editor->texture_textures[wall->texture_id];
 
-	x_axis = ceil((float)dim.w / (temp_texture->w * (float)wall->texture_scale));
-	y_axis = ceil((float)dim.h / (temp_texture->h * (float)wall->texture_scale));
+	x_axis = ((float)dim.w / (temp_texture->w * (float)wall->texture_scale));
+	y_axis = ((float)dim.h / (temp_texture->h * (float)wall->texture_scale));
 
 	ft_printf("temp_texutre-> ; %d %d\n",temp_texture->w, temp_texture->h);
 	ft_printf("_axis ; %.1f %.1f\n", x_axis, y_axis);
@@ -83,7 +83,7 @@ void	wall_render(t_editor *editor)
 			(t_xywh){editor->grid.modify_sprite->coord.x,
 			editor->grid.modify_sprite->coord.y,
 			editor->grid.modify_sprite->coord.w,
-			editor->grid.modify_sprite->coord.h}, 0xff0000ff, 2);
+			editor->grid.modify_sprite->coord.h}, 0xff0000ff, 1);
 
 // finally blit the wall to the surface of the window
 	SDL_Surface	*ent_tex;
@@ -300,33 +300,22 @@ void	wall_option(t_editor *editor, t_bui_libui *libui)
 			if (editor->active_wall_sprite != NULL)
 				editor->grid.modify_sprite->sprite_id = ft_atoi(editor->active_wall_sprite->text);
 		}
-	
-		// TODO: this doesnt take into account the scale of the sprite, it assumes that the scale is default, which means
-		// 	if you mkae the scale bigger you can only choose the sprite from the top left corner of the sprite, and not
-		// 	the actual whole sprite render. (change the mouse_hover to multiply the position with the scale)
-
-		// Choose the sprite
-		if (mouse_hover(editor->libui, editor->edit_view_wall->position) &&
-		mouse_pressed(editor->libui, MKEY_LEFT))
+		// Choose sprite
+		if (editor->grid.modify_wall->sprites != NULL)
 		{
-			int view_x = editor->libui->mouse_x - editor->edit_view_wall->position.x - 50;
-			int view_y = editor->libui->mouse_y - editor->edit_view_wall->position.y - 50;
-			t_sprite *temp;
-
-			// Note: this function returns the sprite at that exact location, so you have to give
-			// 	the exact location of where you want it to look if there is a sprite. thus the way you have
-			// 	removed from the mouse_x and y the view location.
-			temp = get_sprite_from_list(&editor->grid.modify_wall->sprites, view_x, view_y);
-			if (temp != NULL)
-			{
-				ft_putstr("Sprite was successfully selected.\n");
-				editor->grid.modify_sprite = temp;
-			}
+			changer_prefab_events(editor->sprite_changer, &editor->selected_sprite, 1);
+			if (editor->selected_sprite >= get_list_len(&editor->grid.modify_wall->sprites))
+				editor->selected_sprite = 0;
+			else if (editor->selected_sprite < 0)
+				editor->selected_sprite = get_list_len(&editor->grid.modify_wall->sprites) - 1;
+			editor->grid.modify_sprite = get_nth_from_list(
+				&editor->grid.modify_wall->sprites,
+				editor->selected_sprite)->content;
 		}
 		// Move the sprite
 		if (editor->grid.modify_sprite != NULL)
 		{
-			float move_speed = 0.1;
+			float move_speed = 1;
 			if (key_pressed(libui, KEY_LEFT))
 				editor->grid.modify_sprite->real_x -= move_speed;
 			else if (key_pressed(libui, KEY_RIGHT))

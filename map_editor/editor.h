@@ -292,6 +292,8 @@ struct			s_editor
 	// temporary variable for the current wall sprite youre editing.
 	//t_wall_sprite *active_wall_sprite; // disabled?
 	t_changer_prefab *sprite_scale_changer;
+	t_changer_prefab *sprite_changer;
+	int		selected_sprite;
 
 	///////////////////
 	// Sector elements,
