@@ -59,7 +59,6 @@ void	wall_render(t_editor *editor)
 		}
 	}
 
-	/*
 // render the objects placed on the wall
 	t_list		*curr;
 	t_sprite	*sprite;
@@ -72,21 +71,20 @@ void	wall_render(t_editor *editor)
 		temp_sprite =
 			editor->texture_textures[sprite->sprite_id];
 		sprite->coord = ui_init_coords(
-			scale * sprite->real_x, scale * sprite->real_y,
-			scale * sprite->scale, scale * sprite->scale);
-		SDL_BlitScaled(temp_sprite, NULL, scaled_wall, &(SDL_Rect){
+			sprite->real_x, sprite->real_y,
+			sprite->scale * 10, sprite->scale * 10);
+		SDL_BlitScaled(temp_sprite, NULL, the_wall, &(SDL_Rect){
 			sprite->coord.x, sprite->coord.y,
 			sprite->coord.w, sprite->coord.h});
 		curr = curr->next;
 	}
 	if (editor->grid.modify_sprite != NULL)
-		draw_rect_border(scaled_wall,
+		draw_rect_border(the_wall,
 			(t_xywh){editor->grid.modify_sprite->coord.x,
 			editor->grid.modify_sprite->coord.y,
 			editor->grid.modify_sprite->coord.w,
 			editor->grid.modify_sprite->coord.h}, 0xff0000ff, 2);
 
-			*/
 // finally blit the wall to the surface of the window
 	SDL_Surface	*ent_tex;
 	SDL_Surface	*dst_surf;
@@ -101,7 +99,8 @@ void	wall_render(t_editor *editor)
 	rect.h = ent_tex->h * aspect;
 	rect.x = (dst_surf->w - rect.w) / 2;
 	rect.y = (dst_surf->h - rect.h) / 2;
-	SDL_BlitSurface(the_wall, NULL, editor->edit_view_wall->active_surface, &rect);
+	SDL_BlitScaled(the_wall, NULL,
+		editor->edit_view_wall->active_surface, &rect);
 	gfx_draw_rect(editor->edit_view_wall->active_surface, 0xff00ff00,
 		(t_xywh){rect.x, rect.y, rect.w, rect.h});
 	SDL_FreeSurface(the_wall);
