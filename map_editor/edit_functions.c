@@ -481,19 +481,23 @@ void	entity_option(t_editor *editor)
 	only_one_button_toggled_at_a_time(editor->entity_direction_radio_buttons, &editor->active_direction_button);
 	editor->grid.modify_entity->direction = ft_atoi(editor->active_direction_button->text);
 	// draw selected entity
+	SDL_Surface	*ent_tex;
+	SDL_Surface	*dst_surf;
+	SDL_Rect	rect;
+	float		aspect;
+
 	if (!editor->grid.modify_entity->preset->texture)
 		return ;
-	SDL_Surface *ent_tex = editor->grid.modify_entity->preset->texture;
-	SDL_Surface *dst_surf = editor->edit_view_entity->active_surface;
-	SDL_Rect rect;
-	float w_ratio = (float)dst_surf->w / (float)ent_tex->w;
-	float h_ratio = (float)dst_surf->h / (float)ent_tex->h;
-	float aspect = ft_fmin(w_ratio, h_ratio);
+	ent_tex = editor->grid.modify_entity->preset->texture;
+	dst_surf = editor->edit_view_entity->active_surface;
+	aspect = ft_fmin((float)dst_surf->w / (float)ent_tex->w,
+		(float)dst_surf->h / (float)ent_tex->h);
 	rect.w = ent_tex->w * aspect;
 	rect.h = ent_tex->h * aspect;
 	rect.x = (dst_surf->w - rect.w) / 2;
 	rect.y = (dst_surf->h - rect.h) / 2;
-	SDL_BlitScaled(editor->grid.modify_entity->preset->texture, NULL, editor->edit_view_entity->active_surface, &rect);
+	SDL_BlitScaled(editor->grid.modify_entity->preset->texture, NULL,
+		editor->edit_view_entity->active_surface, &rect);
 }
 
 void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)

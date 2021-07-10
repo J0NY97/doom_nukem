@@ -335,6 +335,7 @@ struct			s_editor
 
 	t_preset_dropdown *entity_type_drop;
 
+	t_bui_element	*edit_entity_direction;
 	t_list	*entity_direction_radio_buttons; // list of t_bui_element, these are the "radio" buttons for the direction of entity
 	t_bui_element *active_direction_button;
 

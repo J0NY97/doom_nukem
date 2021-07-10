@@ -768,71 +768,100 @@ void	init_entity_presets(t_list **list)
 	t_entity_preset *preset;
 
 	preset = new_entity_preset("Alfred");
+	preset->mood = ENTITY_TYPE_HOSTILE;
 	preset->texture = load_image(GAME_PATH"resources/BMP/alfred.bmp");
 	add_to_list(list, preset, sizeof(t_entity_preset));
 
 	preset = new_entity_preset("Spooky");
+	preset->mood = ENTITY_TYPE_HOSTILE;
 	preset->texture = load_image(GAME_PATH"resources/BMP/spooky.bmp");
 	add_to_list(list, preset, sizeof(t_entity_preset));
 
 	preset = new_entity_preset("Rift");
+	preset->mood = ENTITY_TYPE_HOSTILE;
 	preset->texture = load_image(GAME_PATH"resources/BMP/rift.bmp");
 	add_to_list(list, preset, sizeof(t_entity_preset));
 
-	preset = new_entity_preset("Something");
-	preset->texture = load_image(GAME_PATH"resources/BMP/wood.bmp");
-	add_to_list(list, new_entity_preset("Something"), sizeof(t_entity_preset));
+	preset = new_entity_preset("Object1");
+	preset->mood = ENTITY_TYPE_NEUTRAL;
+	preset->texture = load_image(GAME_PATH"resources/BMP/objects.bmp");
+	add_to_list(list, preset, sizeof(t_entity_preset));
+
+	preset = new_entity_preset("Object2");
+	preset->mood = ENTITY_TYPE_NEUTRAL;
+	preset->texture = load_image(GAME_PATH"resources/BMP/objects.bmp");
+	add_to_list(list, preset, sizeof(t_entity_preset));
+
+	preset = new_entity_preset("Object3");
+	preset->mood = ENTITY_TYPE_NEUTRAL;
+	preset->texture = load_image(GAME_PATH"resources/BMP/objects.bmp");
+	add_to_list(list, preset, sizeof(t_entity_preset));
+
+	preset = new_entity_preset("Object4");
+	preset->mood = ENTITY_TYPE_NEUTRAL;
+	preset->texture = load_image(GAME_PATH"resources/BMP/objects.bmp");
+	add_to_list(list, preset, sizeof(t_entity_preset));
 
 	ft_printf("[init_entity_presets]\n");	
 }
 
-void	init_entity_editor(t_editor *editor)
+void	add_to_entity_editor(t_editor *editor)
 {
-	t_xywh coord;
-
-	// Toolbox menu
-	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
-	editor->edit_toolbox_entity = bui_new_menu(editor->new_edit_window, "Entity Toolbox", coord);
-
-	// View menu
-	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
-			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
-			editor->new_edit_window->position.h - 10);
-	editor->edit_view_entity = bui_new_menu(editor->new_edit_window, "Entity View", coord);
-
-	// Drop down menu for all the entity preset types
-	coord = ui_init_coords(5, 20, editor->edit_toolbox_entity->position.w - 10, 20);
-	editor->entity_type_drop = bui_new_dropdown_preset(editor->edit_toolbox_entity, "Entity types", coord);
+	t_xywh	coord;
+	t_list	*curr;
 
 	// adding elements to the drop
-	t_list *curr;
-	t_entity_preset *preset;
-
 	curr = editor->entity_presets;
 	while (curr)
 	{
-		preset = curr->content;
-		preset_dropdown_add_element(editor->entity_type_drop, preset->name);
+		preset_dropdown_add_element(editor->entity_type_drop,
+			((t_entity_preset *)curr->content)->name);
 		curr = curr->next;
 	}
-
 	// radio buttons for entity direction
-	int start_x = editor->edit_toolbox_entity->position.w * 0.5f - 50; // this -50 == radio_parent->position.w * 0.5 
-	int start_y = editor->edit_toolbox_entity->position.h * 0.5f;
-	coord = ui_init_coords(start_x, start_y, 100, 100);
-	t_bui_element *radio_parent = bui_new_element(editor->edit_toolbox_entity, "direction", coord);
+	coord = ui_init_coords(editor->edit_toolbox_entity->position.w * 0.5f
+		- 50, editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
+	coord.x -= 7;
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			editor->edit_entity_direction, coord.x, 25, "270");
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			editor->edit_entity_direction, coord.x + 25, 25 + 25,
+			"0");
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			editor->edit_entity_direction, coord.x, 25 + 50, "90");
+	new_radio_button(&editor->entity_direction_radio_buttons,
+			editor->edit_entity_direction, coord.x - 25, 25 + 25,
+			"180");
+}
 
-	start_x = radio_parent->position.w * 0.5f - 7; // this -7 == radio_button->position.w * 0.5
-	start_y = 25; 
-	new_radio_button(&editor->entity_direction_radio_buttons,
-			radio_parent, start_x, start_y, "270");
-	new_radio_button(&editor->entity_direction_radio_buttons,
-			radio_parent, start_x + 25, start_y + 25, "0");
+void	init_entity_editor(t_editor *editor)
+{
+	t_xywh		coord;
 
-	new_radio_button(&editor->entity_direction_radio_buttons,
-			radio_parent, start_x, start_y + 50, "90");
-	new_radio_button(&editor->entity_direction_radio_buttons,
-			radio_parent, start_x - 25, start_y + 25, "180");
-
+	// Toolbox menu
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w
+		* 0.20f, editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_entity = bui_new_menu(editor->new_edit_window,
+		"Entity Toolbox", coord);
+	// View menu
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x
+		+ editor->edit_toolbox_sector->position.w + 5, 5,
+		editor->new_edit_window->position.w
+		- editor->edit_toolbox_sector->position.w - 15,
+		editor->new_edit_window->position.h - 10);
+	editor->edit_view_entity = bui_new_menu(editor->new_edit_window,
+		"Entity View", coord);
+	// Drop down menu for all the entity preset types
+	coord = ui_init_coords(5, 20,
+		editor->edit_toolbox_entity->position.w - 10, 20);
+	editor->entity_type_drop = bui_new_dropdown_preset(
+		editor->edit_toolbox_entity, "Entity types", coord);
+	// radio buttons for entity direction
+	coord = ui_init_coords(editor->edit_toolbox_entity->position.w * 0.5f
+		- 50, editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
+	editor->edit_entity_direction = bui_new_element(
+		editor->edit_toolbox_entity, "direction", coord);
+	// adding stuff to the parents
+	add_to_entity_editor(editor);
 }
 

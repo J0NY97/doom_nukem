@@ -242,7 +242,7 @@ void		read_entities(t_editor *doom, int fd)
 		ent->preset =
 			get_entity_preset_with_name(doom->entity_presets,
 			arr[1]);
-		ent->direction = ft_atoi(arr[4]);
+		ent->direction = ft_atoi(arr[5]);
 		add_to_list(&doom->grid.entities, ent, sizeof(t_entity));
 		free_array(arr);
 		ft_strdel(&line);
