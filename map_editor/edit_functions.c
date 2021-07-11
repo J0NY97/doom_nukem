@@ -12,7 +12,7 @@
 
 #include "editor.h"
 
-void	wall_render(t_editor *editor)
+void	new_wall_render(t_editor *editor)
 {
 	t_grid *grid;
 	t_wall *wall;
@@ -110,7 +110,7 @@ void	wall_render(t_editor *editor)
 
 
 // @Improvement: blit everything on the normal sized wall and then finally scale it up -.-
-void	old_wall_render(t_editor *doom)
+void	wall_render(t_editor *doom)
 {
 	t_grid *grid;
 	t_wall *wall;
@@ -210,13 +210,29 @@ void	old_wall_render(t_editor *doom)
 	SDL_FreeSurface(scaled_wall);
 }
 
-void	wall_texture_view_events(t_editor *editor)
+void	wall_texture_button_events(t_editor *editor)
 {
 	char	*temp;
-	// texture scale
-	changer_prefab_events_float(editor->texture_scale_changer, &editor->grid.modify_wall->texture_scale, 0.1f);
-	editor->grid.modify_wall->texture_scale = ft_fclamp(editor->grid.modify_wall->texture_scale, 0.1f, 64.0f);
-	// wall solidity tick box
+
+	temp = ft_itoa(editor->grid.modify_wall->texture_id);
+	if (only_one_button_toggled_at_a_time(editor->wall_texture_buttons,
+		&editor->active_wall_texture))
+	{}
+	else
+		toggle_on_element_with_text(editor->wall_texture_buttons,
+			&editor->active_wall_texture, temp);
+	ft_strdel(&temp);
+	if (editor->active_wall_texture != NULL)
+		editor->grid.modify_wall->texture_id =
+			ft_atoi(editor->active_wall_texture->text);
+}
+
+void	wall_texture_view_events(t_editor *editor)
+{
+	changer_prefab_events_float(editor->texture_scale_changer,
+		&editor->grid.modify_wall->texture_scale, 0.1f);
+	editor->grid.modify_wall->texture_scale =
+		ft_fclamp(editor->grid.modify_wall->texture_scale, 0.1f, 64.0f);
 	editor->wall_solid_tick->toggle = editor->grid.modify_wall->solid;
 	if (bui_button(editor->wall_solid_tick))
 	{
@@ -225,7 +241,6 @@ void	wall_texture_view_events(t_editor *editor)
 		else
 			editor->grid.modify_wall->solid = 1;
 	}
-	// wall portal tick box
 	if (editor->grid.modify_wall->neighbor != -1)
 		editor->wall_portal_tick->toggle = 1;
 	else
@@ -237,15 +252,7 @@ void	wall_texture_view_events(t_editor *editor)
 		else
 			add_portal(&editor->grid);
 	}
-	// texture buttons
-	temp = ft_itoa(editor->grid.modify_wall->texture_id);
-	if (only_one_button_toggled_at_a_time(editor->wall_texture_buttons, &editor->active_wall_texture))
-	{}
-	else
-		toggle_on_element_with_text(editor->wall_texture_buttons, &editor->active_wall_texture, temp);
-	ft_strdel(&temp);
-	if (editor->active_wall_texture != NULL)
-		editor->grid.modify_wall->texture_id = ft_atoi(editor->active_wall_texture->text);
+	wall_texture_button_events(editor);
 }
 
 void	portal_texture_view_events(t_editor *editor)
@@ -253,56 +260,25 @@ void	portal_texture_view_events(t_editor *editor)
 	char	*temp;
 
 	temp = ft_itoa(editor->grid.modify_wall->portal_texture_id);
-	if (only_one_button_toggled_at_a_time(editor->portal_texture_buttons, &editor->active_portal_texture))
+	if (only_one_button_toggled_at_a_time(editor->portal_texture_buttons,
+		&editor->active_portal_texture))
 	{}
 	else
-		toggle_on_element_with_text(editor->portal_texture_buttons, &editor->active_portal_texture, temp);
+		toggle_on_element_with_text(editor->portal_texture_buttons,
+			&editor->active_portal_texture, temp);
 	ft_strdel(&temp);
 	if (editor->active_portal_texture != NULL)
-		editor->grid.modify_wall->portal_texture_id = ft_atoi(editor->active_portal_texture->text);
+		editor->grid.modify_wall->portal_texture_id =
+			ft_atoi(editor->active_portal_texture->text);
 }
 
-void	wall_sprite_view_events(t_editor *editor)
+void	move_selected_sprite(t_editor *editor)
 {
-	char	*temp;
-	/// adding
-	if (bui_button(editor->add_wall_sprite_button))
-	{
-		t_sprite *sprite;
+	float	move_speed;
 
-		sprite = new_sprite();
-		sprite->sprite_id = 0; // default 0 texture
-		add_to_list(&editor->grid.modify_wall->sprites, sprite, sizeof(t_sprite));
-		editor->grid.modify_sprite = sprite;
-	}
-	// the button change thingy
+	move_speed = 1;
 	if (editor->grid.modify_sprite != NULL)
 	{
-		temp = ft_itoa(editor->grid.modify_sprite->sprite_id);
-		if (only_one_button_toggled_at_a_time(editor->wall_sprite_buttons, &editor->active_wall_sprite))
-		{}
-		else
-			toggle_on_element_with_text(editor->wall_sprite_buttons, &editor->active_wall_sprite, temp);
-		ft_strdel(&temp);
-		if (editor->active_wall_sprite != NULL)
-			editor->grid.modify_sprite->sprite_id = ft_atoi(editor->active_wall_sprite->text);
-	}
-	// Choose sprite
-	if (editor->grid.modify_wall->sprites != NULL)
-	{
-		changer_prefab_events(editor->sprite_changer, &editor->selected_sprite, 1);
-		if (editor->selected_sprite >= get_list_len(&editor->grid.modify_wall->sprites))
-			editor->selected_sprite = 0;
-		else if (editor->selected_sprite < 0)
-			editor->selected_sprite = get_list_len(&editor->grid.modify_wall->sprites) - 1;
-		editor->grid.modify_sprite = get_nth_from_list(
-			&editor->grid.modify_wall->sprites,
-			editor->selected_sprite)->content;
-	}
-	// Move the sprite
-	if (editor->grid.modify_sprite != NULL)
-	{
-		float move_speed = 1;
 		if (key_pressed(editor->libui, KEY_LEFT))
 			editor->grid.modify_sprite->real_x -= move_speed;
 		else if (key_pressed(editor->libui, KEY_RIGHT))
@@ -311,13 +287,74 @@ void	wall_sprite_view_events(t_editor *editor)
 			editor->grid.modify_sprite->real_y -= move_speed;
 		else if (key_pressed(editor->libui, KEY_DOWN))
 			editor->grid.modify_sprite->real_y += move_speed;
-		changer_prefab_events_float(editor->sprite_scale_changer, &editor->grid.modify_sprite->scale, 0.1f);
+		changer_prefab_events_float(editor->sprite_scale_changer,
+			&editor->grid.modify_sprite->scale, 0.1f);
 		if (bui_button(editor->remove_wall_sprite_button))
 		{
-			remove_from_sprites(&editor->grid.modify_wall->sprites, editor->grid.modify_sprite);
+			remove_from_sprites(&editor->grid.modify_wall->sprites,
+				editor->grid.modify_sprite);
 			editor->grid.modify_sprite = NULL;
 		}
 	}
+}
+
+void	change_selected_sprite(t_editor *editor)
+{
+	if (editor->grid.modify_wall->sprites != NULL)
+	{
+		changer_prefab_events(editor->sprite_changer,
+			&editor->selected_sprite, 1);
+		if (editor->selected_sprite
+			>= get_list_len(&editor->grid.modify_wall->sprites))
+			editor->selected_sprite = 0;
+		else if (editor->selected_sprite < 0)
+			editor->selected_sprite = get_list_len(
+				&editor->grid.modify_wall->sprites) - 1;
+		editor->grid.modify_sprite = get_nth_from_list(
+			&editor->grid.modify_wall->sprites,
+			editor->selected_sprite)->content;
+	}
+}
+
+void	change_selected_sprite_texture(t_editor *editor)
+{
+	char	*temp;
+
+	if (editor->grid.modify_sprite != NULL)
+	{
+		temp = ft_itoa(editor->grid.modify_sprite->sprite_id);
+		if (only_one_button_toggled_at_a_time(
+			editor->wall_sprite_buttons,
+			&editor->active_wall_sprite))
+		{}
+		else
+			toggle_on_element_with_text(
+				editor->wall_sprite_buttons,
+				&editor->active_wall_sprite, temp);
+		ft_strdel(&temp);
+		if (editor->active_wall_sprite != NULL)
+			editor->grid.modify_sprite->sprite_id =
+				ft_atoi(editor->active_wall_sprite->text);
+	}
+}
+
+void	wall_sprite_view_events(t_editor *editor)
+{
+	t_sprite	*sprite;
+
+	if (bui_button(editor->add_wall_sprite_button))
+	{
+
+		sprite = new_sprite();
+		sprite->sprite_id = 0;
+		add_to_list(&editor->grid.modify_wall->sprites, sprite,
+			sizeof(t_sprite));
+		editor->grid.modify_sprite = sprite;
+	}
+
+	change_selected_sprite_texture(editor);
+	change_selected_sprite(editor);
+	move_selected_sprite(editor);
 }
 
 void	wall_option(t_editor *editor)
@@ -359,24 +396,20 @@ t_wall	*get_longest_wall_from_list(t_list *list)
 	return (long_wall);
 }
 
-void	sector_option(t_editor *editor, t_grid *grid)
+void	sector_f_and_c_button_events(t_editor *editor)
 {
-	char *ceil_tex;
-	char *floor_tex;
-
-	editor->sector_texture_menu->show = 1;
-	editor->edit_toolbox_sector->show = 1;
-	editor->slope_edit_menu->show = 1;
-
-	// manually event handle these buttons.
 	t_list	*curr;
+	char	*ceil_tex;
+	char	*floor_tex;
 
 	ceil_tex = ft_itoa(editor->grid.modify_sector->ceiling_texture);
 	floor_tex = ft_itoa(editor->grid.modify_sector->floor_texture);
 	editor->active_ceiling_texture =
-		bui_get_element_with_text_from_list(editor->sector_texture_buttons, ceil_tex);
+		bui_get_element_with_text_from_list(
+		editor->sector_texture_buttons, ceil_tex);
 	editor->active_floor_texture =
-		bui_get_element_with_text_from_list(editor->sector_texture_buttons, floor_tex);
+		bui_get_element_with_text_from_list(
+		editor->sector_texture_buttons, floor_tex);
 	ft_strdel(&ceil_tex);
 	ft_strdel(&floor_tex);
 	curr = editor->sector_texture_buttons;
@@ -391,6 +424,19 @@ void	sector_option(t_editor *editor, t_grid *grid)
 		}
 		curr = curr->next;
 	}
+}
+
+void	sector_option(t_editor *editor, t_grid *grid)
+{
+
+	editor->sector_texture_menu->show = 1;
+	editor->edit_toolbox_sector->show = 1;
+	editor->slope_edit_menu->show = 1;
+
+	// manually event handle these buttons.
+	sector_f_and_c_button_events(editor);
+
+	t_list *curr;
 	t_xywh	c;
 
 	if (editor->active_floor_texture)
@@ -417,7 +463,6 @@ void	sector_option(t_editor *editor, t_grid *grid)
 	changer_prefab_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
 
 	// draw the sector and event handle the wall choosing.
-	// TODO: figureo ut how to fit any size of sector on the small element.
 	t_wall	*long_wall;
 	t_wall	*wall;
 	float	long_wall_dist;
@@ -462,7 +507,6 @@ void	sector_option(t_editor *editor, t_grid *grid)
 	t_wall *temp_wall; 
 	// floor wall id changer
 	changer_prefab_events(editor->slope_floor_wall_changer, &editor->grid.modify_sector->floor_slope_wall_id, 1);
-	// NOTE: you cant use clamp, because you want it to wrap around.
 	int wall_amount = get_list_len(&editor->grid.modify_sector->walls);
 	if (editor->grid.modify_sector->floor_slope_wall_id >= wall_amount)
 		editor->grid.modify_sector->floor_slope_wall_id = 0;
