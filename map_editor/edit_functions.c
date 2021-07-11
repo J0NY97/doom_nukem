@@ -367,6 +367,46 @@ void	sector_changer_prefab_events(t_editor *editor)
 		&editor->grid.modify_sector->ceiling_texture_scale, 0.1f);
 }
 
+void	floor_ceiling_slope_changer_prefab_events(t_editor *editor)
+{
+	changer_prefab_events(editor->slope_floor_angle_changer,
+		&editor->grid.modify_sector->floor_slope, 1);
+	if (editor->grid.modify_sector->floor_slope > 45)
+		editor->grid.modify_sector->floor_slope = -45;
+	else if (editor->grid.modify_sector->floor_slope < -45)
+		editor->grid.modify_sector->floor_slope = 45;
+	changer_prefab_events(editor->slope_ceiling_angle_changer,
+		&editor->grid.modify_sector->ceiling_slope, 1);
+	if (editor->grid.modify_sector->ceiling_slope > 45)
+		editor->grid.modify_sector->ceiling_slope = -45;
+	else if (editor->grid.modify_sector->ceiling_slope < -45)
+		editor->grid.modify_sector->ceiling_slope = 45;
+}
+
+t_vector	*get_scaled_line(SDL_Surface *surface, t_wall *wall, t_vector center, float scale)
+{
+	t_vector	new_orig;
+	t_vector	new_dest;
+	float		dist_to_middle_x;
+	float		dist_to_middle_y;
+
+	dist_to_middle_x = (surface->w / 2) - center.x;
+	dist_to_middle_y = (surface->h / 2) - center.y;
+	new_orig = wall->orig->pos;
+	new_dest = wall->dest->pos;
+	new_orig = (t_vector){new_orig.x - center.x, new_orig.y - center.y, 0};
+	new_orig = gfx_vector_multiply(new_orig, scale);
+	new_orig = (t_vector){new_orig.x + center.x, new_orig.y + center.y, 0};
+	new_dest = (t_vector){new_dest.x - center.x, new_dest.y - center.y, 0};
+	new_dest = gfx_vector_multiply(new_dest, scale);
+	new_dest = (t_vector){new_dest.x + center.x, new_dest.y + center.y, 0};
+	new_orig.x += dist_to_middle_x;
+	new_orig.y += dist_to_middle_y;
+	new_dest.x += dist_to_middle_x;
+	new_dest.y += dist_to_middle_y;
+	return ((t_vector []){new_orig, new_dest});
+}
+
 void	sector_option(t_editor *editor, t_grid *grid)
 {
 	editor->sector_texture_menu->show = 1;
@@ -381,6 +421,7 @@ void	sector_option(t_editor *editor, t_grid *grid)
 	t_list	*curr;
 	t_wall	*long_wall;
 	t_wall	*wall;
+	t_vector *v;
 	float	long_wall_dist;
 	float	scale_ratio;
 
@@ -390,65 +431,26 @@ void	sector_option(t_editor *editor, t_grid *grid)
 	scale_ratio = editor->slope_sector->position.h / long_wall_dist;
 
 	t_vector a = gfx_vector_divide(editor->grid.modify_sector->center, editor->grid.gap);
-	float dist_to_middle_x = (editor->slope_sector->position.w / 2) - a.x;
-	float dist_to_middle_y = (editor->slope_sector->position.h / 2) - a.y;
-	t_vector new_orig; 
-	t_vector new_dest;
 	while (curr)
 	{
 		wall = curr->content;
-
-		new_orig = wall->orig->pos;
-		new_dest = wall->dest->pos;
-
-		new_orig = (t_vector){new_orig.x - a.x, new_orig.y - a.y, 0};
-		new_orig = gfx_vector_multiply(new_orig, scale_ratio - 1);
-		new_orig = (t_vector){new_orig.x + a.x, new_orig.y + a.y, 0};
-
-		new_dest = (t_vector){new_dest.x - a.x, new_dest.y - a.y, 0};
-		new_dest = gfx_vector_multiply(new_dest, scale_ratio - 1);
-		new_dest = (t_vector){new_dest.x + a.x, new_dest.y + a.y, 0};
-
-		new_orig.x += dist_to_middle_x;
-		new_orig.y += dist_to_middle_y;
-		new_dest.x += dist_to_middle_x;
-		new_dest.y += dist_to_middle_y;
-		
-		gfx_draw_line(editor->slope_sector->active_surface,
-		editor->grid.modify_sector->color,
-		new_orig, new_dest);
+		v = get_scaled_line(editor->slope_sector->active_surface, wall, a, scale_ratio - 1.0f);
+		gfx_draw_line(editor->slope_sector->active_surface, editor->grid.modify_sector->color, v[0], v[1]);
 		curr = curr->next;
 	}
 	// the changers.
 	t_wall *temp_wall; 
+	int	wall_amount;
 	// floor wall id changer
 	changer_prefab_events(editor->slope_floor_wall_changer, &editor->grid.modify_sector->floor_slope_wall_id, 1);
-	int wall_amount = get_list_len(&editor->grid.modify_sector->walls);
+	wall_amount = get_list_len(&editor->grid.modify_sector->walls);
 	if (editor->grid.modify_sector->floor_slope_wall_id >= wall_amount)
 		editor->grid.modify_sector->floor_slope_wall_id = 0;
 	else if (editor->grid.modify_sector->floor_slope_wall_id < 0)
 		editor->grid.modify_sector->floor_slope_wall_id = wall_amount - 1;
 	temp_wall = get_nth_from_list(&editor->grid.modify_sector->walls, editor->grid.modify_sector->floor_slope_wall_id)->content;
-
-	new_orig = temp_wall->orig->pos;
-	new_dest = temp_wall->dest->pos;
-
-	new_orig = (t_vector){new_orig.x - a.x, new_orig.y - a.y, 0};
-	new_orig = gfx_vector_multiply(new_orig, scale_ratio - 1.5f);
-	new_orig = (t_vector){new_orig.x + a.x, new_orig.y + a.y, 0};
-
-	new_dest = (t_vector){new_dest.x - a.x, new_dest.y - a.y, 0};
-	new_dest = gfx_vector_multiply(new_dest, scale_ratio - 1.5f);
-	new_dest = (t_vector){new_dest.x + a.x, new_dest.y + a.y, 0};
-
-	new_orig.x += dist_to_middle_x;
-	new_orig.y += dist_to_middle_y;
-	new_dest.x += dist_to_middle_x;
-	new_dest.y += dist_to_middle_y;
-
-	gfx_draw_line(editor->slope_sector->active_surface,
-	0xff0000ff,
-	new_orig, new_dest);
+	v = get_scaled_line(editor->slope_sector->active_surface, temp_wall, a, scale_ratio - 1.5f);
+	gfx_draw_line(editor->slope_sector->active_surface, 0xff0000ff, v[0], v[1]);
 
 	// ceiling wall id changer
 	changer_prefab_events(editor->slope_ceiling_wall_changer, &editor->grid.modify_sector->ceiling_slope_wall_id, 1);
@@ -457,39 +459,10 @@ void	sector_option(t_editor *editor, t_grid *grid)
 	else if (editor->grid.modify_sector->ceiling_slope_wall_id < 0)
 		editor->grid.modify_sector->ceiling_slope_wall_id = wall_amount - 1;
 	temp_wall = get_nth_from_list(&editor->grid.modify_sector->walls, editor->grid.modify_sector->ceiling_slope_wall_id)->content;
+	v = get_scaled_line(editor->slope_sector->active_surface, temp_wall, a, scale_ratio - 0.5f);
+	gfx_draw_line(editor->slope_sector->active_surface, 0xff00ff00, v[0], v[1]);
 
-	new_orig = temp_wall->orig->pos;
-	new_dest = temp_wall->dest->pos;
-
-	new_orig = (t_vector){new_orig.x - a.x, new_orig.y - a.y, 0};
-	new_orig = gfx_vector_multiply(new_orig, scale_ratio - 0.5f);
-	new_orig = (t_vector){new_orig.x + a.x, new_orig.y + a.y, 0};
-
-	new_dest = (t_vector){new_dest.x - a.x, new_dest.y - a.y, 0};
-	new_dest = gfx_vector_multiply(new_dest, scale_ratio - 0.5f);
-	new_dest = (t_vector){new_dest.x + a.x, new_dest.y + a.y, 0};
-
-	new_orig.x += dist_to_middle_x;
-	new_orig.y += dist_to_middle_y;
-	new_dest.x += dist_to_middle_x;
-	new_dest.y += dist_to_middle_y;
-
-	gfx_draw_line(editor->slope_sector->active_surface,
-	0xff00ff00,
-	new_orig, new_dest);
-
-	// floor slope angle changer
-	changer_prefab_events(editor->slope_floor_angle_changer, &editor->grid.modify_sector->floor_slope, 1);
-	if (editor->grid.modify_sector->floor_slope > 45)
-		editor->grid.modify_sector->floor_slope = -45;
-	else if (editor->grid.modify_sector->floor_slope < -45)
-		editor->grid.modify_sector->floor_slope = 45;
-	// ceiling slope angle changer
-	changer_prefab_events(editor->slope_ceiling_angle_changer, &editor->grid.modify_sector->ceiling_slope, 1);
-	if (editor->grid.modify_sector->ceiling_slope > 45)
-		editor->grid.modify_sector->ceiling_slope = -45;
-	else if (editor->grid.modify_sector->ceiling_slope < -45)
-		editor->grid.modify_sector->ceiling_slope = 45;
+	floor_ceiling_slope_changer_prefab_events(editor);
 }
 
 void	draw_selected_entity_texture(t_editor *editor)
