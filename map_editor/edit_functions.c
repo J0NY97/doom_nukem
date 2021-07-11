@@ -130,27 +130,14 @@ void	wall_render(t_editor *doom)
 		doom->edit_view_wall->position.h}, 0xff000000);
 	grid = &doom->grid;
 	wall = grid->modify_wall;
-	// get w from the difference from the orig -> dest x
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * doom->scale; // NOTE: this '* doom->scale', means what one value on the grid is in the game
-	// get h from the sector it is a part of
-	// get the sector that the wall is a part of... and then take the height from it
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * doom->scale;
 	sec = get_sector_with_wall(&doom->grid.sectors, wall);
 	dim.h = sec->ceiling_height - sec->floor_height;
-	// all of these values needs to  have a zoom value depending on which is...
-	//	more the x or the y so that we can see the whole wall...
-	//	MAYBE: but if you after that want to zoom you can??
-	dim.x = 50; // offsets, because of the position of the wall on the surface of the view element.
+	dim.x = 50;
 	dim.y = 50;
 
-	// render wall with the texture
-	if (wall->texture_id < 0 || wall->texture_id >= doom->texture_amount) // this is just to check that the wall has a texture id between 0 and the maximum loaded textures, otherwise sgflt
-	{
-		// TODO: instaed of doing this every time should we do this in the getter, or if it once comes here you just put the texture id to default value and not just select the default id texture every loop.
-		ft_putstr("[wall_render]\n");
-		ft_printf("[Error] Wall Texture ID : %d is not valid!\n", wall->texture_id);
-		ft_putstr("Defaulting to texture id : 0\n");
+	if (wall->texture_id < 0 || wall->texture_id >= doom->texture_amount)
 		temp_texture = doom->texture_textures[0];
-	}
 	else
 		temp_texture = doom->texture_textures[wall->texture_id];
 	texture.x = 0;
@@ -158,7 +145,6 @@ void	wall_render(t_editor *doom)
 	texture.w = temp_texture->w; 
 	texture.h = temp_texture->h;
 
-	// how many of the textures can fit on each axis
 	x_axis = ceil((float)dim.w / (float)doom->grid.modify_wall->texture_scale);
 	y_axis = ceil((float)dim.h / (float)doom->grid.modify_wall->texture_scale);
 
@@ -203,10 +189,23 @@ void	wall_render(t_editor *doom)
 			doom->grid.modify_sprite->coord.h}, 0xff0000ff, 2);
 
 // finally blit the wall to the surface of the window
-	SDL_BlitSurface(scaled_wall, NULL, doom->edit_view_wall->active_surface,
-		&(SDL_Rect){dim.x, dim.y, dim.w * scale, dim.h * scale});
+	SDL_Surface	*ent_tex;
+	SDL_Surface	*dst_surf;
+	SDL_Rect	rect;
+	float		aspect;
+
+	ent_tex = scaled_wall;
+	dst_surf = doom->edit_view_wall->active_surface;
+	aspect = ft_fmin((float)dst_surf->w / (float)ent_tex->w,
+		(float)dst_surf->h / (float)ent_tex->h);
+	rect.w = ent_tex->w * aspect;
+	rect.h = ent_tex->h * aspect;
+	rect.x = (dst_surf->w - rect.w) / 2;
+	rect.y = (dst_surf->h - rect.h) / 2;
+	SDL_BlitScaled(scaled_wall, NULL,
+		doom->edit_view_wall->active_surface, &rect);
 	gfx_draw_rect(doom->edit_view_wall->active_surface, 0xff00ff00,
-		(t_xywh){dim.x, dim.y, dim.w * scale, dim.h * scale});
+		(t_xywh){rect.x, rect.y, rect.w, rect.h});
 	SDL_FreeSurface(scaled_wall);
 }
 
