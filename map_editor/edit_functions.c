@@ -407,61 +407,68 @@ t_vector	*get_scaled_line(SDL_Surface *surface, t_wall *wall, t_vector center, f
 	return ((t_vector []){new_orig, new_dest});
 }
 
-void	sector_option(t_editor *editor, t_grid *grid)
+void	floor_ceiling_id_changer_prefab_events(t_editor *editor)
+{
+	int	wall_amount;
+
+	wall_amount = get_list_len(&editor->grid.modify_sector->walls);
+	changer_prefab_events(editor->slope_floor_wall_changer,
+		&editor->grid.modify_sector->floor_slope_wall_id, 1);
+	if (editor->grid.modify_sector->floor_slope_wall_id >= wall_amount)
+		editor->grid.modify_sector->floor_slope_wall_id = 0;
+	else if (editor->grid.modify_sector->floor_slope_wall_id < 0)
+		editor->grid.modify_sector->floor_slope_wall_id =
+			wall_amount - 1;
+	changer_prefab_events(editor->slope_ceiling_wall_changer,
+		&editor->grid.modify_sector->ceiling_slope_wall_id, 1);
+	if (editor->grid.modify_sector->ceiling_slope_wall_id >= wall_amount)
+		editor->grid.modify_sector->ceiling_slope_wall_id = 0;
+	else if (editor->grid.modify_sector->ceiling_slope_wall_id < 0)
+		editor->grid.modify_sector->ceiling_slope_wall_id =
+			wall_amount - 1;
+}
+
+void	draw_sector_viewer(t_editor *editor, SDL_Surface *surf)
+{
+	t_vector	*v;
+	t_vector	center;
+	t_list		*curr;
+	float		scale;
+
+	curr = editor->grid.modify_sector->walls;
+	scale = editor->slope_sector->position.h
+		/ get_wall_length(get_longest_wall_from_list(curr));
+	center = gfx_vector_divide(editor->grid.modify_sector->center,
+		editor->grid.gap);
+	while (curr)
+	{
+		v = get_scaled_line(surf, curr->content, center, scale - 1.0f);
+		gfx_draw_line(surf, editor->grid.modify_sector->color,
+			v[0], v[1]);
+		curr = curr->next;
+	}
+	v = get_scaled_line(surf, 
+		get_nth_from_list(&editor->grid.modify_sector->walls,
+		editor->grid.modify_sector->floor_slope_wall_id)->content,
+		center, scale - 1.5f);
+	gfx_draw_line(surf, 0xff0000ff, v[0], v[1]);
+	v = get_scaled_line(surf, 
+		get_nth_from_list(&editor->grid.modify_sector->walls,
+		editor->grid.modify_sector->ceiling_slope_wall_id)->content,
+		center, scale - 0.5f);
+	gfx_draw_line(surf, 0xff00ff00, v[0], v[1]);
+}
+
+void	sector_option(t_editor *editor)
 {
 	editor->sector_texture_menu->show = 1;
 	editor->edit_toolbox_sector->show = 1;
 	editor->slope_edit_menu->show = 1;
-
 	sector_f_and_c_button_events(editor);
 	draw_selected_f_and_c_button(editor);
 	sector_changer_prefab_events(editor);
-
-	// draw the sector and event handle the wall choosing.
-	t_list	*curr;
-	t_wall	*long_wall;
-	t_wall	*wall;
-	t_vector *v;
-	float	long_wall_dist;
-	float	scale_ratio;
-
-	curr = editor->grid.modify_sector->walls;
-	long_wall = get_longest_wall_from_list(curr);
-	long_wall_dist = gfx_distance(long_wall->orig->pos, long_wall->dest->pos);
-	scale_ratio = editor->slope_sector->position.h / long_wall_dist;
-
-	t_vector a = gfx_vector_divide(editor->grid.modify_sector->center, editor->grid.gap);
-	while (curr)
-	{
-		wall = curr->content;
-		v = get_scaled_line(editor->slope_sector->active_surface, wall, a, scale_ratio - 1.0f);
-		gfx_draw_line(editor->slope_sector->active_surface, editor->grid.modify_sector->color, v[0], v[1]);
-		curr = curr->next;
-	}
-	// the changers.
-	t_wall *temp_wall; 
-	int	wall_amount;
-	// floor wall id changer
-	changer_prefab_events(editor->slope_floor_wall_changer, &editor->grid.modify_sector->floor_slope_wall_id, 1);
-	wall_amount = get_list_len(&editor->grid.modify_sector->walls);
-	if (editor->grid.modify_sector->floor_slope_wall_id >= wall_amount)
-		editor->grid.modify_sector->floor_slope_wall_id = 0;
-	else if (editor->grid.modify_sector->floor_slope_wall_id < 0)
-		editor->grid.modify_sector->floor_slope_wall_id = wall_amount - 1;
-	temp_wall = get_nth_from_list(&editor->grid.modify_sector->walls, editor->grid.modify_sector->floor_slope_wall_id)->content;
-	v = get_scaled_line(editor->slope_sector->active_surface, temp_wall, a, scale_ratio - 1.5f);
-	gfx_draw_line(editor->slope_sector->active_surface, 0xff0000ff, v[0], v[1]);
-
-	// ceiling wall id changer
-	changer_prefab_events(editor->slope_ceiling_wall_changer, &editor->grid.modify_sector->ceiling_slope_wall_id, 1);
-	if (editor->grid.modify_sector->ceiling_slope_wall_id >= wall_amount)
-		editor->grid.modify_sector->ceiling_slope_wall_id = 0;
-	else if (editor->grid.modify_sector->ceiling_slope_wall_id < 0)
-		editor->grid.modify_sector->ceiling_slope_wall_id = wall_amount - 1;
-	temp_wall = get_nth_from_list(&editor->grid.modify_sector->walls, editor->grid.modify_sector->ceiling_slope_wall_id)->content;
-	v = get_scaled_line(editor->slope_sector->active_surface, temp_wall, a, scale_ratio - 0.5f);
-	gfx_draw_line(editor->slope_sector->active_surface, 0xff00ff00, v[0], v[1]);
-
+	floor_ceiling_id_changer_prefab_events(editor);
+	draw_sector_viewer(editor, editor->slope_sector->active_surface);
 	floor_ceiling_slope_changer_prefab_events(editor);
 }
 
@@ -486,53 +493,56 @@ void	draw_selected_entity_texture(t_editor *editor)
 		editor->edit_view_entity->active_surface, &rect);
 }
 
-void	entity_option(t_editor *editor)
+void	entity_drop_down_event(t_editor *editor)
 {
-	t_list	*curr;
-
-	if (editor->grid.modify_entity == NULL)
-		return ;
-	editor->edit_toolbox_entity->show = 1;
-	editor->edit_view_entity->show = 1;
-	// dorp
-	editor->entity_type_drop->active = bui_get_element_with_text_from_list(editor->entity_type_drop->elements,
+	editor->entity_type_drop->active = bui_get_element_with_text_from_list(
+		editor->entity_type_drop->elements,
 		editor->grid.modify_entity->preset->name);
 	preset_dropdown_events(editor->entity_type_drop);
 	if (editor->entity_type_drop->active != NULL)
 	{
-		editor->grid.modify_entity->preset = get_entity_preset_with_name(editor->entity_presets,
+		editor->grid.modify_entity->preset =
+			get_entity_preset_with_name(editor->entity_presets,
 			editor->entity_type_drop->active->text);
 	}
-	// direction radio buttons
+}
+
+void	entity_option(t_editor *editor)
+{
+	t_list	*curr;
+
+	editor->edit_toolbox_entity->show = 1;
+	editor->edit_view_entity->show = 1;
+	entity_drop_down_event(editor);
 	curr = editor->entity_direction_radio_buttons;
 	while (curr)
 	{
-		if (ft_atoi(((t_bui_element *)curr->content)->text) == editor->grid.modify_entity->direction)
+		if (ft_atoi(((t_bui_element *)curr->content)->text)
+			== editor->grid.modify_entity->direction)
 			editor->active_direction_button = curr->content;
 		curr = curr->next;
 	}
-	only_one_button_toggled_at_a_time(editor->entity_direction_radio_buttons, &editor->active_direction_button);
-	editor->grid.modify_entity->direction = ft_atoi(editor->active_direction_button->text);
-	// draw selected entity
+	only_one_button_toggled_at_a_time(
+		editor->entity_direction_radio_buttons,
+		&editor->active_direction_button);
+	editor->grid.modify_entity->direction =
+		ft_atoi(editor->active_direction_button->text);
 	draw_selected_entity_texture(editor);
 }
 
-void	selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui)
+void	selected_option_menu(t_editor *doom, t_grid *grid)
 {
 	doom->sector_texture_menu->show = 0;
 	doom->edit_toolbox_sector->show = 0;
 	doom->slope_edit_menu->show = 0;
-
 	doom->edit_view_wall->show = 0;
 	doom->edit_toolbox_wall->show = 0;
-
 	doom->edit_toolbox_entity->show = 0;
 	doom->edit_view_entity->show = 0;
-
 	if (grid->modify_wall != NULL)
 		wall_option(doom);
 	else if (grid->modify_sector != NULL)
-		sector_option(doom, grid);
+		sector_option(doom);
 	else if (grid->modify_entity != NULL)
 		entity_option(doom);
 }

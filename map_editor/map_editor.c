@@ -3,7 +3,6 @@
 // NOTE: map_editor makes new window and libui.
 void	map_editor(char *map)
 {
-	ft_printf("%d", sizeof(unsigned char));
 	t_editor	*editor;
 	t_bui_libui	*libui;
 
@@ -104,7 +103,7 @@ ft_printf("Starting to loop!\n");
 			draw_selected_sector(editor, &editor->grid);
 			draw_selected_entity(&editor->grid);
 			selection_mode_buttons(editor, &editor->grid);
-			selected_option_menu(editor, &editor->grid, libui);
+			selected_option_menu(editor, &editor->grid);
 		}
 		unselect_selected(editor, &editor->grid);
 		// boundaries(doom, &doom->grid);

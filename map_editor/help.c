@@ -46,6 +46,11 @@ int	wall_compare(t_wall *v1, t_wall *v2)
 	return (0);
 }
 
+float	get_wall_length(t_wall *wall)
+{
+	return (gfx_distance(wall->orig->pos, wall->dest->pos));
+}
+
 t_list	*get_nth_from_list(t_list **list, int index)
 {
 	int	count;

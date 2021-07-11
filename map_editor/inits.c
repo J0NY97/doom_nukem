@@ -91,11 +91,22 @@ static void	load_all_textures(t_editor *editor)
 	*/
 }
 
+SDL_Surface	*yoink_from_surface(SDL_Surface *image, t_xywh coord)
+{
+	SDL_Surface *surface;
+	
+	surface = create_surface(coord.w, coord.h);
+	SDL_BlitSurface(image, &(SDL_Rect){coord.x, coord.y, coord.w, coord.h},
+		surface, NULL);
+	return (surface);
+}
+
 static void	load_all_sprites(t_editor *editor)
 {
 	editor->sprite_amount = 2;
 	editor->sprite_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->sprite_amount);
-	editor->sprite_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/spooky.bxpm");
+	editor->sprite_textures[0] = yoink_from_surface(load_bxpm_to_surface(GAME_PATH"resources/BXPM/spooky.bxpm"),
+		(t_xywh){25, 193, 139 - 25, 377 - 193});
 	editor->sprite_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/alfred.bxpm");
 }
 
@@ -241,138 +252,154 @@ void	toolbox_init(t_editor *editor)
 	selection_mode_buttons_init(editor);
 }
 
-void info_area_init(t_editor *editor)
+void	init_info_box(t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
-	coord.x = 10;
-	coord.y = 150;
-	coord.w = editor->toolbox->position.w - 20; 
-	coord.h = 250;
-	editor->info_area = bui_new_element(editor->toolbox, "info area", coord);
-	editor->info_area->update_state = 0;
-	bui_set_element_color(editor->info_area, editor->palette.elem_elem);
-	editor->hover_info = bui_new_element(editor->info_area, "hover info", (t_xywh) {10, 20, 100, 50});
-	bui_set_element_color(editor->hover_info, editor->info_area->color);
-	editor->selected_sector_info = bui_new_element(editor->info_area, "selected sector info", (t_xywh) {10, 75, 100, 50});
-	editor->selected_sector_info->text_color = 0xffffffff;
-	bui_set_element_color(editor->selected_sector_info, editor->info_area->color);
-	editor->selected_vector_info = bui_new_element(editor->info_area, "selected vector info", (t_xywh) {10, 130, 100, 55});
-	bui_set_element_color(editor->selected_vector_info, editor->info_area->color);
-	coord = ui_init_coords(editor->info_area->position.w - 110, 100, 100, 40);
-	editor->scaler = new_changer_prefab(editor->info_area, "Map Scale", coord);
 	coord = ui_init_coords(10, 200, editor->info_area->position.w - 20, 40);
 	editor->info_box = bui_new_element(editor->info_area, NULL, coord);
 	editor->info_box->update_state = 0;
 	editor->info_box->text_x = 2;
 	editor->info_box->text_color = 0xffffffff;
 	bui_set_element_color(editor->info_box, editor->info_area->color);
-	bui_set_element_border(editor->info_box, 1, editor->palette.elem_elem_elem);
-	add_text_to_info_box(editor, "testing, should be removed after 5 sec after adding");
+	bui_set_element_border(editor->info_box, 1, editor->palette.light_gray);
 }
 
+void	info_area_init(t_editor *editor)
+{
+	t_xywh coord;
+
+	coord = ui_init_coords(10, 150, editor->toolbox->position.w - 20, 250);
+	editor->info_area = bui_new_element(editor->toolbox, NULL, coord);
+	editor->info_area->update_state = 0;
+	bui_set_element_color(editor->info_area, editor->palette.elem_elem);
+	coord = ui_init_coords(10, 20, 100, 50);
+	editor->hover_info = bui_new_element(editor->info_area, NULL, coord);
+	bui_set_element_color(editor->hover_info, editor->info_area->color);
+	coord = ui_init_coords(10, 75, 100, 50);
+	editor->selected_sector_info = bui_new_element(editor->info_area,
+		NULL, coord);
+	editor->selected_sector_info->text_color = 0xffffffff;
+	bui_set_element_color(editor->selected_sector_info,
+		editor->info_area->color);
+	coord = ui_init_coords(10, 130, 100, 55);
+	editor->selected_vector_info = bui_new_element(editor->info_area,
+		NULL, coord);
+	bui_set_element_color(editor->selected_vector_info,
+		editor->info_area->color);
+	coord = ui_init_coords(editor->info_area->position.w - 110, 100, 100, 40);
+	editor->scaler = new_changer_prefab(editor->info_area, "Map Scale", coord);
+	init_info_box(editor);
+}
+
+/*
+ ** !!!!!!!!! IMPORTANT !!!!!!!!!!!!!!!!
+ ** WE DO NOT FREE THE TEXT_ELEM HERE!!!!!!!!
+ ** REMEMBER TO FREE EVEYRTHING IN THE BUI QUITTER
+*/
 t_bui_element	*new_map_type_tickbox(t_bui_element *parent, char *text, t_xywh coord)
 {
-	t_bui_element *tick;
-	t_bui_element *text_elem;
-	t_xywh text_coord;
+	t_bui_element	*tick;
+	t_xywh		text_coord;
 
 	text_coord = coord;
 	text_coord.w = 50; 
-	text_elem = bui_new_element(parent, text, text_coord);
+	bui_new_element(parent, text, text_coord);
 	coord.x += text_coord.w; 
-	tick = bui_new_element(parent, " ", coord);
-	bui_set_element_image_from_path(tick, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/tick_box_off.png", NULL);
-	bui_set_element_image_from_path(tick, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/tick_box_hover.png", NULL);
-	bui_set_element_image_from_path(tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
+	tick = bui_new_element(parent, NULL, coord);
+	bui_set_element_image_to_states(tick, 
+		ROOT_PATH"ui/ui_images/tick_box_off.png", 
+		ROOT_PATH"ui/ui_images/tick_box_hover.png",
+		ROOT_PATH"ui/ui_images/tick_box_on.png");
 	return (tick);
 }
 
 void	draw_button_init(int button_w, int gap, t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
-	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20, button_w, button_w);
+	coord = ui_init_coords((0 * (button_w + gap)) + gap, 20,
+		button_w, button_w);
 	editor->button_draw = bui_new_element(editor->draw_mode, "draw", coord);
 	editor->button_draw->text_y = -20;
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_DEFAULT,
-			ROOT_PATH"ui/ui_images/draw_mode.png", NULL);
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_HOVER,
-			ROOT_PATH"ui/ui_images/draw_mode_click.png", NULL);
-	bui_set_element_image_from_path(editor->button_draw, ELEMENT_CLICK,
-			ROOT_PATH"ui/ui_images/draw_mode_click.png", NULL);
-	add_to_list(&editor->select_mode_buttons, editor->button_draw, sizeof(t_bui_element));
+	bui_set_element_image_to_states(editor->button_draw,
+			ROOT_PATH"ui/ui_images/draw_mode.png", 
+			ROOT_PATH"ui/ui_images/draw_mode_click.png",
+			ROOT_PATH"ui/ui_images/draw_mode_click.png");
+	add_to_list(&editor->select_mode_buttons,
+		editor->button_draw, sizeof(t_bui_element));
 }
 
 void	map_type_tickbox_init(int gap, t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
 	coord = ui_init_coords(editor->button_save->position.x +
 			editor->button_save->position.w + gap,
 			editor->button_save->position.y - gap, 20, 20);
-	editor->endless_tickbox = new_map_type_tickbox(editor->other_mode, "endless", coord);
-
+	editor->endless_tickbox = new_map_type_tickbox(editor->other_mode,
+		"endless", coord);
 	coord = ui_init_coords(editor->button_save->position.x +
 			editor->button_save->position.w + gap,
 			editor->button_save->position.y + gap, 20, 20);
-	editor->story_tickbox = new_map_type_tickbox(editor->other_mode, "story", coord);
+	editor->story_tickbox = new_map_type_tickbox(editor->other_mode,
+		"story", coord);
 	if (ft_strendswith(editor->fullpath, ".story") == 0)
 		editor->active_map_type = editor->story_tickbox;
 	else
 		editor->active_map_type = editor->endless_tickbox;
-	add_to_list(&editor->map_type_tickboxes, editor->endless_tickbox, sizeof(t_bui_element));
-	add_to_list(&editor->map_type_tickboxes, editor->story_tickbox, sizeof(t_bui_element));
+	add_to_list(&editor->map_type_tickboxes,
+		editor->endless_tickbox, sizeof(t_bui_element));
+	add_to_list(&editor->map_type_tickboxes,
+		editor->story_tickbox, sizeof(t_bui_element));
 }
 
 void	button_init_other(int button_w, int gap, t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
 	coord = ui_init_coords(gap, 20, 100, 20);
-	editor->map_name_input = bui_new_element(editor->other_mode, editor->mapname, coord);
+	editor->map_name_input =
+		bui_new_element(editor->other_mode, editor->mapname, coord);
 	editor->map_name_input->text_x = 5;
 
 	coord = ui_init_coords(editor->map_name_input->position.x +
-			editor->map_name_input->position.w + gap, 20, button_w, button_w);
-	editor->button_save = bui_new_element(editor->other_mode, "save", coord);
+		editor->map_name_input->position.w + gap, 20,
+		button_w, button_w);
+	editor->button_save = bui_new_element(editor->other_mode,
+		"save", coord);
 	editor->button_save->text_y = -20;
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_DEFAULT,
-			ROOT_PATH"ui/ui_images/save_button.png", NULL);
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_HOVER,
-			ROOT_PATH"ui/ui_images/save_button_click.png", NULL);
-	bui_set_element_image_from_path(editor->button_save, ELEMENT_CLICK,
-			ROOT_PATH"ui/ui_images/save_button_click.png", NULL);
+	bui_set_element_image_to_states(editor->button_save,
+		ROOT_PATH"ui/ui_images/save_button.png",
+		ROOT_PATH"ui/ui_images/save_button_click.png",
+		ROOT_PATH"ui/ui_images/save_button_click.png");
 	map_type_tickbox_init(gap, editor);
 }
 
 void	button_init_info_area(t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
 	coord = ui_init_coords(editor->info_area->position.w - 110, 25, 32, 32);
 	editor->button_remove = bui_new_element(editor->info_area, NULL, coord);
-	bui_set_element_image_from_path(editor->button_remove, ELEMENT_DEFAULT,
-			ROOT_PATH"ui/ui_images/remove_button.png", NULL);
-	bui_set_element_image_from_path(editor->button_remove, ELEMENT_HOVER,
-			ROOT_PATH"ui/ui_images/remove_button_click.png", NULL);
-	bui_set_element_image_from_path(editor->button_remove, ELEMENT_CLICK,
-			ROOT_PATH"ui/ui_images/remove_button_click.png", NULL);
-	coord = ui_init_coords(editor->info_area->position.w - 110 + 32 + 10, 25, 32, 32);
+	bui_set_element_image_to_states(editor->button_remove,
+			ROOT_PATH"ui/ui_images/remove_button.png",
+			ROOT_PATH"ui/ui_images/remove_button_click.png",
+			ROOT_PATH"ui/ui_images/remove_button_click.png");
+	coord = ui_init_coords(editor->info_area->position.w
+		- 110 + 32 + 10, 25, 32, 32);
 	editor->button_edit = bui_new_element(editor->info_area, NULL, coord);
-	bui_set_element_image_from_path(editor->button_edit, ELEMENT_DEFAULT,
-			ROOT_PATH"ui/ui_images/edit_button.png", NULL);
-	bui_set_element_image_from_path(editor->button_edit, ELEMENT_HOVER,
-			ROOT_PATH"ui/ui_images/edit_button_click.png", NULL);
-	bui_set_element_image_from_path(editor->button_edit, ELEMENT_CLICK,
-			ROOT_PATH"ui/ui_images/edit_button_click.png", NULL);
+	bui_set_element_image_to_states(editor->button_edit,
+			ROOT_PATH"ui/ui_images/edit_button.png",
+			ROOT_PATH"ui/ui_images/edit_button_click.png",
+			ROOT_PATH"ui/ui_images/edit_button_click.png");
 }
 
 void	button_init(t_editor *editor)
 {
-	t_xywh coord;
-	int gap;
-	int button_w;
+	t_xywh	coord;
+	int	gap;
+	int	button_w;
 
 	gap = 10;
 	button_w = 32;
@@ -401,6 +428,7 @@ void	color_palette_init(t_color_palette *pal)
 	pal->win_elem = 0xff232b2b;
 	pal->elem_elem = 0xff353839;
 	pal->elem_elem_elem = 0xffa6a6a4;
+	pal->light_gray = 0xffa6a6a4;
 	pal->granny_smith_apple = 0xffadf7b6;
 	pal->peach_crayola = 0xffffc09f;
 	pal->light_blue = 0xffa0ced9;
@@ -443,8 +471,9 @@ void	changer_prefab_events(t_changer_prefab *changer, int *current_value, int ch
 
 void	changer_prefab_events_float(t_changer_prefab *changer, float *current_value, float change_amount)
 {
-	char *str = NULL;
-	
+	char	*str;
+
+	str = NULL;
 	if (bui_button(changer->add_button))
 		*current_value += change_amount;
 	else if (bui_button(changer->sub_button))
@@ -784,42 +813,53 @@ void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *
 void	init_entity_presets(t_list **list)
 {
 	t_entity_preset *preset;
+	SDL_Surface	*image;
 
 	preset = new_entity_preset("Alfred");
 	preset->mood = ENTITY_TYPE_HOSTILE;
-	preset->texture = load_image(GAME_PATH"resources/BMP/alfred.bmp");
+	image = load_image(GAME_PATH"resources/BMP/alfred.bmp");
+	preset->texture = yoink_from_surface(image, (t_xywh){0, 0, 43, 47});
 	add_to_list(list, preset, sizeof(t_entity_preset));
+	SDL_FreeSurface(image);
 
 	preset = new_entity_preset("Spooky");
 	preset->mood = ENTITY_TYPE_HOSTILE;
-	preset->texture = load_image(GAME_PATH"resources/BMP/spooky.bmp");
+	image = load_image(GAME_PATH"resources/BMP/spooky.bmp");
+	preset->texture = yoink_from_surface(image, (t_xywh){25, 193, 139 - 25, 377 - 193});
 	add_to_list(list, preset, sizeof(t_entity_preset));
+	SDL_FreeSurface(image);
 
 	preset = new_entity_preset("Rift");
 	preset->mood = ENTITY_TYPE_HOSTILE;
-	preset->texture = load_image(GAME_PATH"resources/BMP/rift.bmp");
+	image = load_image(GAME_PATH"resources/BMP/rift.bmp");
+	preset->texture = yoink_from_surface(image, (t_xywh){0, 0, 174, 315});
 	add_to_list(list, preset, sizeof(t_entity_preset));
+	SDL_FreeSurface(image);
 
-	preset = new_entity_preset("Object1");
+	// this is jony optimization
+	image = load_image(GAME_PATH"resources/BMP/objects.bmp");
+
+	preset = new_entity_preset("Barrel");
 	preset->mood = ENTITY_TYPE_NEUTRAL;
-	preset->texture = load_image(GAME_PATH"resources/BMP/objects.bmp");
+	preset->texture = yoink_from_surface(image, (t_xywh){174, 182, 209 - 174, 233 - 182});
 	add_to_list(list, preset, sizeof(t_entity_preset));
 
-	preset = new_entity_preset("Object2");
+	preset = new_entity_preset("Lamp");
 	preset->mood = ENTITY_TYPE_NEUTRAL;
-	preset->texture = load_image(GAME_PATH"resources/BMP/objects.bmp");
+	preset->texture = yoink_from_surface(image, (t_xywh){174, 7, 197 - 174, 91 - 7});
 	add_to_list(list, preset, sizeof(t_entity_preset));
 
-	preset = new_entity_preset("Object3");
+	preset = new_entity_preset("Torch");
 	preset->mood = ENTITY_TYPE_NEUTRAL;
-	preset->texture = load_image(GAME_PATH"resources/BMP/objects.bmp");
+	preset->texture = yoink_from_surface(image, (t_xywh){371, 209, 381 - 371, 256 - 209});
 	add_to_list(list, preset, sizeof(t_entity_preset));
 
-	preset = new_entity_preset("Object4");
+	preset = new_entity_preset("Meat Hook");
 	preset->mood = ENTITY_TYPE_NEUTRAL;
-	preset->texture = load_image(GAME_PATH"resources/BMP/objects.bmp");
+	preset->texture = yoink_from_surface(image, (t_xywh){543, 5, 579 - 543, 104 - 5});
 	add_to_list(list, preset, sizeof(t_entity_preset));
 
+	SDL_FreeSurface(image);
 	ft_printf("[init_entity_presets]\n");	
 }
 
@@ -828,7 +868,6 @@ void	add_to_entity_editor(t_editor *editor)
 	t_xywh	coord;
 	t_list	*curr;
 
-	// adding elements to the drop
 	curr = editor->entity_presets;
 	while (curr)
 	{
@@ -836,7 +875,6 @@ void	add_to_entity_editor(t_editor *editor)
 			((t_entity_preset *)curr->content)->name);
 		curr = curr->next;
 	}
-	// radio buttons for entity direction
 	coord = ui_init_coords(editor->edit_toolbox_entity->position.w * 0.5f
 		- 50, editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
 	coord.x -= 7;
@@ -854,7 +892,7 @@ void	add_to_entity_editor(t_editor *editor)
 
 void	init_entity_editor(t_editor *editor)
 {
-	t_xywh		coord;
+	t_xywh	coord;
 
 	// Toolbox menu
 	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w
@@ -880,9 +918,10 @@ void	init_entity_editor(t_editor *editor)
 	coord = ui_init_coords(editor->edit_toolbox_entity->position.w * 0.5f
 		- 50, editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
 	editor->edit_entity_direction = bui_new_element(
-		editor->edit_toolbox_entity, "direction", coord);
+		editor->edit_toolbox_entity, "Direction", coord);
 	bui_set_element_color(editor->edit_entity_direction, editor->palette.elem_elem);
 	bui_set_element_text_color(editor->edit_entity_direction, 0xffffffff);
+	bui_set_element_flags(editor->edit_entity_direction, BUI_ELEMENT_DONT_UPDATE_STATE);
 	// adding stuff to the parents
 	add_to_entity_editor(editor);
 }

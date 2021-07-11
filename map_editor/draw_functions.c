@@ -192,6 +192,8 @@ void	click_calc(t_editor *editor, t_grid *grid)
 	mouse_pressed(editor->libui, MKEY_RIGHT))
 	{
 		entity = new_entity(grid->entity_amount++, grid->hover);
+		entity->preset = get_entity_preset_with_name(
+			editor->entity_presets, "Barrel");
 		add_to_list(&grid->entities, entity, sizeof(t_entity));
 	}
 	else if (mouse_pressed(editor->libui, MKEY_MIDDLE))
