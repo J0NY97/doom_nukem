@@ -12,69 +12,18 @@
 
 #include "editor.h"
 
-void	wall_render(t_editor *doom)
+void	render_sprites_on_the_wall(t_editor *editor, SDL_Surface *scaled_wall, int scale)
 {
-	t_grid *grid;
-	t_wall *wall;
-	t_sector *sec;
-	t_xywh dim;
-	SDL_Surface	*temp_texture;
-	SDL_Rect	texture;
-	SDL_Rect	temp;
-	SDL_Surface	*scaled_wall;
-	float	scale;
-	float	x_axis;
-	float	y_axis;
-
-	SDL_FillRect(doom->edit_view_wall->active_surface,
-		&(SDL_Rect){0, 0,
-		doom->edit_view_wall->position.w,
-		doom->edit_view_wall->position.h}, 0xff000000);
-	grid = &doom->grid;
-	wall = grid->modify_wall;
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * doom->scale;
-	sec = get_sector_with_wall(&doom->grid.sectors, wall);
-	dim.h = sec->ceiling_height - sec->floor_height;
-	dim.x = 50;
-	dim.y = 50;
-
-	if (wall->texture_id < 0 || wall->texture_id >= doom->texture_amount)
-		temp_texture = doom->texture_textures[0];
-	else
-		temp_texture = doom->texture_textures[wall->texture_id];
-	texture.x = 0;
-	texture.y = 0;
-	texture.w = temp_texture->w; 
-	texture.h = temp_texture->h;
-
-	x_axis = ceil((float)dim.w / (float)doom->grid.modify_wall->texture_scale);
-	y_axis = ceil((float)dim.h / (float)doom->grid.modify_wall->texture_scale);
-
-	scale = (doom->edit_view_wall->position.w - (dim.x * 2)) / dim.w;
-	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
-	for (int y = 0; y < y_axis; y++)
-	{
-		for (int x = 0; x < x_axis; x++)
-		{
-			temp.w = scale * doom->grid.modify_wall->texture_scale;
-			temp.h = scale * doom->grid.modify_wall->texture_scale;
-			temp.x = x * temp.w;
-			temp.y = y * temp.h;
-			SDL_BlitScaled(temp_texture, &texture, scaled_wall, &temp);
-		}
-	}
-
-// render the objects placed on the wall
 	t_list		*curr;
 	t_sprite	*sprite;
 	SDL_Surface	*temp_sprite;
 
-	curr = wall->sprites;
+	curr = editor->grid.modify_wall->sprites;
 	while (curr)
 	{
 		sprite = curr->content;
 		temp_sprite =
-			doom->texture_textures[sprite->sprite_id];
+			editor->texture_textures[sprite->sprite_id];
 		sprite->coord = ui_init_coords(
 			scale * sprite->real_x, scale * sprite->real_y,
 			scale * sprite->scale, scale * sprite->scale);
@@ -83,21 +32,23 @@ void	wall_render(t_editor *doom)
 			sprite->coord.w, sprite->coord.h});
 		curr = curr->next;
 	}
-	if (doom->grid.modify_sprite != NULL)
+	if (editor->grid.modify_sprite != NULL)
 		draw_rect_border(scaled_wall,
-			(t_xywh){doom->grid.modify_sprite->coord.x,
-			doom->grid.modify_sprite->coord.y,
-			doom->grid.modify_sprite->coord.w,
-			doom->grid.modify_sprite->coord.h}, 0xff0000ff, 2);
+			(t_xywh){editor->grid.modify_sprite->coord.x,
+			editor->grid.modify_sprite->coord.y,
+			editor->grid.modify_sprite->coord.w,
+			editor->grid.modify_sprite->coord.h}, 0xff0000ff, 2);
+}
 
-// finally blit the wall to the surface of the window
+void	render_scaled_wall(t_editor *editor, SDL_Surface *scaled_wall)
+{
 	SDL_Surface	*ent_tex;
 	SDL_Surface	*dst_surf;
 	SDL_Rect	rect;
 	float		aspect;
 
 	ent_tex = scaled_wall;
-	dst_surf = doom->edit_view_wall->active_surface;
+	dst_surf = editor->edit_view_wall->active_surface;
 	aspect = ft_fmin((float)dst_surf->w / (float)ent_tex->w,
 		(float)dst_surf->h / (float)ent_tex->h);
 	rect.w = ent_tex->w * aspect;
@@ -105,10 +56,56 @@ void	wall_render(t_editor *doom)
 	rect.x = (dst_surf->w - rect.w) / 2;
 	rect.y = (dst_surf->h - rect.h) / 2;
 	SDL_BlitScaled(scaled_wall, NULL,
-		doom->edit_view_wall->active_surface, &rect);
-	gfx_draw_rect(doom->edit_view_wall->active_surface, 0xff00ff00,
+		editor->edit_view_wall->active_surface, &rect);
+	gfx_draw_rect(editor->edit_view_wall->active_surface, 0xff00ff00,
 		(t_xywh){rect.x, rect.y, rect.w, rect.h});
 	SDL_FreeSurface(scaled_wall);
+}
+
+void	wall_render(t_editor *editor)
+{
+	t_wall	*wall;
+	t_sector	*sec;
+	t_xywh	dim;
+	SDL_Surface	*temp_texture;
+	SDL_Surface	*scaled_wall;
+	SDL_Rect	temp;
+	float	scale;
+	float	x_axis;
+	float	y_axis;
+	int	y;
+	int	x;
+
+	SDL_FillRect(editor->edit_view_wall->active_surface, NULL, 0xff000000);
+	wall = editor->grid.modify_wall;
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * editor->scale;
+	sec = get_sector_with_wall(&editor->grid.sectors, wall);
+	dim.h = sec->ceiling_height - sec->floor_height;
+	if (wall->texture_id < 0 || wall->texture_id >= editor->texture_amount)
+		temp_texture = editor->texture_textures[0];
+	else
+		temp_texture = editor->texture_textures[wall->texture_id];
+	x_axis = ((float)dim.w / (float)editor->grid.modify_wall->texture_scale);
+	y_axis = ((float)dim.h / (float)editor->grid.modify_wall->texture_scale);
+	scale = editor->edit_view_wall->position.w / dim.w;
+	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
+	y = 0;
+	while (y < y_axis)
+	{
+		x = 0;
+		while (x < x_axis)
+		{
+			temp.w = scale * editor->grid.modify_wall->texture_scale;
+			temp.h = scale * editor->grid.modify_wall->texture_scale;
+			temp.x = x * temp.w;
+			temp.y = y * temp.h;
+			SDL_BlitScaled(temp_texture, NULL, scaled_wall, &temp);
+			x++;
+		}
+		y++;
+	}
+	render_sprites_on_the_wall(editor, scaled_wall, scale);
+	render_scaled_wall(editor, scaled_wall);
 }
 
 void	wall_texture_button_events(t_editor *editor)
@@ -177,7 +174,7 @@ void	move_selected_sprite(t_editor *editor)
 {
 	float	move_speed;
 
-	move_speed = 1;
+	move_speed = 0.1f;
 	if (editor->grid.modify_sprite != NULL)
 	{
 		if (key_pressed(editor->libui, KEY_LEFT))
@@ -325,19 +322,14 @@ void	sector_f_and_c_button_events(t_editor *editor)
 		}
 		curr = curr->next;
 	}
+	editor->grid.modify_sector->floor_texture =
+		ft_atoi(editor->active_floor_texture->text);
+	editor->grid.modify_sector->ceiling_texture =
+		ft_atoi(editor->active_ceiling_texture->text);
 }
 
-void	sector_option(t_editor *editor, t_grid *grid)
+void	draw_selected_f_and_c_button(t_editor *editor)
 {
-
-	editor->sector_texture_menu->show = 1;
-	editor->edit_toolbox_sector->show = 1;
-	editor->slope_edit_menu->show = 1;
-
-	// manually event handle these buttons.
-	sector_f_and_c_button_events(editor);
-
-	t_list *curr;
 	t_xywh	c;
 
 	if (editor->active_floor_texture)
@@ -345,25 +337,48 @@ void	sector_option(t_editor *editor, t_grid *grid)
 		c = ui_init_coords(0, 0,
 			editor->active_floor_texture->active_surface->w,
 			editor->active_floor_texture->active_surface->h);
-		draw_rect_border(editor->active_floor_texture->active_surface, c, 0xff0000ff, 2);
+		draw_rect_border(editor->active_floor_texture->active_surface,
+			c, 0xff0000ff, 2);
 	}
 	if (editor->active_ceiling_texture)
 	{
 		c = ui_init_coords(2, 2,
 			editor->active_ceiling_texture->active_surface->w - 4,
 			editor->active_ceiling_texture->active_surface->h - 4);
-		draw_rect_border(editor->active_ceiling_texture->active_surface, c, 0xff00ff00, 2);
+		draw_rect_border(
+			editor->active_ceiling_texture->active_surface,
+			c, 0xff00ff00, 2);
 	}
-	editor->grid.modify_sector->floor_texture = ft_atoi(editor->active_floor_texture->text);
-	editor->grid.modify_sector->ceiling_texture = ft_atoi(editor->active_ceiling_texture->text);
-	changer_prefab_events(editor->floor_height, &grid->modify_sector->floor_height, 1);
-	changer_prefab_events(editor->ceiling_height, &grid->modify_sector->ceiling_height, 1);
-	changer_prefab_events(editor->gravity, &grid->modify_sector->gravity, 1);
-	changer_prefab_events(editor->lighting, &grid->modify_sector->light_level, 1);
-	changer_prefab_events_float(editor->floor_scale, &grid->modify_sector->floor_texture_scale, 0.1f);
-	changer_prefab_events_float(editor->ceiling_scale, &grid->modify_sector->ceiling_texture_scale, 0.1f);
+}
+
+void	sector_changer_prefab_events(t_editor *editor)
+{
+	changer_prefab_events(editor->floor_height,
+		&editor->grid.modify_sector->floor_height, 1);
+	changer_prefab_events(editor->ceiling_height,
+		&editor->grid.modify_sector->ceiling_height, 1);
+	changer_prefab_events(editor->gravity,
+		&editor->grid.modify_sector->gravity, 1);
+	changer_prefab_events(editor->lighting,
+		&editor->grid.modify_sector->light_level, 1);
+	changer_prefab_events_float(editor->floor_scale,
+		&editor->grid.modify_sector->floor_texture_scale, 0.1f);
+	changer_prefab_events_float(editor->ceiling_scale,
+		&editor->grid.modify_sector->ceiling_texture_scale, 0.1f);
+}
+
+void	sector_option(t_editor *editor, t_grid *grid)
+{
+	editor->sector_texture_menu->show = 1;
+	editor->edit_toolbox_sector->show = 1;
+	editor->slope_edit_menu->show = 1;
+
+	sector_f_and_c_button_events(editor);
+	draw_selected_f_and_c_button(editor);
+	sector_changer_prefab_events(editor);
 
 	// draw the sector and event handle the wall choosing.
+	t_list	*curr;
 	t_wall	*long_wall;
 	t_wall	*wall;
 	float	long_wall_dist;
