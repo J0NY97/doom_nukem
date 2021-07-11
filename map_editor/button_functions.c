@@ -14,11 +14,11 @@
 
 void	add_portal(t_grid *grid)
 {
-	t_list *sec;
-	t_list *wall;
-	t_wall *other;
-	int wall_one_sec;
-	int wall_two_sec;
+	t_list	*sec;
+	t_list	*wall;
+	t_wall	*other;
+	int	wall_one_sec;
+	int	wall_two_sec;
 
 	wall_one_sec = -1;
 	wall_two_sec = -1;
@@ -46,8 +46,10 @@ void	add_portal(t_grid *grid)
 		return ;
 	other->neighbor = wall_one_sec;
 	grid->modify_wall->neighbor = wall_two_sec;
-	if (other->neighbor != -1) other->solid = 0;
-	if (grid->modify_wall->neighbor != -1) grid->modify_wall->solid = 0;
+	if (other->neighbor != -1)
+		other->solid = 0;
+	if (grid->modify_wall->neighbor != -1)
+		grid->modify_wall->solid = 0;
 }
 
 void	remove_portal(t_grid *grid)
@@ -74,21 +76,19 @@ void	remove_portal(t_grid *grid)
 	}
 }
 
-int		entity_compare(t_entity *ent, t_entity *ity)
+int	entity_compare(t_entity *ent, t_entity *ity)
 {
 	if (vector_compare(ent->pos, ity->pos) &&
 	ent->direction == ity->direction &&
 	ft_strcmp(ent->preset->name, ity->preset->name) == 0)
-	{
 		return (1);
-	}
 	return (0);
 }
 
 void	remove_entity_from_list(t_list **entities, t_entity *entity)
 {
-	t_list *curr;
-	t_list *prev;
+	t_list	*curr;
+	t_list	*prev;
 
 	curr = *entities;
 	if (curr && entity_compare(curr->content, entity))
@@ -116,14 +116,12 @@ void	remove_entity_from_list(t_list **entities, t_entity *entity)
 
 void	other_box_events(t_editor *editor)
 {
-	// Input
 	if (bui_input(editor->map_name_input))
 	{
 		ft_strdel(&editor->mapname);
 		editor->mapname = ft_strdup(editor->map_name_input->text);
 		add_text_to_info_box(editor, "Map name changed successfully!");
 	}
-	// Save Button
 	if (bui_button(editor->button_save))
 	{
 		ft_strdel(&editor->mapname);
@@ -141,26 +139,21 @@ void	other_box_events(t_editor *editor)
 		set_map(editor);
 		add_text_to_info_box(editor, "Map saved successfully!");
 	}
-	// Tickboxes
 	only_one_button_toggled_at_a_time(editor->map_type_tickboxes,
 		&editor->active_map_type);
 }
 
 void	loop_buttons(t_editor *editor)
 {
-	t_rgba new_col;
+	t_rgba	new_col;
 
 	other_box_events(editor);
-	// NOTE: the draw button is in this select_mode_buttons list
-	// the selection mode buttons
 	only_one_button_toggled_at_a_time(editor->select_mode_buttons,
 		&editor->active_select_mode);
 	if (editor->active_select_mode != NULL)
 		bui_button_toggle(editor->active_select_mode);
-	// scale changer prefab
 	changer_prefab_events(editor->scaler, &editor->scale, 1);
 	editor->scale = clamp(editor->scale, 1, 64);
-	// Info area events
 	if (editor->info_box->text && SDL_GetTicks()
 	- editor->info_box_start_timer >= editor->info_box_timer)
 	{
@@ -177,7 +170,7 @@ void	loop_buttons(t_editor *editor)
 void	add_text_to_info_box(t_editor *editor, char *text)
 {
 	editor->info_box_start_timer = SDL_GetTicks();
-	editor->info_box_timer = 5000; // milliseconds
+	editor->info_box_timer = 5000;
 	editor->info_box->text_color = 0x00ffffff;
 	bui_change_element_text(editor->info_box, text);
 }
@@ -214,9 +207,8 @@ void	re_id_sectors(t_list **sectors)
 
 void	recount_everything(t_editor *editor)
 {
-	ft_putstr("[recount_everything]\n");
-	t_list *curr;
-	t_list *curr_sprite;
+	t_list	*curr;
+	t_list	*curr_sprite;
 
 	editor->grid.sector_amount = get_list_len(&editor->grid.sectors);
 	re_id_sectors(&editor->grid.sectors);
@@ -240,9 +232,9 @@ void	recount_everything(t_editor *editor)
 
 void	remove_selected_point_from_all_walls_and_sectors(t_editor *editor)
 {
-	t_list *wall;
-	t_list *sec;
-	t_grid *grid;
+	t_list	*wall;
+	t_list	*sec;
+	t_grid	*grid;
 
 	grid = &editor->grid;
 	wall = grid->walls;
@@ -270,8 +262,8 @@ void	remove_selected_point_from_all_walls_and_sectors(t_editor *editor)
 // Removes all sectors that have no walls left.
 void	remove_all_non_existing_sectors(t_editor *editor)
 {
-	t_list *sec;
-	t_sector *sector;
+	t_list		*sec;
+	t_sector	*sector;
 
 	sec = editor->grid.sectors;
 	while (sec)
@@ -311,37 +303,39 @@ void	remove_all_lonely_points(t_editor *editor)
 	}
 }
 
+void	remove_button_events(t_editor *editor, t_grid *grid)
+{
+	if (grid->modify_point != NULL)
+		remove_selected_point_from_all_walls_and_sectors(editor);
+	else if (grid->modify_wall != NULL)
+	{
+		remove_wall_from_its_sector(&editor->grid, grid->modify_wall);
+		remove_from_walls(&editor->grid.walls, grid->modify_wall);
+	}
+	else if (grid->modify_sector != NULL)
+	{
+		remove_everything_from_list(&grid->modify_sector->walls);
+		remove_from_sectors(&editor->grid.sectors, grid->modify_sector);
+		remove_all_non_existing_portals(&editor->grid.sectors);
+	}
+	else if (grid->modify_entity != NULL)
+		remove_entity_from_list(&grid->entities, grid->modify_entity);
+	else
+		return ;
+	remove_all_non_existing_sectors(editor);
+	remove_all_lonely_walls(&grid->walls, &grid->sectors);
+	remove_all_lonely_points(editor);
+	recount_everything(editor);
+	grid->modify_point = NULL;
+	grid->modify_wall = NULL;
+	grid->modify_sector = NULL;
+	grid->modify_entity = NULL;
+}
+
 void	selection_mode_buttons(t_editor *editor, t_grid *grid)
 {
 	if (bui_button(editor->button_remove))
-	{
-		if (grid->modify_point != NULL)
-			remove_selected_point_from_all_walls_and_sectors(editor);
-		else if (grid->modify_wall != NULL)
-		{
-			remove_wall_from_its_sector(&editor->grid, grid->modify_wall);
-			remove_from_walls(&editor->grid.walls, grid->modify_wall);
-		}
-		else if (grid->modify_sector != NULL)
-		{
-			remove_everything_from_list(&grid->modify_sector->walls);
-			remove_from_sectors(&editor->grid.sectors, grid->modify_sector);
-			remove_all_walls_not_a_part_of_a_sector(&grid->walls, &grid->sectors);
-			remove_all_points_not_a_part_of_a_wall(&grid->points, &grid->walls);
-			remove_all_non_existing_portals(&editor->grid.sectors);
-		}
-		else if (grid->modify_entity != NULL)
-			remove_entity_from_list(&grid->entities, grid->modify_entity);
-		else
-			return ;
-		remove_all_non_existing_sectors(editor);
-		remove_all_lonely_points(editor);
-		recount_everything(editor);
-		grid->modify_point = NULL;
-		grid->modify_wall = NULL;
-		grid->modify_sector = NULL;
-		grid->modify_entity = NULL;
-	}
+		remove_button_events(editor, grid);
 	else if (bui_button(editor->button_edit))
 	{
 		SDL_RestoreWindow(editor->new_edit_window->win);

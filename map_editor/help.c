@@ -630,11 +630,14 @@ int				wall_in_sector(t_wall *wall, t_sector *sector)
 	*/
 }
 
-void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors)
+/*
+ ** All walls not a part of a sector.
+*/
+void	remove_all_lonely_walls(t_list **walls, t_list **sectors)
 {
-	t_list *wall;
-	t_list *sec;
-	int		found;
+	t_list	*wall;
+	t_list	*sec;
+	int	found;
 
 	wall = *walls;
 	while (wall)
@@ -653,6 +656,7 @@ void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors)
 	}
 }
 
+/* This might not be needed. */
 // NOTE: This spaghett has to be added so that niklas renderer can work. 
 //
 // 1. loop through all sectors walls

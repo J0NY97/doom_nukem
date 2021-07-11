@@ -255,6 +255,7 @@ void info_area_init(t_editor *editor)
 	editor->hover_info = bui_new_element(editor->info_area, "hover info", (t_xywh) {10, 20, 100, 50});
 	bui_set_element_color(editor->hover_info, editor->info_area->color);
 	editor->selected_sector_info = bui_new_element(editor->info_area, "selected sector info", (t_xywh) {10, 75, 100, 50});
+	editor->selected_sector_info->text_color = 0xffffffff;
 	bui_set_element_color(editor->selected_sector_info, editor->info_area->color);
 	editor->selected_vector_info = bui_new_element(editor->info_area, "selected vector info", (t_xywh) {10, 130, 100, 55});
 	bui_set_element_color(editor->selected_vector_info, editor->info_area->color);

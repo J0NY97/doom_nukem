@@ -385,6 +385,7 @@ void			check_selected(t_grid *grid);
 void			unselect_selected(t_editor *editor, t_grid *grid);
 void			hover_calc(t_editor *doom, t_grid *grid);
 void			draw_sectors(t_grid *grid);
+void			draw_wall(t_wall *wall, t_grid *grid, Uint32 color); // note already takes grid->gap into consideration
 void			draw_walls(t_grid *grid, t_list **walls, Uint32 color);
 void			draw_points(t_grid *grid, t_list *points);
 void			draw_entities(t_editor *doom, t_grid *grid);
@@ -443,7 +444,7 @@ void			remove_all_points_not_a_part_of_a_wall(t_list **points, t_list **walls);
 int				get_point_connection_amount(t_list **walls, t_point *point);
 
 /* Wall shit */
-void			remove_all_walls_not_a_part_of_a_sector(t_list **walls, t_list **sectors);
+void			remove_all_lonely_walls(t_list **walls, t_list **sectors);
 
 void			texture_init(t_editor *doom);
 void			texture_buttons(t_editor *doom, t_grid *grid);

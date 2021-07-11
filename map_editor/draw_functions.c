@@ -214,16 +214,15 @@ void	unselect_selected(t_editor *editor, t_grid *grid)
 
 void	hover_calc(t_editor *doom, t_grid *grid)
 {
-	int x;
-	int y;
-	int real_x;
-	int real_y;
-	int gap;
+	int	x;
+	int	y;
+	int	real_x;
+	int	real_y;
+	int	gap;
 
 	if (SDL_GetMouseFocus() != doom->window->win)
 		return ;
 	grid->last_hover = grid->hover; 
-
 	SDL_GetMouseState(&x, &y);
 	gap = grid->gap;
 	real_x = (((x - grid->elem->position.x) / (gap / 2)) * (gap / 2)) / gap;
@@ -255,8 +254,8 @@ void	draw_dimensions(t_grid *grid)
 
 void	draw_grid(t_editor *doom, t_grid *grid)
 {
-	int i;
-	int max;
+	int	i;
+	int	max;
 
 	fill_surface(grid->elem->active_surface,
 		((t_bui_window *)grid->elem->parent)->color);	
@@ -293,7 +292,7 @@ void	draw_points(t_grid *grid, t_list *points)
 	}
 }
 
-void	draw_wall(t_wall *wall, t_grid *grid, Uint32 color) // grid is needed for both gap and surface
+void	draw_wall(t_wall *wall, t_grid *grid, Uint32 color)
 {
 	t_vector orig_vec;
 	t_vector dest_vec;
@@ -336,8 +335,6 @@ void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
 	}
 }
 
-// NOTE:
-// if this function seg faults, you have to check that the get_list_len returns something that is not 0
 void	draw_sector(t_sector *sector, t_grid *grid)
 {
 	int	i;
@@ -361,14 +358,14 @@ void	draw_sector(t_sector *sector, t_grid *grid)
 		wall = wall->next;
 	}
 	i = get_list_len(&sector->walls) * 2;
-	x /= i;
-	y /= i;
-	draw_sector_number(sector, grid, x, y);
+	if (i == 0)
+		return ;
+	draw_sector_number(sector, grid, x /= i, y /= i);
 }
 
 void	draw_sectors(t_grid *grid)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = grid->sectors;
 	while (curr)
@@ -383,16 +380,13 @@ void	draw_sectors(t_grid *grid)
 		grid->gap));
 }
 
-// NOTE:
-// fix this after you have decided if you event want the entities.
 void	draw_entities(t_editor *doom, t_grid *grid)
 {
 	float		angle;
-	float		dx;
-	float		dy;
 	t_list		*curr;
 	t_entity	*entity;
 	t_vector	pos;
+	int		color;
 
 	curr = grid->entities;
 	while (curr)
@@ -402,21 +396,16 @@ void	draw_entities(t_editor *doom, t_grid *grid)
 			entity->preset = doom->default_entity;
 		pos = gfx_vector_multiply(entity->pos, grid->gap);
 		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 6, pos);
+		color = 0xff0000ff;
 		if (entity->preset->mood == ENTITY_TYPE_HOSTILE)
-			gfx_draw_vector(grid->elem->active_surface,
-				0xffff0000, 3, pos);
+			color = 0xffff0000;
 		else if (entity->preset->mood == ENTITY_TYPE_FRIENDLY)
-			gfx_draw_vector(grid->elem->active_surface,
-				0xff00ff00, 3, pos);
-		else if (entity->preset->mood == ENTITY_TYPE_NEUTRAL)
-			gfx_draw_vector(grid->elem->active_surface,
-				0xff0000ff, 3, pos);
+			color = 0xff00ff00;
+		gfx_draw_vector(grid->elem->active_surface, color, 3, pos);
 		angle = entity->direction * (M_PI / 180);
-		dx = cos(angle) * 10.0f;
-		dy = sin(angle) * 10.0f;
-		t_vector dir_pos = gfx_new_vector(dx + pos.x, dy + pos.y, 0);
-		gfx_draw_vector(grid->elem->active_surface,
-			0xffaaab5d, 1, dir_pos);
+		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 1,
+			gfx_new_vector(cos(angle) * 10.0f + pos.x,
+			sin(angle) * 10.0f + pos.y, 0));
 		curr = curr->next;
 	}
 }
