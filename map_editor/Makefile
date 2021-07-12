@@ -23,6 +23,7 @@ INCLUDES = \
 	-I../libgfx \
 	-I../SDL2/includes \
 	-I../game/libbxpm \
+	-I../game/inc \
 	-I../
 
 LIB_FOLDERS = \

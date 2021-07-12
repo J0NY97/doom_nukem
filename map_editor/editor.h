@@ -9,6 +9,8 @@
 # include "ft_printf.h"
 # include "path.h"
 # include "bxpm.h"
+# include "enum.h"
+# include "resources.h"
 
 //////////////////////
 // ENTITY TODO

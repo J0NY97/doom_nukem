@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/02 10:26:18 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/12 13:04:53 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,21 +74,16 @@ SDL_Surface	*load_bxpm_to_surface(char *bxpm_file)
 
 static void	load_all_textures(t_editor *editor)
 {
-	editor->texture_amount = 7;
+	int	i;
+
+	i = 0;
+	editor->texture_amount = MAP_TEXTURE_AMOUNT;
 	editor->texture_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->texture_amount);
-	editor->texture_textures[0] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood1.bxpm");
-	editor->texture_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/steel.bxpm");
-	editor->texture_textures[2] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wall_panel.bxpm");
-	editor->texture_textures[3] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor.bxpm");
-	editor->texture_textures[4] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor_test.bxpm");
-	editor->texture_textures[5] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/tile_floor_test(1).bxpm");
-	editor->texture_textures[6] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/wood.bxpm");
-	/*
-	editor->texture_textures[0] = load_image(GAME_PATH"resources/BMP/wood.bmp");
-	editor->texture_textures[1] = load_image(GAME_PATH"resources/BMP/steel.bmp");
-	editor->texture_textures[2] = load_image(GAME_PATH"resources/BMP/wall_panel.bmp");
-	editor->texture_textures[3] = load_image(GAME_PATH"resources/BMP/tile_floor.bmp");
-	*/
+	while (i < MAP_TEXTURE_AMOUNT)
+	{
+		editor->texture_textures[g_map_textures[i].id] = load_bxpm_to_surface(g_map_textures[i].path);
+		i++;
+	}	
 }
 
 SDL_Surface	*yoink_from_surface(SDL_Surface *image, t_xywh coord)
@@ -100,16 +95,6 @@ SDL_Surface	*yoink_from_surface(SDL_Surface *image, t_xywh coord)
 		surface, NULL);
 	return (surface);
 }
-
-static void	load_all_sprites(t_editor *editor)
-{
-	editor->sprite_amount = 2;
-	editor->sprite_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->sprite_amount);
-	editor->sprite_textures[0] = yoink_from_surface(load_bxpm_to_surface(GAME_PATH"resources/BXPM/spooky.bxpm"),
-		(t_xywh){25, 193, 139 - 25, 377 - 193});
-	editor->sprite_textures[1] = load_bxpm_to_surface(GAME_PATH"resources/BXPM/alfred.bxpm");
-}
-
 
 void	grid_init1(t_editor *editor)
 {
@@ -151,7 +136,6 @@ void	grid_init(t_editor *editor)
 	editor->grid.y = editor->grid.coords.y;
 	editor->grid.dimensions = editor->grid.coords;
 	load_all_textures(editor);
-	load_all_sprites(editor);
 	init_entity_presets(&editor->entity_presets);
 	editor->default_entity = new_entity_preset("default_entity_name");
 }
@@ -755,16 +739,17 @@ void	wall_texture_buttons_init(t_editor *editor)
 	editor->wall_texture_buttons = NULL;
 	editor->active_wall_texture = NULL;
 	for (int i = 0; i < editor->texture_amount; i++)
-		new_wall_texture_button(editor->wall_texture_view, &editor->wall_texture_buttons, editor->texture_textures[i], i);
+		new_wall_texture_button(editor->wall_texture_view,
+			&editor->wall_texture_buttons, editor->texture_textures[i], i);
 }
 
-// If you have different portal textures than texture textures you have to make struct in editor and then load them and then edit this function to use those textures instead of texture textures.
 void	portal_texture_buttons_init(t_editor *editor)
 {
 	editor->portal_texture_buttons = NULL;
 	editor->active_portal_texture = NULL;
 	for (int i = 0; i < editor->texture_amount; i++)
-		new_wall_texture_button(editor->portal_texture_view, &editor->portal_texture_buttons, editor->texture_textures[i], i);
+		new_wall_texture_button(editor->portal_texture_view,
+			&editor->portal_texture_buttons, editor->texture_textures[i], i);
 }
 
 void	wall_sprite_texture_buttons_init(t_editor *editor)
@@ -772,7 +757,8 @@ void	wall_sprite_texture_buttons_init(t_editor *editor)
 	editor->wall_sprite_buttons = NULL;
 	editor->active_wall_sprite = NULL;
 	for (int i = 0; i < editor->texture_amount; i++)
-		new_wall_texture_button(editor->wall_sprite_view, &editor->wall_sprite_buttons, editor->texture_textures[i], i);
+		new_wall_texture_button(editor->wall_sprite_view,
+			&editor->wall_sprite_buttons, editor->texture_textures[i], i);
 }
 
 void	init_wall_editor(t_editor *editor)
@@ -802,64 +788,37 @@ void	new_radio_button(t_list **list, t_bui_element *parent, int x, int y, char *
 
 	coord = ui_init_coords(x, y, 15, 15);
 	radio = bui_new_element(parent, str, coord);
-	radio->text_y = -100; // This is because we dont want to display the text, only store it for the map file
+	radio->text_y = -100;
 	bui_set_element_color(radio, 0x00);
-	bui_set_element_image_from_path(radio, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/radio_button_off.png", NULL);
-	bui_set_element_image_from_path(radio, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/radio_button_hover.png", NULL);
-	bui_set_element_image_from_path(radio, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/radio_button_on.png", NULL);
+	bui_set_element_image_to_states(radio,
+		ROOT_PATH"ui/ui_images/radio_button_off.png",
+		ROOT_PATH"ui/ui_images/radio_button_hover.png",
+		ROOT_PATH"ui/ui_images/radio_button_on.png");
 	add_to_list(list, radio, sizeof(t_bui_element));
 }
 
 void	init_entity_presets(t_list **list)
 {
-	t_entity_preset *preset;
-	SDL_Surface	*image;
+	int				i;
+	int	const		*tc;
+	SDL_Surface		*image;
+	t_entity_preset	*preset;
 
-	preset = new_entity_preset("Alfred");
-	preset->mood = ENTITY_TYPE_HOSTILE;
-	image = load_image(GAME_PATH"resources/BMP/alfred.bmp");
-	preset->texture = yoink_from_surface(image, (t_xywh){0, 0, 43, 47});
-	add_to_list(list, preset, sizeof(t_entity_preset));
-	SDL_FreeSurface(image);
-
-	preset = new_entity_preset("Spooky");
-	preset->mood = ENTITY_TYPE_HOSTILE;
-	image = load_image(GAME_PATH"resources/BMP/spooky.bmp");
-	preset->texture = yoink_from_surface(image, (t_xywh){25, 193, 139 - 25, 377 - 193});
-	add_to_list(list, preset, sizeof(t_entity_preset));
-	SDL_FreeSurface(image);
-
-	preset = new_entity_preset("Rift");
-	preset->mood = ENTITY_TYPE_HOSTILE;
-	image = load_image(GAME_PATH"resources/BMP/rift.bmp");
-	preset->texture = yoink_from_surface(image, (t_xywh){0, 0, 174, 315});
-	add_to_list(list, preset, sizeof(t_entity_preset));
-	SDL_FreeSurface(image);
-
-	// this is jony optimization
-	image = load_image(GAME_PATH"resources/BMP/objects.bmp");
-
-	preset = new_entity_preset("Barrel");
-	preset->mood = ENTITY_TYPE_NEUTRAL;
-	preset->texture = yoink_from_surface(image, (t_xywh){174, 182, 209 - 174, 233 - 182});
-	add_to_list(list, preset, sizeof(t_entity_preset));
-
-	preset = new_entity_preset("Lamp");
-	preset->mood = ENTITY_TYPE_NEUTRAL;
-	preset->texture = yoink_from_surface(image, (t_xywh){174, 7, 197 - 174, 91 - 7});
-	add_to_list(list, preset, sizeof(t_entity_preset));
-
-	preset = new_entity_preset("Torch");
-	preset->mood = ENTITY_TYPE_NEUTRAL;
-	preset->texture = yoink_from_surface(image, (t_xywh){371, 209, 381 - 371, 256 - 209});
-	add_to_list(list, preset, sizeof(t_entity_preset));
-
-	preset = new_entity_preset("Meat Hook");
-	preset->mood = ENTITY_TYPE_NEUTRAL;
-	preset->texture = yoink_from_surface(image, (t_xywh){543, 5, 579 - 543, 104 - 5});
-	add_to_list(list, preset, sizeof(t_entity_preset));
-
-	SDL_FreeSurface(image);
+	i = 0;
+	while (i < ENTITY_AMOUNT)
+	{
+		preset = new_entity_preset(g_entity_data[i].name);
+		preset->mood = ENTITY_TYPE_HOSTILE;
+		if (!g_entity_data[i].hostile)
+			preset->mood = ENTITY_TYPE_NEUTRAL;
+		image = load_bxpm_to_surface(g_entity_data[i].path);
+		tc = g_entity_data[i].tc;
+		preset->texture = yoink_from_surface(image,
+			(t_xywh){tc[0], tc[1], tc[2], tc[3]});
+		add_to_list(list, preset, sizeof(t_entity_preset));
+		SDL_FreeSurface(image);
+		i++;
+	}	
 	ft_printf("[init_entity_presets]\n");	
 }
 
