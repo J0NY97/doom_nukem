@@ -111,7 +111,7 @@ ft_printf("Starting to loop!\n");
 		//draw_walls(&doom->grid, &doom->grid.walls, 0xffffffff); // this is just for debugging purposes, to know if you remove a wall it actually is removed.
 		draw_sectors(&editor->grid);
 		draw_points(&editor->grid, editor->grid.points);
-		draw_entities(editor, &editor->grid);
+		draw_entities(editor);
 		// draw spawn
 		if (!vector_is_empty(editor->spawn.pos))
 			gfx_draw_vector(editor->grid.elem->active_surface, 0xff00ff00, 6, gfx_vector_multiply(editor->spawn.pos, editor->grid.gap));

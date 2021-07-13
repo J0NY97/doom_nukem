@@ -46,8 +46,6 @@ t_wall	*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
 	return (NULL);
 }
 
-// NOTE: Not to confuse with vector_on_line, which is vector math,
-// 	this just checks if t_vector *v is either vec->dest or ->orig
 int	vector_in_wall(t_vector v, t_wall *vec)
 {
 	if (vector_compare(v, vec->orig->pos)
@@ -56,25 +54,7 @@ int	vector_in_wall(t_vector v, t_wall *vec)
 	return (0);
 }
 
-// This function isnt used anywhere, so remove it when you have decided that that is gonna be kept so.
-void	split_wall(t_grid *grid, t_wall *old_wall, t_point *new_vec)
-{
-	t_wall	*temp;
-
-	temp = get_wall_from_list(&grid->walls, old_wall->dest, new_vec);
-	if (temp == NULL)
-		temp = get_wall_from_list(&grid->walls,
-			old_wall->orig, new_vec);
-	if (temp != NULL)
-		return ;
-	temp = new_wall(old_wall->dest, new_vec);
-	add_to_list(&grid->walls, temp, sizeof(t_wall));
-	old_wall->dest = new_vec;
-	if (grid->modify_sector != NULL)
-		add_to_list(&grid->modify_sector->walls, temp, sizeof(t_wall));
-}
-
-void	update_real_dimensions(t_grid *grid) // the yellowish lines
+void	update_real_dimensions(t_grid *grid)
 {
 	float	low_x;
 	float	low_y;
@@ -119,6 +99,20 @@ t_point	*get_point_from_wall_in_sector(t_sector *sector, t_point *v)
 	return (NULL);
 }
 
+t_point	*t(t_grid *grid, t_vector pos)
+{
+	t_point	*point;
+
+	point = get_point_from_wall_in_sector(grid->modify_sector,
+			&(t_point){0, pos});
+	if (point == NULL)
+	{
+		point = new_point(pos);
+		add_to_list(&grid->points, point, sizeof(t_point));
+	}
+	return (point);
+}
+
 void	check_selected(t_grid *grid)
 {
 	t_point	*temp1;
@@ -130,20 +124,8 @@ void	check_selected(t_grid *grid)
 	temp_wall = NULL;
 	if (vector_is_empty(grid->selected2)) // seg faults if removed.
 		return ;
-	temp1 = get_point_from_wall_in_sector(grid->modify_sector,
-			&(t_point){0, grid->selected1});
-	temp2 = get_point_from_wall_in_sector(grid->modify_sector,
-			&(t_point){0, grid->selected2});
-	if (temp1 == NULL)
-	{
-		temp1 = new_point(grid->selected1);
-		add_to_list(&grid->points, temp1, sizeof(t_point));
-	}
-	if (temp2 == NULL)
-	{
-		temp2 = new_point(grid->selected2);
-		add_to_list(&grid->points, temp2, sizeof(t_point));
-	}
+	temp1 = t(grid, grid->selected1);
+	temp2 = t(grid, grid->selected2);
 	// check if a wall with that same points is in the sector walls, if yes then give it the &
 	temp_wall = get_wall_from_list(&grid->modify_sector->walls, temp1, temp2); // enable this to not make duplicate walls
 	if (temp_wall == NULL) // make new wall
@@ -382,32 +364,36 @@ void	draw_sectors(t_grid *grid)
 		grid->gap));
 }
 
-void	draw_entities(t_editor *doom, t_grid *grid)
+void	draw_entity(t_editor *editor, t_entity *entity)
 {
-	float		angle;
-	t_list		*curr;
-	t_entity	*entity;
 	t_vector	pos;
 	int		color;
+	float		angle;
 
-	curr = grid->entities;
+	if (entity->preset == NULL)
+		entity->preset = editor->default_entity;
+	pos = gfx_vector_multiply(entity->pos, editor->grid.gap);
+	gfx_draw_vector(editor->grid.elem->active_surface, 0xffaaab5d, 6, pos);
+	color = 0xff0000ff;
+	if (entity->preset->mood == ENTITY_TYPE_HOSTILE)
+		color = 0xffff0000;
+	else if (entity->preset->mood == ENTITY_TYPE_FRIENDLY)
+		color = 0xff00ff00;
+	gfx_draw_vector(editor->grid.elem->active_surface, color, 3, pos);
+	angle = entity->direction * (M_PI / 180);
+	gfx_draw_vector(editor->grid.elem->active_surface, 0xffaaab5d, 1,
+		gfx_new_vector(cos(angle) * 10.0f + pos.x,
+		sin(angle) * 10.0f + pos.y, 0));
+}
+
+void	draw_entities(t_editor *editor)
+{
+	t_list		*curr;
+
+	curr = editor->grid.entities;
 	while (curr)
 	{
-		entity = curr->content;
-		if (entity->preset == NULL)
-			entity->preset = doom->default_entity;
-		pos = gfx_vector_multiply(entity->pos, grid->gap);
-		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 6, pos);
-		color = 0xff0000ff;
-		if (entity->preset->mood == ENTITY_TYPE_HOSTILE)
-			color = 0xffff0000;
-		else if (entity->preset->mood == ENTITY_TYPE_FRIENDLY)
-			color = 0xff00ff00;
-		gfx_draw_vector(grid->elem->active_surface, color, 3, pos);
-		angle = entity->direction * (M_PI / 180);
-		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 1,
-			gfx_new_vector(cos(angle) * 10.0f + pos.x,
-			sin(angle) * 10.0f + pos.y, 0));
+		draw_entity(editor, curr->content);
 		curr = curr->next;
 	}
 }

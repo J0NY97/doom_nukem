@@ -391,7 +391,7 @@ void			draw_sectors(t_grid *grid);
 void			draw_wall(t_wall *wall, t_grid *grid, Uint32 color); // note already takes grid->gap into consideration
 void			draw_walls(t_grid *grid, t_list **walls, Uint32 color);
 void			draw_points(t_grid *grid, t_list *points);
-void			draw_entities(t_editor *doom, t_grid *grid);
+void			draw_entities(t_editor *editor);
 void			draw_hover_info(t_editor *doom, t_grid *grid);
 void			draw_selected_sector_info(t_editor *doom, t_grid *grid);
 void			loop_buttons(t_editor *doom);
