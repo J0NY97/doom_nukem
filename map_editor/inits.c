@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/12 13:04:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/13 11:01:53 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -78,10 +78,12 @@ static void	load_all_textures(t_editor *editor)
 
 	i = 0;
 	editor->texture_amount = MAP_TEXTURE_AMOUNT;
-	editor->texture_textures = ft_memalloc(sizeof(SDL_Surface *) * editor->texture_amount);
+	editor->texture_textures = ft_memalloc(sizeof(SDL_Surface *)
+		* editor->texture_amount);
 	while (i < MAP_TEXTURE_AMOUNT)
 	{
-		editor->texture_textures[g_map_textures[i].id] = load_bxpm_to_surface(g_map_textures[i].path);
+		editor->texture_textures[g_map_textures[i].id] =
+			load_bxpm_to_surface(g_map_textures[i].path);
 		i++;
 	}	
 }
@@ -144,14 +146,15 @@ void	vertex_button_init(int select_w, int select_gap, t_editor *editor)
 {
 	t_xywh coord;
 
-	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
-	editor->select_mode_vertex = bui_new_element(editor->select_mode, "Vertex", coord);
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_DEFAULT,
-			ROOT_PATH"ui/ui_images/selection_mode_vertex.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_HOVER,
-			ROOT_PATH"ui/ui_images/selection_mode_vertex_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_vertex, ELEMENT_CLICK,
-			ROOT_PATH"ui/ui_images/selection_mode_vertex_click.png", NULL);
+	coord = ui_init_coords((0 * (select_w + select_gap)) + select_gap,
+		20, select_w, select_w);
+	editor->select_mode_vertex = bui_new_element(editor->select_mode,
+		"Vertex", coord);
+	bui_set_element_image_to_states(editor->select_mode_vertex,
+			ROOT_PATH"ui/ui_images/selection_mode_vertex.png",
+			ROOT_PATH"ui/ui_images/selection_mode_vertex_click.png",
+			ROOT_PATH"ui/ui_images/selection_mode_vertex_click.png");
+	editor->select_mode_vertex->text_y = -20;
 }
 
 void	wall_button_init(int select_w, int select_gap, t_editor *editor)
@@ -160,12 +163,11 @@ void	wall_button_init(int select_w, int select_gap, t_editor *editor)
 
 	coord = ui_init_coords((1 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
 	editor->select_mode_wall = bui_new_element(editor->select_mode, "Wall", coord);
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_DEFAULT,
-			ROOT_PATH"ui/ui_images/selection_mode_wall.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_HOVER,
-			ROOT_PATH"ui/ui_images/selection_mode_wall_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_wall, ELEMENT_CLICK,
-			ROOT_PATH"ui/ui_images/selection_mode_wall_click.png", NULL);
+	bui_set_element_image_to_states(editor->select_mode_wall,
+			ROOT_PATH"ui/ui_images/selection_mode_wall.png",
+			ROOT_PATH"ui/ui_images/selection_mode_wall_click.png",
+			ROOT_PATH"ui/ui_images/selection_mode_wall_click.png");
+	editor->select_mode_wall->text_y = -20;
 }
 
 void	sector_button_init(int select_w, int select_gap, t_editor *editor)
@@ -174,12 +176,11 @@ void	sector_button_init(int select_w, int select_gap, t_editor *editor)
 
 	coord = ui_init_coords((2 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
 	editor->select_mode_sector = bui_new_element(editor->select_mode, "Sector", coord);
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_DEFAULT,
-			ROOT_PATH"ui/ui_images/selection_mode_sector.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_HOVER,
-			ROOT_PATH"ui/ui_images/selection_mode_sector_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_sector, ELEMENT_CLICK,
-			ROOT_PATH"ui/ui_images/selection_mode_sector_click.png", NULL);
+	bui_set_element_image_to_states(editor->select_mode_sector,
+			ROOT_PATH"ui/ui_images/selection_mode_sector.png",
+			ROOT_PATH"ui/ui_images/selection_mode_sector_click.png",
+			ROOT_PATH"ui/ui_images/selection_mode_sector_click.png");
+	editor->select_mode_sector->text_y = -20;
 }
 
 void	entity_button_init(int select_w, int select_gap, t_editor *editor)
@@ -188,48 +189,45 @@ void	entity_button_init(int select_w, int select_gap, t_editor *editor)
 
 	coord = ui_init_coords((3 * (select_w + select_gap)) + select_gap, 20, select_w, select_w);
 	editor->select_mode_entity = bui_new_element(editor->select_mode, "Entity", coord);
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_DEFAULT,
-			ROOT_PATH"ui/ui_images/selection_mode_entity.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_HOVER,
-			ROOT_PATH"ui/ui_images/selection_mode_entity_click.png", NULL);
-	bui_set_element_image_from_path(editor->select_mode_entity, ELEMENT_CLICK,
-			ROOT_PATH"ui/ui_images/selection_mode_entity_click.png", NULL);
+	bui_set_element_image_to_states(editor->select_mode_entity,
+			ROOT_PATH"ui/ui_images/selection_mode_entity.png",
+			ROOT_PATH"ui/ui_images/selection_mode_entity_click.png",
+			ROOT_PATH"ui/ui_images/selection_mode_entity_click.png");
+	editor->select_mode_entity->text_y = -20;
 }
 
 void	selection_mode_buttons_init(t_editor *editor)
 {
-	int select_gap;
-	int select_w;
-	t_xywh coord;
+	t_xywh	coord;
 
-	select_gap = 10;
-	select_w = 32;
 	coord = ui_init_coords(70, 25, 200, 50);
 	editor->select_mode = bui_new_element(editor->toolbox, "Select", coord);
 	editor->select_mode->update_state = 0;
-	bui_set_element_text_font(editor->select_mode, "DroidSans.ttf", editor->select_mode->font_size, 0xffffffff);
+	bui_set_element_text_font(editor->select_mode, "DroidSans.ttf",
+		editor->select_mode->font_size, 0xffffffff);
 	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
-	vertex_button_init(select_w, select_gap, editor);
-	wall_button_init(select_w, select_gap, editor);
-	sector_button_init(select_w, select_gap, editor);
-	entity_button_init(select_w, select_gap, editor);
-	editor->select_mode_vertex->text_y = -20;
-	editor->select_mode_wall->text_y = -20;
-	editor->select_mode_sector->text_y = -20;
-	editor->select_mode_entity->text_y = -20;
+	vertex_button_init(32, 10, editor);
+	wall_button_init(32, 10, editor);
+	sector_button_init(32, 10, editor);
+	entity_button_init(32, 10, editor);
 	editor->select_mode_buttons = NULL;
 	editor->active_select_mode = NULL;
-	add_to_list(&editor->select_mode_buttons, editor->select_mode_vertex, sizeof(t_bui_element));
-	add_to_list(&editor->select_mode_buttons, editor->select_mode_wall, sizeof(t_bui_element));
-	add_to_list(&editor->select_mode_buttons, editor->select_mode_sector, sizeof(t_bui_element));
-	add_to_list(&editor->select_mode_buttons, editor->select_mode_entity, sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_vertex,
+		sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_wall,
+		sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_sector,
+		sizeof(t_bui_element));
+	add_to_list(&editor->select_mode_buttons, editor->select_mode_entity,
+		sizeof(t_bui_element));
 }
 
 void	toolbox_init(t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
-	coord = ui_init_coords(10, 10, editor->window->active_surface->w / 6, editor->window->active_surface->h - 20);
+	coord = ui_init_coords(10, 10, editor->window->active_surface->w / 6,
+		editor->window->active_surface->h - 20);
 	editor->toolbox = bui_new_menu(editor->window, "toolbox", coord);
 	editor->toolbox->update_state = 0;
 	bui_set_element_color(editor->toolbox, editor->palette.win_elem);
@@ -251,7 +249,7 @@ void	init_info_box(t_editor *editor)
 
 void	info_area_init(t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
 	coord = ui_init_coords(10, 150, editor->toolbox->position.w - 20, 250);
 	editor->info_area = bui_new_element(editor->toolbox, NULL, coord);
@@ -382,8 +380,8 @@ void	button_init_info_area(t_editor *editor)
 void	button_init(t_editor *editor)
 {
 	t_xywh	coord;
-	int	gap;
-	int	button_w;
+	int		gap;
+	int		button_w;
 
 	gap = 10;
 	button_w = 32;
@@ -421,7 +419,7 @@ void	color_palette_init(t_color_palette *pal)
 t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_xywh coord)
 {
 	t_changer_prefab	*prefab;
-	t_xywh			temp_coord;
+	t_xywh				temp_coord;
 
 	prefab = ft_memalloc(sizeof(t_changer_prefab));
 	prefab->menu = bui_new_element(parent_menu, title, coord);
@@ -441,7 +439,7 @@ t_changer_prefab	*new_changer_prefab(t_bui_element *parent_menu, char *title, t_
 
 void	changer_prefab_events(t_changer_prefab *changer, int *current_value, int change_amount)
 {
-	char *str;
+	char	*str;
 	
 	str = NULL;
 	if (bui_button(changer->add_button))
@@ -469,27 +467,25 @@ void	changer_prefab_events_float(t_changer_prefab *changer, float *current_value
 
 void	new_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *texture, int i)
 {
-	t_bui_element *temp_elem;
-	t_xywh coord;
-	int offset_x = 20;
-	int offset_y = 50;
-	int button_gap = 20;
-	int amount_on_x = floor(parent->position.w / (50 + button_gap + offset_x));
-	char *str;
+	t_bui_element	*temp_elem;
+	t_xywh			coord;
+	int				button_gap;
+	int				amount_on_x;
+	char			*str;
 
+	button_gap = 20;
+	amount_on_x  = floor(parent->position.w / (50 + button_gap + 20));
 	coord = ui_init_coords(0, 0, 50, 50);
-	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
-	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + 20;
+	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + 50;
 	str = ft_sprintf("%d", i);
 	temp_elem = bui_new_element(parent, str, coord);
 	ft_strdel(&str);
-
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[0], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[1], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[2], NULL);
 	bui_set_element_state_border(temp_elem, 2, 0xff00ff00, ELEMENT_HOVER);
 	bui_set_element_state_border(temp_elem, 2, 0xff00ffff, ELEMENT_CLICK);
-
 	add_to_list(list, temp_elem, sizeof(t_bui_element));
 }
 
@@ -509,41 +505,43 @@ void	texture_buttons_init(t_editor *editor)
 	}
 }
 
-void	init_sector_editor(t_editor *editor)
+void	floor_and_ceiling_texture_menu_init(t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
-	// edit toolbox
-	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f,
-			editor->new_edit_window->position.h - 10);
-	editor->edit_toolbox_sector =
-		bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
-	bui_set_element_color(editor->edit_toolbox_sector, editor->palette.elem_elem_elem);
-	// floor texture menu
-	coord = ui_init_coords(coord.x + coord.w + 5, 5,
-			(editor->new_edit_window->position.w - coord.w - 15) * 0.5,
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x
+			+ editor->edit_toolbox_sector->position.w + 5, 5,
+			(editor->new_edit_window->position.w
+			 - editor->edit_toolbox_sector->position.w - 15) * 0.5,
 			editor->new_edit_window->position.h - 10);
 	editor->sector_texture_menu =
 		bui_new_menu(editor->new_edit_window, "Sector Texture Menu", coord);
-	bui_set_element_color(editor->sector_texture_menu, editor->palette.elem_elem_elem);
-	// textures
+	bui_set_element_color(editor->sector_texture_menu,
+		editor->palette.elem_elem_elem);
 	texture_buttons_init(editor);
-	// floor and ceiling texture title
-	coord = ui_init_coords(editor->sector_texture_menu->position.w - 100, 0, 50, 20);
+	coord = ui_init_coords(editor->sector_texture_menu->position.w - 100,
+		0, 50, 20);
 	editor->floor_texture_title = 
 		bui_new_element(editor->sector_texture_menu, "Floor", coord);
 	bui_set_element_color(editor->floor_texture_title, 0xff0000ff);
-	coord = ui_init_coords(editor->sector_texture_menu->position.w - 50, 0, 50, 20);
+	coord = ui_init_coords(editor->sector_texture_menu->position.w - 50,
+		0, 50, 20);
 	editor->ceiling_texture_title = 
 		bui_new_element(editor->sector_texture_menu, "Ceiling", coord);
 	bui_set_element_color(editor->ceiling_texture_title, 0xff00ff00);
-	// Init the ceiling- and floor height... etc. buttons
+}
+
+void	sector_edit_changer_inits(t_editor *editor)
+{
+	t_xywh	coord;
+
 	coord = ui_init_coords(5, (25 * 1) + (40 * 0), 100, 40);
 	editor->floor_height =
 		new_changer_prefab(editor->edit_toolbox_sector, "floor height", coord);
 	coord.y = (25 * 2) + (40 * 1);
 	editor->ceiling_height =
-		new_changer_prefab(editor->edit_toolbox_sector, "ceiling height", coord);
+		new_changer_prefab(editor->edit_toolbox_sector,
+		"ceiling height", coord);
 	coord.y = (25 * 3) + (40 * 2);
 	editor->gravity =
 		new_changer_prefab(editor->edit_toolbox_sector, "gravity", coord);
@@ -559,7 +557,12 @@ void	init_sector_editor(t_editor *editor)
 	editor->ceiling_scale =
 		new_changer_prefab(editor->edit_toolbox_sector,
 		"ceiling texture scale", coord);
-	// slope edit menu
+}
+
+void	sector_slope_edit_menu_init(t_editor *editor)
+{
+	t_xywh	coord;
+
 	coord.x = editor->sector_texture_menu->position.x + editor->sector_texture_menu->position.w + 5;
 	coord.y = 5;
 	coord.w = editor->new_edit_window->position.w - editor->sector_texture_menu->position.w - editor->edit_toolbox_sector->position.w - 20;
@@ -610,51 +613,52 @@ void	init_sector_editor(t_editor *editor)
 	editor->slope_ceiling_angle_changer = new_changer_prefab(editor->slope_edit_menu, "Slope Angle", coord);
 }
 
+void	init_sector_editor(t_editor *editor)
+{
+	t_xywh	coord;
+
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f,
+			editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_sector =
+		bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+	bui_set_element_color(editor->edit_toolbox_sector, editor->palette.elem_elem_elem);
+	floor_and_ceiling_texture_menu_init(editor);
+	sector_edit_changer_inits(editor);
+	sector_slope_edit_menu_init(editor);
+}
+
 void	new_wall_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *texture, int i)
 {
-	t_bui_element *temp_elem;
-	t_xywh coord;
-	char *str;
-
-	int button_w = 50;
-	int button_gap = 15;
-	int offset_x = 5;
-	int offset_y = 70;
-	int amount_on_x = floor(parent->position.w / (button_w + button_gap + offset_x));
+	t_bui_element	*temp_elem;
+	t_xywh			coord;
+	char			*str;
+	int				button_gap;
+	int				amount_on_x;
 	
-	coord = ui_init_coords(0, 0, button_w, button_w);
-	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + offset_x;
-	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + offset_y;
+	button_gap = 15;
+	amount_on_x = floor(parent->position.w / (50 + button_gap + 5));
+	coord = ui_init_coords(0, 0, 50, 50);
+	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + 5;
+	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + 70;
 	str = ft_itoa(i);
 	temp_elem = bui_new_element(parent, str, coord);
 	ft_strdel(&str);
-
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[0], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[1], NULL);
 	SDL_BlitScaled(texture, NULL, temp_elem->surface[2], NULL);
-
 	draw_rect_border(temp_elem->surface[ELEMENT_CLICK],
 		(t_xywh){0, 0, temp_elem->position.w, temp_elem->position.h},
 		0xff00ff00, 5);
 	draw_rect_border(temp_elem->surface[ELEMENT_HOVER],
 		(t_xywh){0, 0, temp_elem->position.w, temp_elem->position.h},
 		0xff0000ff, 5);
-
 	add_to_list(list, temp_elem, sizeof(t_bui_element));
 }
 
-void	tabsystem_wall_editor_init(t_editor *editor)
+void	portal_texture_tab_init(t_editor *editor)
 {
-	t_xywh coord;
-	t_bui_element **elems;
+	t_bui_element	**elems;
 
-	coord = ui_init_coords(5, 20,
-		editor->edit_toolbox_wall->position.w - 10,
-		editor->edit_toolbox_wall->position.h - 25);
-	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall,
-		"texture tabs", coord);
-	bui_set_element_color(editor->wall_tab->tabsystem, ((t_bui_element *)editor->wall_tab->tabsystem->parent)->color);
-	bui_set_element_flags(editor->wall_tab->tabsystem, BUI_ELEMENT_DONT_UPDATE_STATE);
 	elems = preset_tab_add(editor->wall_tab, "Wall Texture");
 	bui_set_element_color(elems[0], editor->palette.light_blue);
 	bui_set_element_color(elems[1], editor->palette.light_blue);
@@ -662,6 +666,12 @@ void	tabsystem_wall_editor_init(t_editor *editor)
 	bui_set_element_flags(editor->wall_texture_view,
 		BUI_ELEMENT_DONT_UPDATE_STATE);
 	free(elems);
+}
+
+void	wall_texture_tab_init(t_editor *editor)
+{
+	t_bui_element	**elems;
+
 	elems = preset_tab_add(editor->wall_tab, "Portal Texture");
 	bui_set_element_color(elems[0], editor->palette.granny_smith_apple);
 	bui_set_element_color(elems[1], editor->palette.granny_smith_apple);
@@ -669,6 +679,13 @@ void	tabsystem_wall_editor_init(t_editor *editor)
 	bui_set_element_flags(editor->portal_texture_view,
 		BUI_ELEMENT_DONT_UPDATE_STATE);
 	free(elems);
+
+}
+
+void	wall_sprite_texture_tab_init(t_editor *editor)
+{
+	t_bui_element	**elems;
+
 	elems = preset_tab_add(editor->wall_tab, "Wall Sprite");
 	bui_set_element_color(elems[0], editor->palette.peach_crayola);
 	bui_set_element_color(elems[1], editor->palette.peach_crayola);
@@ -678,52 +695,82 @@ void	tabsystem_wall_editor_init(t_editor *editor)
 	free(elems);
 }
 
+void	tabsystem_wall_editor_init(t_editor *editor)
+{
+	t_xywh			coord;
+
+	coord = ui_init_coords(5, 20,
+		editor->edit_toolbox_wall->position.w - 10,
+		editor->edit_toolbox_wall->position.h - 25);
+	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall,
+		"texture tabs", coord);
+	bui_set_element_color(editor->wall_tab->tabsystem,
+		((t_bui_element *)editor->wall_tab->tabsystem->parent)->color);
+	editor->wall_tab->tabsystem->update_state = 0;
+	portal_texture_tab_init(editor);
+	wall_texture_tab_init(editor);
+	wall_sprite_texture_tab_init(editor);
+}
+
 void	wall_tab_init(t_editor *editor)
 {
 	t_xywh coord;
 
 	coord = ui_init_coords(5, 20, 80, 40);
-	editor->texture_scale_changer = new_changer_prefab(editor->wall_texture_view, "texture scale", coord);
+	editor->texture_scale_changer =
+		new_changer_prefab(editor->wall_texture_view, "texture scale", coord);
 	bui_set_element_color(editor->texture_scale_changer->menu, 0xff06D6A0);
-	bui_set_element_color(editor->texture_scale_changer->sub_button, 0xff06D6A0);
+	bui_set_element_color(editor->texture_scale_changer->sub_button,
+		0xff06D6A0);
 	bui_set_element_color(editor->texture_scale_changer->value, 0xff06D6A0);
-	bui_set_element_color(editor->texture_scale_changer->add_button, 0xff06D6A0);
+	bui_set_element_color(editor->texture_scale_changer->add_button,
+		0xff06D6A0);
 	coord = ui_init_coords(115, 20, 100, 20);
-	editor->wall_solid = bui_new_element(editor->wall_texture_view, "Solid:", coord);
-	bui_set_element_color(editor->wall_solid, ((t_bui_element *)editor->wall_solid->parent)->color);
+	editor->wall_solid = bui_new_element(editor->wall_texture_view,
+		"Solid:", coord);
+	bui_set_element_color(editor->wall_solid,
+		((t_bui_element *)editor->wall_solid->parent)->color);
 	coord = ui_init_coords(40, 0, 20, 20);
 	editor->wall_solid_tick = bui_new_element(editor->wall_solid, NULL, coord);
-	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/tick_box_off.png", NULL);
-	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/tick_box_hover.png", NULL);
-	bui_set_element_image_from_path(editor->wall_solid_tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
+	bui_set_element_image_to_states(editor->wall_solid_tick,
+		ROOT_PATH"ui/ui_images/tick_box_off.png",
+		ROOT_PATH"ui/ui_images/tick_box_hover.png",
+		ROOT_PATH"ui/ui_images/tick_box_on.png");
 }
 
 void	portal_tab_init(t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
 	coord = ui_init_coords(115, 40, 100, 20);
-	editor->wall_portal = bui_new_element(editor->wall_texture_view, "Portal:", coord);
-	bui_set_element_color(editor->wall_portal, ((t_bui_element *)editor->wall_portal->parent)->color);
+	editor->wall_portal =
+		bui_new_element(editor->wall_texture_view, "Portal:", coord);
+	bui_set_element_color(editor->wall_portal,
+		((t_bui_element *)editor->wall_portal->parent)->color);
 	coord = ui_init_coords(40, 0, 20, 20);
-	editor->wall_portal_tick = bui_new_element(editor->wall_portal, NULL, coord);
-	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_DEFAULT, ROOT_PATH"ui/ui_images/tick_box_off.png", NULL);
-	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_HOVER, ROOT_PATH"ui/ui_images/tick_box_hover.png", NULL);
-	bui_set_element_image_from_path(editor->wall_portal_tick, ELEMENT_CLICK, ROOT_PATH"ui/ui_images/tick_box_on.png", NULL);
+	editor->wall_portal_tick =
+		bui_new_element(editor->wall_portal, NULL, coord);
+	bui_set_element_image_to_states(editor->wall_portal_tick,
+		ROOT_PATH"ui/ui_images/tick_box_off.png",
+		ROOT_PATH"ui/ui_images/tick_box_hover.png",
+		ROOT_PATH"ui/ui_images/tick_box_on.png");
 }
 
 void	wall_sprite_tab_init(t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
 	coord = ui_init_coords(95, 20, 80, 20);
-	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "add sprite", coord);
+	editor->add_wall_sprite_button =
+		bui_new_element(editor->wall_sprite_view, "add sprite", coord);
 	bui_set_element_color(editor->add_wall_sprite_button, 0xff06D6A0);
 	coord = ui_init_coords(95, 40, 80, 20);
-	editor->remove_wall_sprite_button = bui_new_element(editor->wall_sprite_view, "remove sprite", coord);
+	editor->remove_wall_sprite_button =
+		bui_new_element(editor->wall_sprite_view, "remove sprite", coord);
 	bui_set_element_color(editor->remove_wall_sprite_button, 0xff06D6A0);
 	coord = ui_init_coords(5, 20, 80, 40);
-	editor->sprite_scale_changer = new_changer_prefab(editor->wall_sprite_view, "sprite scale", coord);
+	editor->sprite_scale_changer = new_changer_prefab(editor->wall_sprite_view,
+		"sprite scale", coord);
 	bui_set_element_color(editor->sprite_scale_changer->menu, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->sub_button, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->value, 0xff06D6A0);
@@ -763,14 +810,19 @@ void	wall_sprite_texture_buttons_init(t_editor *editor)
 
 void	init_wall_editor(t_editor *editor)
 {
-	t_xywh coord;
+	t_xywh	coord;
 
-	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f, editor->new_edit_window->position.h - 10);
-	editor->edit_toolbox_wall = bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
-	coord = ui_init_coords(editor->edit_toolbox_sector->position.x + editor->edit_toolbox_sector->position.w + 5, 5,
-			editor->new_edit_window->position.w - editor->edit_toolbox_sector->position.w - 15,
+	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f,
+		editor->new_edit_window->position.h - 10);
+	editor->edit_toolbox_wall =
+		bui_new_menu(editor->new_edit_window, "New Toolbox", coord);
+	coord = ui_init_coords(editor->edit_toolbox_sector->position.x
+			+ editor->edit_toolbox_sector->position.w + 5, 5,
+			editor->new_edit_window->position.w
+			- editor->edit_toolbox_sector->position.w - 15,
 			editor->new_edit_window->position.h - 10);
-	editor->edit_view_wall = bui_new_menu(editor->new_edit_window, "New View", coord);
+	editor->edit_view_wall =
+		bui_new_menu(editor->new_edit_window, "New View", coord);
 	editor->edit_view_wall->update = 0;
 	tabsystem_wall_editor_init(editor);
 	wall_tab_init(editor);
@@ -849,17 +901,34 @@ void	add_to_entity_editor(t_editor *editor)
 			"180");
 }
 
+void	init_entity_editor2(t_editor *editor)
+{
+	t_xywh	coord;
+
+	coord = ui_init_coords(5, 20,
+		editor->edit_toolbox_entity->position.w - 10, 20);
+	editor->entity_type_drop = bui_new_dropdown_preset(
+		editor->edit_toolbox_entity, "Entity types", coord);
+	coord = ui_init_coords(editor->edit_toolbox_entity->position.w * 0.5f
+		- 50, editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
+	editor->edit_entity_direction = bui_new_element(
+		editor->edit_toolbox_entity, "Direction", coord);
+	bui_set_element_color(editor->edit_entity_direction,
+		editor->palette.elem_elem);
+	bui_set_element_text_color(editor->edit_entity_direction, 0xffffffff);
+	editor->edit_entity_direction->update_state = 0;
+}
+
 void	init_entity_editor(t_editor *editor)
 {
 	t_xywh	coord;
 
-	// Toolbox menu
 	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w
 		* 0.20f, editor->new_edit_window->position.h - 10);
 	editor->edit_toolbox_entity = bui_new_menu(editor->new_edit_window,
 		"Entity Toolbox", coord);
-	bui_set_element_color(editor->edit_toolbox_entity, editor->palette.elem_elem_elem);
-	// View menu
+	bui_set_element_color(editor->edit_toolbox_entity,
+		editor->palette.elem_elem_elem);
 	coord = ui_init_coords(editor->edit_toolbox_sector->position.x
 		+ editor->edit_toolbox_sector->position.w + 5, 5,
 		editor->new_edit_window->position.w
@@ -867,21 +936,9 @@ void	init_entity_editor(t_editor *editor)
 		editor->new_edit_window->position.h - 10);
 	editor->edit_view_entity = bui_new_menu(editor->new_edit_window,
 		"Entity View", coord);
-	bui_set_element_color(editor->edit_view_entity, editor->palette.elem_elem_elem);
-	// Drop down menu for all the entity preset types
-	coord = ui_init_coords(5, 20,
-		editor->edit_toolbox_entity->position.w - 10, 20);
-	editor->entity_type_drop = bui_new_dropdown_preset(
-		editor->edit_toolbox_entity, "Entity types", coord);
-	// radio buttons for entity direction
-	coord = ui_init_coords(editor->edit_toolbox_entity->position.w * 0.5f
-		- 50, editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
-	editor->edit_entity_direction = bui_new_element(
-		editor->edit_toolbox_entity, "Direction", coord);
-	bui_set_element_color(editor->edit_entity_direction, editor->palette.elem_elem);
-	bui_set_element_text_color(editor->edit_entity_direction, 0xffffffff);
-	bui_set_element_flags(editor->edit_entity_direction, BUI_ELEMENT_DONT_UPDATE_STATE);
-	// adding stuff to the parents
+	bui_set_element_color(editor->edit_view_entity,
+		editor->palette.elem_elem_elem);
+	init_entity_editor2(editor);
 	add_to_entity_editor(editor);
 }
 
