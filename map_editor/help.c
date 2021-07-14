@@ -69,8 +69,6 @@ t_list	*get_nth_from_list(t_list **list, int index)
 }
 
 
-// NOTE: this is a wall sprite, not the ones in the actual game.
-// 	aka t_sprite found in ../core.h
 t_sprite	*new_sprite(void)
 {
 	t_sprite *sprite;
@@ -113,12 +111,7 @@ t_wall	*new_wall(t_point *orig, t_point *dest)
 {
 	t_wall *new_wall;
 
-	if (!(new_wall = (t_wall *)malloc(sizeof(t_wall))))
-	{
-		ft_putstr("Error: Mallocing new wall.\n");
-		return (NULL);
-	}
-	memset(new_wall, 0, sizeof(t_wall));
+	new_wall = ft_memalloc(sizeof(t_wall));
 	new_wall->dest = dest;
 	new_wall->orig = orig;
 	new_wall->texture_scale = 1;
@@ -157,13 +150,7 @@ t_sector	*new_sector(int id)
 {
 	t_sector *sector;
 
-	if (!(sector = (t_sector *)malloc(sizeof(t_sector))))
-	{
-		ft_putstr("Error: Mallocing new sector.\n");
-		return (NULL);
-	}
-	memset(sector, 0, sizeof(t_sector));
-
+	sector = ft_memalloc(sizeof(t_sector));
 	sector->id = id;
 	sector->walls = NULL;
 	sector->first_point = NULL;
@@ -201,13 +188,7 @@ t_entity	*new_entity(int id, t_vector pos)
 {
 	t_entity *entity;
 
-
-	if (!(entity = (t_entity *)malloc(sizeof(t_entity))))
-	{
-		ft_putstr("Error: Mallocing new entity\n");
-		return (NULL);
-	}
-	memset(entity, 0, sizeof(t_entity));
+	entity = ft_memalloc(sizeof(t_entity));
 	entity->id = id;
 	entity->pos = pos;
 	entity->direction = 90;
@@ -306,7 +287,6 @@ void	remove_from_points(t_list **points, t_point *v)
 			curr = prev->next;
 		}
 	}
-	printf("Point removed\n");
 }
 
 void	remove_from_walls(t_list **walls, t_wall *wall)
@@ -321,8 +301,6 @@ void	remove_from_walls(t_list **walls, t_wall *wall)
 	{
 		printf("Wall removed\n");
 		*walls = curr->next;
-		// ((t_wall *)curr->content)->orig = NULL;
-		// ((t_wall *)curr->content)->dest = NULL;
 		free(curr->content);
 		free(curr);
 		return ;
@@ -335,8 +313,6 @@ void	remove_from_walls(t_list **walls, t_wall *wall)
 			{
 				printf("Wall removed\n");
 				prev->next = curr->next;
-				// ((t_wall *)curr->content)->orig = NULL;
-				// ((t_wall *)curr->content)->dest = NULL;
 				free(curr->content);
 				free(curr);
 				return ;
@@ -346,7 +322,6 @@ void	remove_from_walls(t_list **walls, t_wall *wall)
 			curr = prev->next;
 		}
 	}
-	printf("Wall removed\n");
 }
 
 void	remove_from_walls_non_free(t_list **walls, t_wall *wall)
