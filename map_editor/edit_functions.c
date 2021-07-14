@@ -253,7 +253,6 @@ void	wall_sprite_view_events(t_editor *editor)
 			sizeof(t_sprite));
 		editor->grid.modify_sprite = sprite;
 	}
-
 	change_selected_sprite_texture(editor);
 	change_selected_sprite(editor);
 	move_selected_sprite(editor);
