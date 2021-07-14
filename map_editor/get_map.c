@@ -18,7 +18,7 @@ t_point	*get_point_with_id(t_list *points, unsigned int id)
 
 	curr = points;
 	while (curr)
-{
+	{
 		if (((t_point *)curr->content)->id == id)
 			return (curr->content);
 		curr = curr->next;
@@ -152,13 +152,29 @@ void	read_spawn(t_spawn *spawn, int fd)
 	ft_strdel(&line);
 }
 
-void	read_sectors(t_editor *doom, int fd)
+void	add_wall_ids_to_sector(
+	t_editor *editor, t_sector *sector, char **walls, char **neighbors)
 {
-	int i;
+	int	i;
+
+	i = 0;
+	while (walls[i] != 0)
+	{
+		add_to_list(&sector->walls, get_wall_with_id(
+			editor->grid.walls,
+			ft_atoi(walls[i])), sizeof(t_wall));
+		((t_wall *)sector->walls->content)->neighbor
+			= ft_atoi(neighbors[i]);
+		i++;
+	}
+}
+
+void	read_sectors(t_editor *editor, int fd)
+{
 	char		*line;
 	char		**arr;
 	char		**walls;
-	char		**neighbor;
+	char		**neighbors;
 	t_sector	*sect;
 
 	while (get_next_line(fd, &line))
@@ -166,26 +182,27 @@ void	read_sectors(t_editor *doom, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		sect = new_sector(doom->grid.sector_amount++);
+		sect = new_sector(editor->grid.sector_amount++);
 		sect->id = ft_atoi(arr[0]);
 		walls = ft_strsplit(arr[1], ' ');
-		neighbor = ft_strsplit(arr[2], ' ');
-		i = 0;
-		while (walls[i] != 0)
-		{
-			add_to_list(&sect->walls, get_wall_with_id(doom->grid.walls, ft_atoi(walls[i])), sizeof(t_wall));
-			((t_wall *)sect->walls->content)->neighbor = ft_atoi(neighbor[i]);
-			i++;
-		}
+		neighbors = ft_strsplit(arr[2], ' ');
+		add_wall_ids_to_sector(editor, sect, walls, neighbors);
 		sect->gravity = ft_atoi(arr[3]);
 		sect->light_level = ft_atoi(arr[4]);
-		add_to_list(&doom->grid.sectors, sect, sizeof(t_sector));
+		add_to_list(&editor->grid.sectors, sect, sizeof(t_sector));
 		free_array(arr);
 		free_array(walls);
-		free_array(neighbor);
+		free_array(neighbors);
 		ft_strdel(&line);
 	}
-	ft_strdel(&line);
+}
+
+void	set_sector_slope(t_sector *sec, char **slope_arr)
+{
+	sec->floor_slope_wall_id = ft_atoi(slope_arr[0]);
+	sec->floor_slope = ft_atoi(slope_arr[1]);
+	sec->ceiling_slope_wall_id = ft_atoi(slope_arr[2]);
+	sec->ceiling_slope = ft_atoi(slope_arr[3]);
 }
 
 void	read_fandc(t_editor *editor, int fd)
@@ -202,27 +219,21 @@ void	read_fandc(t_editor *editor, int fd)
 		arr = ft_strsplit(line, '\t');
 		sec = get_sector_with_id(editor->grid.sectors,
 			ft_atoi(arr[0]));
-		if (sec == NULL)
-			continue ;
 		sec->floor_height = ft_atoi(arr[1]);
 		sec->ceiling_height = ft_atoi(arr[2]);
-		sec->floor_texture = 1; //ft_atoi(arr[3]);
-		sec->ceiling_texture = 1; //ft_atoi(arr[4]);
+		sec->floor_texture = ft_atoi(arr[3]);
+		sec->ceiling_texture = ft_atoi(arr[4]);
 		sec->floor_texture_scale = ft_atof(arr[5]);
 		sec->ceiling_texture_scale = ft_atof(arr[6]);
 		slope_arr = ft_strsplit(arr[7], ' ');
-		sec->floor_slope_wall_id = ft_atoi(slope_arr[0]);
-		sec->floor_slope = ft_atoi(slope_arr[1]);
-		sec->ceiling_slope_wall_id = ft_atoi(slope_arr[2]);
-		sec->ceiling_slope = ft_atoi(slope_arr[3]);
+		set_sector_slope(sec, slope_arr);
 		free_array(arr);
 		free_array(slope_arr);
 		ft_strdel(&line);
 	}
-	ft_strdel(&line);
 }
 
-void		read_entities(t_editor *doom, int fd)
+void	read_entities(t_editor *editor, int fd)
 {
 	int		id;
 	char		*line;
@@ -240,15 +251,14 @@ void		read_entities(t_editor *doom, int fd)
 				atof(arr[3]),
 				atof(arr[4])});
 		ent->preset =
-			get_entity_preset_with_name(doom->entity_presets,
+			get_entity_preset_with_name(editor->entity_presets,
 			arr[1]);
 		ent->direction = ft_atoi(arr[5]);
-		add_to_list(&doom->grid.entities, ent, sizeof(t_entity));
+		add_to_list(&editor->grid.entities, ent, sizeof(t_entity));
 		free_array(arr);
 		ft_strdel(&line);
 		id++;
 	}
-	ft_strdel(&line);
 }
 
 void	read_mapinfo(t_editor *editor, int fd)
@@ -265,15 +275,34 @@ void	read_mapinfo(t_editor *editor, int fd)
 		free_array(arr);
 		ft_strdel(&line);
 	}
-	ft_strdel(&line);
 }
 
-void		read_map_file(t_editor *doom)
+void	choose_correct_reader(t_editor *editor, char *line, int fd)
+{
+	if (!(ft_strncmp(line, "type:map", 8)))
+		read_mapinfo(editor, fd);
+	else if (!(ft_strncmp(line, "type:vertex", 11)))
+		read_vertex(&editor->grid, fd);
+	else if (!(ft_strncmp(line, "type:wsprite", 12)))
+		read_sprite(&editor->grid, fd);
+	else if (!(ft_strncmp(line, "type:wall", 9)))
+		read_wall(&editor->grid, fd);
+	else if (!(ft_strncmp(line, "type:spawn", 10)))
+		read_spawn(&editor->spawn, fd);
+	else if (!(ft_strncmp(line, "type:sector", 11)))
+		read_sectors(editor, fd);
+	else if (!(ft_strncmp(line, "type:f&c", 8)))
+		read_fandc(editor, fd);
+	else if (!(ft_strncmp(line, "type:entity", 10)))
+		read_entities(editor, fd);
+}
+
+void		read_map_file(t_editor *editor)
 {
 	int	fd;
 	char	*line;
 
-	if ((fd = open(doom->fullpath, O_RDONLY)) < 0)
+	if ((fd = open(editor->fullpath, O_RDONLY)) < 0)
 	{
 		ft_putstr("Couldnt open map.\n");
 		return ;
@@ -282,22 +311,7 @@ void		read_map_file(t_editor *doom)
 	{
 		ft_putstr(line);
 		ft_putchar('\n');
-		if (!(ft_strncmp(line, "type:map", 8)))
-			read_mapinfo(doom, fd);
-		else if (!(ft_strncmp(line, "type:vertex", 11)))
-			read_vertex(&doom->grid, fd);
-		else if (!(ft_strncmp(line, "type:wsprite", 12)))
-			read_sprite(&doom->grid, fd);
-		else if (!(ft_strncmp(line, "type:wall", 9)))
-			read_wall(&doom->grid, fd);
-		else if (!(ft_strncmp(line, "type:spawn", 10)))
-			read_spawn(&doom->spawn, fd);
-		else if (!(ft_strncmp(line, "type:sector", 11)))
-			read_sectors(doom, fd);
-		else if (!(ft_strncmp(line, "type:f&c", 8)))
-			read_fandc(doom, fd);
-		else if (!(ft_strncmp(line, "type:entity", 10)))
-			read_entities(doom, fd);
+		choose_correct_reader(editor, line, fd);
 		ft_strdel(&line);
 		ft_putstr("read");
 	}
