@@ -14,13 +14,14 @@
 
 char	*set_spawn(t_editor *doom)
 {
-	char	*str;
-	char	*temp;
-	t_vector pos;
+	char		*str;
+	char		*temp;
+	t_vector	pos;
 
 	pos = doom->spawn.pos;
 	str = ft_sprintf("type:spawn\tx\ty\tz\tdir\n");
-	temp = ft_sprintf("0\t%.1f\t%.1f\t%.1f\t%d\n", pos.x, pos.y, pos.z, doom->spawn.direction);
+	temp = ft_sprintf("0\t%.1f\t%.1f\t%.1f\t%d\n",
+		pos.x, pos.y, pos.z, doom->spawn.direction);
 	ft_stradd(&str, temp);
 	ft_strdel(&temp);
 	return (str);
@@ -28,60 +29,70 @@ char	*set_spawn(t_editor *doom)
 
 char	*set_point(t_editor *doom)
 {
-	t_list *v;
-	t_point	*point;
-	t_vector vec;
-	char *str;
-	char *temp;
-	int id;
+	int		id;
+	char		*str;
+	char		*temp;
+	t_list		*curr;
+	t_point		*point;
 
-	v = doom->grid.points;
 	id = 0;
+	curr = doom->grid.points;
 	str = ft_sprintf("type:vertex\tid\tx\ty\tz\n");
-	while (v)
+	while (curr)
 	{
-		point = v->content;
+		point = curr->content;
 		point->id = id;
-		vec = point->pos;
-		temp = ft_sprintf("%d\t%.1f\t%.1f\t%.1f\n", point->id, vec.x, vec.y, vec.z);
+		temp = ft_sprintf("%d\t%.1f\t%.1f\t%.1f\n",
+			point->id, point->pos.x, point->pos.y, point->pos.z);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		point->id = id;
 		id++;
-		v = v->next;
+		curr = curr->next;
 	}
 	return (str);
 }
 
-char	*set_sprite(t_editor *doom)
+char	*set_all_sprites_for_wall(t_wall *wall, int wall_id)
 {
-	t_list *curr_wall;
-	t_list *curr_sprite;
-	t_wall *wall;
-	t_sprite *sprite;
-	char *temp = NULL;
-	char *str = ft_sprintf("type:wsprite\tid\twall_id\tx\ty\ttex\tscale\n");
-	int id = 0;
-	int wall_id = 0;
+	t_list		*curr_sprite;
+	t_sprite	*sprite;
+	char		*temp;
+	char		*str;
+	int		id;
 
-	curr_wall = doom->grid.walls;
+	id = 0;
+	curr_sprite = wall->sprites;
+	str = ft_strnew(0);
+	while (curr_sprite)
+	{
+		sprite = curr_sprite->content;
+		temp = ft_sprintf("%d\t%d\t%.3f\t%.3f\t%d\t%.3f\n",
+			id, wall_id, sprite->real_x, sprite->real_y,
+			sprite->sprite_id, sprite->scale);
+		ft_stradd(&str, temp);
+		ft_strdel(&temp);
+		curr_sprite = curr_sprite->next;
+		id++;
+	}
+	return (str);
+}
+
+char	*set_sprite(t_editor *editor)
+{
+	t_list		*curr_wall;
+	char		*str;
+	char		*temp;
+	int		wall_id;
+
+	wall_id = 0;
+	str = ft_sprintf("type:wsprite\tid\twall_id\tx\ty\ttex\tscale\n");
+	curr_wall = editor->grid.walls;
 	while (curr_wall)
 	{
-		wall = curr_wall->content;
-		curr_sprite = wall->sprites;
-		while (curr_sprite)
-		{
-			sprite = curr_sprite->content;
-			// NOTE: if the wall id is not matching to the correct wall, then you have to rethink this,
-			// 	but it should because youre looping in the same order as the set_wall function comes up with ids.
-			temp = ft_sprintf("%d\t%d\t%.3f\t%.3f\t%d\t%.3f\n", id, wall_id, sprite->real_x, sprite->real_y, sprite->sprite_id, sprite->scale);
-			ft_putstr(temp);
-			// maybe remove this and just add it in the printf, actually no idea if its even faster
-			ft_stradd(&str, temp);
-			ft_strdel(&temp);
-			id++;
-			curr_sprite = curr_sprite->next;
-		}
+		temp = set_all_sprites_for_wall(curr_wall->content, wall_id);
+		ft_stradd(&str, temp);
+		ft_strdel(&temp);
 		wall_id++;
 		curr_wall = curr_wall->next;
 	}
@@ -90,145 +101,148 @@ char	*set_sprite(t_editor *doom)
 
 char	*set_wall(t_editor *doom)
 {
-	t_list *v;
-	char *str;
-	char *temp;
-	t_wall *wall;
-	int id;
+	t_list	*curr;
+	t_wall	*wall;
+	char	*str;
+	char	*temp;
+	int	id;
 
-	v = doom->grid.walls;
 	id = 0;
-	str = ft_sprintf("type:wall\tid\tv1\tv2\twalltex\tportaltex\tscale\tsolid\n");
-	while (v)
+	str = ft_sprintf("type:wall\tid\tv1\tv2\twalltex"\
+		"\tportaltex\tscale\tsolid\n");
+	curr = doom->grid.walls;
+	while (curr)
 	{
-		wall = v->content;
+		wall = curr->content;
 		wall->id = id;
-
-		// default the soliditiy of the wall if not set (-1 means its not set (if youre curious))
-		if (wall->solid == -1)
-			wall->solid = wall->neighbor == -1;
-
-		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t\t%.1f\t%d\n", wall->id, wall->orig->id, wall->dest->id, wall->texture_id, wall->portal_texture_id, wall->texture_scale, wall->solid);
+		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t\t%.1f\t%d\n",
+			wall->id, wall->orig->id, wall->dest->id,
+			wall->texture_id, wall->portal_texture_id,
+			wall->texture_scale, wall->solid);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
-
 		id++;
-		v = v->next;
+		curr = curr->next;
 	}
 	return (str);
 }
 
 char	*set_fandc(t_editor *editor)
 {
-	int		id;
 	char		*str;
 	char		*temp;
-	t_list		*s;
+	t_list		*curr;
 	t_sector	*sec;
 
-	id = 0;
 	str = ft_sprintf("type:f&c\tid\tf_height\tc_height\tf_tex\tc_tex\t"\
 		"f_scale\tc_scale\tslope\n");
-	s = editor->grid.sectors;
-	while (s)
+	curr = editor->grid.sectors;
+	while (curr)
 	{
-		sec = s->content;
-		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.1f\t%.1f\t%d %d %d %d\n",
-			sec->id, sec->floor_height, sec->ceiling_height,
-			sec->floor_texture, sec->ceiling_texture,
-			sec->floor_texture_scale, sec->ceiling_texture_scale,
-			sec->floor_slope_wall_id, sec->floor_slope,
-			sec->ceiling_slope_wall_id, sec->ceiling_slope);
+		sec = curr->content;
+		temp = ft_sprintf("%d\t%d\t%d\t%d\t%d\t%.1f\t%.1f\t%d %d %d"\
+			" %d\n", sec->id, sec->floor_height,
+			sec->ceiling_height, sec->floor_texture,
+			sec->ceiling_texture, sec->floor_texture_scale,
+			sec->ceiling_texture_scale, sec->floor_slope_wall_id,
+			sec->floor_slope, sec->ceiling_slope_wall_id,
+			sec->ceiling_slope);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
-		s = s->next;
-		id++;
+		curr = curr->next;
 	}
 	return (str);
 }
 
+char	*set_walls_and_neighbors_for_sector(t_list *wall_list)
+{
+	char	*temp_wall;
+	char	*temp_neighbor;
+	char	*temp_w;
+	char	*temp_n;
+	char	*temp;
+	char	*str;
+	t_wall	*w;
+
+	temp_w = NULL;
+	temp_n = NULL;
+	str = ft_strnew(0);
+	while (wall_list)
+	{
+		w = wall_list->content;
+		if (temp_w == NULL)
+			temp_wall = ft_sprintf("%d", w->id);
+		else
+			temp_wall = ft_sprintf("%d %s", w->id, temp_w);
+		if (temp_n == NULL)
+			temp_neighbor = ft_sprintf("%d", w->neighbor);
+		else
+			temp_neighbor = ft_sprintf("%d %s", w->neighbor, temp_n);
+		ft_strdel(&temp_w);
+		ft_strdel(&temp_n);
+		temp_w = ft_strdup(temp_wall);
+		temp_n = ft_strdup(temp_neighbor);
+		ft_strdel(&temp_wall);
+		ft_strdel(&temp_neighbor);
+		wall_list = wall_list->next;
+	}
+	ft_stradd(&str, temp_w);
+	temp = ft_sprintf("\t%s", temp_n);
+	ft_stradd(&str, temp);
+	ft_strdel(&temp_w);
+	ft_strdel(&temp_n);
+	ft_strdel(&temp);
+	return (str);
+}
+
+
 char	*set_sector(t_editor *doom)
 {
-	t_list *s;
-	char *str;
-	char *temp;
-	t_sector *sec;
-	t_list	*wall;
-	t_wall *w;
-	int id;
+	t_list		*curr;
+	char		*str;
+	char		*temp;
+	t_sector	*sec;
 
-	s = doom->grid.sectors;
-	id = 0;
-	str = ft_sprintf("type:sector\tid\twall_id\tneighbors\tgravity\tlight\n");
-	while (s)
+	curr = doom->grid.sectors;
+	str = ft_sprintf("type:sector\tid\twall_id\tneighbors\tgravity\t"\
+		"light\n");
+	while (curr)
 	{
-		sec = s->content;
-
+		sec = curr->content;
 		sort_sector_wall_list(sec);
-
 		temp = ft_sprintf("%d\t", sec->id);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
-
-		wall = sec->walls;
-		char *temp_wall;
-		char *temp_neighbor;
-		char *temp_w;
-		char *temp_n;
-		temp_w = NULL;
-		temp_n = NULL;
-		while (wall)
-		{
-			w = wall->content;
-			if (temp_w == NULL)
-				temp_wall = ft_sprintf("%d", w->id);
-			else
-				temp_wall = ft_sprintf("%d %s", w->id, temp_w);
-			if (temp_n == NULL)
-				temp_neighbor = ft_sprintf("%d", w->neighbor);
-			else
-				temp_neighbor = ft_sprintf("%d %s", w->neighbor, temp_n);
-			ft_strdel(&temp_w);
-			ft_strdel(&temp_n);
-			temp_w = ft_strdup(temp_wall);
-			temp_n = ft_strdup(temp_neighbor);
-			ft_strdel(&temp_wall);
-			ft_strdel(&temp_neighbor);
-			wall = wall->next;
-		}
-		ft_stradd(&str, temp_w);
-		temp = ft_sprintf("\t%s", temp_n);
+		temp = set_walls_and_neighbors_for_sector(sec->walls);
 		ft_stradd(&str, temp);
-		ft_strdel(&temp_w);
-		ft_strdel(&temp_n);
 		ft_strdel(&temp);
-
 		temp = ft_sprintf("\t%d\t%d\n", sec->gravity, sec->light_level);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
-		s = s->next;
-		id++;
+		curr = curr->next;
 	}
 	return (str);
 }
 
 char	*set_entities(t_editor *doom)
 {
-	t_list *e;
-	t_entity *ent;
 	char *temp;
 	char *str;
+	t_list	*curr;
+	t_entity *ent;
 
-	e = doom->grid.entities;
+	curr = doom->grid.entities;
 	str = ft_sprintf("type:entity\tid\tname\tx\ty\tz\tdirection\n");
-	while (e)
+	while (curr)
 	{
-		ent = e->content;
+		ent = curr->content;
 		gfx_vector_string(ent->pos);
-		temp = ft_sprintf("%d\t%s\t%.1f\t%.1f\t%.1f\t%d\n", ent->id, ent->preset->name, ent->pos.x, ent->pos.y, ent->pos.z, ent->direction);
+		temp = ft_sprintf("%d\t%s\t%.1f\t%.1f\t%.1f\t%d\n",
+			ent->id, ent->preset->name, ent->pos.x, ent->pos.y,
+			ent->pos.z, ent->direction);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
-		e = e->next;
+		curr = curr->next;
 	}
 	return (str);
 }
@@ -250,12 +264,13 @@ void	set_map(t_editor *doom)
 
 	ft_putstr("Saving file.\n");
 
-	//just to be sure you have the correct amount of things.
-	// remove when niklas decides to fix his code.
 	recount_everything(doom);
 
 	divider = ft_strdup("-----------------------------------\n");
-	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n0\t%s\t%d\t%d\t%d\t%d\t%d\n", doom->fullpath, doom->scale, doom->grid.point_amount, doom->grid.wall_amount, doom->grid.sector_amount, doom->grid.entity_amount);
+	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n0\t%s\t%d\t%d\t%d\t%d\t%d\n",
+		doom->fullpath, doom->scale, doom->grid.point_amount,
+		doom->grid.wall_amount, doom->grid.sector_amount,
+		doom->grid.entity_amount);
 	spawn = set_spawn(doom);
 	point = set_point(doom);
 	wall = set_wall(doom);
@@ -263,17 +278,13 @@ void	set_map(t_editor *doom)
 	sector = set_sector(doom);
 	fandc = set_fandc(doom);
 	entity = set_entities(doom);
-	// str = ft_sprintf("%s%s%s%s%s%s%s%s%s%s%s%s", map, divider, spawn, divider, point, divider, wall, divider, sector, divider, entity, divider);
 	str = ft_strjoiner(map, divider, spawn, divider, point, divider, wall, divider, sprite, divider, sector, divider, fandc, divider, entity, divider, NULL);
 
 	fd = creat(doom->fullpath, S_IRUSR | S_IWUSR);
 	if (fd > -1)
 		ft_fprintf(fd, "%s", str);
 	else
-	{
-		ft_printf("Something went wrong with saving the file.\n");
-		add_text_to_info_box(doom, "Something went wrong with saving the map!");
-	}
+		add_text_to_info_box(doom, "[ERROR] Couldnt save map!");
 	close(fd);
 
 	ft_printf("%s", str);

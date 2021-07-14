@@ -27,6 +27,8 @@ char	*args_parser(int ac, char **av)
 		if (ft_strendswith(av[1], ".endless") == 0
 			|| ft_strendswith(av[1], ".story") == 0)
 			map = ft_strjoiner(ROOT_PATH"map_editor/maps/", av[1], NULL);
+		else
+			ft_putstr("[ERROR] Invalid map name!\n");
 		return (map);
 	}
 	return (NULL);
