@@ -12,7 +12,8 @@
 
 #include "editor.h"
 
-void	render_sprites_on_the_wall(t_editor *editor, SDL_Surface *scaled_wall, int scale)
+void	render_sprites_on_the_wall(
+	t_editor *editor, SDL_Surface *scaled_wall, int scale)
 {
 	t_list		*curr;
 	t_sprite	*sprite;
@@ -62,48 +63,51 @@ void	render_scaled_wall(t_editor *editor, SDL_Surface *scaled_wall)
 	SDL_FreeSurface(scaled_wall);
 }
 
-void	wall_render(t_editor *editor)
+void	render_texture_on_the_wall(SDL_Surface *surface, SDL_Surface *texture, float texture_scale, float scale)
 {
-	t_wall	*wall;
-	t_sector	*sec;
-	t_xywh	dim;
-	SDL_Surface	*temp_texture;
-	SDL_Surface	*scaled_wall;
+	int		y;
+	int		x;
+	int		x_axis;
+	int		y_axis;
 	SDL_Rect	temp;
-	float	scale;
-	float	x_axis;
-	float	y_axis;
-	int	y;
-	int	x;
 
-	SDL_FillRect(editor->edit_view_wall->active_surface, NULL, 0xff000000);
-	wall = editor->grid.modify_wall;
-	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * editor->scale;
-	sec = get_sector_with_wall(&editor->grid.sectors, wall);
-	dim.h = sec->ceiling_height - sec->floor_height;
-	if (wall->texture_id < 0 || wall->texture_id >= editor->texture_amount)
-		temp_texture = editor->texture_textures[0];
-	else
-		temp_texture = editor->texture_textures[wall->texture_id];
-	x_axis = ((float)dim.w / (float)editor->grid.modify_wall->texture_scale);
-	y_axis = ((float)dim.h / (float)editor->grid.modify_wall->texture_scale);
-	scale = editor->edit_view_wall->position.w / dim.w;
-	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
+	x_axis = (((float)surface->w / scale) / texture_scale);
+	y_axis = (((float)surface->h / scale) / texture_scale);
 	y = 0;
 	while (y < y_axis)
 	{
 		x = 0;
 		while (x < x_axis)
 		{
-			temp.w = scale * editor->grid.modify_wall->texture_scale;
-			temp.h = scale * editor->grid.modify_wall->texture_scale;
+			temp.w = scale * texture_scale;
+			temp.h = scale * texture_scale;
 			temp.x = x * temp.w;
 			temp.y = y * temp.h;
-			SDL_BlitScaled(temp_texture, NULL, scaled_wall, &temp);
+			SDL_BlitScaled(texture, NULL, surface, &temp);
 			x++;
 		}
 		y++;
 	}
+}
+
+void	wall_render(t_editor *editor)
+{
+	float		scale;
+	t_xywh		dim;
+	t_wall		*wall;
+	t_sector	*sec;
+	SDL_Surface	*scaled_wall;
+
+	SDL_FillRect(editor->edit_view_wall->active_surface, NULL, 0xff000000);
+	wall = editor->grid.modify_wall;
+	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * editor->scale;
+	sec = get_sector_with_wall(&editor->grid.sectors, wall);
+	dim.h = sec->ceiling_height - sec->floor_height;
+	scale = editor->edit_view_wall->position.w / dim.w;
+	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
+	render_texture_on_the_wall(scaled_wall, editor->texture_textures[
+		ft_clamp(wall->texture_id, 0, editor->texture_amount)],
+		editor->grid.modify_wall->texture_scale, scale);
 	render_sprites_on_the_wall(editor, scaled_wall, scale);
 	render_scaled_wall(editor, scaled_wall);
 }
@@ -294,22 +298,10 @@ t_wall	*get_longest_wall_from_list(t_list *list)
 	return (long_wall);
 }
 
-void	sector_f_and_c_button_events(t_editor *editor)
+void	loop_all_fandc_texture_buttons(t_editor *editor)
 {
 	t_list	*curr;
-	char	*ceil_tex;
-	char	*floor_tex;
 
-	ceil_tex = ft_itoa(editor->grid.modify_sector->ceiling_texture);
-	floor_tex = ft_itoa(editor->grid.modify_sector->floor_texture);
-	editor->active_ceiling_texture =
-		bui_get_element_with_text_from_list(
-		editor->sector_texture_buttons, ceil_tex);
-	editor->active_floor_texture =
-		bui_get_element_with_text_from_list(
-		editor->sector_texture_buttons, floor_tex);
-	ft_strdel(&ceil_tex);
-	ft_strdel(&floor_tex);
 	curr = editor->sector_texture_buttons;
 	while (curr)
 	{
@@ -322,10 +314,27 @@ void	sector_f_and_c_button_events(t_editor *editor)
 		}
 		curr = curr->next;
 	}
-	editor->grid.modify_sector->floor_texture =
-		ft_atoi(editor->active_floor_texture->text);
-	editor->grid.modify_sector->ceiling_texture =
-		ft_atoi(editor->active_ceiling_texture->text);
+}
+
+
+void	sector_f_and_c_button_events(t_editor *editor)
+{
+	char	*ceil_tex;
+	char	*floor_tex;
+
+	ceil_tex = ft_itoa(editor->grid.modify_sector->ceiling_texture);
+	floor_tex = ft_itoa(editor->grid.modify_sector->floor_texture);
+	editor->active_ceiling_texture = bui_get_element_with_text_from_list(
+		editor->sector_texture_buttons, ceil_tex);
+	editor->active_floor_texture = bui_get_element_with_text_from_list(
+		editor->sector_texture_buttons, floor_tex);
+	ft_strdel(&ceil_tex);
+	ft_strdel(&floor_tex);
+	loop_all_fandc_texture_buttons(editor);
+	editor->grid.modify_sector->floor_texture
+		= ft_atoi(editor->active_floor_texture->text);
+	editor->grid.modify_sector->ceiling_texture
+		= ft_atoi(editor->active_ceiling_texture->text);
 }
 
 void	draw_selected_f_and_c_button(t_editor *editor)
@@ -428,6 +437,23 @@ void	floor_ceiling_id_changer_prefab_events(t_editor *editor)
 			wall_amount - 1;
 }
 
+void	draw_fandc_scaled_line(
+	t_editor *editor, SDL_Surface *surf, t_vector center, float scale)
+{
+	t_vector	*v;
+
+	v = get_scaled_line(surf, get_nth_from_list(
+		&editor->grid.modify_sector->walls,
+		editor->grid.modify_sector->floor_slope_wall_id)->content,
+		center, scale - 1.5f);
+	gfx_draw_line(surf, 0xff0000ff, v[0], v[1]);
+	v = get_scaled_line(surf, get_nth_from_list(
+		&editor->grid.modify_sector->walls,
+		editor->grid.modify_sector->ceiling_slope_wall_id)->content,
+		center, scale - 0.5f);
+	gfx_draw_line(surf, 0xff00ff00, v[0], v[1]);
+}
+
 void	draw_sector_viewer(t_editor *editor, SDL_Surface *surf)
 {
 	t_vector	*v;
@@ -447,16 +473,7 @@ void	draw_sector_viewer(t_editor *editor, SDL_Surface *surf)
 			v[0], v[1]);
 		curr = curr->next;
 	}
-	v = get_scaled_line(surf, 
-		get_nth_from_list(&editor->grid.modify_sector->walls,
-		editor->grid.modify_sector->floor_slope_wall_id)->content,
-		center, scale - 1.5f);
-	gfx_draw_line(surf, 0xff0000ff, v[0], v[1]);
-	v = get_scaled_line(surf, 
-		get_nth_from_list(&editor->grid.modify_sector->walls,
-		editor->grid.modify_sector->ceiling_slope_wall_id)->content,
-		center, scale - 0.5f);
-	gfx_draw_line(surf, 0xff00ff00, v[0], v[1]);
+	draw_fandc_scaled_line(editor, surf, center, scale);
 }
 
 void	sector_option(t_editor *editor)

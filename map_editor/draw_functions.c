@@ -99,7 +99,7 @@ t_point	*get_point_from_wall_in_sector(t_sector *sector, t_point *v)
 	return (NULL);
 }
 
-t_point	*t(t_grid *grid, t_vector pos)
+t_point	*get_existing_point_or_new(t_grid *grid, t_vector pos)
 {
 	t_point	*point;
 
@@ -113,6 +113,21 @@ t_point	*t(t_grid *grid, t_vector pos)
 	return (point);
 }
 
+t_wall	*get_existing_wall_or_new(t_grid *grid, t_point *temp1, t_point *temp2)
+{
+	t_wall	*wall;
+
+	wall = NULL;
+	wall = get_wall_from_list(&grid->modify_sector->walls, temp1, temp2);
+	if (wall == NULL)
+	{
+		wall = new_wall(temp1, temp2);
+		add_to_list(&grid->walls, wall, sizeof(t_wall));
+		add_to_list(&grid->modify_sector->walls, wall, sizeof(t_wall));
+	}
+	return (wall);
+}
+
 void	check_selected(t_grid *grid)
 {
 	t_point	*temp1;
@@ -122,21 +137,14 @@ void	check_selected(t_grid *grid)
 	temp1 = NULL;
 	temp2 = NULL;
 	temp_wall = NULL;
-	if (vector_is_empty(grid->selected2)) // seg faults if removed.
+	if (vector_is_empty(grid->selected2))
 		return ;
-	temp1 = t(grid, grid->selected1);
-	temp2 = t(grid, grid->selected2);
-	// check if a wall with that same points is in the sector walls, if yes then give it the &
-	temp_wall = get_wall_from_list(&grid->modify_sector->walls, temp1, temp2); // enable this to not make duplicate walls
-	if (temp_wall == NULL) // make new wall
-	{
-		temp_wall = new_wall(temp1, temp2);
-		add_to_list(&grid->walls, temp_wall, sizeof(t_wall));
-		add_to_list(&grid->modify_sector->walls, temp_wall, sizeof(t_wall));
-	}
+	temp1 = get_existing_point_or_new(grid, grid->selected1);
+	temp2 = get_existing_point_or_new(grid, grid->selected2);
+	temp_wall = get_existing_wall_or_new(grid, temp1, temp2);
 	if (grid->modify_sector->first_point == NULL)
 		grid->modify_sector->first_point = temp1;
-	if (grid->modify_sector->first_point == temp_wall->dest) // check if you end up on the first point to stop drawing sector.
+	if (grid->modify_sector->first_point == temp_wall->dest)
 	{
 		grid->modify_sector->first_point = NULL;
 		grid->modify_sector = NULL;
@@ -147,10 +155,34 @@ void	check_selected(t_grid *grid)
 	grid->selected2 = EMPTY_VEC;
 }
 
-void	click_calc(t_editor *editor, t_grid *grid)
+void	click_calc_sec(t_grid *grid)
 {
 	t_sector	*sector;
+
+	if (grid->modify_sector == NULL)
+	{
+		sector = new_sector(grid->sector_amount++);
+		add_to_list(&grid->sectors, sector, sizeof(t_sector));
+		grid->modify_sector = sector;
+	}
+	if (vector_is_empty(grid->selected1))
+		grid->selected1 = grid->hover;
+	else if (!vector_compare(grid->selected1, grid->hover))
+		grid->selected2 = grid->hover;
+}
+
+void	click_calc_ent(t_editor *editor)
+{
 	t_entity	*entity;
+
+	entity = new_entity(editor->grid.entity_amount++, editor->grid.hover);
+	entity->preset = get_entity_preset_with_name(
+		editor->entity_presets, "Barrel");
+	add_to_list(&editor->grid.entities, entity, sizeof(t_entity));
+}
+
+void	click_calc(t_editor *editor, t_grid *grid)
+{
 
 	if (!mouse_hover(editor->libui, (t_xywh) {
 	grid->elem->position.x, grid->elem->position.y,
@@ -158,26 +190,10 @@ void	click_calc(t_editor *editor, t_grid *grid)
 		return ;
 	if (editor->libui->mouse_down_last_frame &&
 	mouse_pressed(editor->libui, MKEY_LEFT))
-	{
-		if (grid->modify_sector == NULL)
-		{
-			sector = new_sector(grid->sector_amount++);
-			add_to_list(&grid->sectors, sector, sizeof(t_sector));
-			grid->modify_sector = sector;
-		}
-		if (vector_is_empty(grid->selected1))
-			grid->selected1 = grid->hover;
-		else if (!vector_compare(grid->selected1, grid->hover))
-			grid->selected2 = grid->hover;
-	}
+		click_calc_sec(grid);
 	else if (editor->libui->mouse_down_last_frame &&
 	mouse_pressed(editor->libui, MKEY_RIGHT))
-	{
-		entity = new_entity(grid->entity_amount++, grid->hover);
-		entity->preset = get_entity_preset_with_name(
-			editor->entity_presets, "Barrel");
-		add_to_list(&grid->entities, entity, sizeof(t_entity));
-	}
+		click_calc_ent(editor);
 	else if (mouse_pressed(editor->libui, MKEY_MIDDLE))
 		editor->spawn.pos = grid->hover;
 }
