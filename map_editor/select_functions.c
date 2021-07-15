@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/17 16:36:29 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/15 09:52:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,7 +158,7 @@ void	draw_selected_point(t_editor *editor, t_grid *grid)
 	}
 	editor->selected_vector_info->text_color = 0xffffffff;
 	bui_set_element_text(editor->selected_vector_info, s, 0, 0);
-	ft_strdel(&ss);
+	ft_strdel(&s);
 }
 
 int	get_point_connection_amount(t_list **walls, t_point *point)
