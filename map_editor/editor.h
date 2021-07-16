@@ -9,6 +9,8 @@
 # include "ft_printf.h"
 # include "path.h"
 # include "bxpm.h"
+# include "enum.h"
+# include "resources.h"
 
 //////////////////////
 // ENTITY TODO
@@ -101,6 +103,7 @@ typedef struct	s_color_palette
 	int			elem_elem;
 	int			elem_elem_elem;
 
+	int	light_gray;
 	// Coolors.co
 	int	granny_smith_apple;
 	int	peach_crayola;
@@ -388,7 +391,7 @@ void			draw_sectors(t_grid *grid);
 void			draw_wall(t_wall *wall, t_grid *grid, Uint32 color); // note already takes grid->gap into consideration
 void			draw_walls(t_grid *grid, t_list **walls, Uint32 color);
 void			draw_points(t_grid *grid, t_list *points);
-void			draw_entities(t_editor *doom, t_grid *grid);
+void			draw_entities(t_editor *editor);
 void			draw_hover_info(t_editor *doom, t_grid *grid);
 void			draw_selected_sector_info(t_editor *doom, t_grid *grid);
 void			loop_buttons(t_editor *doom);
@@ -411,10 +414,9 @@ void			draw_selected_entity(t_grid *grid);
 void			boundaries(t_editor *doom, t_grid *grid);
 void			selection_mode_buttons(t_editor *doom, t_grid *grid);
 void			show_selected_wall_texture(t_editor *doom, t_grid *grid);
-void			selected_option_menu(t_editor *doom, t_grid *grid, t_bui_libui *libui);
+void			selected_option_menu(t_editor *doom, t_grid *grid);
 
-int				args_parser(t_editor *editor, int ac, char **av);
-char			*args_parser_v2(int ac, char **av);
+char			*args_parser(int ac, char **av);
 t_point			*get_point_from_list(t_list *list, t_point *v);
 t_wall			*get_wall_from_list(t_list **list, t_point *v1, t_point *v2);
 t_sprite		*get_sprite_from_list(t_list **list, int x, int y);
@@ -428,7 +430,7 @@ void			remove_everything_from_list(t_list **list);
 
 void			recount_everything(t_editor *doom);
 
-/* Sector shit */
+/* Sector */
 t_sector		*get_sector_with_wall(t_list **sector_list, t_wall *wall);
 void			check_sector_wanter(t_editor *doom, SDL_Event *e);
 void			remove_wall_from_sector(t_sector **sector, t_wall *wall); // use this if you want to remove a specific wall from a specific sector
@@ -439,11 +441,11 @@ void   			remove_wall_from_its_sector(t_grid *grid, t_wall *wall); // use this i
 void			remove_all_non_existing_portals(t_list **sectors);
 int				get_sector_wall_amount(t_sector *sector);
 
-/* Point shit */
+/* Point */
 void			remove_all_points_not_a_part_of_a_wall(t_list **points, t_list **walls);
 int				get_point_connection_amount(t_list **walls, t_point *point);
 
-/* Wall shit */
+/* Wall */
 void			remove_all_lonely_walls(t_list **walls, t_list **sectors);
 
 void			texture_init(t_editor *doom);
@@ -457,6 +459,7 @@ void			remove_portal(t_grid *grid);
 /*
 ** Help
 */
+float			get_wall_length(t_wall *wall);
 int			get_list_len(t_list **list);
 int				vector_is_empty(t_vector v);
 int				vector_compare(t_vector v1, t_vector v2);

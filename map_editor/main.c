@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/13 14:15:44 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/13 13:38:57 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ int main(int argc, char **argv)
 {
 	char *map;
 
-	if (!(map = args_parser_v2(argc, argv)))
+	if (!(map = args_parser(argc, argv)))
 		return (1);
 	map_editor(map);
 	ft_strdel(&map);

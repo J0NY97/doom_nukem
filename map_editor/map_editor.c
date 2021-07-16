@@ -3,7 +3,6 @@
 // NOTE: map_editor makes new window and libui.
 void	map_editor(char *map)
 {
-	ft_printf("%d", sizeof(unsigned char));
 	t_editor	*editor;
 	t_bui_libui	*libui;
 
@@ -104,7 +103,7 @@ ft_printf("Starting to loop!\n");
 			draw_selected_sector(editor, &editor->grid);
 			draw_selected_entity(&editor->grid);
 			selection_mode_buttons(editor, &editor->grid);
-			selected_option_menu(editor, &editor->grid, libui);
+			selected_option_menu(editor, &editor->grid);
 		}
 		unselect_selected(editor, &editor->grid);
 		// boundaries(doom, &doom->grid);
@@ -112,7 +111,7 @@ ft_printf("Starting to loop!\n");
 		//draw_walls(&doom->grid, &doom->grid.walls, 0xffffffff); // this is just for debugging purposes, to know if you remove a wall it actually is removed.
 		draw_sectors(&editor->grid);
 		draw_points(&editor->grid, editor->grid.points);
-		draw_entities(editor, &editor->grid);
+		draw_entities(editor);
 		// draw spawn
 		if (!vector_is_empty(editor->spawn.pos))
 			gfx_draw_vector(editor->grid.elem->active_surface, 0xff00ff00, 6, gfx_vector_multiply(editor->spawn.pos, editor->grid.gap));

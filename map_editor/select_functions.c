@@ -6,89 +6,81 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/17 16:36:29 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/15 09:52:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "editor.h"
 
-void	movement(t_editor *doom, t_grid *grid, int move_x, int move_y)
+void	move_wall(t_editor *editor, int move_x, int move_y)
 {
-	t_list *curr;
+	editor->grid.modify_wall->orig->pos.x += move_x;
+	editor->grid.modify_wall->dest->pos.x += move_x;
+	editor->grid.modify_wall->orig->pos.y += move_y;
+	editor->grid.modify_wall->dest->pos.y += move_y;
+}
 
-	if (grid->modify_point != NULL)
-	{
-		grid->modify_point->pos.x = grid->hover.x;
-		grid->modify_point->pos.y = grid->hover.y;
-	}
-	else if (doom->grid.modify_sprite != NULL)
-	{
-		if (key_pressed(doom->libui, MKEY_RIGHT))
-		{
-			ft_printf("[Warning] Drag and drop not workings yet!\n");
-		}
-		else
-		{
-			if (key_pressed(doom->libui, KEY_LEFT))
-				doom->grid.modify_sprite->pos.x -= (double)grid->gap;
-			else if (key_pressed(doom->libui, KEY_RIGHT))
-				doom->grid.modify_sprite->pos.x += (double)grid->gap;
-			else if (key_pressed(doom->libui, KEY_UP))
-				doom->grid.modify_sprite->pos.y -= (double)grid->gap;
-			else if (key_pressed(doom->libui, KEY_DOWN))
-				doom->grid.modify_sprite->pos.y += (double)grid->gap;
-		}
-	}
-	else if (grid->modify_wall != NULL)
-	{
-		grid->modify_wall->orig->pos.x += move_x;
-		grid->modify_wall->dest->pos.x += move_x;
-		grid->modify_wall->orig->pos.y += move_y;
-		grid->modify_wall->dest->pos.y += move_y;
-	}
-	else if (grid->modify_sector != NULL)
-	{
-		curr = grid->modify_sector->walls;
-		while (curr)
-		{
-			((t_wall *)curr->content)->dest->pos.x += move_x / 2;
-			((t_wall *)curr->content)->dest->pos.y += move_y / 2;
-			((t_wall *)curr->content)->orig->pos.x += move_x / 2;
-			((t_wall *)curr->content)->orig->pos.y += move_y / 2;
-			curr = curr->next;
-		}
-	}
-	else if (grid->modify_entity != NULL)
-	{
-		grid->modify_entity->pos.x = grid->hover.x;
-		grid->modify_entity->pos.y = grid->hover.y;
-	}
-	else if (move_x != 0.0f || move_y != 0.0f) // moving whole map
-	{
-		t_point *point;
+void	move_sector(t_editor *editor, int move_x, int move_y)
+{
+	t_list	*curr;
 
-		curr = grid->points;
-		while (curr)
-		{
-			point = curr->content;
-			point->pos.x += move_x;
-			point->pos.y += move_y;
-			curr = curr->next;
-		}
-
-		t_entity *entity;
-		curr = grid->entities;
-		while (curr)
-		{
-			entity = curr->content;
-			entity->pos.x += move_x;
-			entity->pos.y += move_y;
-			curr = curr->next;
-		}
-
-		doom->spawn.pos.x += move_x;
-		doom->spawn.pos.y += move_y;
+	curr = editor->grid.modify_sector->walls;
+	while (curr)
+	{
+		((t_wall *)curr->content)->dest->pos.x += move_x / 2;
+		((t_wall *)curr->content)->dest->pos.y += move_y / 2;
+		((t_wall *)curr->content)->orig->pos.x += move_x / 2;
+		((t_wall *)curr->content)->orig->pos.y += move_y / 2;
+		curr = curr->next;
 	}
+}
+
+void	move_pos(t_vector *pos, int move_x, int move_y)
+{
+	pos->x = move_x;
+	pos->y = move_y;
+}
+
+void	move_map(t_editor *editor, int move_x, int move_y)
+{
+	t_list		*curr;
+	t_point		*point;
+	t_entity	*entity;
+
+	curr = editor->grid.points;
+	while (curr)
+	{
+		point = curr->content;
+		point->pos.x += move_x;
+		point->pos.y += move_y;
+		curr = curr->next;
+	}
+	curr = editor->grid.entities;
+	while (curr)
+	{
+		entity = curr->content;
+		entity->pos.x += move_x;
+		entity->pos.y += move_y;
+		curr = curr->next;
+	}
+	editor->spawn.pos.x += move_x;
+	editor->spawn.pos.y += move_y;
+}
+
+void	movement(t_editor *editor, int move_x, int move_y)
+{
+	if (editor->grid.modify_point != NULL)
+		move_pos(&editor->grid.modify_point->pos,
+			editor->grid.hover.x, editor->grid.hover.y);
+	else if (editor->grid.modify_wall != NULL)
+		move_wall(editor, move_x, move_y);
+	else if (editor->grid.modify_sector != NULL)
+		move_sector(editor, move_x, move_y);
+	else if (editor->grid.modify_entity != NULL)
+		move_pos(&editor->grid.modify_entity->pos,
+			editor->grid.hover.x, editor->grid.hover.y);
+	else if (move_x != 0.0f || move_y != 0.0f)
+		move_map(editor, move_x, move_y);
 }
 
 void	drag_calc(t_editor *editor, t_grid *grid)
@@ -106,21 +98,19 @@ void	drag_calc(t_editor *editor, t_grid *grid)
 	}
 	if (grid->elem->was_hovered_last_frame
 		&& editor->libui->mouse_wheel_y != 0)
-		grid->gap =
-			ft_clamp(grid->gap + editor->libui->mouse_wheel_y, 2, 32);
+		grid->gap = ft_clamp(grid->gap + editor->libui->mouse_wheel_y,
+			2, 32);
 	if (move_x == 0.0f && move_y == 0.0f)
 		return ;
-	movement(editor, grid, move_x, move_y);
+	movement(editor, move_x, move_y);
 }
 
-// Get the nearest point in a radius of where you clicked.
 void	select_point(t_grid *grid)
 {
 	t_point		*temp;
 	float		allowed_radius;
 	float		x;
 	float		y;
-
 
 	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover});
 	if (temp == NULL)
@@ -151,22 +141,24 @@ void	select_point(t_grid *grid)
 
 void	draw_selected_point(t_editor *editor, t_grid *grid)
 {
-	char	*str;
+	char	*s;
 
 	if (grid->modify_point == NULL)
-		str = ft_strdup("Selected Vector: \nNULL");
+		s = ft_strdup("Selected Vector: \nNULL");
 	else
 	{
-		str = ft_sprintf("Selected Vector:\nx %d\ny %d\nconnections: %d\n",
+		s = ft_sprintf("Selected Vector:\nx %d\ny %d\nconnections:%d\n",
 			(int)grid->modify_point->pos.x,
 			(int)grid->modify_point->pos.y,
-			get_point_connection_amount(&grid->walls, grid->modify_point));
+			get_point_connection_amount(&grid->walls,
+				grid->modify_point));
 		gfx_draw_vector(grid->elem->active_surface, 0xffffae42, 2,
-			gfx_vector_multiply(grid->modify_point->pos, grid->gap));
+			gfx_vector_multiply(grid->modify_point->pos,
+			grid->gap));
 	}
 	editor->selected_vector_info->text_color = 0xffffffff;
-	bui_set_element_text(editor->selected_vector_info, str, 0, 0);
-	ft_strdel(&str);
+	bui_set_element_text(editor->selected_vector_info, s, 0, 0);
+	ft_strdel(&s);
 }
 
 int	get_point_connection_amount(t_list **walls, t_point *point)
@@ -207,27 +199,22 @@ void	selection(t_editor *editor, t_grid *grid)
 	if (editor->libui->mouse_down_last_frame
 		&& mouse_pressed(editor->libui, MKEY_LEFT))
 	{
-		// Vertex
 		if (bui_button_toggle(editor->select_mode_vertex))
 			select_point(grid);
 		else
 			editor->grid.modify_point = NULL;
-		// Wall
 		if (bui_button_toggle(editor->select_mode_wall))
 			select_wall(editor, grid);
 		else
 			editor->grid.modify_wall = NULL;
-		// Entity
 		if (bui_button_toggle(editor->select_mode_entity))
 			select_entity(editor, grid);
 		else
 			editor->grid.modify_entity = NULL;
-		// Sector
 		if (bui_button_toggle(editor->select_mode_sector))
 			select_sector(grid);
 		else
 			editor->grid.modify_sector = NULL;
-		ft_putstr("Selection Done.\n");
 	}
 }
 
@@ -242,7 +229,7 @@ float	distance_from_vector_to_wall(t_vector p0, t_wall *wall)
 	p1 = wall->orig->pos;
 	p2 = wall->dest->pos;
 	up = (p2.x - p1.x) * (p1.y - p0.y)
-			- (p1.x - p0.x) * (p2.y - p1.y);
+		- (p1.x - p0.x) * (p2.y - p1.y);
 	down = sqrt(ft_pow(p2.x - p1.x, 2) + ft_pow(p2.y - p1.y, 2));
 	dist = up / down;
 	return (dist);
@@ -367,7 +354,6 @@ void	select_sector(t_grid *grid)
 	grid->modify_sector = temp;
 }
 
-// Basically same as select_point... when you have that normed, you can easily norme this.
 void	select_entity(t_editor *editor, t_grid *grid)
 {
 	t_entity	*temp;

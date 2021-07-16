@@ -46,8 +46,6 @@ t_wall	*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
 	return (NULL);
 }
 
-// NOTE: Not to confuse with vector_on_line, which is vector math,
-// 	this just checks if t_vector *v is either vec->dest or ->orig
 int	vector_in_wall(t_vector v, t_wall *vec)
 {
 	if (vector_compare(v, vec->orig->pos)
@@ -56,25 +54,7 @@ int	vector_in_wall(t_vector v, t_wall *vec)
 	return (0);
 }
 
-// This function isnt used anywhere, so remove it when you have decided that that is gonna be kept so.
-void	split_wall(t_grid *grid, t_wall *old_wall, t_point *new_vec)
-{
-	t_wall	*temp;
-
-	temp = get_wall_from_list(&grid->walls, old_wall->dest, new_vec);
-	if (temp == NULL)
-		temp = get_wall_from_list(&grid->walls,
-			old_wall->orig, new_vec);
-	if (temp != NULL)
-		return ;
-	temp = new_wall(old_wall->dest, new_vec);
-	add_to_list(&grid->walls, temp, sizeof(t_wall));
-	old_wall->dest = new_vec;
-	if (grid->modify_sector != NULL)
-		add_to_list(&grid->modify_sector->walls, temp, sizeof(t_wall));
-}
-
-void	update_real_dimensions(t_grid *grid) // the yellowish lines
+void	update_real_dimensions(t_grid *grid)
 {
 	float	low_x;
 	float	low_y;
@@ -119,6 +99,35 @@ t_point	*get_point_from_wall_in_sector(t_sector *sector, t_point *v)
 	return (NULL);
 }
 
+t_point	*get_existing_point_or_new(t_grid *grid, t_vector pos)
+{
+	t_point	*point;
+
+	point = get_point_from_wall_in_sector(grid->modify_sector,
+			&(t_point){0, pos});
+	if (point == NULL)
+	{
+		point = new_point(pos);
+		add_to_list(&grid->points, point, sizeof(t_point));
+	}
+	return (point);
+}
+
+t_wall	*get_existing_wall_or_new(t_grid *grid, t_point *temp1, t_point *temp2)
+{
+	t_wall	*wall;
+
+	wall = NULL;
+	wall = get_wall_from_list(&grid->modify_sector->walls, temp1, temp2);
+	if (wall == NULL)
+	{
+		wall = new_wall(temp1, temp2);
+		add_to_list(&grid->walls, wall, sizeof(t_wall));
+		add_to_list(&grid->modify_sector->walls, wall, sizeof(t_wall));
+	}
+	return (wall);
+}
+
 void	check_selected(t_grid *grid)
 {
 	t_point	*temp1;
@@ -128,33 +137,14 @@ void	check_selected(t_grid *grid)
 	temp1 = NULL;
 	temp2 = NULL;
 	temp_wall = NULL;
-	if (vector_is_empty(grid->selected2)) // seg faults if removed.
+	if (vector_is_empty(grid->selected2))
 		return ;
-	temp1 = get_point_from_wall_in_sector(grid->modify_sector,
-			&(t_point){0, grid->selected1});
-	temp2 = get_point_from_wall_in_sector(grid->modify_sector,
-			&(t_point){0, grid->selected2});
-	if (temp1 == NULL)
-	{
-		temp1 = new_point(grid->selected1);
-		add_to_list(&grid->points, temp1, sizeof(t_point));
-	}
-	if (temp2 == NULL)
-	{
-		temp2 = new_point(grid->selected2);
-		add_to_list(&grid->points, temp2, sizeof(t_point));
-	}
-	// check if a wall with that same points is in the sector walls, if yes then give it the &
-	temp_wall = get_wall_from_list(&grid->modify_sector->walls, temp1, temp2); // enable this to not make duplicate walls
-	if (temp_wall == NULL) // make new wall
-	{
-		temp_wall = new_wall(temp1, temp2);
-		add_to_list(&grid->walls, temp_wall, sizeof(t_wall));
-		add_to_list(&grid->modify_sector->walls, temp_wall, sizeof(t_wall));
-	}
+	temp1 = get_existing_point_or_new(grid, grid->selected1);
+	temp2 = get_existing_point_or_new(grid, grid->selected2);
+	temp_wall = get_existing_wall_or_new(grid, temp1, temp2);
 	if (grid->modify_sector->first_point == NULL)
 		grid->modify_sector->first_point = temp1;
-	if (grid->modify_sector->first_point == temp_wall->dest) // check if you end up on the first point to stop drawing sector.
+	if (grid->modify_sector->first_point == temp_wall->dest)
 	{
 		grid->modify_sector->first_point = NULL;
 		grid->modify_sector = NULL;
@@ -165,10 +155,34 @@ void	check_selected(t_grid *grid)
 	grid->selected2 = EMPTY_VEC;
 }
 
-void	click_calc(t_editor *editor, t_grid *grid)
+void	click_calc_sec(t_grid *grid)
 {
 	t_sector	*sector;
+
+	if (grid->modify_sector == NULL)
+	{
+		sector = new_sector(grid->sector_amount++);
+		add_to_list(&grid->sectors, sector, sizeof(t_sector));
+		grid->modify_sector = sector;
+	}
+	if (vector_is_empty(grid->selected1))
+		grid->selected1 = grid->hover;
+	else if (!vector_compare(grid->selected1, grid->hover))
+		grid->selected2 = grid->hover;
+}
+
+void	click_calc_ent(t_editor *editor)
+{
 	t_entity	*entity;
+
+	entity = new_entity(editor->grid.entity_amount++, editor->grid.hover);
+	entity->preset = get_entity_preset_with_name(
+		editor->entity_presets, "Barrel");
+	add_to_list(&editor->grid.entities, entity, sizeof(t_entity));
+}
+
+void	click_calc(t_editor *editor, t_grid *grid)
+{
 
 	if (!mouse_hover(editor->libui, (t_xywh) {
 	grid->elem->position.x, grid->elem->position.y,
@@ -176,24 +190,10 @@ void	click_calc(t_editor *editor, t_grid *grid)
 		return ;
 	if (editor->libui->mouse_down_last_frame &&
 	mouse_pressed(editor->libui, MKEY_LEFT))
-	{
-		if (grid->modify_sector == NULL)
-		{
-			sector = new_sector(grid->sector_amount++);
-			add_to_list(&grid->sectors, sector, sizeof(t_sector));
-			grid->modify_sector = sector;
-		}
-		if (vector_is_empty(grid->selected1))
-			grid->selected1 = grid->hover;
-		else if (!vector_compare(grid->selected1, grid->hover))
-			grid->selected2 = grid->hover;
-	}
+		click_calc_sec(grid);
 	else if (editor->libui->mouse_down_last_frame &&
 	mouse_pressed(editor->libui, MKEY_RIGHT))
-	{
-		entity = new_entity(grid->entity_amount++, grid->hover);
-		add_to_list(&grid->entities, entity, sizeof(t_entity));
-	}
+		click_calc_ent(editor);
 	else if (mouse_pressed(editor->libui, MKEY_MIDDLE))
 		editor->spawn.pos = grid->hover;
 }
@@ -380,32 +380,36 @@ void	draw_sectors(t_grid *grid)
 		grid->gap));
 }
 
-void	draw_entities(t_editor *doom, t_grid *grid)
+void	draw_entity(t_editor *editor, t_entity *entity)
 {
-	float		angle;
-	t_list		*curr;
-	t_entity	*entity;
 	t_vector	pos;
 	int		color;
+	float		angle;
 
-	curr = grid->entities;
+	if (entity->preset == NULL)
+		entity->preset = editor->default_entity;
+	pos = gfx_vector_multiply(entity->pos, editor->grid.gap);
+	gfx_draw_vector(editor->grid.elem->active_surface, 0xffaaab5d, 6, pos);
+	color = 0xff0000ff;
+	if (entity->preset->mood == ENTITY_TYPE_HOSTILE)
+		color = 0xffff0000;
+	else if (entity->preset->mood == ENTITY_TYPE_FRIENDLY)
+		color = 0xff00ff00;
+	gfx_draw_vector(editor->grid.elem->active_surface, color, 3, pos);
+	angle = entity->direction * (M_PI / 180);
+	gfx_draw_vector(editor->grid.elem->active_surface, 0xffaaab5d, 1,
+		gfx_new_vector(cos(angle) * 10.0f + pos.x,
+		sin(angle) * 10.0f + pos.y, 0));
+}
+
+void	draw_entities(t_editor *editor)
+{
+	t_list		*curr;
+
+	curr = editor->grid.entities;
 	while (curr)
 	{
-		entity = curr->content;
-		if (entity->preset == NULL)
-			entity->preset = doom->default_entity;
-		pos = gfx_vector_multiply(entity->pos, grid->gap);
-		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 6, pos);
-		color = 0xff0000ff;
-		if (entity->preset->mood == ENTITY_TYPE_HOSTILE)
-			color = 0xffff0000;
-		else if (entity->preset->mood == ENTITY_TYPE_FRIENDLY)
-			color = 0xff00ff00;
-		gfx_draw_vector(grid->elem->active_surface, color, 3, pos);
-		angle = entity->direction * (M_PI / 180);
-		gfx_draw_vector(grid->elem->active_surface, 0xffaaab5d, 1,
-			gfx_new_vector(cos(angle) * 10.0f + pos.x,
-			sin(angle) * 10.0f + pos.y, 0));
+		draw_entity(editor, curr->content);
 		curr = curr->next;
 	}
 }

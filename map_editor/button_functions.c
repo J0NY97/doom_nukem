@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 13:59:23 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/18 11:44:21 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/13 14:28:52 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,8 +17,8 @@ void	add_portal(t_grid *grid)
 	t_list	*sec;
 	t_list	*wall;
 	t_wall	*other;
-	int	wall_one_sec;
-	int	wall_two_sec;
+	int		wall_one_sec;
+	int		wall_two_sec;
 
 	wall_one_sec = -1;
 	wall_two_sec = -1;
@@ -54,8 +54,8 @@ void	add_portal(t_grid *grid)
 
 void	remove_portal(t_grid *grid)
 {
-	t_list *s;
-	t_list *w;
+	t_list	*s;
+	t_list	*w;
 
 	if (grid->modify_wall == NULL)
 		return ;
@@ -133,9 +133,6 @@ void	other_box_events(t_editor *editor)
 		else if (bui_button_toggle(editor->story_tickbox))
 			editor->fullpath = ft_sprintf("./maps/%s%s",
 					editor->mapname, ".story");
-		else
-			editor->fullpath = ft_sprintf("./maps/%s%s",
-					editor->mapname, ".doom");
 		set_map(editor);
 		add_text_to_info_box(editor, "Map saved successfully!");
 	}
@@ -259,7 +256,6 @@ void	remove_selected_point_from_all_walls_and_sectors(t_editor *editor)
 	remove_from_points(&editor->grid.points, grid->modify_point);
 }
 
-// Removes all sectors that have no walls left.
 void	remove_all_non_existing_sectors(t_editor *editor)
 {
 	t_list		*sec;
