@@ -14,15 +14,22 @@
 
 int main(int argc, char **argv)
 {
-	char *map;
+	char	*map;
+	char	*arr[0];
 
 	if (!(map = args_parser(argc, argv)))
 		return (1);
 	map_editor(map);
+	if (ft_strequ(argv[2], "-l")
+		|| ft_strequ(argv[2], "-launcher"))
+	{
+		arr[0] = ft_strdup(ROOT_PATH"ui/menu");
+		arr[1] = NULL;
+		execv(arr[0], arr);
+	}
 	ft_strdel(&map);
 	SDL_Quit();
 	TTF_Quit();
 	IMG_Quit();
-//	while (1);
 	return (0);
 }

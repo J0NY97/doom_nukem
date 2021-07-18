@@ -4,7 +4,7 @@ void	update_title_fps(SDL_Window *win, t_fps *fps)
 {
 	char	*str;
 
-	str = ft_sprintf("Launcher [FPS: %d]", fps->fps);
+	str = ft_sprintf("Doom Editor [FPS: %d]", fps->fps);
 	SDL_SetWindowTitle(win, str);
 	ft_strdel(&str);
 }

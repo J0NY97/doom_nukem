@@ -12,6 +12,16 @@
 
 #include "editor.h"
 
+void	print_usage(void)
+{
+	ft_printf("Usage: ./doom_editor [map]\n\n"\
+		"Note:\n"\
+		"Map must end in .endless or .story\n"\
+		"Map will be taken from ./maps/\n"\
+		"(a new map file with the [map] name will be made "\
+		"if it\'s not in the \"maps\" directory)\n");
+}
+
 char	*args_parser(int ac, char **av)
 {
 	char	*map;
@@ -28,7 +38,7 @@ char	*args_parser(int ac, char **av)
 			|| ft_strendswith(av[1], ".story") == 0)
 			map = ft_strjoiner(ROOT_PATH"map_editor/maps/", av[1], NULL);
 		else
-			ft_putstr("[ERROR] Invalid map name!\n");
+			print_usage();
 		return (map);
 	}
 	return (NULL);
