@@ -26,10 +26,11 @@ int 	main(void)
 #ifndef PATH_H\n\
 # define PATH_H\n\
 # define ROOT_PATH \"%s/\"\n\
-# define GAME_PATH \"%s/game/\"\n\
-# define TTF_PATH \"%s/game/resources/TTF\"\n\
+# define GAME_PATH ROOT_PATH\"game/\"\n\
+# define RESOURCE_PATH GAME_PATH\"resources/\"\n\
+# define TTF_PATH RESOURCE_PATH\"TTF/\"\n\
 #endif"\
-	, path, path);
+	, path);
 	close(fd);
 	free(path);
 	return (1);
