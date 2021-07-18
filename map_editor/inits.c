@@ -17,7 +17,7 @@ void	window_init(t_editor *editor, t_bui_libui *libui)
 	t_xywh	coord;
 	char	*title;
 
-	coord = ui_init_coords(0, 0, 1920, 1080);
+	coord = ui_init_coords(10, 10, 1920, 1080);
 	title = ft_strjoiner("Doom Nukem Map Editor : ", editor->mapname, NULL);
 	editor->window = bui_new_window(libui, title, coord, 0);
 	bui_set_window_color(editor->window, editor->palette.win);

@@ -1,12 +1,21 @@
 #include "editor.h"
 
+void	update_title_fps(SDL_Window *win, t_fps *fps)
+{
+	char	*str;
+
+	str = ft_sprintf("Launcher [FPS: %d]", fps->fps);
+	SDL_SetWindowTitle(win, str);
+	ft_strdel(&str);
+}
+
 // NOTE: map_editor makes new window and libui.
 void	map_editor(char *map)
 {
 	t_editor	*editor;
 	t_bui_libui	*libui;
 
-//	t_fps *fps = ft_memalloc(sizeof(t_fps));
+	t_fps *fps = ft_memalloc(sizeof(t_fps));
 	editor = ft_memalloc(sizeof(t_editor));
 
 	libui = bui_new_libui();
@@ -79,7 +88,8 @@ ft_printf("Map Got!\n");
 ft_printf("Starting to loop!\n");
 	while (libui->run)
 	{
-		//fps_func(fps);
+		fps_func(fps);
+		update_title_fps(editor->window->win, fps);
 		bui_event_handler_new(libui);
 
 		draw_grid(editor, &editor->grid);

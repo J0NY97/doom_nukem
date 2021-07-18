@@ -19,19 +19,6 @@ typedef struct	s_texture	t_texture;
 typedef struct	s_game		t_game;
 typedef	struct	s_player	t_player;
 
-typedef	struct		s_fps
-{
-	float		curr;
-	float		prev;
-	float		avg;
-	int		fps;
-	int		count;
-	// Delta
-	float		delta_curr;
-	float		delta_last;
-	float		delta;
-}					t_fps;
-
 struct	s_point
 {
 	unsigned int	id;

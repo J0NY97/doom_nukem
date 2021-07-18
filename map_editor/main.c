@@ -12,20 +12,6 @@
 
 #include "editor.h"
 
-void	fps_func(t_fps *fps)
-{
-	fps->curr = SDL_GetTicks();
-	fps->count++;
-	if (fps->curr - fps->prev >= 1000)
-	{
-		fps->prev = fps->curr;
-		fps->fps = fps->count;
-		fps->count = 0;
-		ft_putnbr(fps->fps);
-		ft_putchar('\n');
-	}
-}
-
 int main(int argc, char **argv)
 {
 	char *map;
