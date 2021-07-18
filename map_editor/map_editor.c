@@ -88,7 +88,7 @@ ft_printf("Map Got!\n");
 ft_printf("Starting to loop!\n");
 	while (libui->run)
 	{
-		fps_func(fps);
+		bui_fps_func(fps);
 		update_title_fps(editor->window->win, fps);
 		bui_event_handler_new(libui);
 
