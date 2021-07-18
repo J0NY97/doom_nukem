@@ -29,6 +29,7 @@ int 	main(void)
 # define GAME_PATH ROOT_PATH\"game/\"\n\
 # define RESOURCE_PATH GAME_PATH\"resources/\"\n\
 # define TTF_PATH RESOURCE_PATH\"TTF/\"\n\
+# define UI_PATH RESOURCE_PATH\"UI/\"\n\
 #endif"\
 	, path);
 	close(fd);
