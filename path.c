@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/06 12:03:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/08 12:11:49 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/19 19:04:37 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,6 +30,7 @@ int 	main(void)
 # define RESOURCE_PATH GAME_PATH\"resources/\"\n\
 # define TTF_PATH RESOURCE_PATH\"TTF/\"\n\
 # define UI_PATH RESOURCE_PATH\"UI/\"\n\
+# define ICON_PATH RESOURCE_PATH\"ICON/\"\n\
 #endif"\
 	, path);
 	close(fd);
