@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/12 12:18:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/19 17:02:16 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -126,24 +126,28 @@ t_wall	*new_wall(t_point *orig, t_point *dest)
 
 void	free_point(void *content, size_t size)
 {
-	ft_putstr("[free_point]\n");
+	t_point *point;
+
+	point = content;
+	if (point == NULL)
+		return ;
 	(void)size;
 	ft_memdel(&content);
 }
 
 void	free_wall(void *content, size_t size)
 {
-	ft_putstr("[free_wall]\n");
+	t_wall *wall;
+   
+	wall = content;
 	(void)size;
-	if (content == NULL)
+	if (wall == NULL)
 		return ;
-	t_wall *wall = content;
-
-	free_point(wall->orig, sizeof(t_point));
-	free_point(wall->dest, sizeof(t_point));
+	//free_point(wall->orig, sizeof(t_point));
+	//free_point(wall->dest, sizeof(t_point));
 	if (wall->sprites)
 		ft_lstdel(&wall->sprites, &free_sprite);
-	ft_memdel(content);
+	ft_memdel(&content);
 }
 
 t_sector	*new_sector(int id)
@@ -178,9 +182,9 @@ void	free_sector(void *content, size_t size)
 
 	ft_putstr("Starting to free walls from sector.\n");
 	if (sector->walls)
-		ft_lstdel(&sector->walls, &free_wall);
+		ft_lstdel(&sector->walls, &dummy_free_er);
 	ft_putstr("All walls from sector freed.\n");
-	free_point(sector->first_point, sizeof(t_point));
+	//free_point(sector->first_point, sizeof(t_point));
 	free(sector);
 }
 
@@ -219,11 +223,14 @@ t_entity_preset	*new_entity_preset(char *name)
 void	free_entity_preset(void *content, size_t size)
 {
 	(void)size;
-	if (content == NULL)
+	t_entity_preset *ent;
+   
+	ent = content;
+	if (ent == NULL)
 		return ;
-	t_entity_preset *ent = content;
-
 	ft_strdel(&ent->name);
+	if (ent->texture)
+		SDL_FreeSurface(ent->texture);
 	ft_memdel((void **)&ent);
 }
 

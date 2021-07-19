@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/13 12:59:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/19 14:51:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,6 +58,7 @@ SDL_Surface	*load_bxpm_to_surface(char *bxpm_file)
 	if (result != 1)
 	{
 		ft_printf("Couldnt open file: %s\n", bxpm_file);
+		free(bxpm);
 		return (NULL);
 	}
 	surface = create_surface(bxpm->w, bxpm->h);
@@ -81,7 +82,7 @@ static void	load_all_textures(t_editor *editor)
 		editor->texture_textures[g_map_textures[i].id]
 			= load_bxpm_to_surface(g_map_textures[i].path);
 		i++;
-	}	
+	}
 }
 
 SDL_Surface	*yoink_from_surface(SDL_Surface *image, t_xywh coord)

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 13:59:23 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/13 14:28:52 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/19 14:23:13 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,10 +128,10 @@ void	other_box_events(t_editor *editor)
 		editor->mapname = ft_strdup(editor->map_name_input->text);
 		ft_strdel(&editor->fullpath);
 		if (bui_button_toggle(editor->endless_tickbox))
-			editor->fullpath = ft_sprintf("./maps/%s%s",
+			editor->fullpath = ft_sprintf(ROOT_PATH"map_editor/maps/%s%s",
 					editor->mapname, ".endless");
 		else if (bui_button_toggle(editor->story_tickbox))
-			editor->fullpath = ft_sprintf("./maps/%s%s",
+			editor->fullpath = ft_sprintf(ROOT_PATH"map_editor/maps/%s%s",
 					editor->mapname, ".story");
 		set_map(editor);
 		add_text_to_info_box(editor, "Map saved successfully!");

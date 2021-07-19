@@ -20,34 +20,24 @@ void	map_editor(char *map)
 
 	libui = bui_new_libui();
 
-	// basically send mouse events when focus change.
-	// doesnt work for some reason, it works the first couple times and then nothing.... hello my name is sdl
 	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
-//	SDL_SetHintWithPriority(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1", SDL_HINT_OVERRIDE);
-//	ft_printf("Hint set? %s\n", SDL_GetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH));
 
 	editor->libui = libui;
 
 	editor->fullpath = ft_strdup(map);
 	// Spaghett way of getting the map name from fullpath
 	char **mapname = ft_strsplit(map, '/');
-	char *final;
+
 	int i = 0;
 	while (mapname[i + 1])
 		i++;
 	if (ft_strendswith(mapname[i], ".endless") == 0)
-		final = ft_strremove(mapname[i], ".endless");
+		ft_strremove(mapname[i], ".endless");
 	else if (ft_strendswith(mapname[i], ".story") == 0)
-		final = ft_strremove(mapname[i], ".story");
-	else if (ft_strendswith(mapname[i], ".doom") == 0)
-		final = ft_strremove(mapname[i], ".doom");
-	else
-		final = ft_strdup(mapname[i]);
-	editor->mapname = ft_strdup(final);
-//	ft_strdel(&final); // for some reason you dont have to free this....
+		ft_strremove(mapname[i], ".story");
+	editor->mapname = ft_strdup(mapname[i]);
 	free_array(mapname);
 	// End of spaghett
-
 ft_printf("Map Name set to: %s, %s\n", editor->mapname, editor->fullpath);
 
 
@@ -86,6 +76,7 @@ ft_printf("Map Got!\n");
 	//sprite_init(doom);
 	//entity_sprite_init(doom);
 ft_printf("Starting to loop!\n");
+
 	while (libui->run)
 	{
 		bui_fps_func(fps);
@@ -144,7 +135,9 @@ ft_printf("Starting to loop!\n");
 	}
 	ft_putstr("[map_editor] Bye!\n");
 
+	free(fps);
 	editor_free(editor);
+	system("leaks doom_editor");
 	bui_libui_quit(libui);
 	return ;
 }

@@ -12,86 +12,11 @@
 # include "enum.h"
 # include "resources.h"
 
-//////////////////////
-// ENTITY TODO
-// ///////////////////
-// entity viewn skall visa hela texturen av selected entity.
-// i editor windown.
-
-// texture
-// < 0  == skybox
-// 0 == monochorme
-// > 0 == textures
-
-// TODO: hotkeys for all the buttons.
-//
-// TODO: when in selection mode. ctrl or (drag and highlight) to choose multiple points, walls, sectors, entities for deletion.
-//
-// TODO: draw the grid only once on the surface of the grid, and only update it when you zoom.
-//
-// TODO: split wall doesnt workin (the question is, is that important?)
-//
-// TODO: when edit view is open dont enable keypresses in the grid thinga majig (done in libui?)
-//
-// TODO: on the right side of the wall editor, you can add a list for all the wall sprites and from there choose the sprite
-// 	you want to edit (move or rechoose texture)
-// 	maybe add this to the sector editing, where you can choose each wall for editiing.
-//
-// TODO: on the right side of the sector editor, list all the walls that are in taht sector then you can choose from there to edit them?
-//
-// MAJOR TODO: if you can figure out how to remove sectors until you have the file, it would be insane. and make this project
-// 		so much better and probably less complicated.
-//
-// TODO: right click draws, left click selects, double click edits. (instead of exactly this, do this only for selecting)
-// 	draw mode; (select mode not draw :))
-// 		-vertex, adds vertex where you click.
-// 		-line, draws line between 2 points you click.
-// 		-sector, functions the same as the current type of drawing.
-// 		-thing, adds things that you can edit at a later time.
-// 		-create sector from, creates a sector from a compilation of lines.... havent thought enought about this mode.
-// 	i have rethunk this idea, not quite the same as what this text says but idgaf to change it, i hope i will remember
-// 	my new idea when i actually do it.
-//
-// TODO: having different modes for selecting, so that you can just return the closest whatever (depending on the mode) to
-// 	where you clicked. (calc the distance from mouse to the point youre checking)
-// 	NOTE: read the TODO above
-//
-// TODO: scrolling actually scrolls towards where youre scrolling, i have done this in the mandelbrot thing.
-//
-// TODO: temporary save the file everytime you have completed a new sector, so that you can go back.
-//
-// TODO: status/info area, where you can send stuff that are important for the user, (when you save it tells you, if you cant
-// 	save it tells you, etc...)
-//
-// TODO: not letting user save in some cases (if  there is no spawn (this breaks the game))
-//
-// TODO: a way of removing wall_sprites
-//
-// TODO: instead of having some default images on the texture chagner actually show all the textures you can choose from,
-// 	be able to give a texture pack and/or load textures that you can set as "wall textures"/"portal textures"/"wall sprites"
-// 	t_texture *load_texture(TEXTURE_WALL/TEXTURE_PORTAL/TEXTURE_SPRITE, char *path);
-// 	and depending ont the type you give in it will save in a list of textures, from where the editor window will take
-// 	the textures for the buttons from, i hope this makes sense.
-//
-// TODO: instead of zoom changing 1 pixel at a time +/-, you should make it change procentuellt.
-
-// Remove this if not used in the final version.
-enum e_select_mode
-{
-	VERTEX_MODE,
-	LINE_MODE,
-	SECTOR_MODE,
-	CREATE_SECTOR_MODE // not sure what this does yet
-};
-
 enum e_entity
 {
 	ENTITY_TYPE_HOSTILE,
 	ENTITY_TYPE_FRIENDLY,
-	ENTITY_TYPE_NEUTRAL,
-	ENTITY_STYLE_NONE = -1,
-	ENTITY_STYLE_MELEE,
-	ENTITY_STYLE_RANGED
+	ENTITY_TYPE_NEUTRAL
 };
 
 typedef	struct	s_editor			t_editor;
@@ -102,34 +27,22 @@ typedef struct	s_color_palette
 	int			win_elem;
 	int			elem_elem;
 	int			elem_elem_elem;
-
-	int	light_gray;
-	// Coolors.co
-	int	granny_smith_apple;
-	int	peach_crayola;
-	int	light_blue;
+	int			light_gray;
+	int			granny_smith_apple;
+	int			peach_crayola;
+	int			light_blue;
 }				t_color_palette;
-
-typedef	struct	s_map
-{
-	int			w;
-	int			h;
-	char		*texture_pack;
-	char		*name;
-}				t_map;
 
 typedef	struct	s_spawn
 {
 	t_vector	pos;
-	int		direction; // degrees
+	int			direction; // degrees
 }				t_spawn;
 
-// TODO: at some point make this struct redundant
 typedef	struct	s_grid
 {
 	t_bui_element	*elem; // the actual element where you draw everything.
 
-	// Note: this is like this because its easier when you finally save the points to map file.
 	t_vector	hover; // this is calculating from the coordinate system used in this program.
 	t_vector	last_hover; // last frame grid->hover
 
@@ -139,6 +52,7 @@ typedef	struct	s_grid
 	int			gap;
 	t_vector	selected1;
 	t_vector	selected2;
+
 // these are the information for when you want to edit
 	t_point		*modify_point;
 	t_wall		*modify_wall;
@@ -148,17 +62,16 @@ typedef	struct	s_grid
 
 // the information for the output when you save the map
 	t_list		*points;
-	int		point_amount;
+	int			point_amount;
 	t_list		*walls;
-	int		wall_amount;
+	int			wall_amount;
 	t_list		*sectors;
-	int		sector_amount;
+	int			sector_amount;
 	t_list		*entities;
-	int		entity_amount;
+	int			entity_amount;
 
-	int		wall_sprite_amount;
-	// t_list		*portals;
-	t_xywh			dimensions;
+	int			wall_sprite_amount;
+	t_xywh		dimensions;
 
 	TTF_Font	*font;
 }				t_grid;
@@ -170,15 +83,15 @@ typedef	struct		s_changer_prefab
 	t_bui_element	*sub_button;
 	t_bui_element	*value;
 	t_bui_element	*add_button;
-}			t_changer_prefab;
+}					t_changer_prefab;
 
 struct			s_editor
 {
-	t_bui_libui	*libui;
+	t_bui_libui		*libui;
 
 	t_bui_window	*window;
-	t_bui_element	*toolbox; // menu / surface
-	t_bui_element	*info_area; // menu / surface / located on toolbox
+	t_bui_element	*toolbox;
+	t_bui_element	*info_area;
 	t_bui_element	*button_remove;
 	t_bui_element	*button_save;
 	t_bui_element	*button_edit;
@@ -187,42 +100,30 @@ struct			s_editor
 	t_bui_element	*selected_vector_info;
 
 	// Entity presets
-	t_list *entity_presets; // list of t_entity_preset , you can find it in ../core.h
-	t_entity_preset *default_entity;
+	t_list			*entity_presets; // list of t_entity_preset , you can find it in ../core.h
+	t_entity_preset	*default_entity;
 
 	// scale changer
-	int scale;
-	t_changer_prefab *scaler;
+	int					scale;
+	t_changer_prefab	*scaler;
 
-	t_grid		grid;
-	char		*fullpath;
-	char		*mapname;
+	t_grid				grid;
+	char				*fullpath;
+	char				*mapname;
 // bui_elements
-	t_bui_element	*button_draw;
-	t_color_palette	palette;
-//	t_texture	textures[1];
-//	t_bui_element	**texture_buttons;
+	t_bui_element		*button_draw;
+	t_color_palette		palette;
 
-	t_map		map;
-	t_spawn		spawn;
+	t_spawn				spawn;
 
-//	t_texture	sprites[1];
-//	t_bui_element	**sprite_buttons;
-
-//	t_texture	entity_sprites[1];
-//	t_bui_element	**entity_sprite_buttons;
-
-	// New stuff
 	//////////////////
 	// Info area elements
 	//////////////////
-	t_bui_element *info_box;
-	Uint32 info_box_start_timer;
-	Uint32 info_box_timer; // everytime you add something to the info box, it will replace whatever is in it and reset timer.
-				// otherwise if the timer ends before youa dd new thing, it will jsut remove the current thing.
+	t_bui_element	*info_box;
+	Uint32			info_box_start_timer;
+	Uint32			info_box_timer; // everytime you add something to the info box, it will replace whatever is in it and reset timer.
+									// otherwise if the timer ends before youa dd new thing, it will jsut remove the current thing.
 
-	// Dont know
-	t_list		*all_textures; // list of t_editor_texture (note: wall, portal and wall_sprite textures take their tex from here)
 	//////////////////
 	// Draw Mode
 	//////////////////
@@ -231,28 +132,28 @@ struct			s_editor
 	//////////////////
 	// Selection Mode
 	//////////////////
-	t_bui_element *select_mode;
-	t_list *select_mode_buttons; // list of t_bui_element *
-	t_bui_element *active_select_mode;
-	t_bui_element *select_mode_vertex;
-	t_bui_element *select_mode_wall;
-	t_bui_element *select_mode_sector;
-	t_bui_element *select_mode_entity;
+	t_bui_element	*select_mode;
+	t_bui_element	*active_select_mode;
+	t_bui_element	*select_mode_vertex;
+	t_bui_element	*select_mode_wall;
+	t_bui_element	*select_mode_sector;
+	t_bui_element	*select_mode_entity;
+	t_list			*select_mode_buttons; // list of t_bui_element *
 
 	///////////////////
 	// Other Mode
 	//////////////////
-	t_bui_element *other_mode;
+	t_bui_element	*other_mode;
 
 	/////////////////
 	// Buttons
 	/////////////////
-	t_bui_element *map_name_input;
+	t_bui_element	*map_name_input;
 
-	t_bui_element *endless_tickbox;
-	t_bui_element *story_tickbox;
-	t_bui_element *active_map_type;
-	t_list *map_type_tickboxes; // list of t_bui_element *
+	t_bui_element	*endless_tickbox;
+	t_bui_element	*story_tickbox;
+	t_bui_element	*active_map_type;
+	t_list			*map_type_tickboxes; // list of t_bui_element *
 
 	// New edit window
 	t_bui_window	*new_edit_window;
@@ -260,48 +161,47 @@ struct			s_editor
 	///////////////////
 	// Wall elements
 	///////////////////
-	t_bui_element *edit_toolbox_wall;
-	t_bui_element *edit_view_wall;
+	t_bui_element	*edit_toolbox_wall;
+	t_bui_element	*edit_view_wall;
 
 	// toolbox texture adding tabsystem
-	t_preset_tab *wall_tab;
+	t_preset_tab	*wall_tab;
 
-	t_bui_element *wall_texture_view;
-	t_bui_element *portal_texture_view;
-	t_bui_element *wall_sprite_view;
+	t_bui_element	*wall_texture_view;
+	t_bui_element	*portal_texture_view;
+	t_bui_element	*wall_sprite_view;
 
-	// TODO: init the active to null
-	t_list *wall_texture_buttons;	// list of t_bui_element * of the texture buttons for wall
-	t_bui_element *active_wall_texture;
-	t_list *portal_texture_buttons; // list of t_bui_element * of the texture buttons for wall
-	t_bui_element *active_portal_texture;
-	t_list *wall_sprite_buttons;	// list of t_bui_element * of the sprite buttons for wall
-	t_bui_element *active_wall_sprite;
+	t_list			*wall_texture_buttons;	// list of t_bui_element * of the texture buttons for wall
+	t_bui_element	*active_wall_texture;
+	t_list			*portal_texture_buttons; // list of t_bui_element * of the texture buttons for wall
+	t_bui_element	*active_portal_texture;
+	t_list			*wall_sprite_buttons;	// list of t_bui_element * of the sprite buttons for wall
+	t_bui_element	*active_wall_sprite;
 
-	t_bui_element *add_wall_sprite_button;
-	t_bui_element *remove_wall_sprite_button;
+	t_bui_element	*add_wall_sprite_button;
+	t_bui_element	*remove_wall_sprite_button;
 
 	// Scale for the wall texture. texture_scale, this is here because of search keyword.
-	t_changer_prefab *texture_scale_changer;
+	t_changer_prefab	*texture_scale_changer;
 
 	// solidity tick box for wall
-	t_bui_element *wall_solid;
-	t_bui_element *wall_solid_tick;
+	t_bui_element	*wall_solid;
+	t_bui_element	*wall_solid_tick;
 
 	// portal tick box for wall
-	t_bui_element *wall_portal;
-	t_bui_element *wall_portal_tick;
+	t_bui_element	*wall_portal;
+	t_bui_element	*wall_portal_tick;
 
 	// temporary variable for the current wall sprite youre editing.
 	//t_wall_sprite *active_wall_sprite; // disabled?
-	t_changer_prefab *sprite_scale_changer;
-	t_changer_prefab *sprite_changer;
-	int		selected_sprite;
+	t_changer_prefab	*sprite_scale_changer;
+	t_changer_prefab	*sprite_changer;
+	int					selected_sprite;
 
 	///////////////////
 	// Sector elements,
 	///////////////////
-	t_bui_element	*edit_toolbox_sector;
+	t_bui_element		*edit_toolbox_sector;
 
 	// toolbox sector edit buttons
 	t_changer_prefab	*floor_height;
@@ -313,44 +213,42 @@ struct			s_editor
 	t_changer_prefab	*ceiling_scale;
 
 	// sector editing stuff
-	t_bui_element	*sector_texture_menu;
-	t_list		*sector_texture_buttons; // list of t_bui_element * of the texture buttons
-	t_bui_element	*active_floor_texture;
-	t_bui_element	*active_ceiling_texture;
-	t_bui_element	*floor_texture_title;
-	t_bui_element	*ceiling_texture_title;
+	t_bui_element		*sector_texture_menu;
+	t_list				*sector_texture_buttons; // list of t_bui_element * of the texture buttons
+	t_bui_element		*active_floor_texture;
+	t_bui_element		*active_ceiling_texture;
+	t_bui_element		*floor_texture_title;
+	t_bui_element		*ceiling_texture_title;
 
 	// slope thingy majig
-	t_bui_element	*slope_edit_menu;
-	t_bui_element	*slope_sector;
+	t_bui_element		*slope_edit_menu;
+	t_bui_element		*slope_sector;
 		// floor
-	t_bui_element	*slope_floor_title;
-	t_changer_prefab *slope_floor_wall_changer;
-	t_changer_prefab *slope_floor_angle_changer;
+	t_bui_element		*slope_floor_title;
+	t_changer_prefab	*slope_floor_wall_changer;
+	t_changer_prefab	*slope_floor_angle_changer;
 		// ceiling
-	t_bui_element	*slope_ceiling_title;
-	t_changer_prefab *slope_ceiling_wall_changer;
-	t_changer_prefab *slope_ceiling_angle_changer;
+	t_bui_element		*slope_ceiling_title;
+	t_changer_prefab	*slope_ceiling_wall_changer;
+	t_changer_prefab	*slope_ceiling_angle_changer;
 
 	///////////////////
 	// Entity elements
 	// ////////////////
-	t_bui_element *edit_toolbox_entity;
-	t_bui_element *edit_view_entity;
+	t_bui_element		*edit_toolbox_entity;
+	t_bui_element		*edit_view_entity;
 
-	t_preset_dropdown *entity_type_drop;
+	t_preset_dropdown	*entity_type_drop;
 
-	t_bui_element	*edit_entity_direction;
-	t_list	*entity_direction_radio_buttons; // list of t_bui_element, these are the "radio" buttons for the direction of entity
-	t_bui_element *active_direction_button;
+	t_bui_element		*edit_entity_direction;
+	t_list				*entity_direction_radio_buttons; // list of t_bui_element *
+	t_bui_element		*active_direction_button;
 
 	/////////////////////
-	// TEXTURES // added in functioin ; load_all_texture() / inits.c / line 68
+	// TEXTURES
 	/////////////////////
-	SDL_Surface **texture_textures; // these are used for wall_textures, portal_textures, floor- & ceiling textures and wall sprite textures.
-	int	texture_amount;
-	SDL_Surface **sprite_textures; // these are used for the entity textures
-	int	sprite_amount;
+	SDL_Surface			**texture_textures; // these are used for wall_textures, portal_textures, floor- & ceiling textures and wall sprite textures.
+	int					texture_amount;
 };
 
 void	fps_func(t_fps *fps);
@@ -359,7 +257,7 @@ void	add_text_to_info_box(t_editor *editor, char *text);
 // NOTE: this is the function that you call in the other program.
 void			map_editor(char *map);
 void			editor_free(t_editor *editor);
-// Rewrites
+
 void			edit_window_init(t_editor *editor, t_bui_libui *libui);
 void			init_sector_editor(t_editor *editor);
 void			init_wall_editor(t_editor *editor);

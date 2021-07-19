@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/02 12:08:02 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/19 14:41:40 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -195,6 +195,7 @@ void	read_sectors(t_editor *editor, int fd)
 		free_array(neighbors);
 		ft_strdel(&line);
 	}
+	ft_strdel(&line);
 }
 
 void	set_sector_slope(t_sector *sec, char **slope_arr)
@@ -231,6 +232,7 @@ void	read_fandc(t_editor *editor, int fd)
 		free_array(slope_arr);
 		ft_strdel(&line);
 	}
+	ft_strdel(&line);
 }
 
 void	read_entities(t_editor *editor, int fd)
@@ -259,6 +261,7 @@ void	read_entities(t_editor *editor, int fd)
 		ft_strdel(&line);
 		id++;
 	}
+	ft_strdel(&line);
 }
 
 void	read_mapinfo(t_editor *editor, int fd)
@@ -275,6 +278,7 @@ void	read_mapinfo(t_editor *editor, int fd)
 		free_array(arr);
 		ft_strdel(&line);
 	}
+	ft_strdel(&line);
 }
 
 void	choose_correct_reader(t_editor *editor, char *line, int fd)
