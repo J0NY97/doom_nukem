@@ -59,25 +59,17 @@ $(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
 	@mingw32-make -C ../better_libui
 
 $(NAME): $(SRCS)
-	@gcc -g -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+	@gcc -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:
 	@rm -f $(OBJS)
-	@mingw32-make -C $(LIBFT) clean
-	@mingw32-make -C $(LIBGFX) clean
-	@mingw32-make -C $(BETTER_LIBUI) clean
-	@mingw32-make -C $(FT_PRINTF) clean
 	@echo "$(NAME) was cleaned."
 
 fclean:
 	@rm -f $(NAME)
-	@mingw32-make -C $(LIBFT) fclean
-	@mingw32-make -C $(LIBGFX) fclean
-	@mingw32-make -C $(BETTER_LIBUI) fclean
-	@mingw32-make -C $(FT_PRINTF) fclean
 	@echo "$(NAME) was fcleaned."
 
-re: fclean fclean_libs $(LIBS) all
+re: fclean $(LIBS) all
 
 .PHONY: clean, all, re, fclean

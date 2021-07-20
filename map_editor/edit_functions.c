@@ -98,7 +98,7 @@ void	wall_render(t_editor *editor)
 	t_sector	*sec;
 	SDL_Surface	*scaled_wall;
 
-	SDL_FillRect(editor->edit_view_wall->active_surface, NULL, 0xff000000);
+	SDL_FillRect(editor->edit_view_wall->active_surface, NULL, 0xf000000);
 	wall = editor->grid.modify_wall;
 	dim.w = gfx_distance(wall->orig->pos, wall->dest->pos) * editor->scale;
 	sec = get_sector_with_wall(&editor->grid.sectors, wall);

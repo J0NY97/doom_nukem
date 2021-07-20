@@ -257,7 +257,7 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 	int	i;
 	int	max;
 
-	fill_surface(grid->elem->active_surface,
+	SDL_FillRect(grid->elem->active_surface, NULL,
 		((t_bui_window *)grid->elem->parent)->color);	
 	i = -1;
 	max = grid->elem->active_surface->h / grid->gap;
