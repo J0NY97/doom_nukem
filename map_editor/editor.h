@@ -92,12 +92,8 @@ struct			s_editor
 	t_bui_window	*window;
 	t_bui_element	*toolbox;
 	t_bui_element	*info_area;
-	t_bui_element	*button_remove;
 	t_bui_element	*button_save;
-	t_bui_element	*button_edit;
 	t_bui_element	*hover_info;
-	t_bui_element	*selected_sector_info;
-	t_bui_element	*selected_vector_info;
 
 	// Entity presets
 	t_list			*entity_presets; // list of t_entity_preset , you can find it in ../core.h
@@ -119,16 +115,16 @@ struct			s_editor
 	//////////////////
 	// Info area elements
 	//////////////////
+	t_bui_element	*button_remove;
+	t_bui_element	*button_edit;
+
+	t_bui_element	*selected_sector_info;
+	t_bui_element	*selected_vector_info;
+
 	t_bui_element	*info_box;
 	Uint32			info_box_start_timer;
 	Uint32			info_box_timer; // everytime you add something to the info box, it will replace whatever is in it and reset timer.
 									// otherwise if the timer ends before youa dd new thing, it will jsut remove the current thing.
-
-	//////////////////
-	// Draw Mode
-	//////////////////
-	t_bui_element *draw_mode;
-
 	//////////////////
 	// Selection Mode
 	//////////////////
@@ -269,7 +265,7 @@ void			changer_prefab_events_float(t_changer_prefab *changer, float *current_val
 void			remove_from_sprites(t_list **list, t_sprite *s);
 t_entity		*get_entity_from_list_at_pos(t_list *list, t_vector pos);
 void			sort_sector_wall_list(t_sector *sector);
-void			info_area_init(t_editor *editor);
+void			info_area_init(t_editor *editor, t_xywh c);
 
 void			mode_functions(t_editor *editor);
 void			draw_all_points(SDL_Surface *surface, t_list *points);

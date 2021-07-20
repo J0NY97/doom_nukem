@@ -58,23 +58,12 @@ ft_printf("libui done!\n");
 
 	toolbox_init(editor);
 ft_printf("toolbox done!\n");
-	info_area_init(editor);
-ft_printf("Info area done!\n");
-	button_init(editor);
-ft_printf("button done!\n");
 	grid_init1(editor);
 ft_printf("Grid1 done!\n");
-
-ft_printf("Ntity din dan don!\n");
 	read_map_file(editor); // map getter
 ft_printf("Map Got!\n");
 
 	editor->grid.modify_sprite = NULL;
-	// New stuff
-
-	//texture_init(doom);
-	//sprite_init(doom);
-	//entity_sprite_init(doom);
 ft_printf("Starting to loop!\n");
 
 	while (libui->run)
