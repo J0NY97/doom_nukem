@@ -353,11 +353,13 @@ void				remove_portal(t_grid *grid);
 /*
 ** Help
 */
+void				remove_from_list_if_with(t_list **list, void *s, int (*cmp)(void *, void *), void (*del)(void *, size_t));
 float				get_wall_length(t_wall *wall);
 int					get_list_len(t_list **list);
 int					vector_is_empty(t_vector v);
+int					pointer_compare(void *p1, void *p2);
 int					vector_compare(t_vector v1, t_vector v2);
-int					wall_compare(t_wall *v1, t_wall *v2);
+int					wall_compare(void *v1, void *v2);
 void				add_to_list(t_list **list, void *new_v, size_t size);
 t_list				*get_nth_from_list(t_list **list, int index);
 t_point				*new_point(t_vector pos);

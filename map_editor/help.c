@@ -27,6 +27,11 @@ int	vector_is_empty(t_vector v)
 	return (vector_compare(v, EMPTY_VEC));
 }
 
+int	pointer_compare(void *p1, void *p2)
+{
+	return (p1 == p2);
+}
+
 int	vector_compare(t_vector v1, t_vector v2)
 {
 	if ((int)v1.x == (int)v2.x &&
@@ -36,12 +41,9 @@ int	vector_compare(t_vector v1, t_vector v2)
 	return (0);
 }
 
-int	wall_compare(t_wall *v1, t_wall *v2)
+int	wall_compare(void *v1, void *v2)
 {
-	if ((vector_compare(v1->dest->pos, v2->dest->pos) &&
-	vector_compare(v1->orig->pos, v2->orig->pos)) ||
-	(vector_compare(v1->orig->pos, v2->dest->pos) &&
-	vector_compare(v1->dest->pos, v2->orig->pos)))
+	if ((t_wall *)v1 == (t_wall *)v2)
 		return (1);
 	return (0);
 }
@@ -67,7 +69,6 @@ t_list	*get_nth_from_list(t_list **list, int index)
 	}
 	return (NULL);
 }
-
 
 t_sprite	*new_sprite(void)
 {
@@ -143,8 +144,6 @@ void	free_wall(void *content, size_t size)
 	(void)size;
 	if (wall == NULL)
 		return ;
-	//free_point(wall->orig, sizeof(t_point));
-	//free_point(wall->dest, sizeof(t_point));
 	if (wall->sprites)
 		ft_lstdel(&wall->sprites, &free_sprite);
 	ft_memdel(&content);
@@ -184,7 +183,6 @@ void	free_sector(void *content, size_t size)
 	if (sector->walls)
 		ft_lstdel(&sector->walls, &dummy_free_er);
 	ft_putstr("All walls from sector freed.\n");
-	//free_point(sector->first_point, sizeof(t_point));
 	free(sector);
 }
 
@@ -267,68 +265,12 @@ t_entity	*get_entity_from_list_at_pos(t_list *list, t_vector pos)
 
 void	remove_from_points(t_list **points, t_point *v)
 {
-	t_list *curr;
-	t_list *prev;
-
-	curr = *points;
-	if (curr == NULL)
-		return ;
-	if (vector_compare(((t_point *)curr->content)->pos, ((t_point *)v)->pos))
-	{
-		*points = curr->next;
-		free(curr->content);
-		free(curr);
-	}
-	else
-	{
-		while (curr)
-		{
-			if (vector_compare(((t_point *)curr->content)->pos, ((t_point *)v)->pos))
-			{
-				prev->next = curr->next;
-				free(curr->content);
-				free(curr);
-			}
-			else
-				prev = curr;
-			curr = prev->next;
-		}
-	}
+	remove_from_list_if_with(points, v, &pointer_compare, &free_point);
 }
 
 void	remove_from_walls(t_list **walls, t_wall *wall)
 {
-	t_list *curr;
-	t_list *prev;
-
-	curr = *walls;
-	if (curr == NULL)
-		return ;
-	if (wall_compare(curr->content, wall))
-	{
-		printf("Wall removed\n");
-		*walls = curr->next;
-		free(curr->content);
-		free(curr);
-		return ;
-	}
-	else
-	{
-		while (curr)
-		{
-			if (wall_compare(curr->content, wall))
-			{
-				printf("Wall removed\n");
-				prev->next = curr->next;
-				free(curr->content);
-				free(curr);
-				return ;
-			}
-			else
-				prev = curr;
-			curr = prev->next;
-		}
-	}
+	remove_from_list_if_with(walls, wall, &pointer_compare, &free_wall);
 }
 
 void	remove_from_walls_non_free(t_list **walls, t_wall *wall)
@@ -339,34 +281,25 @@ void	remove_from_walls_non_free(t_list **walls, t_wall *wall)
 	curr = *walls;
 	if (curr == NULL)
 		return ;
-	ft_putstr("e");
-	if (wall_compare(curr->content, wall))
+	if (curr->content == wall)
 	{
-		ft_printf("Found wall to remove1.\n");
 		*walls = curr->next;
 		free(curr);
-		return ;
 	}
 	else
 	{
-		ft_putstr("b");
 		while (curr)
 		{
-			if (wall_compare(curr->content, wall))
+			if (curr->content == wall)
 			{
-				ft_printf("Found wall to remove2.\n");
 				prev->next = curr->next;
 				free(curr);
-				return ;
 			}
 			else
 				prev = curr;
-			ft_putstr("c");
 			curr = prev->next;
-			ft_putstr("d");
 		}
 	}
-	ft_printf("No wall found in that t_list of walls.\n");
 }
 
 int	sprite_compare(t_sprite *bubble, t_sprite *gum)
@@ -382,7 +315,7 @@ int	sprite_compare(t_sprite *bubble, t_sprite *gum)
 
 }
 
-void	remove_from_sprites(t_list **list, t_sprite *s)
+void	remove_from_list_if_with(t_list **list, void *s, int (*cmp)(void *, void *), void (*del)(void *, size_t))
 {
 	t_list *curr;
 	t_list *prev;
@@ -390,28 +323,30 @@ void	remove_from_sprites(t_list **list, t_sprite *s)
 	curr = *list;
 	if (curr == NULL)
 		return ;
-	if (sprite_compare(curr->content, s))
+	if (cmp(curr->content, s))
 	{
 		*list = curr->next;
-		free(curr->content);
-		free(curr);
+		ft_lstdelone(&curr, del);
 	}
 	else
 	{
 		while (curr)
 		{
-			if (sprite_compare(curr->content, s))
+			if (cmp(curr->content, s))
 			{
 				prev->next = curr->next;
-				free(curr->content);
-				free(curr);
+				ft_lstdelone(&curr, del);
 			}
 			else
 				prev = curr;
 			curr = prev->next;
 		}
 	}
-	printf("Sprite removed\n");
+}
+
+void	remove_from_sprites(t_list **list, t_sprite *s)
+{
+	remove_from_list_if_with(list, s, &pointer_compare, &free_sprite);
 }
 
 
