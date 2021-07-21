@@ -169,6 +169,26 @@ void	add_wall_ids_to_sector(
 	}
 }
 
+void	rearrange_wall_neighbors(t_editor *editor)
+{
+	t_list	*curr_sec;
+	t_list	*curr;
+
+	curr_sec = editor->grid.sectors;
+	while (curr_sec)
+	{
+		curr = ((t_sector *)curr_sec->content)->walls;
+		while (curr)
+		{
+			((t_wall *)curr->content)->neighbor_sector
+				= get_sector_with_id(editor->grid.sectors,
+					((t_wall *)curr->content)->neighbor);
+			curr = curr->next;
+		}
+		curr_sec = curr_sec->next;
+	}
+}
+
 void	read_sectors(t_editor *editor, int fd)
 {
 	char		*line;
@@ -294,7 +314,10 @@ void	choose_correct_reader(t_editor *editor, char *line, int fd)
 	else if (!(ft_strncmp(line, "type:spawn", 10)))
 		read_spawn(&editor->spawn, fd);
 	else if (!(ft_strncmp(line, "type:sector", 11)))
+	{
 		read_sectors(editor, fd);
+		rearrange_wall_neighbors(editor);
+	}
 	else if (!(ft_strncmp(line, "type:f&c", 8)))
 		read_fandc(editor, fd);
 	else if (!(ft_strncmp(line, "type:entity", 10)))

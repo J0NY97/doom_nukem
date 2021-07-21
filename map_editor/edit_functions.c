@@ -143,7 +143,7 @@ void	wall_texture_view_events(t_editor *editor)
 		else
 			editor->grid.modify_wall->solid = 1;
 	}
-	if (editor->grid.modify_wall->neighbor != -1)
+	if (editor->grid.modify_wall->neighbor_sector != NULL)
 		editor->wall_portal_tick->toggle = 1;
 	else
 		editor->wall_portal_tick->toggle = 0;

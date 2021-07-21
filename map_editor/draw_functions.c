@@ -350,7 +350,7 @@ void	draw_sector(t_sector *sector, t_grid *grid)
 		w = wall->content;
 		x += (w->orig->pos.x + w->dest->pos.x) * grid->gap; 
 		y += (w->orig->pos.y + w->dest->pos.y) * grid->gap; 
-		if (((t_wall *)wall->content)->neighbor != -1)
+		if (((t_wall *)wall->content)->neighbor_sector != NULL)
 			draw_wall(wall->content, grid, 0xffff0000);
 		else
 			draw_wall(wall->content, grid, sector->color);

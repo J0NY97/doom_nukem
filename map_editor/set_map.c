@@ -180,7 +180,6 @@ char	*set_walls_and_neighbors_for_sector(t_list *wall_list)
 				temp_neighbor = ft_sprintf("%d", w->neighbor_sector->id);
 			else
 				temp_neighbor = ft_sprintf("%d", -1);
-			//temp_neighbor = ft_sprintf("%d", w->neighbor);
 		}
 		else
 		{
@@ -188,7 +187,6 @@ char	*set_walls_and_neighbors_for_sector(t_list *wall_list)
 				temp_neighbor = ft_sprintf("%d %s", w->neighbor_sector->id, temp_n);
 			else
 				temp_neighbor = ft_sprintf("%d %s", -1, temp_n);
-		//	temp_neighbor = ft_sprintf("%d %s", w->neighbor, temp_n);
 		}
 		ft_strdel(&temp_w);
 		ft_strdel(&temp_n);

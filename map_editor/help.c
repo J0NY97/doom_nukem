@@ -440,8 +440,8 @@ void	remove_all_non_existing_portals(t_list **sectors)
 				w2 = ((t_sector *)s2->content)->walls;
 				while (w2)
 				{
-					if (((t_wall *)w->content)->neighbor == ((t_sector *)s2->content)->id
-						&& ((t_wall *)w2->content)->neighbor == ((t_sector *)s->content)->id)
+					if (((t_wall *)w->content)->neighbor_sector == s2->content
+						&& ((t_wall *)w2->content)->neighbor_sector == s->content)
 					{
 						found = 1;	
 						break ;
@@ -453,7 +453,7 @@ void	remove_all_non_existing_portals(t_list **sectors)
 				s2 = s2->next;
 			}
 			if (found == 0)
-				((t_wall *)w->content)->neighbor = -1;
+				((t_wall *)w->content)->neighbor_sector = NULL;
 			w = w->next;
 		}
 		s = s->next;
