@@ -63,12 +63,14 @@ void	render_scaled_wall(t_editor *editor, SDL_Surface *scaled_wall)
 	SDL_FreeSurface(scaled_wall);
 }
 
-void	render_texture_on_the_wall(SDL_Surface *surface, SDL_Surface *texture, float texture_scale, float scale)
+void	render_texture_on_the_wall(
+		SDL_Surface *surface, SDL_Surface *texture,
+		float texture_scale, float scale)
 {
-	int		y;
-	int		x;
-	int		x_axis;
-	int		y_axis;
+	int			y;
+	int			x;
+	int			x_axis;
+	int			y_axis;
 	SDL_Rect	temp;
 
 	x_axis = (((float)surface->w / scale) / texture_scale);
@@ -391,7 +393,8 @@ void	floor_ceiling_slope_changer_prefab_events(t_editor *editor)
 		editor->grid.modify_sector->ceiling_slope = 45;
 }
 
-t_vector	*get_scaled_line(SDL_Surface *surface, t_wall *wall, t_vector center, float scale)
+t_vector	*get_scaled_line(
+	SDL_Surface *surface, t_wall *wall, t_vector center, float scale)
 {
 	t_vector	new_orig;
 	t_vector	new_dest;

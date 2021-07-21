@@ -336,7 +336,7 @@ void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
 
 void	draw_sector(t_sector *sector, t_grid *grid)
 {
-	int	i;
+	int		i;
 	float	x;
 	float	y;
 	t_list	*wall;
@@ -382,7 +382,7 @@ void	draw_sectors(t_grid *grid)
 void	draw_entity(t_editor *editor, t_entity *entity)
 {
 	t_vector	pos;
-	int		color;
+	int			color;
 	float		angle;
 
 	if (entity->preset == NULL)

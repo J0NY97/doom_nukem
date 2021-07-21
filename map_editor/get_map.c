@@ -81,9 +81,9 @@ void	read_vertex(t_grid *grid, int fd)
 
 void	read_wall(t_grid *grid, int fd)
 {
-	char *line;
-	char **arr;
-	t_wall *new_w;
+	char	*line;
+	char	**arr;
+	t_wall	*new_w;
 
 	while (get_next_line(fd, &line))
 	{
@@ -257,7 +257,7 @@ void	read_fandc(t_editor *editor, int fd)
 
 void	read_entities(t_editor *editor, int fd)
 {
-	int		id;
+	int			id;
 	char		*line;
 	char		**arr;
 	t_entity	*ent;

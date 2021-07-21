@@ -22,6 +22,7 @@ int	wall_has_same_coords(t_wall *w1, t_wall *w2)
 	return (0);
 }
 
+// When / IF this is the only function left, just split it in 2
 void	add_portal(t_grid *grid)
 {
 	t_list		*sec;
