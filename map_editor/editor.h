@@ -118,6 +118,7 @@ struct			s_editor
 	t_bui_element		*button_remove;
 	t_bui_element		*button_edit;
 
+	t_bui_element		*general_info;
 	t_bui_element		*selected_sector_info;
 	t_bui_element		*selected_vector_info;
 
@@ -323,6 +324,7 @@ int					vector_on_wall(t_vector v, t_wall *line);
 void				remove_everything_from_list(t_list **list);
 
 void				recount_everything(t_editor *doom);
+void				update_general_info_element(t_editor *editor);
 
 /* Sector */
 t_sector			*get_sector_with_wall(t_list **sector_list, t_wall *wall);
@@ -353,6 +355,11 @@ void				remove_portal(t_grid *grid);
 /*
 ** Help
 */
+void				remove_all_non_existing_sectors(t_editor *editor);
+void				remove_all_non_existing_portals(t_list **sectors);
+void				remove_all_lonely_walls(t_list **walls, t_list **sectors);
+void				remove_all_lonely_points(t_editor *editor);
+
 void				remove_from_list_if_with(t_list **list, void *s, int (*cmp)(void *, void *), void (*del)(void *, size_t));
 float				get_wall_length(t_wall *wall);
 int					get_list_len(t_list **list);

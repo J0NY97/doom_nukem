@@ -74,6 +74,7 @@ ft_printf("Starting to loop!\n");
 
 		draw_grid(editor, &editor->grid);
 		hover_calc(editor, &editor->grid);
+		update_general_info_element(editor);
 		if (bui_button_toggle(editor->button_draw))
 		{
 			click_calc(editor, &editor->grid);

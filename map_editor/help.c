@@ -119,7 +119,6 @@ t_wall	*new_wall(t_point *orig, t_point *dest)
 	new_wall->texture_id = 0;
 	new_wall->portal_texture_id = 0;
 	new_wall->solid = 1; 
-	new_wall->portal = -1; 
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;
 	new_wall->neighbor_sector = NULL;
@@ -276,31 +275,7 @@ void	remove_from_walls(t_list **walls, t_wall *wall)
 
 void	remove_from_walls_non_free(t_list **walls, t_wall *wall)
 {
-	t_list *curr;
-	t_list *prev;
-
-	curr = *walls;
-	if (curr == NULL)
-		return ;
-	if (curr->content == wall)
-	{
-		*walls = curr->next;
-		free(curr);
-	}
-	else
-	{
-		while (curr)
-		{
-			if (curr->content == wall)
-			{
-				prev->next = curr->next;
-				free(curr);
-			}
-			else
-				prev = curr;
-			curr = prev->next;
-		}
-	}
+	remove_from_list_if_with(walls, wall, &pointer_compare, &dummy_free_er);
 }
 
 int	sprite_compare(t_sprite *bubble, t_sprite *gum)
@@ -316,7 +291,8 @@ int	sprite_compare(t_sprite *bubble, t_sprite *gum)
 
 }
 
-void	remove_from_list_if_with(t_list **list, void *s, int (*cmp)(void *, void *), void (*del)(void *, size_t))
+void	remove_from_list_if_with(t_list **list, void *s,
+		int (*cmp)(void *, void *), void (*del)(void *, size_t))
 {
 	t_list *curr;
 	t_list *prev;
@@ -477,18 +453,6 @@ int				wall_in_list(t_wall *wall, t_list *list)
 int				wall_in_sector(t_wall *wall, t_sector *sector)
 {
 	return (wall_in_list(wall, sector->walls));
-	/* OLD, if the code on top of this doesnt work, uncomment.
-	t_list *curr;
-
-	curr = sector->walls;
-	while (curr)
-	{
-		if (wall_compare(wall, curr->content))
-			return (1);
-		curr = curr->next;
-	}
-	return (0);
-	*/
 }
 
 /*
@@ -518,6 +482,7 @@ void	remove_all_lonely_walls(t_list **walls, t_list **sectors)
 }
 
 /* This might not be needed. */
+/* Try to remove this and then test in the game if it works. */
 // NOTE: This spaghett has to be added so that niklas renderer can work. 
 //
 // 1. loop through all sectors walls
@@ -585,6 +550,5 @@ t_sector	*get_sector_with_wall(t_list **sector_list, t_wall *wall)
 		}
 		curr = curr->next;
 	}
-	// Weird that there is a wall that isnt a part of a sector.... so if we get here, look into it.
 	return (NULL);
 }

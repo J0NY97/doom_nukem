@@ -134,6 +134,19 @@ t_point	*get_point_from_list_around_radius(
 	return (temp);
 }
 
+void	update_general_info_element(t_editor *editor)
+{
+	char	*str;
+
+	// how many poitns, walls, sectors, entities, wallsprites, (portals?)
+	recount_everything(editor);
+	str = ft_sprintf("v: %d, w: %d, s: %d, e: %d\n",
+		editor->grid.point_amount, editor->grid.wall_amount,
+		editor->grid.sector_amount, editor->grid.entity_amount);
+	bui_set_element_text(editor->general_info, str, 0, 0);
+	ft_strdel(&str);
+}
+
 void	draw_selected_point(t_editor *editor, t_grid *grid)
 {
 	char	*s;

@@ -208,7 +208,7 @@ void	toolbox_init(t_editor *editor)
 	button_init(editor);
 	coord = new_xywh(10, editor->other_mode->position.y
 			+ editor->other_mode->position.h + 10, editor->toolbox->position.w
-			- 20, editor->toolbox->position.w - 20);
+			- 20, 300);
 	info_area_init(editor, coord);
 }
 
@@ -216,7 +216,8 @@ void	init_info_box(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(10, 200, editor->info_area->position.w - 20, 40);
+	coord = ui_init_coords(10, editor->info_area->position.h - 40 - 10,
+			editor->info_area->position.w - 20, 40);
 	editor->info_box = bui_new_element(editor->info_area, NULL, coord);
 	editor->info_box->update_state = 0;
 	editor->info_box->text_x = 2;
@@ -244,6 +245,18 @@ void	button_init_info_area(t_editor *editor)
 		ROOT_PATH"ui/ui_images/edit_button_click.png");
 }
 
+void	general_info_init(t_editor *editor)
+{
+	t_xywh	coord;
+
+	coord = ui_init_coords(10, editor->selected_vector_info->position.y
+			+ editor->selected_vector_info->position.h + 5,
+			editor->info_area->position.w - 20, 40);
+	editor->general_info = bui_new_element(editor->info_area, "Info", coord);
+	bui_set_element_color(editor->general_info, editor->info_area->color);
+	bui_set_element_text_color(editor->general_info, 0xffffffff);
+}
+
 void	info_area_init(t_editor *editor, t_xywh c)
 {
 	t_xywh	coord;
@@ -268,6 +281,7 @@ void	info_area_init(t_editor *editor, t_xywh c)
 	coord = ui_init_coords(editor->info_area->position.w - 110, 100, 100, 40);
 	editor->scaler = new_changer_prefab(editor->info_area, "Map Scale", coord);
 	init_info_box(editor);
+	general_info_init(editor);
 	button_init_info_area(editor);
 }
 

@@ -12,7 +12,7 @@
 
 #include "editor.h"
 
-t_point	*get_point_with_id(t_list *points, unsigned int id)
+t_point	*get_point_with_id(t_list *points, int id)
 {
 	t_list *curr;
 
@@ -26,7 +26,7 @@ t_point	*get_point_with_id(t_list *points, unsigned int id)
 	return (NULL);
 }
 
-t_wall	*get_wall_with_id(t_list *walls, unsigned int id)
+t_wall	*get_wall_with_id(t_list *walls, int id)
 {
 	t_list *curr;
 
@@ -40,7 +40,7 @@ t_wall	*get_wall_with_id(t_list *walls, unsigned int id)
 	return (NULL);
 }
 
-t_sector *get_sector_with_id(t_list *sectors, unsigned int id)
+t_sector *get_sector_with_id(t_list *sectors, int id)
 {
 	t_list *curr;
 

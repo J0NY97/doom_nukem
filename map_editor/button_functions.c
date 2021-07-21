@@ -124,6 +124,26 @@ void	remove_entity_from_list(t_list **entities, t_entity *entity)
 	}
 }
 
+void	save_button_events(t_editor *editor)
+{
+	ft_strdel(&editor->mapname);
+	editor->mapname = ft_strdup(editor->map_name_input->text);
+	ft_strdel(&editor->fullpath);
+	if (bui_button_toggle(editor->endless_tickbox))
+		editor->fullpath = ft_sprintf(ROOT_PATH"map_editor/maps/%s%s",
+				editor->mapname, ".endless");
+	else if (bui_button_toggle(editor->story_tickbox))
+		editor->fullpath = ft_sprintf(ROOT_PATH"map_editor/maps/%s%s",
+				editor->mapname, ".story");
+	remove_all_non_existing_sectors(editor);
+	remove_all_lonely_walls(&editor->grid.walls, &editor->grid.sectors);
+	remove_all_non_existing_portals(&editor->grid.sectors);
+	remove_all_lonely_points(editor);
+	recount_everything(editor);
+	set_map(editor);
+	add_text_to_info_box(editor, "Map saved successfully!");
+}
+
 void	other_box_events(t_editor *editor)
 {
 	if (bui_input(editor->map_name_input))
@@ -133,19 +153,7 @@ void	other_box_events(t_editor *editor)
 		add_text_to_info_box(editor, "Map name changed successfully!");
 	}
 	if (bui_button(editor->button_save))
-	{
-		ft_strdel(&editor->mapname);
-		editor->mapname = ft_strdup(editor->map_name_input->text);
-		ft_strdel(&editor->fullpath);
-		if (bui_button_toggle(editor->endless_tickbox))
-			editor->fullpath = ft_sprintf(ROOT_PATH"map_editor/maps/%s%s",
-					editor->mapname, ".endless");
-		else if (bui_button_toggle(editor->story_tickbox))
-			editor->fullpath = ft_sprintf(ROOT_PATH"map_editor/maps/%s%s",
-					editor->mapname, ".story");
-		set_map(editor);
-		add_text_to_info_box(editor, "Map saved successfully!");
-	}
+		save_button_events(editor);
 	only_one_button_toggled_at_a_time(editor->map_type_tickboxes,
 		&editor->active_map_type);
 }
@@ -286,18 +294,20 @@ void	remove_all_lonely_points(t_editor *editor)
 	t_list	*p;
 	t_list	*wall;
 	t_point	*point;
+	t_wall	*w;
 	int	found;
 
-	found = 0;
 	p = editor->grid.points;
 	while (p)
 	{
+		found = 0;
 		point = p->content;
 		p = p->next;
 		wall = editor->grid.walls;
 		while (wall)
 		{
-			if (vector_in_wall(point->pos, wall->content))
+			w = wall->content;
+			if (point == w->orig || point == w->dest)
 			{
 				found = 1;
 				break ;
