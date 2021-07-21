@@ -105,38 +105,33 @@ void	drag_calc(t_editor *editor, t_grid *grid)
 	movement(editor, move_x, move_y);
 }
 
-void	select_point(t_grid *grid)
+t_point	*get_point_from_list_around_radius(
+		t_list *points, t_vector pos, float allowed_radius)
 {
 	t_point		*temp;
-	float		allowed_radius;
 	float		x;
 	float		y;
 
-	temp = get_point_from_list(grid->points, &(t_point){.pos = grid->hover});
-	if (temp == NULL)
+	temp = get_point_from_list_at_pos(points, pos);
+	if (temp)
+		return (temp);
+	x = -allowed_radius;
+	while (x <= allowed_radius)
 	{
-		allowed_radius = 1.0f;
-		x = -allowed_radius;
-		while (x <= allowed_radius)
+		y = -allowed_radius;
+		while (y <= allowed_radius)
 		{
-			y = -allowed_radius;
-			while (y <= allowed_radius)
-			{
-				temp = get_point_from_list(grid->points,
-					&(t_point){.pos = (t_vector){
-					grid->hover.x + x, grid->hover.y + y, 0}});
-				if (temp != NULL)
-					break ;
-				y += 0.5f;
-			}
+			temp = get_point_from_list_at_pos(points,
+				(t_vector){pos.x + x, pos.y + y, 0});
 			if (temp != NULL)
 				break ;
-			x += 0.5f;
+			y += 0.5f;
 		}
-		if (temp == NULL)
-			return ;
+		if (temp != NULL)
+			break ;
+		x += 0.5f;
 	}
-	grid->modify_point = temp;
+	return (temp);
 }
 
 void	draw_selected_point(t_editor *editor, t_grid *grid)
@@ -194,6 +189,41 @@ int	vector_on_wall(t_vector v, t_wall *wall)
 	return (0);
 }
 
+void	select_point(t_grid *grid)
+{
+	t_point	*point;
+
+	point = get_point_from_list_around_radius(grid->points, grid->hover, 1.0f);
+	if (point)
+		grid->modify_point = point;
+}
+
+void	select_entity(t_editor *editor)
+{
+	t_entity *entity;
+
+	entity = get_entity_from_list_around_radius(editor->grid.entities,
+			editor->grid.hover, 1.0f);
+	if (entity)
+	{
+		editor->grid.modify_entity = entity;
+		editor->entity_type_drop->drop->toggle = 0;	
+	}
+}
+
+void	select_wall(t_editor *editor)
+{
+	t_wall	*wall;
+
+	wall = get_wall_from_list_around_radius(editor->grid.walls,
+			editor->grid.hover, 1.0f);
+	if (wall)
+	{
+		editor->grid.modify_wall = wall;
+		editor->grid.modify_sprite = NULL;
+	}
+}
+
 void	selection(t_editor *editor, t_grid *grid)
 {
 	if (editor->libui->mouse_down_last_frame
@@ -204,11 +234,11 @@ void	selection(t_editor *editor, t_grid *grid)
 		else
 			editor->grid.modify_point = NULL;
 		if (bui_button_toggle(editor->select_mode_wall))
-			select_wall(editor, grid);
+			select_wall(editor);
 		else
 			editor->grid.modify_wall = NULL;
 		if (bui_button_toggle(editor->select_mode_entity))
-			select_entity(editor, grid);
+			select_entity(editor);
 		else
 			editor->grid.modify_entity = NULL;
 		if (bui_button_toggle(editor->select_mode_sector))
@@ -235,68 +265,60 @@ float	distance_from_vector_to_wall(t_vector p0, t_wall *wall)
 	return (dist);
 }
 
-void	select_wall(t_editor *editor, t_grid *grid)
+t_wall	*get_wall_from_list_around_radius(
+		t_list *walls, t_vector pos, float allowed_radius)
 {
 	t_list		*curr;
-	t_wall		*temp;
 	t_wall		*wall;
-	t_vector	v;
-	float		allowed_radius;
 	float		dist;
 
-	allowed_radius = 1.0f;
-	temp = NULL;
-	v = grid->hover;
-	curr = grid->walls;
+	curr = walls;
 	while (curr)
 	{
 		wall = curr->content;
-		dist = fabs(distance_from_vector_to_wall(v, curr->content));
+		dist = fabs(distance_from_vector_to_wall(pos, curr->content));
 		if (dist <= allowed_radius)
 		{
-			if (v.x >= fmin(wall->orig->pos.x, wall->dest->pos.x)
-			- allowed_radius && v.x <= fmax(wall->orig->pos.x,
+			if (pos.x >= fmin(wall->orig->pos.x, wall->dest->pos.x)
+			- allowed_radius && pos.x <= fmax(wall->orig->pos.x,
 			wall->dest->pos.x) + allowed_radius)
 			{
-				if (v.y >= fmin(wall->orig->pos.y,
-				wall->dest->pos.y) - allowed_radius && v.y
+				if (pos.y >= fmin(wall->orig->pos.y,
+				wall->dest->pos.y) - allowed_radius && pos.y
 				<= fmax(wall->orig->pos.y,
 				wall->dest->pos.y) + allowed_radius)
-				{
-					temp = curr->content;
-					break ;
-				}
+					return (curr->content);
 			}
 		}
 		curr = curr->next;
 	}
-	if (temp == NULL)
-		return ;
-	editor->grid.modify_sprite = NULL;
-	grid->modify_wall = temp;
+	return (NULL);
 }
 
-void	draw_selected_wall(t_grid *grid)
+void	draw_wall_as_selected(t_grid *grid, SDL_Surface *surface, t_wall *wall)
 {
 	t_vector orig;
 	t_vector dest;
 
+	orig = gfx_vector_add(gfx_vector_multiply(wall->orig->pos, grid->gap), 1);
+	dest = gfx_vector_add(gfx_vector_multiply(wall->dest->pos, grid->gap), 1);
+	gfx_draw_line(surface, 0xffffae42, orig, dest);
+	orig = gfx_vector_sub(orig, 2);
+	dest = gfx_vector_sub(dest, 2);
+	gfx_draw_line(surface, 0xffffae42, orig, dest);
+}
+
+void	draw_selected_wall(t_grid *grid)
+{
 	if (grid->modify_wall == NULL)
 		return ;
-	orig = gfx_vector_multiply((t_vector){(grid->modify_wall->orig->pos.x),
-			(grid->modify_wall->orig->pos.y), 0}, grid->gap);
-	dest = gfx_vector_multiply((t_vector){(grid->modify_wall->dest->pos.x),
-			(grid->modify_wall->dest->pos.y), 0}, grid->gap);
-	orig = gfx_vector_add(orig, 1);
-	dest = gfx_vector_add(dest, 1);
-	gfx_draw_line(grid->elem->active_surface, 0xffffae42, orig, dest);
+	draw_wall_as_selected(grid,
+		grid->elem->active_surface, grid->modify_wall);
 }
 
 void	draw_selected_sector(t_editor *editor, t_grid *grid)
 {
 	t_list		*curr;
-	t_vector	orig;
-	t_vector	dest;
 	char		*str;
 
 	if (grid->modify_sector == NULL)
@@ -309,16 +331,8 @@ void	draw_selected_sector(t_editor *editor, t_grid *grid)
 		curr = grid->modify_sector->walls;
 		while (curr)
 		{
-			orig = gfx_vector_add(gfx_vector_multiply(((t_wall *)
-				curr->content)->orig->pos, grid->gap), 1);
-			dest = gfx_vector_add(gfx_vector_multiply(((t_wall *)
-				curr->content)->dest->pos, grid->gap), 1);
-			gfx_draw_line(grid->elem->active_surface,
-				0xffffae42, orig, dest);
-			orig = gfx_vector_sub(orig, 2);
-			dest = gfx_vector_sub(dest, 2);
-			gfx_draw_line(grid->elem->active_surface,
-				0xffffae42, orig, dest);
+			draw_wall_as_selected(grid,
+				editor->grid.elem->active_surface, curr->content);
 			curr = curr->next;
 		}
 	}
@@ -354,42 +368,33 @@ void	select_sector(t_grid *grid)
 	grid->modify_sector = temp;
 }
 
-void	select_entity(t_editor *editor, t_grid *grid)
+t_entity	*get_entity_from_list_around_radius(
+			t_list *entities, t_vector pos, float allowed_radius)
 {
 	t_entity	*temp;
-	float		allowed_radius;
 	float		x;
 	float		y;
 
-
-	temp = get_entity_from_list_at_pos(editor->grid.entities,
-		editor->grid.hover);
-	if (temp == NULL)
+	temp = get_entity_from_list_at_pos(entities, pos);
+	if (temp)
+		return (temp);
+	x = -allowed_radius;
+	while (x <= allowed_radius)
 	{
-		allowed_radius = 1.0f;
-		x = -allowed_radius;
-		while (x <= allowed_radius)
+		y = -allowed_radius;
+		while (y <= allowed_radius)
 		{
-			y = -allowed_radius;
-			while (y <= allowed_radius)
-			{
-				temp = get_entity_from_list_at_pos(
-					editor->grid.entities, (t_vector){
-					grid->hover.x + x, grid->hover.y + y,
-					0});
-				if (temp != NULL)
-					break ;
-				y += 0.5f;
-			}
+			temp = get_entity_from_list_at_pos(entities,
+					(t_vector){pos.x + x, pos.y + y, 0});
 			if (temp != NULL)
 				break ;
-			x += 0.5f;
+			y += 0.5f;
 		}
-		if (temp == NULL)
-			return ;
+		if (temp != NULL)
+			break ;
+		x += 0.5f;
 	}
-	editor->grid.modify_entity = temp;
-	editor->entity_type_drop->drop->toggle = 0;	
+	return (temp);
 }
 
 void	draw_selected_entity(t_grid *grid)

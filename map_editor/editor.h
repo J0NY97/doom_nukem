@@ -295,10 +295,10 @@ void				entity_edit_button_init(t_editor *doom);
 void				scale_changer_events(t_bui_libui *libui, t_editor *editor);
 
 void				selection(t_editor *doom, t_grid *grid);
-void				select_point(t_grid *grid);
-void				select_wall(t_editor *doom, t_grid *grid);
+t_point				*get_point_from_list_around_radius(t_list *points, t_vector pos, float allowed_radius);
+t_entity			*get_entity_from_list_around_radius(t_list *entities, t_vector pos, float allowed_radius);
+t_wall				*get_wall_from_list_around_radius(t_list *walls, t_vector pos, float allowed_radius);
 void				select_sector(t_grid *grid);
-void				select_entity(t_editor *doom, t_grid *grid);
 
 void				drag_calc(t_editor *doom, t_grid *grid);
 void				draw_selected_point(t_editor *doom, t_grid *grid);
@@ -311,7 +311,7 @@ void				show_selected_wall_texture(t_editor *doom, t_grid *grid);
 void				selected_option_menu(t_editor *doom, t_grid *grid);
 
 char				*args_parser(int ac, char **av);
-t_point				*get_point_from_list(t_list *list, t_point *v);
+t_point				*get_point_from_list_at_pos(t_list *list, t_vector v);
 t_wall				*get_wall_from_list(t_list **list, t_point *v1, t_point *v2);
 t_sprite			*get_sprite_from_list(t_list **list, int x, int y);
 void				update_real_dimensions(t_grid *grid);

@@ -12,15 +12,14 @@
 
 #include "editor.h"
 
-t_point	*get_point_from_list(t_list *list, t_point *v)
+t_point	*get_point_from_list_at_pos(t_list *list, t_vector v)
 {
 	t_list	*curr;
 
 	curr = list;
 	while (curr)
 	{
-		if (vector_compare(((t_point *)curr->content)->pos,
-		(t_vector){v->pos.x, v->pos.y, v->pos.z}))
+		if (vector_compare(((t_point *)curr->content)->pos,	v))
 			return (curr->content);
 		curr = curr->next;
 	}
