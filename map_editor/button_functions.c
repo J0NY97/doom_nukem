@@ -97,31 +97,7 @@ int	entity_compare(t_entity *ent, t_entity *ity)
 
 void	remove_entity_from_list(t_list **entities, t_entity *entity)
 {
-	t_list	*curr;
-	t_list	*prev;
-
-	curr = *entities;
-	if (curr && entity_compare(curr->content, entity))
-	{
-		*entities = curr->next;
-		free_entity(curr->content, 0);
-		free(curr);
-	}
-	else
-	{
-		while (curr)
-		{
-			if (entity_compare(curr->content, entity))
-			{
-				prev->next = curr->next;
-				free_entity(curr->content, 0);
-				free(curr);
-			}
-			else
-				prev = curr;
-			curr = prev->next;
-		}
-	}
+	remove_from_list_if_with(entities, entity, &pointer_compare, &free_entity);
 }
 
 void	save_button_events(t_editor *editor)
@@ -294,8 +270,7 @@ void	remove_all_lonely_points(t_editor *editor)
 	t_list	*p;
 	t_list	*wall;
 	t_point	*point;
-	t_wall	*w;
-	int	found;
+	int		found;
 
 	p = editor->grid.points;
 	while (p)
@@ -306,8 +281,8 @@ void	remove_all_lonely_points(t_editor *editor)
 		wall = editor->grid.walls;
 		while (wall)
 		{
-			w = wall->content;
-			if (point == w->orig || point == w->dest)
+			if (point == ((t_wall *)wall->content)->orig
+				|| point == ((t_wall *)wall->content)->dest)
 			{
 				found = 1;
 				break ;
