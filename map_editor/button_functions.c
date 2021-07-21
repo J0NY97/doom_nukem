@@ -30,8 +30,13 @@ void	add_portal(t_grid *grid)
 	int		wall_one_sec;
 	int		wall_two_sec;
 
+	t_sector		*wall_1_sec;
+	t_sector		*wall_2_sec;
+
 	wall_one_sec = -1;
 	wall_two_sec = -1;
+	wall_1_sec = NULL;
+	wall_2_sec = NULL;
 	sec = grid->sectors;
 	while (sec)
 	{
@@ -41,11 +46,15 @@ void	add_portal(t_grid *grid)
 			if (wall_has_same_coords(grid->modify_wall, wall->content))
 			{
 				if (grid->modify_wall == wall->content)
+				{
 					wall_one_sec = ((t_sector *)sec->content)->id;
+					wall_1_sec = sec->content;
+				}
 				else
 				{
 					other = wall->content;
 					wall_two_sec = ((t_sector *)sec->content)->id;
+					wall_2_sec = sec->content;
 				}
 			}
 			wall = wall->next;
@@ -56,6 +65,8 @@ void	add_portal(t_grid *grid)
 		return ;
 	other->neighbor = wall_one_sec;
 	grid->modify_wall->neighbor = wall_two_sec;
+	other->neighbor_sector = wall_1_sec;
+	grid->modify_wall->neighbor_sector = wall_2_sec;
 	if (other->neighbor != -1)
 		other->solid = 0;
 	if (grid->modify_wall->neighbor != -1)
@@ -78,6 +89,7 @@ void	remove_portal(t_grid *grid)
 			if (wall_compare(w->content, grid->modify_wall))
 			{
 				((t_wall *)w->content)->neighbor = -1;
+				((t_wall *)w->content)->neighbor_sector = NULL;
 				((t_wall *)w->content)->solid = 1;
 			}
 			w = w->next;

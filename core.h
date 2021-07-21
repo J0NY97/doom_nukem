@@ -51,6 +51,7 @@ struct				s_wall
 	int			portal;
 	t_list			*sprites; // list of t_sprite 
 	int				neighbor;
+	t_sector		*neighbor_sector;
 };
 
 struct				s_sector

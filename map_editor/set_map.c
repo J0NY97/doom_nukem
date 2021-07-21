@@ -175,9 +175,21 @@ char	*set_walls_and_neighbors_for_sector(t_list *wall_list)
 		else
 			temp_wall = ft_sprintf("%d %s", w->id, temp_w);
 		if (temp_n == NULL)
-			temp_neighbor = ft_sprintf("%d", w->neighbor);
+		{
+			if (w->neighbor_sector)
+				temp_neighbor = ft_sprintf("%d", w->neighbor_sector->id);
+			else
+				temp_neighbor = ft_sprintf("%d", -1);
+			//temp_neighbor = ft_sprintf("%d", w->neighbor);
+		}
 		else
-			temp_neighbor = ft_sprintf("%d %s", w->neighbor, temp_n);
+		{
+			if (w->neighbor_sector)
+				temp_neighbor = ft_sprintf("%d %s", w->neighbor_sector->id, temp_n);
+			else
+				temp_neighbor = ft_sprintf("%d %s", -1, temp_n);
+		//	temp_neighbor = ft_sprintf("%d %s", w->neighbor, temp_n);
+		}
 		ft_strdel(&temp_w);
 		ft_strdel(&temp_n);
 		temp_w = ft_strdup(temp_wall);

@@ -122,6 +122,7 @@ t_wall	*new_wall(t_point *orig, t_point *dest)
 	new_wall->portal = -1; 
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;
+	new_wall->neighbor_sector = NULL;
 	return (new_wall);
 }
 
