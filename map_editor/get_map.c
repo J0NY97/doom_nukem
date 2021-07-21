@@ -331,7 +331,7 @@ void		read_map_file(t_editor *editor)
 
 	if ((fd = open(editor->fullpath, O_RDONLY)) < 0)
 	{
-		ft_putstr("Couldnt open map.\n");
+		ft_putstr("[read_map_file] Couldnt open map.\n");
 		return ;
 	}
 	while (get_next_line(fd, &line))

@@ -57,7 +57,7 @@ SDL_Surface	*load_bxpm_to_surface(char *bxpm_file)
 	result = read_bxpm(bxpm, bxpm_file);
 	if (result != 1)
 	{
-		ft_printf("Couldnt open file: %s\n", bxpm_file);
+		ft_printf("[load_bxpm_to_surface] Couldnt open file: %s\n", bxpm_file);
 		free(bxpm);
 		return (NULL);
 	}

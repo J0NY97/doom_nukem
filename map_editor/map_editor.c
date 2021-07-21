@@ -9,31 +9,39 @@ void	update_title_fps(SDL_Window *win, t_fps *fps)
 	ft_strdel(&str);
 }
 
-// NOTE: map_editor makes new window and libui.
-void	map_editor(char *map)
+char	*get_mapname_from_path(char *map)
 {
-	t_editor	*editor;
-	t_bui_libui	*libui;
+	char	**mapname;
+	char	*str;
+	int		i;
 
-	t_fps *fps = ft_memalloc(sizeof(t_fps));
-	editor = ft_memalloc(sizeof(t_editor));
-	libui = bui_new_libui();
-	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
-	editor->libui = libui;
-	editor->fullpath = ft_strdup(map);
-	// Spaghett way of getting the map name from fullpath
-	char **mapname = ft_strsplit(map, '/');
-
-	int i = 0;
+	i = 0;
+	mapname = ft_strsplit(map, '/');
 	while (mapname[i + 1])
 		i++;
 	if (ft_strendswith(mapname[i], ".endless") == 0)
 		ft_strremove(mapname[i], ".endless");
 	else if (ft_strendswith(mapname[i], ".story") == 0)
 		ft_strremove(mapname[i], ".story");
-	editor->mapname = ft_strdup(mapname[i]);
+	str = ft_strdup(mapname[i]);
 	free_array(mapname);
-	// End of spaghett
+	return (str);
+}
+
+// NOTE: map_editor makes new window and libui.
+void	map_editor(char *map)
+{
+	t_editor	*editor;
+	t_bui_libui	*libui;
+	t_fps		*fps;
+
+	fps = ft_memalloc(sizeof(t_fps));
+	editor = ft_memalloc(sizeof(t_editor));
+	libui = bui_new_libui();
+	SDL_SetHint(SDL_HINT_MOUSE_FOCUS_CLICKTHROUGH, "1");
+	editor->libui = libui;
+	editor->fullpath = ft_strdup(map);
+	editor->mapname = get_mapname_from_path(map);
 	grid_init(editor);
 	color_palette_init(&editor->palette);
 	window_init(editor, libui);
