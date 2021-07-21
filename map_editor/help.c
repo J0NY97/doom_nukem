@@ -352,27 +352,19 @@ void	remove_from_sprites(t_list **list, t_sprite *s)
 
 t_sprite	*get_sprite_from_list(t_list **list, int x, int y)
 {
-	t_list *curr;
-	t_sprite *sprite;
-	int i; // NOTE: this i looks to only be used in the printf
+	t_list		*curr;
+	t_sprite	*sprite;
 
-	i = 0;
 	curr = *list;
-
-	ft_printf("Searching for sprite on coords: %d %d\n", x, y);
 	while (curr)
 	{
 		sprite = curr->content;
-		ft_printf("%d: %d %d %d %d\n", i, sprite->coord.x, sprite->coord.y, sprite->coord.w, sprite->coord.h);
 		if (sprite->coord.x <= x &&
 		sprite->coord.x + sprite->coord.w >= x &&
 		sprite->coord.y <= y &&
 		sprite->coord.y + sprite->coord.h >= y)
-		{
 			return (curr->content);
-		}
 		curr = curr->next;
-		i++;
 	}
 	return (NULL);
 }
@@ -380,36 +372,12 @@ t_sprite	*get_sprite_from_list(t_list **list, int x, int y)
 void   remove_wall_from_its_sector(t_grid *grid, t_wall *wall)
 {
 	t_list  *curr_sec;
-	t_list  *curr_wall;
-	t_list  *prev_wall = NULL;
 
 	curr_sec = grid->sectors;
 	while (curr_sec)
 	{
-		curr_wall = ((t_sector *)curr_sec->content)->walls;
-		if (wall_compare(curr_wall->content, wall))
-	    {
-			ft_printf("Wall removed from its sector.\n");
-			((t_sector *)curr_sec->content)->walls = curr_wall->next;
-	    	free(curr_wall);
-			return ;
-	    }
-	    else
-	    {
-			while (curr_wall)
-			{
-				if (wall_compare(curr_wall->content, wall))
-				{
-					ft_printf("Wall removed from its sector.\n");
-					prev_wall->next = curr_wall->next;
-					free(curr_wall);
-					return ;
-				}
-				else
-					prev_wall = curr_wall;
-				curr_wall = prev_wall->next;
-			}
-		}
+		remove_from_list_if_with(&((t_sector *)curr_sec->content)->walls, wall,
+			&pointer_compare, &dummy_free_er);
 		curr_sec = curr_sec->next;
 	}
  }
@@ -424,49 +392,7 @@ int		sector_compare(t_sector *s1, t_sector *s2)
 
 void	remove_from_sectors(t_list **sectors, t_sector *sec)
 {
-	t_list *curr;
-	t_list *prev;
-
-	curr = *sectors;
-	if (curr && sector_compare(curr->content, sec))
-	{
-		*sectors = curr->next;
-		free_sector(curr->content, 0);
-		free(curr);
-		return ;
-	}
-	else
-	{
-		while (curr)
-		{
-			if (sector_compare(curr->content, sec))
-			{
-				prev->next = curr->next;
-				free_sector(curr->content, 0);
-				free(curr);
-				return ;
-			}
-			else
-				prev = curr;
-			curr = prev->next;
-		}
-	}
-}
-
-void	remove_everything_from_list(t_list **list)
-{
-	t_list *curr;
-	t_list *prev;
-
-	curr = *list;
-	while (curr)
-	{
-		prev = curr->next;
-		free(curr);
-		curr = prev;
-	}
-	*list = NULL;
-ft_printf("Everything removed from list.\n");
+	remove_from_list_if_with(sectors, sec, &pointer_compare, &free_sector);
 }
 
 void	remove_all_points_not_a_part_of_a_wall(t_list **points, t_list **walls)
@@ -492,25 +418,37 @@ void	remove_all_points_not_a_part_of_a_wall(t_list **points, t_list **walls)
 	}
 }
 
-void			remove_all_non_existing_portals(t_list **sectors)
+void	remove_all_non_existing_portals(t_list **sectors)
 {
-	t_list *s;
-	t_list *w;
-	t_list *s2;
-	int found;
+	t_list	*s;
+	t_list	*w;
+	t_list	*s2;
+	t_list	*w2;
+	int		found;
 
+	found = 0;
 	s = *sectors;
 	while (s)
 	{
 		w = ((t_sector *)s->content)->walls;
 		while (w)
 		{
-			found = 0;
 			s2 = *sectors;
 			while (s2)
 			{
-				if (((t_wall *)w->content)->neighbor == (int)((t_sector *)s2->content)->id)
-					found = 1;
+				w2 = ((t_sector *)s2->content)->walls;
+				while (w2)
+				{
+					if (((t_wall *)w->content)->neighbor == ((t_sector *)s2->content)->id
+						&& ((t_wall *)w2->content)->neighbor == ((t_sector *)s->content)->id)
+					{
+						found = 1;	
+						break ;
+					}
+					w2 = w2->next;
+				}
+				if (found == 1)
+					break ;
 				s2 = s2->next;
 			}
 			if (found == 0)

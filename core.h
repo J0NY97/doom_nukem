@@ -55,7 +55,7 @@ struct				s_wall
 
 struct				s_sector
 {
-	unsigned int	id;
+	int				id;
 	t_list			*walls;
 	int		floor_height;
 	int		ceiling_height;

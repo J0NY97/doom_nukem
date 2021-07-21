@@ -12,6 +12,16 @@
 
 #include "editor.h"
 
+int	wall_has_same_coords(t_wall *w1, t_wall *w2)
+{
+	if ((vector_compare(w1->orig->pos, w2->orig->pos)
+		&& vector_compare(w1->dest->pos, w2->dest->pos))
+		|| (vector_compare(w1->orig->pos, w2->dest->pos)
+		&& vector_compare(w1->dest->pos, w2->orig->pos)))
+		return (1);
+	return (0);
+}
+
 void	add_portal(t_grid *grid)
 {
 	t_list	*sec;
@@ -28,7 +38,7 @@ void	add_portal(t_grid *grid)
 		wall = ((t_sector *)sec->content)->walls;
 		while (wall)
 		{
-			if (wall_compare(grid->modify_wall, wall->content))
+			if (wall_has_same_coords(grid->modify_wall, wall->content))
 			{
 				if (grid->modify_wall == wall->content)
 					wall_one_sec = ((t_sector *)sec->content)->id;
@@ -310,9 +320,8 @@ void	remove_button_events(t_editor *editor, t_grid *grid)
 	}
 	else if (grid->modify_sector != NULL)
 	{
-		remove_everything_from_list(&grid->modify_sector->walls);
+		ft_lstdel(&grid->modify_sector->walls, &dummy_free_er);
 		remove_from_sectors(&editor->grid.sectors, grid->modify_sector);
-		remove_all_non_existing_portals(&editor->grid.sectors);
 	}
 	else if (grid->modify_entity != NULL)
 		remove_entity_from_list(&grid->entities, grid->modify_entity);
@@ -320,6 +329,7 @@ void	remove_button_events(t_editor *editor, t_grid *grid)
 		return ;
 	remove_all_non_existing_sectors(editor);
 	remove_all_lonely_walls(&grid->walls, &grid->sectors);
+	remove_all_non_existing_portals(&editor->grid.sectors);
 	remove_all_lonely_points(editor);
 	recount_everything(editor);
 	grid->modify_point = NULL;
