@@ -43,7 +43,6 @@ void	init(t_editor *editor, t_bui_libui *libui, char *map)
 	toolbox_init(editor);
 	grid_init1(editor);
 	read_map_file(editor);
-	editor->grid.modify_sprite = NULL;
 }
 
 void	draw_button_events(t_editor *editor)
@@ -74,9 +73,8 @@ void	general_events(t_editor *editor)
 	draw_sectors(&editor->grid);
 	draw_points(&editor->grid, editor->grid.points);
 	draw_entities(editor);
-	if (!vector_is_empty(editor->spawn.pos))
-		gfx_draw_vector(editor->grid.elem->active_surface, 0xff00ff00, 6,
-			gfx_vector_multiply(editor->spawn.pos, editor->grid.gap));
+	gfx_draw_vector(editor->grid.elem->active_surface, 0xff00ff00, 6,
+		gfx_vector_multiply(editor->spawn.pos, editor->grid.gap));
 	if (!vector_is_empty(editor->grid.selected1)
 		&& bui_button_toggle(editor->button_draw))
 	{

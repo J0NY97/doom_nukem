@@ -122,6 +122,7 @@ void	grid_init(t_editor *editor)
 	editor->grid.modify_point = NULL;
 	editor->grid.modify_sector = NULL;
 	editor->grid.modify_entity = NULL;
+	editor->grid.modify_sprite = NULL;
 	editor->grid.points = NULL;
 	editor->grid.walls = NULL;
 	editor->grid.sectors = NULL;
