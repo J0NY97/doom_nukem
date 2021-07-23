@@ -53,21 +53,21 @@ struct				s_sector
 {
 	int				id;
 	t_list			*walls;
-	int		floor_height;
-	int		ceiling_height;
-	int		floor_texture;
-	int		ceiling_texture;
+	int				floor_height;
+	int				ceiling_height;
+	int				floor_texture;
+	int				ceiling_texture;
 
 	float			floor_texture_scale;
 	float			ceiling_texture_scale;
 
-	int	floor_slope_wall_id; // wall id from which the angle starts.
-	int	ceiling_slope_wall_id;
-	int	floor_slope; // the angle the slope is 0-90?
-	int	ceiling_slope;
+	int				floor_slope_wall_id; // wall id from which the angle starts.
+	int				ceiling_slope_wall_id;
+	int				floor_slope; // the angle the slope is 0-90?
+	int				ceiling_slope;
 
-	int		gravity;		// this is short int but in the real game a float (from 0.10 - 0.01)
-	int		light_level;	// this is short int but in the real game a float (from 1.0 - 0.1)
+	int				gravity;		// this is short int but in the real game a float (from 0.10 - 0.01)
+	int				light_level;	// this is short int but in the real game a float (from 1.0 - 0.1)
 
 	t_point			*first_point;
 	Uint32			color;
@@ -83,8 +83,8 @@ struct				s_entity
 {
 	int				id; // might be useless
 	t_vector		pos;
-	int			direction; // in degrees 
-	t_entity_preset			*preset;
+	int				direction; // in degrees 
+	t_entity_preset	*preset;
 
 	int				statique; // if npc or static sprite
 };
@@ -92,7 +92,7 @@ struct				s_entity
 struct				s_entity_preset
 {
 	char			*name;
-	int			mood;
+	int				mood;
 	SDL_Surface		*texture;
 };
 
