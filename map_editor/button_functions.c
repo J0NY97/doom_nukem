@@ -167,13 +167,13 @@ void	add_text_to_info_box(t_editor *editor, char *text)
 	bui_change_element_text(editor->info_box, text);
 }
 
-int	get_list_len(t_list **list)
+int	get_list_len(t_list *list)
 {
 	int		i;
 	t_list	*curr;
 
 	i = 0;
-	curr = *list;
+	curr = list;
 	while (curr)
 	{
 		i++;
@@ -202,11 +202,11 @@ void	recount_everything(t_editor *editor)
 	t_list	*curr;
 	t_list	*curr_sprite;
 
-	editor->grid.sector_amount = get_list_len(&editor->grid.sectors);
+	editor->grid.sector_amount = get_list_len(editor->grid.sectors);
 	re_id_sectors(&editor->grid.sectors);
 	editor->grid.wall_amount = 0;
-	editor->grid.point_amount = get_list_len(&editor->grid.points);
-	editor->grid.entity_amount = get_list_len(&editor->grid.entities);
+	editor->grid.point_amount = get_list_len(editor->grid.points);
+	editor->grid.entity_amount = get_list_len(editor->grid.entities);
 	editor->grid.wall_sprite_amount = 0;
 	curr = editor->grid.walls;
 	while (curr)
@@ -261,7 +261,7 @@ void	remove_all_non_existing_sectors(t_editor *editor)
 	{
 		sector = sec->content;
 		sec = sec->next;
-		if (sector && get_list_len(&sector->walls) == 0)
+		if (sector && get_list_len(sector->walls) == 0)
 			remove_from_sectors(&editor->grid.sectors, sector);
 	}
 }

@@ -14,7 +14,7 @@
 
 t_point	*get_point_with_id(t_list *points, int id)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = points;
 	while (curr)
@@ -28,7 +28,7 @@ t_point	*get_point_with_id(t_list *points, int id)
 
 t_wall	*get_wall_with_id(t_list *walls, int id)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = walls;
 	while (curr)
@@ -40,9 +40,9 @@ t_wall	*get_wall_with_id(t_list *walls, int id)
 	return (NULL);
 }
 
-t_sector *get_sector_with_id(t_list *sectors, int id)
+t_sector	*get_sector_with_id(t_list *sectors, int id)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = sectors;
 	while (curr)
@@ -91,9 +91,9 @@ void	read_wall(t_grid *grid, int fd)
 			break ;
 		arr = ft_strsplit(line, '\t');
 		new_w = new_wall(get_point_with_id(grid->points,
-				ft_atoi(arr[1])),
+					ft_atoi(arr[1])),
 				get_point_with_id(grid->points,
-				ft_atoi(arr[2])));
+					ft_atoi(arr[2])));
 		new_w->id = ft_atoi(arr[0]);
 		new_w->texture_id = ft_atoi(arr[3]);
 		new_w->portal_texture_id = ft_atoi(arr[4]);
@@ -133,8 +133,8 @@ void	read_sprite(t_grid *grid, int fd)
 
 void	read_spawn(t_spawn *spawn, int fd)
 {
-	char *line;
-	char **arr;
+	char	*line;
+	char	**arr;
 
 	while (get_next_line(fd, &line))
 	{
@@ -161,8 +161,8 @@ void	add_wall_ids_to_sector(
 	while (walls[i] != 0)
 	{
 		add_to_list(&sector->walls, get_wall_with_id(
-			editor->grid.walls,
-			ft_atoi(walls[i])), sizeof(t_wall));
+				editor->grid.walls,
+				ft_atoi(walls[i])), sizeof(t_wall));
 		((t_wall *)sector->walls->content)->neighbor
 			= ft_atoi(neighbors[i]);
 		i++;
@@ -239,7 +239,7 @@ void	read_fandc(t_editor *editor, int fd)
 			break ;
 		arr = ft_strsplit(line, '\t');
 		sec = get_sector_with_id(editor->grid.sectors,
-			ft_atoi(arr[0]));
+				ft_atoi(arr[0]));
 		sec->floor_height = ft_atoi(arr[1]);
 		sec->ceiling_height = ft_atoi(arr[2]);
 		sec->floor_texture = ft_atoi(arr[3]);
@@ -272,9 +272,8 @@ void	read_entities(t_editor *editor, int fd)
 				atof(arr[2]),
 				atof(arr[3]),
 				atof(arr[4])});
-		ent->preset =
-			get_entity_preset_with_name(editor->entity_presets,
-			arr[1]);
+		ent->preset
+			= get_entity_preset_with_name(editor->entity_presets, arr[1]);
 		ent->direction = ft_atoi(arr[5]);
 		add_to_list(&editor->grid.entities, ent, sizeof(t_entity));
 		free_array(arr);
@@ -286,8 +285,8 @@ void	read_entities(t_editor *editor, int fd)
 
 void	read_mapinfo(t_editor *editor, int fd)
 {
-	char *line;
-	char **arr;
+	char	*line;
+	char	**arr;
 
 	while (get_next_line(fd, &line))
 	{
@@ -324,12 +323,13 @@ void	choose_correct_reader(t_editor *editor, char *line, int fd)
 		read_entities(editor, fd);
 }
 
-void		read_map_file(t_editor *editor)
+void	read_map_file(t_editor *editor)
 {
-	int	fd;
+	int		fd;
 	char	*line;
 
-	if ((fd = open(editor->fullpath, O_RDONLY)) < 0)
+	fd = open(editor->fullpath, O_RDONLY);
+	if (fd < 0)
 	{
 		ft_putstr("[read_map_file] Couldnt open map.\n");
 		return ;

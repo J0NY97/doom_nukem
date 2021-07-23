@@ -140,7 +140,8 @@ void	grid_init(t_editor *editor)
 	editor->default_entity = new_entity_preset("default_entity_name");
 }
 
-t_bui_element	*new_selection_mode_button(t_bui_element *parent, char *image_path, int i)
+t_bui_element	*new_selection_mode_button(
+		t_bui_element *parent, char *image_path, int i)
 {
 	t_bui_element	*button;
 	t_xywh			coord;
@@ -162,15 +163,15 @@ void	selection_mode_button_init(t_editor *editor)
 	editor->select_mode_buttons = NULL;
 	editor->active_select_mode = NULL;
 	editor->button_draw = new_selection_mode_button(editor->select_mode,
-		ROOT_PATH"ui/ui_images/draw_mode.png", 0);
+			ROOT_PATH"ui/ui_images/draw_mode.png", 0);
 	editor->select_mode_vertex = new_selection_mode_button(editor->select_mode,
-		ICON_PATH"selection_mode_vertex.png", 1);
+			ICON_PATH"selection_mode_vertex.png", 1);
 	editor->select_mode_wall = new_selection_mode_button(editor->select_mode,
-		ICON_PATH"selection_mode_wall.png", 2);
+			ICON_PATH"selection_mode_wall.png", 2);
 	editor->select_mode_sector = new_selection_mode_button(editor->select_mode,
-		ICON_PATH"selection_mode_sector.png", 3);
+			ICON_PATH"selection_mode_sector.png", 3);
 	editor->select_mode_entity = new_selection_mode_button(editor->select_mode,
-		ICON_PATH"selection_mode_entity.png", 4);
+			ICON_PATH"selection_mode_entity.png", 4);
 	add_to_list(&editor->select_mode_buttons, editor->button_draw,
 		sizeof(t_bui_element));
 	add_to_list(&editor->select_mode_buttons, editor->select_mode_vertex,

@@ -12,12 +12,14 @@
 
 #include "editor.h"
 
-int main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
+	ft_printf("%s %s %s %s %s %s %s, %s\n", ft_itoa(-123), ft_itoa(-10), ft_itoa(-1), ft_itoa(0), ft_itoa(1), ft_itoa(10), ft_itoa(100), ft_itoa(123));
 	char	*map;
 	char	*arr[0];
 
-	if (!(map = args_parser(argc, argv)))
+	map = args_parser(argc, argv);
+	if (!map)
 		return (1);
 	map_editor(map);
 	system("leaks doom_editor");

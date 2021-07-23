@@ -355,7 +355,7 @@ void	draw_sector(t_sector *sector, t_grid *grid)
 			draw_wall(wall->content, grid, sector->color);
 		wall = wall->next;
 	}
-	i = get_list_len(&sector->walls) * 2;
+	i = get_list_len(sector->walls) * 2;
 	if (i == 0)
 		return ;
 	draw_sector_number(sector, grid, x /= i, y /= i);

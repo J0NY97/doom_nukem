@@ -16,7 +16,7 @@ Uint32	random_color(void)
 {
 	Uint32		color;
 
-	color = rgba_to_hex((t_rgba) {
+	color = rgba_to_hex((t_rgba){
 			.a = 255, .r = rand() % 255,
 			.g = rand() % 255, .b = 245});
 	return (color);
@@ -34,9 +34,9 @@ int	pointer_compare(void *p1, void *p2)
 
 int	vector_compare(t_vector v1, t_vector v2)
 {
-	if ((int)v1.x == (int)v2.x &&
-	(int)v1.y == (int)v2.y &&
-	(int)v1.z == (int)v2.z)
+	if ((int)v1.x == (int)v2.x
+		&& (int)v1.y == (int)v2.y
+		&& (int)v1.z == (int)v2.z)
 		return (1);
 	return (0);
 }
@@ -55,7 +55,7 @@ float	get_wall_length(t_wall *wall)
 
 t_list	*get_nth_from_list(t_list **list, int index)
 {
-	int	count;
+	int		count;
 	t_list	*curr;
 
 	curr = *list;
@@ -72,7 +72,7 @@ t_list	*get_nth_from_list(t_list **list, int index)
 
 t_sprite	*new_sprite(void)
 {
-	t_sprite *sprite;
+	t_sprite	*sprite;
 
 	sprite = malloc(sizeof(t_sprite));
 	memset(sprite, 0, sizeof(t_sprite));
@@ -89,9 +89,9 @@ t_sprite	*new_sprite(void)
 
 void	free_sprite(void *content, size_t size)
 {
-	ft_putstr("[free_sprite]\n");
-	t_sprite *sprite;
+	t_sprite	*sprite;
 
+	ft_putstr("[free_sprite]\n");
 	(void)size;
 	if (content == NULL)
 		return ;
@@ -101,7 +101,7 @@ void	free_sprite(void *content, size_t size)
 
 t_point	*new_point(t_vector pos)
 {
-	t_point *point;
+	t_point	*point;
 
 	point = malloc(sizeof(t_point));
 	point->pos = pos;
@@ -110,7 +110,7 @@ t_point	*new_point(t_vector pos)
 
 t_wall	*new_wall(t_point *orig, t_point *dest)
 {
-	t_wall *new_wall;
+	t_wall	*new_wall;
 
 	new_wall = ft_memalloc(sizeof(t_wall));
 	new_wall->dest = dest;
@@ -118,7 +118,7 @@ t_wall	*new_wall(t_point *orig, t_point *dest)
 	new_wall->texture_scale = 1;
 	new_wall->texture_id = 0;
 	new_wall->portal_texture_id = 0;
-	new_wall->solid = 1; 
+	new_wall->solid = 1;
 	new_wall->sprites = NULL;
 	new_wall->neighbor = -1;
 	new_wall->neighbor_sector = NULL;
@@ -127,7 +127,7 @@ t_wall	*new_wall(t_point *orig, t_point *dest)
 
 void	free_point(void *content, size_t size)
 {
-	t_point *point;
+	t_point	*point;
 
 	point = content;
 	if (point == NULL)
@@ -138,8 +138,8 @@ void	free_point(void *content, size_t size)
 
 void	free_wall(void *content, size_t size)
 {
-	t_wall *wall;
-   
+	t_wall	*wall;
+
 	wall = content;
 	(void)size;
 	if (wall == NULL)
@@ -151,7 +151,7 @@ void	free_wall(void *content, size_t size)
 
 t_sector	*new_sector(int id)
 {
-	t_sector *sector;
+	t_sector	*sector;
 
 	sector = ft_memalloc(sizeof(t_sector));
 	sector->id = id;
@@ -173,12 +173,13 @@ t_sector	*new_sector(int id)
 
 void	free_sector(void *content, size_t size)
 {
+	t_sector	*sector;
+
 	ft_putstr("[free_sector]\n");
 	(void)size;
-	if (content == NULL)
+	sector = content;
+	if (sector == NULL)
 		return ;
-	t_sector *sector = content;
-
 	ft_putstr("Starting to free walls from sector.\n");
 	if (sector->walls)
 		ft_lstdel(&sector->walls, &dummy_free_er);
@@ -188,7 +189,7 @@ void	free_sector(void *content, size_t size)
 
 t_entity	*new_entity(int id, t_vector pos)
 {
-	t_entity *entity;
+	t_entity	*entity;
 
 	entity = ft_memalloc(sizeof(t_entity));
 	entity->id = id;
@@ -200,16 +201,18 @@ t_entity	*new_entity(int id, t_vector pos)
 
 void	free_entity(void *content, size_t size)
 {
+	t_entity	*entity;
+
 	(void)size;
-	if (content == NULL)
+	entity = content;
+	if (entity == NULL)
 		return ;
-	t_entity *entity = content;
 	ft_memdel((void **)&entity);
 }
 
 t_entity_preset	*new_entity_preset(char *name)
 {
-	t_entity_preset *preset;
+	t_entity_preset	*preset;
 
 	preset = ft_memalloc(sizeof(t_entity_preset));
 	preset->name = ft_strdup(name);
@@ -220,9 +223,9 @@ t_entity_preset	*new_entity_preset(char *name)
 
 void	free_entity_preset(void *content, size_t size)
 {
+	t_entity_preset	*ent;
+
 	(void)size;
-	t_entity_preset *ent;
-   
 	ent = content;
 	if (ent == NULL)
 		return ;
@@ -235,14 +238,14 @@ void	free_entity_preset(void *content, size_t size)
 // TODO: Get from list if function.
 t_entity_preset	*get_entity_preset_with_name(t_list *list, char *name)
 {
-	t_list *curr;
-	t_entity_preset *preset;
+	t_list			*curr;
+	t_entity_preset	*preset;
 
 	curr = list;
 	while (curr)
 	{
 		preset = curr->content;
-		if (ft_strcmp(preset->name, name) == 0) 
+		if (ft_strcmp(preset->name, name) == 0)
 			return (preset);
 		curr = curr->next;
 	}
@@ -251,7 +254,7 @@ t_entity_preset	*get_entity_preset_with_name(t_list *list, char *name)
 
 t_entity	*get_entity_from_list_at_pos(t_list *list, t_vector pos)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = list;
 	while (curr)
@@ -280,22 +283,21 @@ void	remove_from_walls_non_free(t_list **walls, t_wall *wall)
 
 int	sprite_compare(t_sprite *bubble, t_sprite *gum)
 {
-	if (bubble->sprite_id == gum->sprite_id &&
-	bubble->coord.x == gum->coord.x &&
-	bubble->coord.y == gum->coord.y &&
-	bubble->coord.w == gum->coord.w &&
-	bubble->coord.h == gum->coord.h &&
-	bubble->scale == gum->scale)
+	if (bubble->sprite_id == gum->sprite_id
+		&& bubble->coord.x == gum->coord.x
+		&& bubble->coord.y == gum->coord.y
+		&& bubble->coord.w == gum->coord.w
+		&& bubble->coord.h == gum->coord.h
+		&& bubble->scale == gum->scale)
 		return (1);
 	return (0);
-
 }
 
 void	remove_from_list_if_with(t_list **list, void *s,
 		int (*cmp)(void *, void *), void (*del)(void *, size_t))
 {
-	t_list *curr;
-	t_list *prev;
+	t_list	*curr;
+	t_list	*prev;
 
 	curr = *list;
 	if (curr == NULL)
@@ -326,7 +328,6 @@ void	remove_from_sprites(t_list **list, t_sprite *s)
 	remove_from_list_if_with(list, s, &pointer_compare, &free_sprite);
 }
 
-
 t_sprite	*get_sprite_from_list(t_list **list, int x, int y)
 {
 	t_list		*curr;
@@ -336,19 +337,19 @@ t_sprite	*get_sprite_from_list(t_list **list, int x, int y)
 	while (curr)
 	{
 		sprite = curr->content;
-		if (sprite->coord.x <= x &&
-		sprite->coord.x + sprite->coord.w >= x &&
-		sprite->coord.y <= y &&
-		sprite->coord.y + sprite->coord.h >= y)
+		if (sprite->coord.x <= x
+			&& sprite->coord.x + sprite->coord.w >= x
+			&& sprite->coord.y <= y
+			&& sprite->coord.y + sprite->coord.h >= y)
 			return (curr->content);
 		curr = curr->next;
 	}
 	return (NULL);
 }
 
-void   remove_wall_from_its_sector(t_grid *grid, t_wall *wall)
+void	remove_wall_from_its_sector(t_grid *grid, t_wall *wall)
 {
-	t_list  *curr_sec;
+	t_list	*curr_sec;
 
 	curr_sec = grid->sectors;
 	while (curr_sec)
@@ -357,10 +358,9 @@ void   remove_wall_from_its_sector(t_grid *grid, t_wall *wall)
 			&pointer_compare, &dummy_free_er);
 		curr_sec = curr_sec->next;
 	}
- }
+}
 
-// this is the only thign that can be compared with id
-int		sector_compare(t_sector *s1, t_sector *s2)
+int	sector_compare(t_sector *s1, t_sector *s2)
 {
 	if (s1->id == s2->id)
 		return (1);
@@ -374,8 +374,8 @@ void	remove_from_sectors(t_list **sectors, t_sector *sec)
 
 void	remove_all_points_not_a_part_of_a_wall(t_list **points, t_list **walls)
 {
-	t_list *point;
-	t_list *wall;
+	t_list	*point;
+	t_list	*wall;
 	int		found;
 
 	point = *points;
@@ -416,10 +416,12 @@ void	remove_all_non_existing_portals(t_list **sectors)
 				w2 = ((t_sector *)s2->content)->walls;
 				while (w2)
 				{
-					if (((t_wall *)w->content)->neighbor_sector == s2->content
-						&& ((t_wall *)w2->content)->neighbor_sector == s->content)
+					if (((t_wall *)w->content)->neighbor_sector
+						== s2->content
+						&& ((t_wall *)w2->content)->neighbor_sector
+						== s->content)
 					{
-						found = 1;	
+						found = 1;
 						break ;
 					}
 					w2 = w2->next;
@@ -436,9 +438,9 @@ void	remove_all_non_existing_portals(t_list **sectors)
 	}
 }
 
-int				wall_in_list(t_wall *wall, t_list *list)
+int	wall_in_list(t_wall *wall, t_list *list)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = list;
 	while (curr)
@@ -450,7 +452,7 @@ int				wall_in_list(t_wall *wall, t_list *list)
 	return (0);
 }
 
-int				wall_in_sector(t_wall *wall, t_sector *sector)
+int	wall_in_sector(t_wall *wall, t_sector *sector)
 {
 	return (wall_in_list(wall, sector->walls));
 }
@@ -462,7 +464,7 @@ void	remove_all_lonely_walls(t_list **walls, t_list **sectors)
 {
 	t_list	*wall;
 	t_list	*sec;
-	int	found;
+	int		found;
 
 	wall = *walls;
 	while (wall)
@@ -482,21 +484,25 @@ void	remove_all_lonely_walls(t_list **walls, t_list **sectors)
 }
 
 /* This might not be needed. */
+/* Thats the reason its not norminetted */
 /* Try to remove this and then test in the game if it works. */
-// NOTE: This spaghett has to be added so that niklas renderer can work. 
-//
-// 1. loop through all sectors walls
-// 2. save either wall, and loop through all the walls again and search for a wall with common vertex. that is not itself 
-// 3. when found, check that if its the same vertex aka v1 == v1 or v2 == v2, if not switcheroo.
-// 4. remove all the old walls and set sector - walls to the new lst.
-//
-// NOTE: we always check wall->dest
+/*
+NOTE: This spaghett has to be added so that niklas renderer can work. 
+
+1. loop through all sectors walls
+2. save either wall, and loop through all the walls again and search for a wall with common vertex. that is not itself 
+3. when found, check that if its the same vertex aka v1 == v1 or v2 == v2, if not switcheroo.
+4. remove all the old walls and set sector - walls to the new lst.
+
+NOTE: we always check wall->dest
+*/
 void	sort_sector_wall_list(t_sector *sector)
 {
-	t_list *sorted_list = NULL;
-	t_list *rucc;
-	t_wall *wall;
+	t_list	*sorted_list;
+	t_list	*rucc;
+	t_wall	*wall;
 
+	sorted_list = NULL;
 	if (!sector)
 		return ;
 	ft_putstr("didnt return1");
@@ -508,8 +514,9 @@ void	sort_sector_wall_list(t_sector *sector)
 	rucc = sector->walls;
 	while (rucc)
 	{
-		if ((vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->orig->pos) || vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->dest->pos)) &&
-			!wall_compare(wall, rucc->content)) 
+		if ((vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->orig->pos)
+			|| vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->dest->pos))
+			&& !wall_compare(wall, rucc->content)) 
 		{
 			if (vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->dest->pos))
 			{
@@ -526,17 +533,15 @@ void	sort_sector_wall_list(t_sector *sector)
 		else
 			rucc = rucc->next;
 	}
-
 	ft_lstdel(&sector->walls, &dummy_free_er);
 	sector->walls = sorted_list;
-
 	ft_putstr("We are done sorting the sector.\n");
 }
 
 t_sector	*get_sector_with_wall(t_list **sector_list, t_wall *wall)
 {
-	t_list *curr;
-	t_list *rruc;
+	t_list	*curr;
+	t_list	*rruc;
 
 	curr = *sector_list;
 	while (curr)
