@@ -15,9 +15,9 @@
 int	wall_has_same_coords(t_wall *w1, t_wall *w2)
 {
 	if ((vector_compare(w1->orig->pos, w2->orig->pos)
-		&& vector_compare(w1->dest->pos, w2->dest->pos))
+			&& vector_compare(w1->dest->pos, w2->dest->pos))
 		|| (vector_compare(w1->orig->pos, w2->dest->pos)
-		&& vector_compare(w1->dest->pos, w2->orig->pos)))
+			&& vector_compare(w1->dest->pos, w2->orig->pos)))
 		return (1);
 	return (0);
 }
@@ -89,9 +89,9 @@ void	remove_portal(t_grid *grid)
 
 int	entity_compare(t_entity *ent, t_entity *ity)
 {
-	if (vector_compare(ent->pos, ity->pos) &&
-	ent->direction == ity->direction &&
-	ft_strcmp(ent->preset->name, ity->preset->name) == 0)
+	if (vector_compare(ent->pos, ity->pos)
+		&& ent->direction == ity->direction
+		&& ft_strcmp(ent->preset->name, ity->preset->name) == 0)
 		return (1);
 	return (0);
 }
@@ -147,7 +147,7 @@ void	loop_buttons(t_editor *editor)
 	changer_prefab_events(editor->scaler, &editor->scale, 1);
 	editor->scale = clamp(editor->scale, 1, 64);
 	if (editor->info_box->text && SDL_GetTicks()
-	- editor->info_box_start_timer >= editor->info_box_timer)
+		- editor->info_box_start_timer >= editor->info_box_timer)
 	{
 		new_col = hex_to_rgba(editor->info_box->text_color);
 		new_col.a -= 1;
@@ -155,7 +155,7 @@ void	loop_buttons(t_editor *editor)
 		bui_change_element_text(editor->info_box,
 			editor->info_box->text);
 		if (new_col.a == 0)
-			bui_remove_element_text(editor->info_box);	
+			bui_remove_element_text(editor->info_box);
 	}
 }
 
@@ -169,7 +169,7 @@ void	add_text_to_info_box(t_editor *editor, char *text)
 
 int	get_list_len(t_list **list)
 {
-	int	i;
+	int		i;
 	t_list	*curr;
 
 	i = 0;
@@ -185,7 +185,7 @@ int	get_list_len(t_list **list)
 void	re_id_sectors(t_list **sectors)
 {
 	t_list	*curr;
-	int	id;
+	int		id;
 
 	id = 0;
 	curr = *sectors;
@@ -193,7 +193,7 @@ void	re_id_sectors(t_list **sectors)
 	{
 		((t_sector *)curr->content)->id = id;
 		curr = curr->next;
-		id++;	
+		id++;
 	}
 }
 

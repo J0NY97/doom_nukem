@@ -19,7 +19,7 @@ t_point	*get_point_from_list_at_pos(t_list *list, t_vector v)
 	curr = list;
 	while (curr)
 	{
-		if (vector_compare(((t_point *)curr->content)->pos,	v))
+		if (vector_compare(((t_point *)curr->content)->pos, v))
 			return (curr->content);
 		curr = curr->next;
 	}
@@ -36,9 +36,9 @@ t_wall	*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
 	{
 		wall = curr->content;
 		if ((vector_compare(wall->orig->pos, v1->pos)
-		&& vector_compare(wall->dest->pos, v2->pos))
-		|| (vector_compare(wall->orig->pos, v2->pos)
-		&& vector_compare(wall->dest->pos, v1->pos)))
+				&& vector_compare(wall->dest->pos, v2->pos))
+			|| (vector_compare(wall->orig->pos, v2->pos)
+				&& vector_compare(wall->dest->pos, v1->pos)))
 			return (curr->content);
 		curr = curr->next;
 	}
@@ -48,7 +48,7 @@ t_wall	*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
 int	vector_in_wall(t_vector v, t_wall *vec)
 {
 	if (vector_compare(v, vec->orig->pos)
-	|| vector_compare(v, vec->dest->pos))
+		|| vector_compare(v, vec->dest->pos))
 		return (1);
 	return (0);
 }
@@ -90,7 +90,7 @@ t_point	*get_point_from_wall_in_sector(t_sector *sector, t_point *v)
 	{
 		w = wall->content;
 		if (vector_compare(w->orig->pos, v->pos))
-			return (w->orig);	
+			return (w->orig);
 		else if (vector_compare(w->dest->pos, v->pos))
 			return (w->dest);
 		wall = wall->next;
@@ -176,22 +176,21 @@ void	click_calc_ent(t_editor *editor)
 
 	entity = new_entity(editor->grid.entity_amount++, editor->grid.hover);
 	entity->preset = get_entity_preset_with_name(
-		editor->entity_presets, "Barrel");
+			editor->entity_presets, "Barrel");
 	add_to_list(&editor->grid.entities, entity, sizeof(t_entity));
 }
 
 void	click_calc(t_editor *editor, t_grid *grid)
 {
-
 	if (!mouse_hover(editor->libui, (t_xywh){
-	grid->elem->position.x, grid->elem->position.y,
-	grid->elem->position.w, grid->elem->position.h}))
+			grid->elem->position.x, grid->elem->position.y,
+			grid->elem->position.w, grid->elem->position.h}))
 		return ;
-	if (editor->libui->mouse_down_last_frame &&
-	mouse_pressed(editor->libui, MKEY_LEFT))
+	if (editor->libui->mouse_down_last_frame
+		&& mouse_pressed(editor->libui, MKEY_LEFT))
 		click_calc_sec(grid);
-	else if (editor->libui->mouse_down_last_frame &&
-	mouse_pressed(editor->libui, MKEY_RIGHT))
+	else if (editor->libui->mouse_down_last_frame
+		&& mouse_pressed(editor->libui, MKEY_RIGHT))
 		click_calc_ent(editor);
 	else if (mouse_pressed(editor->libui, MKEY_MIDDLE))
 		editor->spawn.pos = grid->hover;
@@ -221,7 +220,7 @@ void	hover_calc(t_editor *doom, t_grid *grid)
 
 	if (SDL_GetMouseFocus() != doom->window->win)
 		return ;
-	grid->last_hover = grid->hover; 
+	grid->last_hover = grid->hover;
 	SDL_GetMouseState(&x, &y);
 	gap = grid->gap;
 	real_x = (((x - grid->elem->position.x) / (gap / 2)) * (gap / 2)) / gap;
@@ -257,7 +256,7 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 	int	max;
 
 	SDL_FillRect(grid->elem->active_surface, NULL,
-		((t_bui_window *)grid->elem->parent)->color);	
+		((t_bui_window *)grid->elem->parent)->color);
 	i = -1;
 	max = grid->elem->active_surface->h / grid->gap;
 	while (i++ < max)
@@ -279,22 +278,22 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 
 void	draw_points(t_grid *grid, t_list *points)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = points;
 	while (curr)
 	{
 		gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 1,
 			gfx_vector_multiply(((t_point *)curr->content)->pos,
-			grid->gap));
+				grid->gap));
 		curr = curr->next;
 	}
 }
 
 void	draw_wall(t_wall *wall, t_grid *grid, Uint32 color)
 {
-	t_vector orig_vec;
-	t_vector dest_vec;
+	t_vector	orig_vec;
+	t_vector	dest_vec;
 
 	orig_vec = gfx_vector_multiply(wall->orig->pos, grid->gap);
 	dest_vec = gfx_vector_multiply(wall->dest->pos, grid->gap);
@@ -303,7 +302,7 @@ void	draw_wall(t_wall *wall, t_grid *grid, Uint32 color)
 
 void	draw_walls(t_grid *grid, t_list **walls, Uint32 color)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = *walls;
 	while (curr)
@@ -320,12 +319,12 @@ void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
 	char		*str;
 	SDL_Surface	*id_text;
 
-	sector->center = (t_vector) {x, y, 0};
+	sector->center = (t_vector){x, y, 0};
 	if (grid->font)
 	{
 		str = ft_itoa(sector->id);
 		id_text = TTF_RenderText_Blended(grid->font, str,
-			(SDL_Color){255, 255, 255, 255});
+				(SDL_Color){255, 255, 255, 255});
 		SDL_BlitSurface(id_text, NULL, grid->elem->active_surface,
 			&(SDL_Rect){x - (id_text->w / 2), y - (id_text->h / 2),
 			id_text->w, id_text->h});
@@ -348,8 +347,8 @@ void	draw_sector(t_sector *sector, t_grid *grid)
 	while (wall)
 	{
 		w = wall->content;
-		x += (w->orig->pos.x + w->dest->pos.x) * grid->gap; 
-		y += (w->orig->pos.y + w->dest->pos.y) * grid->gap; 
+		x += (w->orig->pos.x + w->dest->pos.x) * grid->gap;
+		y += (w->orig->pos.y + w->dest->pos.y) * grid->gap;
 		if (((t_wall *)wall->content)->neighbor_sector != NULL)
 			draw_wall(wall->content, grid, 0xffff0000);
 		else
@@ -372,11 +371,11 @@ void	draw_sectors(t_grid *grid)
 		draw_sector(curr->content, grid);
 		curr = curr->next;
 	}
-	if (grid->modify_sector != NULL &&
-	grid->modify_sector->first_point != NULL)
+	if (grid->modify_sector != NULL
+		&& grid->modify_sector->first_point != NULL)
 		gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 2,
-		gfx_vector_multiply(grid->modify_sector->first_point->pos,
-		grid->gap));
+			gfx_vector_multiply(grid->modify_sector->first_point->pos,
+				grid->gap));
 }
 
 void	draw_entity(t_editor *editor, t_entity *entity)
@@ -398,7 +397,7 @@ void	draw_entity(t_editor *editor, t_entity *entity)
 	angle = entity->direction * (M_PI / 180);
 	gfx_draw_vector(editor->grid.elem->active_surface, 0xffaaab5d, 1,
 		gfx_new_vector(cos(angle) * 10.0f + pos.x,
-		sin(angle) * 10.0f + pos.y, 0));
+			sin(angle) * 10.0f + pos.y, 0));
 }
 
 void	draw_entities(t_editor *editor)
@@ -416,9 +415,9 @@ void	draw_entities(t_editor *editor)
 void	draw_hover_info(t_editor *doom, t_grid *grid)
 {
 	char	*str;
-	
+
 	str = ft_sprintf("%d, %d\nzoom: %d\n", (int)grid->hover.x,
-		(int)grid->hover.y, (int)grid->gap);
+			(int)grid->hover.y, (int)grid->gap);
 	doom->hover_info->text_color = 0xffffffff;
 	bui_set_element_text(doom->hover_info, str, 0, 0);
 	ft_strdel(&str);
