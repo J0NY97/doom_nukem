@@ -145,7 +145,7 @@ void	loop_buttons(t_editor *editor)
 	if (editor->active_select_mode != NULL)
 		bui_button_toggle(editor->active_select_mode);
 	changer_prefab_events(editor->scaler, &editor->scale, 1);
-	editor->scale = clamp(editor->scale, 1, 64);
+	editor->scale = ft_clamp(editor->scale, 1, 64);
 	if (editor->info_box->text && SDL_GetTicks()
 		- editor->info_box_start_timer >= editor->info_box_timer)
 	{

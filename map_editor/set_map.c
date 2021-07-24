@@ -273,12 +273,24 @@ char	*set_entities(t_editor *doom)
 char	*actual_set_map(t_editor *editor)
 {
 	char	*map;
+	char	*type;
 
+	if (editor->active_map_type == editor->story_tickbox)
+		type = ft_strdup("story");
+	else
+		type = ft_strdup("endless");
+	map = ft_sprintf("type:map\ttype\tscale\tvert\twall\tsec\tent\n"\
+			"0\t%s\t%d\t%d\t%d\t%d\t%d\n",
+			type, editor->scale, editor->grid.point_amount,
+			editor->grid.wall_amount, editor->grid.sector_amount,
+			editor->grid.entity_amount);
+	/*
 	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n"\
 			"0\t%s\t%d\t%d\t%d\t%d\t%d\n",
 			editor->fullpath, editor->scale, editor->grid.point_amount,
 			editor->grid.wall_amount, editor->grid.sector_amount,
 			editor->grid.entity_amount);
+			*/
 	return (map);
 }
 
