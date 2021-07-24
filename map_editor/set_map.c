@@ -286,13 +286,6 @@ char	*actual_set_map(t_editor *editor)
 			type, editor->scale, editor->grid.point_amount,
 			editor->grid.wall_amount, editor->grid.sector_amount,
 			editor->grid.entity_amount);
-	/*
-	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n"\
-			"0\t%s\t%d\t%d\t%d\t%d\t%d\n",
-			editor->fullpath, editor->scale, editor->grid.point_amount,
-			editor->grid.wall_amount, editor->grid.sector_amount,
-			editor->grid.entity_amount);
-			*/
 	ft_strdel(&type);
 	return (map);
 }
@@ -307,6 +300,7 @@ enum	e_map_order
 	M_SECTOR,
 	M_FANDC,
 	M_ENTITY,
+	M_DIVIDER,
 	M_ORDER_AMOUNT
 };
 
@@ -314,11 +308,10 @@ char	*make_whole_map_string(t_editor *editor)
 {
 	char	**order;
 	char	*str;
-	char	*divider;
 
 	order = ft_memalloc(sizeof(char *) * M_ORDER_AMOUNT + 1);
 	order[M_ORDER_AMOUNT] = NULL;
-	divider = ft_strdup("-----------------------------------\n");
+	order[M_DIVIDER] = ft_strdup("-----------------------------------\n");
 	order[M_MAP] = actual_set_map(editor);
 	order[M_SPAWN] = set_spawn(editor);
 	order[M_POINT] = set_point(editor);
@@ -327,16 +320,15 @@ char	*make_whole_map_string(t_editor *editor)
 	order[M_SECTOR] = set_sector(editor);
 	order[M_FANDC] = set_fandc(editor);
 	order[M_ENTITY] = set_entities(editor);
-	str = ft_strjoiner(order[M_MAP], divider,
-			order[M_SPAWN], divider,
-			order[M_POINT], divider,
-			order[M_WALL], divider,
-			order[M_SPRITE], divider,
-			order[M_SECTOR], divider,
-			order[M_FANDC], divider,
-			order[M_ENTITY], divider, NULL);
+	str = ft_strjoiner(order[M_MAP], order[M_DIVIDER],
+			order[M_SPAWN], order[M_DIVIDER],
+			order[M_POINT], order[M_DIVIDER],
+			order[M_WALL], order[M_DIVIDER],
+			order[M_SPRITE], order[M_DIVIDER],
+			order[M_SECTOR], order[M_DIVIDER],
+			order[M_FANDC], order[M_DIVIDER],
+			order[M_ENTITY], order[M_DIVIDER], NULL);
 	free_array(order);
-	ft_strdel(&divider);
 	return (str);
 }
 
