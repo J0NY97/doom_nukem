@@ -216,6 +216,8 @@ char	*set_walls_and_neighbors_for_sector(t_list *wall_list)
 	neighbor_ids = ft_memalloc(sizeof(char *) * wall_amount + 1);
 	neighbor_ids[wall_amount] = NULL;
 	str = ttt(wall_list, wall_ids, neighbor_ids);
+	free_array(wall_ids);
+	free_array(neighbor_ids);
 	return (str);
 }
 
@@ -291,6 +293,7 @@ char	*actual_set_map(t_editor *editor)
 			editor->grid.wall_amount, editor->grid.sector_amount,
 			editor->grid.entity_amount);
 			*/
+	ft_strdel(&type);
 	return (map);
 }
 
@@ -333,6 +336,7 @@ char	*make_whole_map_string(t_editor *editor)
 			order[M_FANDC], divider,
 			order[M_ENTITY], divider, NULL);
 	free_array(order);
+	ft_strdel(&divider);
 	return (str);
 }
 
