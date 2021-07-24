@@ -19,9 +19,9 @@ enum e_entity
 	ENTITY_TYPE_NEUTRAL
 };
 
-typedef	struct	s_editor			t_editor;
+typedef struct s_editor	t_editor;
 
-typedef struct	s_color_palette
+typedef struct s_color_palette
 {
 	int			win;
 	int			win_elem;
@@ -33,13 +33,13 @@ typedef struct	s_color_palette
 	int			light_blue;
 }				t_color_palette;
 
-typedef	struct	s_spawn
+typedef struct s_spawn
 {
 	t_vector	pos;
 	int			direction; // degrees
 }				t_spawn;
 
-typedef	struct	s_grid
+typedef struct s_grid
 {
 	t_bui_element	*elem; // the actual element where you draw everything.
 
@@ -76,7 +76,7 @@ typedef	struct	s_grid
 	TTF_Font		*font;
 }				t_grid;
 
-typedef	struct		s_changer_prefab
+typedef struct s_changer_prefab
 {
 	t_bui_element	*menu;
 	t_bui_element	*text;
@@ -85,7 +85,7 @@ typedef	struct		s_changer_prefab
 	t_bui_element	*add_button;
 }					t_changer_prefab;
 
-struct			s_editor
+struct s_editor
 {
 	t_bui_libui			*libui;
 
