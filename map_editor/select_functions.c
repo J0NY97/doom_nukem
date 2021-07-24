@@ -98,8 +98,7 @@ void	drag_calc(t_editor *editor, t_grid *grid)
 	}
 	if (grid->elem->was_hovered_last_frame
 		&& editor->libui->mouse_wheel_y != 0)
-		grid->gap = ft_clamp(grid->gap + editor->libui->mouse_wheel_y,
-			2, 32);
+		grid->gap = ft_clamp(grid->gap + editor->libui->mouse_wheel_y, 2, 32);
 	if (move_x == 0.0f && move_y == 0.0f)
 		return ;
 	movement(editor, move_x, move_y);
@@ -122,7 +121,7 @@ t_point	*get_point_from_list_around_radius(
 		while (y <= allowed_radius)
 		{
 			temp = get_point_from_list_at_pos(points,
-				(t_vector){pos.x + x, pos.y + y, 0});
+					(t_vector){pos.x + x, pos.y + y, 0});
 			if (temp != NULL)
 				break ;
 			y += 0.5f;
@@ -134,15 +133,17 @@ t_point	*get_point_from_list_around_radius(
 	return (temp);
 }
 
+/*
+ * how many poitns, walls, sectors, entities, wallsprites, (portals?)
+*/
 void	update_general_info_element(t_editor *editor)
 {
 	char	*str;
 
-	// how many poitns, walls, sectors, entities, wallsprites, (portals?)
 	recount_everything(editor);
 	str = ft_sprintf("v: %d, w: %d, s: %d, e: %d\n",
-		editor->grid.point_amount, editor->grid.wall_amount,
-		editor->grid.sector_amount, editor->grid.entity_amount);
+			editor->grid.point_amount, editor->grid.wall_amount,
+			editor->grid.sector_amount, editor->grid.entity_amount);
 	bui_set_element_text(editor->general_info, str, 0, 0);
 	ft_strdel(&str);
 }
@@ -156,13 +157,13 @@ void	draw_selected_point(t_editor *editor, t_grid *grid)
 	else
 	{
 		s = ft_sprintf("Selected Vector:\nx %d\ny %d\nconnections:%d\n",
-			(int)grid->modify_point->pos.x,
-			(int)grid->modify_point->pos.y,
-			get_point_connection_amount(&grid->walls,
-				grid->modify_point));
+				(int)grid->modify_point->pos.x,
+				(int)grid->modify_point->pos.y,
+				get_point_connection_amount(&grid->walls,
+					grid->modify_point));
 		gfx_draw_vector(grid->elem->active_surface, 0xffffae42, 2,
 			gfx_vector_multiply(grid->modify_point->pos,
-			grid->gap));
+				grid->gap));
 	}
 	editor->selected_vector_info->text_color = 0xffffffff;
 	bui_set_element_text(editor->selected_vector_info, s, 0, 0);
@@ -172,15 +173,14 @@ void	draw_selected_point(t_editor *editor, t_grid *grid)
 int	get_point_connection_amount(t_list **walls, t_point *point)
 {
 	t_list	*curr;
-	int	amount;
+	int		amount;
 
 	curr = *walls;
 	amount = 0;
 	while (curr)
 	{
-		if (vector_compare(((t_wall *)curr->content)->dest->pos,
-			point->pos) || vector_compare(
-			((t_wall *)curr->content)->orig->pos, point->pos))
+		if (vector_compare(((t_wall *)curr->content)->dest->pos, point->pos)
+			|| vector_compare(((t_wall *)curr->content)->orig->pos, point->pos))
 			amount++;
 		curr = curr->next;
 	}
@@ -195,7 +195,7 @@ int	vector_on_wall(t_vector v, t_wall *wall)
 			&& v.x <= fmax(wall->orig->pos.x, wall->dest->pos.x))
 		{
 			if (v.y >= fmin(wall->orig->pos.y, wall->dest->pos.y)
-			&& v.y <= fmax(wall->orig->pos.y, wall->dest->pos.y))
+				&& v.y <= fmax(wall->orig->pos.y, wall->dest->pos.y))
 				return (1);
 		}
 	}
@@ -213,14 +213,14 @@ void	select_point(t_grid *grid)
 
 void	select_entity(t_editor *editor)
 {
-	t_entity *entity;
+	t_entity	*entity;
 
 	entity = get_entity_from_list_around_radius(editor->grid.entities,
 			editor->grid.hover, 1.0f);
 	if (entity)
 	{
 		editor->grid.modify_entity = entity;
-		editor->entity_type_drop->drop->toggle = 0;	
+		editor->entity_type_drop->drop->toggle = 0;
 	}
 }
 
@@ -293,13 +293,13 @@ t_wall	*get_wall_from_list_around_radius(
 		if (dist <= allowed_radius)
 		{
 			if (pos.x >= fmin(wall->orig->pos.x, wall->dest->pos.x)
-			- allowed_radius && pos.x <= fmax(wall->orig->pos.x,
-			wall->dest->pos.x) + allowed_radius)
+				- allowed_radius && pos.x <= fmax(wall->orig->pos.x,
+					wall->dest->pos.x) + allowed_radius)
 			{
 				if (pos.y >= fmin(wall->orig->pos.y,
-				wall->dest->pos.y) - allowed_radius && pos.y
-				<= fmax(wall->orig->pos.y,
-				wall->dest->pos.y) + allowed_radius)
+						wall->dest->pos.y) - allowed_radius && pos.y
+					<= fmax(wall->orig->pos.y,
+						wall->dest->pos.y) + allowed_radius)
 					return (curr->content);
 			}
 		}
@@ -310,8 +310,8 @@ t_wall	*get_wall_from_list_around_radius(
 
 void	draw_wall_as_selected(t_grid *grid, SDL_Surface *surface, t_wall *wall)
 {
-	t_vector orig;
-	t_vector dest;
+	t_vector	orig;
+	t_vector	dest;
 
 	orig = gfx_vector_add(gfx_vector_multiply(wall->orig->pos, grid->gap), 1);
 	dest = gfx_vector_add(gfx_vector_multiply(wall->dest->pos, grid->gap), 1);
@@ -339,8 +339,8 @@ void	draw_selected_sector(t_editor *editor, t_grid *grid)
 	else
 	{
 		str = ft_sprintf("Selected Sector:\nid: %d\nwalls: %d\n",
-			grid->modify_sector->id,
-			get_list_len(grid->modify_sector->walls));
+				grid->modify_sector->id,
+				get_list_len(grid->modify_sector->walls));
 		curr = grid->modify_sector->walls;
 		while (curr)
 		{
@@ -365,11 +365,11 @@ void	select_sector(t_grid *grid)
 	{
 		sec = curr->content;
 		if (gfx_hitbox_square(
-			grid->elem->libui->mouse_x - grid->elem->position.x,
-			grid->elem->libui->mouse_y - grid->elem->position.y,
-			(t_xywh){(int)sec->center.x - (grid->gap),
-			(int)sec->center.y - (grid->gap),
-			grid->gap * 2, grid->gap * 2}))
+				grid->elem->libui->mouse_x - grid->elem->position.x,
+				grid->elem->libui->mouse_y - grid->elem->position.y,
+				(t_xywh){(int)sec->center.x - (grid->gap),
+				(int)sec->center.y - (grid->gap),
+				grid->gap * 2, grid->gap * 2}))
 		{
 			temp = curr->content;
 			break ;

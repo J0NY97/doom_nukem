@@ -17,7 +17,7 @@ void	rword_free(void *content, size_t size)
 // NOTE: dont actually free it because the actual grid is never mallcoed.
 void	grid_free(t_grid *grid)
 {
-	t_list *curr;
+	t_list	*curr;
 
 	curr = grid->sectors;
 	while (curr)

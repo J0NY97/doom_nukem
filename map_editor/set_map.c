@@ -154,38 +154,6 @@ char	*set_fandc(t_editor *editor)
 	return (str);
 }
 
-char	*sector_str_wall(char *src, t_wall *w)
-{
-	char	*final;
-
-	if (src == NULL)
-		final = ft_sprintf("%d", w->id);
-	else
-		final = ft_sprintf("%d %s", w->id, src);
-	return (final);
-}
-
-char	*sector_str_neighbor(char *src, t_wall *w)
-{
-	char	*final;
-
-	if (src == NULL)
-	{
-		if (w->neighbor_sector)
-			final = ft_sprintf("%d", w->neighbor_sector->id);
-		else
-			final = ft_sprintf("%d", -1);
-	}
-	else
-	{
-		if (w->neighbor_sector)
-			final = ft_sprintf("%d %s", w->neighbor_sector->id, src);
-		else
-			final = ft_sprintf("%d %s", -1, src);
-	}
-	return (final);
-}
-
 /*
  * Returns a string made of all the char **.
 */
@@ -199,83 +167,57 @@ char	*compile_str_from_array(char **arr)
 	while (arr[i])
 	{
 		ft_stradd(&str, arr[i]);
-		ft_straddchar(&str, ' ');
+		if (arr[i + 1] != NULL)
+			ft_straddchar(&str, ' ');
 		i++;
 	}
 	return (str);
 }
 
-// TODO: ask niklas if this works.
-char	*set_walls_and_neighbors_for_sector(t_list *wall_list)
+char	*ttt(t_list *wall_list, char **wall_ids, char **neighbor_ids)
 {
 	t_list	*curr;
-	t_wall	*wall;
 	char	*str;
-	char	**wall_ids;
-	char	**neighbor_ids;
-	int		wall_amount;
+	char	*walls;
+	char	*neighbors;
 	int		i;
 
 	i = 0;
-	wall_amount = get_list_len(wall_list);
-	wall_ids = ft_memalloc(sizeof(char *) * wall_amount + 1);
-	wall_ids[wall_amount] = NULL;
-	neighbor_ids = ft_memalloc(sizeof(char *) * wall_amount + 1);
-	neighbor_ids[wall_amount] = NULL;
 	curr = wall_list;
 	while (curr)
 	{
-		wall = curr->content;
-		wall_ids[i] = ft_itoa(wall->id);
-		if (wall->neighbor_sector)
-			neighbor_ids[i] = ft_itoa(wall->neighbor_sector->id);
+		wall_ids[i] = ft_itoa(((t_wall *)curr->content)->id);
+		if (((t_wall *)curr->content)->neighbor_sector)
+			neighbor_ids[i]
+				= ft_itoa(((t_wall *)curr->content)->neighbor_sector->id);
 		else
 			neighbor_ids[i] = ft_itoa(-1);
 		curr = curr->next;
 		i++;
 	}
-	char *w = compile_str_from_array(wall_ids);
-	char *n = compile_str_from_array(neighbor_ids);
-	ft_printf("wall_ids : [%s]\n", w);
-	ft_printf("neighbor_ids : [%s]\n", n);
-	str = ft_sprintf("%s\t%s", w, n);
+	walls = compile_str_from_array(wall_ids);
+	neighbors = compile_str_from_array(neighbor_ids);
+	str = ft_sprintf("%s\t%s", walls, neighbors);
+	ft_strdel(&walls);
+	ft_strdel(&neighbors);
 	return (str);
-	/*
-	char	*temp_wall;
-	char	*temp_neighbor;
-	char	*temp_w;
-	char	*temp_n;
-	char	*temp;
-	char	*str;
-	t_wall	*w;
-
-	temp_w = NULL;
-	temp_n = NULL;
-	str = ft_strnew(0);
-	while (wall_list)
-	{
-		w = wall_list->content;
-
-		temp_wall = sector_str_wall(temp_w, w);
-		temp_neighbor = sector_str_neighbor(temp_n, w);
-		ft_strdel(&temp_w);
-		ft_strdel(&temp_n);
-		temp_w = ft_strdup(temp_wall);
-		temp_n = ft_strdup(temp_neighbor);
-		ft_strdel(&temp_wall);
-		ft_strdel(&temp_neighbor);
-		wall_list = wall_list->next;
-	}
-	ft_stradd(&str, temp_w);
-	temp = ft_sprintf("\t%s", temp_n);
-	ft_stradd(&str, temp);
-	ft_strdel(&temp_w);
-	ft_strdel(&temp_n);
-	ft_strdel(&temp);
-	return (str);
-	*/
 }
 
+char	*set_walls_and_neighbors_for_sector(t_list *wall_list)
+{
+	char	*str;
+	char	**wall_ids;
+	char	**neighbor_ids;
+	int		wall_amount;
+
+	wall_amount = get_list_len(wall_list);
+	wall_ids = ft_memalloc(sizeof(char *) * wall_amount + 1);
+	wall_ids[wall_amount] = NULL;
+	neighbor_ids = ft_memalloc(sizeof(char *) * wall_amount + 1);
+	neighbor_ids[wall_amount] = NULL;
+	str = ttt(wall_list, wall_ids, neighbor_ids);
+	return (str);
+}
 
 char	*set_sector(t_editor *doom)
 {
@@ -328,65 +270,76 @@ char	*set_entities(t_editor *doom)
 	return (str);
 }
 
-void	set_map(t_editor *doom)
+char	*actual_set_map(t_editor *editor)
+{
+	char	*map;
+
+	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n"\
+			"0\t%s\t%d\t%d\t%d\t%d\t%d\n",
+			editor->fullpath, editor->scale, editor->grid.point_amount,
+			editor->grid.wall_amount, editor->grid.sector_amount,
+			editor->grid.entity_amount);
+	return (map);
+}
+
+enum	e_map_order
+{
+	M_MAP,
+	M_SPAWN,
+	M_POINT,
+	M_WALL,
+	M_SPRITE,
+	M_SECTOR,
+	M_FANDC,
+	M_ENTITY,
+	M_ORDER_AMOUNT
+};
+
+char	*make_whole_map_string(t_editor *editor)
+{
+	char	**order;
+	char	*str;
+	char	*divider;
+
+	order = ft_memalloc(sizeof(char *) * M_ORDER_AMOUNT + 1);
+	order[M_ORDER_AMOUNT] = NULL;
+	divider = ft_strdup("-----------------------------------\n");
+	order[M_MAP] = actual_set_map(editor);
+	order[M_SPAWN] = set_spawn(editor);
+	order[M_POINT] = set_point(editor);
+	order[M_WALL] = set_wall(editor);
+	order[M_SPRITE] = set_sprite(editor);
+	order[M_SECTOR] = set_sector(editor);
+	order[M_FANDC] = set_fandc(editor);
+	order[M_ENTITY] = set_entities(editor);
+	str = ft_strjoiner(order[M_MAP], divider,
+			order[M_SPAWN], divider,
+			order[M_POINT], divider,
+			order[M_WALL], divider,
+			order[M_SPRITE], divider,
+			order[M_SECTOR], divider,
+			order[M_FANDC], divider,
+			order[M_ENTITY], divider, NULL);
+	free_array(order);
+	return (str);
+}
+
+void	set_map(t_editor *editor)
 {
 	char	*str;
 	int		fd;
 
-	char	*divider;
-	char	*map;
-	char	*spawn;
-	char	*point;
-	char	*wall;
-	char	*sprite;
-	char	*fandc;
-	char	*sector;
-	char	*entity;
-
 	ft_putstr("Saving file.\n");
-
-	recount_everything(doom);
-
-	divider = ft_strdup("-----------------------------------\n");
-	map = ft_sprintf("type:map\tname\tscale\tvert\twall\tsec\tent\n0\t%s\t%d\t%d\t%d\t%d\t%d\n",
-			doom->fullpath, doom->scale, doom->grid.point_amount,
-			doom->grid.wall_amount, doom->grid.sector_amount,
-			doom->grid.entity_amount);
-	spawn = set_spawn(doom);
-	point = set_point(doom);
-	wall = set_wall(doom);
-	sprite = set_sprite(doom);
-	sector = set_sector(doom);
-	fandc = set_fandc(doom);
-	entity = set_entities(doom);
-	str = ft_strjoiner(map, divider,
-			spawn, divider,
-			point, divider,
-			wall, divider,
-			sprite, divider,
-			sector, divider,
-			fandc, divider,
-			entity, divider, NULL);
-	fd = creat(doom->fullpath, S_IRUSR | S_IWUSR);
+	recount_everything(editor);
+	str = make_whole_map_string(editor);
+	fd = creat(editor->fullpath, S_IRUSR | S_IWUSR);
 	if (fd > -1)
 		ft_fprintf(fd, "%s", str);
 	else
-		add_text_to_info_box(doom, "[ERROR] Couldnt save map!");
+		add_text_to_info_box(editor, "[ERROR] Couldnt save map!");
 	close(fd);
-
 	ft_printf("%s", str);
-
-	ft_strdel(&divider);
-	ft_strdel(&map);
-	ft_strdel(&spawn);
-	ft_strdel(&point);
-	ft_strdel(&wall);
-	ft_strdel(&sprite);
-	ft_strdel(&fandc);
-	ft_strdel(&sector);
-	ft_strdel(&entity);
 	ft_strdel(&str);
-
 	ft_putstr("Map saved Successfully.\n");
-	ft_printf("to : %s\n", doom->fullpath);
+	ft_printf("to : %s\n", editor->fullpath);
 }
