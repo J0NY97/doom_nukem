@@ -14,40 +14,6 @@ void	rword_free(void *content, size_t size)
 
 void	grid_free(t_grid *grid)
 {
-	t_list	*curr;
-
-	/*
-	curr = grid->sectors;
-	while (curr)
-	{
-		free_sector(curr->content, 0);
-		//ft_lstdel(&((t_sector *)curr->content)->walls, &dummy_free_er);
-		curr = curr->next;
-	}
-	curr = grid->walls;
-	while (curr)
-	{
-		free_wall(curr->content, 0);
-		curr = curr->next;	
-	}
-	curr = grid->points;
-	while (curr)
-	{
-		free_point(curr->content, 0);
-		curr = curr->next;	
-	}
-	curr = grid->entities;
-	while (curr)
-	{
-		free_entity(curr->content, 0);
-		curr = curr->next;	
-	}
-	ft_putstr("We are done with list content freeing\n");
-	ft_lstdel(&grid->points, &rword_free);
-	ft_lstdel(&grid->walls, &rword_free);
-	ft_lstdel(&grid->sectors, &rword_free);
-	ft_lstdel(&grid->entities, &rword_free);
-	*/
 	ft_lstdel(&grid->sectors, &free_sector);
 	ft_lstdel(&grid->walls, &free_wall);
 	ft_lstdel(&grid->points, &free_point);

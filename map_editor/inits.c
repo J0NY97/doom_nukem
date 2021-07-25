@@ -111,7 +111,7 @@ void	grid_init1(t_editor *editor)
 	editor->spawn.pos = (t_vector){.x = 0, .y = 0, .z = 0};
 	editor->spawn.direction = 0;
 	editor->scale = 1;
-	editor->grid.font = TTF_OpenFont("DroidSans.ttf", 20);
+	editor->grid.font = TTF_OpenFont(TTF_PATH"DroidSans.ttf", 20);
 }
 
 void	grid_init(t_editor *editor)
@@ -191,7 +191,7 @@ void	selection_mode_init(t_editor *editor)
 	coord = ui_init_coords(10, 25, editor->toolbox->position.w - 20, 55);
 	editor->select_mode = bui_new_element(editor->toolbox, "Mode", coord);
 	editor->select_mode->update_state = 0;
-	bui_set_element_text_font(editor->select_mode, "DroidSans.ttf",
+	bui_set_element_text_font(editor->select_mode, TTF_PATH"DroidSans.ttf",
 		editor->select_mode->font_size, 0xffffffff);
 	bui_set_element_color(editor->select_mode, editor->palette.elem_elem);
 	selection_mode_button_init(editor);
@@ -365,7 +365,7 @@ void	button_init(t_editor *editor)
 			editor->toolbox->position.w - 20, 55);
 	editor->other_mode = bui_new_element(editor->toolbox, "Other", coord);
 	editor->other_mode->update_state = 0;
-	bui_set_element_text_font(editor->other_mode, "DroidSans.ttf",
+	bui_set_element_text_font(editor->other_mode, TTF_PATH"DroidSans.ttf",
 		editor->other_mode->font_size, 0xffffffff);
 	bui_set_element_color(editor->other_mode, editor->palette.elem_elem);
 	button_init_other(button_w, gap, editor);
