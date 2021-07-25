@@ -399,7 +399,9 @@ t_vector	*get_scaled_line(
 	t_vector	new_dest;
 	float		dist_to_middle_x;
 	float		dist_to_middle_y;
+	t_vector	*out;
 
+	out = ft_memalloc(sizeof(t_vector) * 2);
 	dist_to_middle_x = (surface->w / 2) - center.x;
 	dist_to_middle_y = (surface->h / 2) - center.y;
 	new_orig = wall->orig->pos;
@@ -414,7 +416,13 @@ t_vector	*get_scaled_line(
 	new_orig.y += dist_to_middle_y;
 	new_dest.x += dist_to_middle_x;
 	new_dest.y += dist_to_middle_y;
-	return ((t_vector []){new_orig, new_dest});
+	
+	out[0] = new_orig;
+	out[1] = new_dest;
+	gfx_vector_string(out[0]);
+	gfx_vector_string(out[1]);
+	return (out);
+//	return ((t_vector []){new_orig, new_dest});
 }
 
 void	floor_ceiling_id_changer_prefab_events(t_editor *editor)
@@ -446,11 +454,13 @@ void	draw_fandc_scaled_line(
 				editor->grid.modify_sector->floor_slope_wall_id)->content,
 			center, scale - 1.5f);
 	gfx_draw_line(surf, 0xff0000ff, v[0], v[1]);
+	free(v);
 	v = get_scaled_line(surf, get_nth_from_list(
 				&editor->grid.modify_sector->walls,
 				editor->grid.modify_sector->ceiling_slope_wall_id)->content,
 			center, scale - 0.5f);
 	gfx_draw_line(surf, 0xff00ff00, v[0], v[1]);
+	free(v);
 }
 
 void	draw_sector_viewer(t_editor *editor, SDL_Surface *surf)
@@ -468,8 +478,11 @@ void	draw_sector_viewer(t_editor *editor, SDL_Surface *surf)
 	while (curr)
 	{
 		v = get_scaled_line(surf, curr->content, center, scale - 1.0f);
+		gfx_vector_string(v[0]);
+		gfx_vector_string(v[1]);
 		gfx_draw_line(surf, editor->grid.modify_sector->color,
 			v[0], v[1]);
+		free(v);
 		curr = curr->next;
 	}
 	draw_fandc_scaled_line(editor, surf, center, scale);

@@ -68,10 +68,10 @@ void	update_real_dimensions(t_grid *grid)
 	curr = grid->points;
 	while (curr)
 	{
-		low_x = min(((t_point *)curr->content)->pos.x, low_x);
-		low_y = min(((t_point *)curr->content)->pos.y, low_y);
-		hi_x = max(((t_point *)curr->content)->pos.x, hi_x);
-		hi_y = max(((t_point *)curr->content)->pos.y, hi_y);
+		low_x = ft_min(((t_point *)curr->content)->pos.x, low_x);
+		low_y = ft_min(((t_point *)curr->content)->pos.y, low_y);
+		hi_x = ft_max(((t_point *)curr->content)->pos.x, hi_x);
+		hi_y = ft_max(((t_point *)curr->content)->pos.y, hi_y);
 		curr = curr->next;
 	}
 	grid->dimensions.x = low_x * grid->gap;

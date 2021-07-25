@@ -135,11 +135,26 @@ void	other_box_events(t_editor *editor)
 		&editor->active_map_type);
 }
 
+void	select_mode_shortcut(t_editor *editor)
+{
+	if (key_pressed(editor->libui, KEY_1))
+		editor->active_select_mode = editor->button_draw;
+	else if (key_pressed(editor->libui, KEY_2))
+		editor->active_select_mode = editor->select_mode_vertex;
+	else if (key_pressed(editor->libui, KEY_3))
+		editor->active_select_mode = editor->select_mode_wall;
+	else if (key_pressed(editor->libui, KEY_4))
+		editor->active_select_mode = editor->select_mode_sector;
+	else if (key_pressed(editor->libui, KEY_5))
+		editor->active_select_mode = editor->select_mode_entity;
+}
+
 void	loop_buttons(t_editor *editor)
 {
 	t_rgba	new_col;
 
 	other_box_events(editor);
+	select_mode_shortcut(editor);
 	only_one_button_toggled_at_a_time(editor->select_mode_buttons,
 		&editor->active_select_mode);
 	if (editor->active_select_mode != NULL)
