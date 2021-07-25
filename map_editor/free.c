@@ -1,7 +1,5 @@
 #include "editor.h"
 
-// TODO: move all the free functions in the same files as the malloc functions.
-
 void	changer_prefab_free(void *prefab, size_t size)
 {
 	(void)size;
@@ -14,11 +12,11 @@ void	rword_free(void *content, size_t size)
 	(void)content;
 }
 
-// NOTE: dont actually free it because the actual grid is never mallcoed.
 void	grid_free(t_grid *grid)
 {
 	t_list	*curr;
 
+	/*
 	curr = grid->sectors;
 	while (curr)
 	{
@@ -49,6 +47,11 @@ void	grid_free(t_grid *grid)
 	ft_lstdel(&grid->walls, &rword_free);
 	ft_lstdel(&grid->sectors, &rword_free);
 	ft_lstdel(&grid->entities, &rword_free);
+	*/
+	ft_lstdel(&grid->sectors, &free_sector);
+	ft_lstdel(&grid->walls, &free_wall);
+	ft_lstdel(&grid->points, &free_point);
+	ft_lstdel(&grid->entities, &free_entity);
 	TTF_CloseFont(grid->font);
 }
 
