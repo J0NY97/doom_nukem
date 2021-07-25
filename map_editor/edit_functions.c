@@ -416,13 +416,9 @@ t_vector	*get_scaled_line(
 	new_orig.y += dist_to_middle_y;
 	new_dest.x += dist_to_middle_x;
 	new_dest.y += dist_to_middle_y;
-	
 	out[0] = new_orig;
 	out[1] = new_dest;
-	gfx_vector_string(out[0]);
-	gfx_vector_string(out[1]);
 	return (out);
-//	return ((t_vector []){new_orig, new_dest});
 }
 
 void	floor_ceiling_id_changer_prefab_events(t_editor *editor)
@@ -478,8 +474,6 @@ void	draw_sector_viewer(t_editor *editor, SDL_Surface *surf)
 	while (curr)
 	{
 		v = get_scaled_line(surf, curr->content, center, scale - 1.0f);
-		gfx_vector_string(v[0]);
-		gfx_vector_string(v[1]);
 		gfx_draw_line(surf, editor->grid.modify_sector->color,
 			v[0], v[1]);
 		free(v);
