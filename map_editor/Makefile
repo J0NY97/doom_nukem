@@ -11,42 +11,42 @@ SRCS = ./main.c \
 	   ./edit_functions.c \
 	   ./free.c \
 	   ./map_editor.c \
-	   ../libDoom/libbxpm/byte_utils.c \
-	   ../libDoom/libbxpm/read_bxpm.c \
+	   ../libs/libbxpm/byte_utils.c \
+	   ../libs/libbxpm/read_bxpm.c \
 	   ./core.c
 OBJS = $(SRCS:.c=.o)
 
 INCLUDES = \
-	-I../libDoom/libft \
-	-I../libDoom/libpf \
-	-I../libDoom/better_libui \
-	-I../libDoom/libgfx \
-	-I../libDoom/SDL2/includes \
-	-I../libDoom/libbxpm \
+	-I../libs/libft \
+	-I../libs/libpf \
+	-I../libs/better_libui \
+	-I../libs/libgfx \
+	-I../libs/SDL2/includes \
+	-I../libs/libbxpm \
 	-I../game/inc
 
 LIB_FOLDERS = \
-	-L../libDoom/libft \
-	-L../libDoom/libpf \
-	-L../libDoom/better_libui \
-	-L../libDoom/libgfx \
-	-L../libDoom/SDL2/lib
+	-L../libs/libft \
+	-L../libs/libpf \
+	-L../libs/better_libui \
+	-L../libs/libgfx \
+	-L../libs/SDL2/lib
 
 LIB = -lui -lSDL2 -lSDL2_ttf -lSDL2_image -lpf -lft -lgfx 
 LIBFT = ../libft
 BETTER_LIBUI = ../better_libui
 LIBGFX = ../libgfx
-FT_PRINTF = ../libDoom/libpf
+FT_PRINTF = ../libs/libpf
 
 FLAGS = -Wall -Wextra
 
 all: $(NAME)
 
 LIBS: $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
-	@mingw32-make -C ../libDoom/libft
-	@mingw32-make -C ../libDoom/libpf
-	@mingw32-make -C ../libDoom/libgfx
-	@mingw32-make -C ../libDoom/better_libui
+	@mingw32-make -C ../libs/libft
+	@mingw32-make -C ../libs/libpf
+	@mingw32-make -C ../libs/libgfx
+	@mingw32-make -C ../libs/better_libui
 
 $(NAME): $(SRCS)
 	@gcc -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)

@@ -9,14 +9,14 @@ SRCS = \
 	   ./free.c \
        ./main_menu.c
 OBJS = $(SRCS:.c=.o)
-INCLUDES = -I../libDoom/libft \
-	   -I../libDoom/better_libui \
-	   -I../libDoom/libpf \
-	   -I../libDoom/libgfx \
-	   -I../libDoom/SDL2/includes \
+INCLUDES = -I../libs/libft \
+	   -I../libs/better_libui \
+	   -I../libs/libpf \
+	   -I../libs/libgfx \
+	   -I../libs/SDL2/includes \
 	   -I../ \
 	   -I../game/inc
-LIBS = -L../libDoom/libft -L../libDoom/better_libui -L../libDoom/libpf -L../libDoom/libgfx -L../libDoom/SDL2/lib \
+LIBS = -L../libs/libft -L../libs/better_libui -L../libs/libpf -L../libs/libgfx -L../libs/SDL2/lib \
        -lui -lSDL2 -lSDL2_ttf -lSDL2_image -lpf -lft -lgfx 
 FLAGS = -Wall -Wextra
 # -Werror
