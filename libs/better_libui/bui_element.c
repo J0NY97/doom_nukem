@@ -199,7 +199,13 @@ void	bui_set_element_border(t_bui_element *elem, int thiccness, Uint32 color)
 */
 void	bui_change_element_text(t_bui_element *elem, char *text)
 {
-	bui_set_element_text(elem, text, elem->text_x, elem->text_y);
+	char	*font_name;
+
+	font_name = elem->font_name;
+	ft_strdel(elem->text);
+	elem->text = ft_strdup(text);
+	bui_set_element_text_font(elem, font_name, elem->font_size, elem->text_color);
+	ft_strdel(font_name);
 }
 
 // remove itn x and y at some ponit.
@@ -209,16 +215,12 @@ void	bui_set_element_text(t_bui_element *elem, char *text, int x, int y)
 
 	if (elem->text)
 		ft_strdel(&elem->text);
-	if (text == NULL)
-	{
-		elem->text = NULL;
-		return ;
-	}
 	if (elem->text_surface)
-	{
 		SDL_FreeSurface(elem->text_surface);
-		elem->text_surface = NULL;
-	}
+	elem->text = NULL;
+	elem->text_surface = NULL;
+	if (!text)
+		return ;
 	elem->text = ft_strdup(text);
 	elem->text_x = x;
 	elem->text_y = y;
@@ -232,16 +234,10 @@ void	bui_remove_element_text(t_bui_element *elem)
 {
 	if (elem->text)
 		ft_strdel(&elem->text);
-	if (elem->font)
-		TTF_CloseFont(elem->font);
 	if (elem->text_surface)
 		SDL_FreeSurface(elem->text_surface);
-	if (elem->font_name)
-		ft_strdel(&elem->font_name);
 	elem->text = NULL;
-	elem->font = NULL;
 	elem->text_surface = NULL;
-	elem->font_name = NULL;
 }
 
 void	bui_set_element_text_color(t_bui_element *elem, Uint32 color)

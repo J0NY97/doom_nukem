@@ -33,6 +33,8 @@ SDL_Surface	*bui_make_text_surface_from_recipe(t_text_recipe *recipe)
 	TTF_Font	*font;
 	t_rgba		rgb;
 
+	if (!recipe->text)
+		ft_printf("[bui_make_text_surface_from_recipe] no recipe->text");
 	font = TTF_OpenFont(recipe->font_name, recipe->font_size);
 	if (!font)
 	{
@@ -46,6 +48,10 @@ SDL_Surface	*bui_make_text_surface_from_recipe(t_text_recipe *recipe)
 			(SDL_Color){.a = rgb.a, .r = rgb.r, .g = rgb.g, .b = rgb.b},
 			recipe->max_w);
 	TTF_CloseFont(font);
+	if (!surface)
+	{
+		ft_printf("[bui_make_text_surface_from_recipe] no surface made for text: %s, TTF?ERROR : %s!", recipe->text, TTF_GetError());
+	}
 	return (surface);
 }
 

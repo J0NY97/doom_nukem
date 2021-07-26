@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 13:59:23 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 15:37:32 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 18:02:18 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -175,8 +175,7 @@ void	loop_buttons(t_editor *editor)
 		new_col = hex_to_rgba(editor->info_box->text_color);
 		new_col.a -= 1;
 		editor->info_box->text_color = rgba_to_hex(new_col);
-		bui_change_element_text(editor->info_box,
-			editor->info_box->text);
+		bui_set_element_text_color(editor->info_box, rgba_to_hex(new_col));
 		if (new_col.a == 0)
 			bui_remove_element_text(editor->info_box);
 	}
@@ -187,7 +186,8 @@ void	add_text_to_info_box(t_editor *editor, char *text)
 	editor->info_box_start_timer = SDL_GetTicks();
 	editor->info_box_timer = 5000;
 	editor->info_box->text_color = 0x00ffffff;
-	bui_change_element_text(editor->info_box, text);
+	bui_set_element_text(editor->info_box, text,
+		editor->info_box->text_x, editor->info_box->text_y);
 }
 
 int	get_list_len(t_list *list)
