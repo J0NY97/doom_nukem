@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/26 11:21:55 by nneronin         ###   ########.fr        #
+#    Updated: 2021/07/26 13:17:56 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,24 +22,49 @@ CYAN		:=	"\e[0;36m"
 UNDERLINE	:=	"\x1b[4m"
 RESET		:=	"\e[0m"
 
-all: framework lib editor launcher engine
+name = dontcare
 
-lib:
+all: framework  
 	@make -C ./libDoom/libft
 	@make -C ./libDoom/libpf
-	@make -C ./libDoom/libtp
 	@make -C ./libDoom/libgfx
 	@make -C ./libDoom/libbxpm
 	@make -C ./libDoom/better_libui
-
-editor:
+ifeq ($(SHELL_NAME), Darwin)
+	@make -C ./libDoom/libtp
+endif
 	@make -C ./map_editor
-
-launcher:
-	@make -C ./ui
-
-engine:
+	@make -C ./launcher
 	@make -C ./game
+	@mv ./launcher/wolf3d .
+
+clean:
+	@make clean -C ./libDoom/libft
+	@make clean -C ./libDoom/libpf
+	@make clean -C ./libDoom/libgfx
+	@make clean -C ./libDoom/libbxpm
+	@make clean -C ./libDoom/better_libui
+ifeq ($(SHELL_NAME), Darwin)
+	@make clean -C ./libDoom/libtp
+endif
+	@make clean -C ./map_editor
+	@make clean -C ./launcher
+	@make clean -C ./game
+	
+fclean: clean
+	@make fclean -C ./libDoom/libft
+	@make fclean -C ./libDoom/libpf
+	@make fclean -C ./libDoom/libgfx
+	@make fclean -C ./libDoom/libbxpm
+	@make fclean -C ./libDoom/better_libui
+ifeq ($(SHELL_NAME), Darwin)
+	@make fclean -C ./libDoom/libtp
+endif
+	@make fclean -C ./map_editor
+	@make fclean -C ./launcher
+	@make fclean -C ./game
+
+re: fclean all
 
 framework:
 ifeq ($(SHELL_NAME), Darwin)
@@ -67,4 +92,4 @@ framework_re: framework_del
 	@cp -Rf $(SDL_DIR)/SDL2_mixer.framework ~/Library/Frameworks/
 	@printf $(CYAN)"[INFO]	Mooving SDL2 Frameworks to ~/Library/Frameworks\n"$(RESET)
 
-.PHONY: clean, all, re, fclean, framework, framework_del, frameworks_re, lib, editor, launcher, engine
+.PHONY: clean, all, re, fclean, framework, framework_del, frameworks_re
