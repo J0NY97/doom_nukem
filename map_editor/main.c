@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/19 15:35:48 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 13:00:04 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ int	main(int argc, char **argv)
 	if (ft_strequ(argv[2], "-l")
 		|| ft_strequ(argv[2], "-launcher"))
 	{
-		arr[0] = ft_strdup(ROOT_PATH"ui/menu");
+		arr[0] = ft_strdup(ROOT_PATH"launcher/menu");
 		arr[1] = NULL;
 		execv(arr[0], arr);
 	}
