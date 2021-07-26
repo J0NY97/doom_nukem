@@ -5,35 +5,66 @@
 #                                                     +:+ +:+         +:+      #
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2021/07/02 08:42:30 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/02 08:49:36 by nneronin         ###   ########.fr        #
+#    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
+#    Updated: 2021/07/26 11:21:55 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-all:
-	@make -C ./better_libui
-	@make -C ./ft_printf
-	@make -C ./libft
-	@make -C ./libgfx
+SHELL_NAME	:= $(shell uname -s)
+
+RED			:=	"\e[0;31m"
+GREEN		:=	"\x1b[38;5;119m"
+ORANGE		:=	"\x1b[38;5;208m"
+YELLOW		:=	"\e[0;33m"
+BLUE		:=	"\e[0;34m"
+MAGENTA		:=	"\e[0;35m"
+CYAN		:=	"\e[0;36m"
+UNDERLINE	:=	"\x1b[4m"
+RESET		:=	"\e[0m"
+
+all: framework lib editor launcher engine
+
+lib:
+	@make -C ./libDoom/libft
+	@make -C ./libDoom/libpf
+	@make -C ./libDoom/libtp
+	@make -C ./libDoom/libgfx
+	@make -C ./libDoom/libbxpm
+	@make -C ./libDoom/better_libui
+
+editor:
 	@make -C ./map_editor
+
+launcher:
 	@make -C ./ui
 
-clean:
-	@make clean -C ./better_libui
-	@make clean -C ./ft_printf
-	@make clean -C ./libft
-	@make clean -C ./libgfx
-	@make clean -C ./map_editor
-	@make clean -C ./ui
+engine:
+	@make -C ./game
 
-fclean:
-	@make fclean -C ./better_libui
-	@make fclean -C ./ft_printf
-	@make fclean -C ./libft
-	@make fclean -C ./libgfx
-	@make fclean -C ./map_editor
-	@make fclean -C ./ui
+framework:
+ifeq ($(SHELL_NAME), Darwin)
+	@mkdir -p ~/Library/Frameworks
+ifeq ("$(wildcard ~/Library/Frameworks/SDL2*.framework)","")
+	@cp -Rf $(SDL_DIR)/SDL2.framework ~/Library/Frameworks/
+	@cp -Rf $(SDL_DIR)/SDL2_ttf.framework ~/Library/Frameworks/
+	@cp -Rf $(SDL_DIR)/SDL2_image.framework ~/Library/Frameworks/
+	@cp -Rf $(SDL_DIR)/SDL2_mixer.framework ~/Library/Frameworks/
+	@printf $(CYAN)"[INFO]	Moving Frameworks\n"$(RESET)
+else
+	@printf $(CYAN)"[INFO]	Frameworks Exists\n"$(RESET)
+endif
+endif
 
-re: fclean all
+framework_del:
+	@rm -rf ~/Library/Frameworks/SDL2*.framework
+	@/bin/rm -f $(NAME)
+	@printf $(CYAN)"[INFO]	Deleted SDL2 Frameworks from ~/Library/Frameworks\n"$(RESET)
 
-.PHONY: clean, all, fclean, re
+framework_re: framework_del
+	@cp -Rf $(SDL_DIR)/SDL2.framework ~/Library/Frameworks/
+	@cp -Rf $(SDL_DIR)/SDL2_ttf.framework ~/Library/Frameworks/
+	@cp -Rf $(SDL_DIR)/SDL2_image.framework ~/Library/Frameworks/
+	@cp -Rf $(SDL_DIR)/SDL2_mixer.framework ~/Library/Frameworks/
+	@printf $(CYAN)"[INFO]	Mooving SDL2 Frameworks to ~/Library/Frameworks\n"$(RESET)
+
+.PHONY: clean, all, re, fclean, framework, framework_del, frameworks_re, lib, editor, launcher, engine
