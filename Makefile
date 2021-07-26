@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/26 13:44:31 by nneronin         ###   ########.fr        #
+#    Updated: 2021/07/26 14:17:10 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,11 +27,11 @@ name = dontcare
 all: framework  
 	@make -C ./libs/libft
 	@make -C ./libs/libpf
-	@make -C ./libs/libgfx
 	@make -C ./libs/libbxpm
 ifeq ($(SHELL_NAME), Darwin)
 	@make -C ./libs/libtp
 endif
+	@make -C ./libs/libgfx
 	@make -C ./libs/better_libui
 	@make -C ./map_editor
 	@make -C ./launcher
@@ -41,11 +41,11 @@ endif
 clean:
 	@make clean -C ./libs/libft
 	@make clean -C ./libs/libpf
-	@make clean -C ./libs/libgfx
 	@make clean -C ./libs/libbxpm
 ifeq ($(SHELL_NAME), Darwin)
 	@make clean -C ./libs/libtp
 endif
+	@make clean -C ./libs/libgfx
 	@make clean -C ./libs/better_libui
 	@make clean -C ./map_editor
 	@make clean -C ./launcher
@@ -54,11 +54,11 @@ endif
 fclean:
 	@make fclean -C ./libs/libft
 	@make fclean -C ./libs/libpf
-	@make fclean -C ./libs/libgfx
 	@make fclean -C ./libs/libbxpm
 ifeq ($(SHELL_NAME), Darwin)
 	@make fclean -C ./libs/libtp
 endif
+	@make fclean -C ./libs/libgfx
 	@make fclean -C ./libs/better_libui
 	@make fclean -C ./map_editor
 	@make fclean -C ./launcher
