@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/26 13:40:23 by nneronin         ###   ########.fr        #
+#    Updated: 2021/07/26 13:44:31 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,48 +25,48 @@ RESET		:=	"\e[0m"
 name = dontcare
 
 all: framework  
-	@make -C ./libDoom/libft
-	@make -C ./libDoom/libpf
-	@make -C ./libDoom/libgfx
-	@make -C ./libDoom/libbxpm
+	@make -C ./libs/libft
+	@make -C ./libs/libpf
+	@make -C ./libs/libgfx
+	@make -C ./libs/libbxpm
 ifeq ($(SHELL_NAME), Darwin)
-	@make -C ./libDoom/libtp
+	@make -C ./libs/libtp
 endif
-	@make -C ./libDoom/better_libui
+	@make -C ./libs/better_libui
 	@make -C ./map_editor
 	@make -C ./launcher
 	@make -C ./game
 	@mv ./launcher/wolf3d .
 
 clean:
-	@make clean -C ./libDoom/libft
-	@make clean -C ./libDoom/libpf
-	@make clean -C ./libDoom/libgfx
-	@make clean -C ./libDoom/libbxpm
+	@make clean -C ./libs/libft
+	@make clean -C ./libs/libpf
+	@make clean -C ./libs/libgfx
+	@make clean -C ./libs/libbxpm
 ifeq ($(SHELL_NAME), Darwin)
-	@make clean -C ./libDoom/libtp
+	@make clean -C ./libs/libtp
 endif
-	@make clean -C ./libDoom/better_libui
+	@make clean -C ./libs/better_libui
 	@make clean -C ./map_editor
 	@make clean -C ./launcher
 	@make clean -C ./game
 	
 fclean:
-	@make fclean -C ./libDoom/libft
-	@make fclean -C ./libDoom/libpf
-	@make fclean -C ./libDoom/libgfx
-	@make fclean -C ./libDoom/libbxpm
+	@make fclean -C ./libs/libft
+	@make fclean -C ./libs/libpf
+	@make fclean -C ./libs/libgfx
+	@make fclean -C ./libs/libbxpm
 ifeq ($(SHELL_NAME), Darwin)
-	@make fclean -C ./libDoom/libtp
+	@make fclean -C ./libs/libtp
 endif
-	@make fclean -C ./libDoom/better_libui
+	@make fclean -C ./libs/better_libui
 	@make fclean -C ./map_editor
 	@make fclean -C ./launcher
 	@make fclean -C ./game
 
 re: fclean all
 
-SDL_DIR		:= ./libDoom/SDL_Frameworks
+SDL_DIR		:= ./libs/SDL_Frameworks
 
 framework:
 ifeq ($(SHELL_NAME), Darwin)
