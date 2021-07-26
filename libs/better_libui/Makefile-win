@@ -1,0 +1,45 @@
+NAME = libui.a
+SRCS = \
+	./bui_element.c \
+	./bui_menu.c \
+	./bui_slider.c \
+	./bui_event_handler.c \
+	./bui_libui.c \
+	./bui_render.c \
+	./bui_preset.c \
+	./bui_text.c \
+	./bui_window.c \
+	./bui_render_the_event.c \
+	./dir_open.c \
+	./load_image.c \
+	./bui_quit.c \
+	./bui_draw.c \
+	./math.c \
+	./bui_render_new.c \
+	./help.c
+OBJS = $(SRCS:.c=.o)
+
+all: $(NAME)
+
+$(NAME): $(SRCS)
+	@gcc -c $(SRCS) \
+		-I ../ft_printf \
+		-I ../libft \
+		-I ../SDL2/includes 
+	@ar rc $(NAME) $(OBJS)
+	@ranlib $(NAME)
+	@echo "$(NAME) was successfully created."
+
+clean:
+	@rm -f $(OBJS)
+	@echo "$(NAME) was cleaned."
+
+fclean: clean
+	@rm -f $(NAME)
+
+re: fclean all
+
+.PHONY: clean, all, re, fclean
+
+
+
