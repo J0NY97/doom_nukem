@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 16:22:12 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 16:34:00 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,7 @@ char	*set_all_sprites_for_wall(t_wall *wall, int wall_id, int *id)
 	while (curr_sprite)
 	{
 		sprite = curr_sprite->content;
-		temp = ft_sprintf("%d\t%d\t%.3f\t%.3f\t%d\t%.3f\n",
+		temp = ft_sprintf("%d\t%d\t%.3f\t%.3f\t%d\t%.3f\tSTATIC\n",
 				*id, wall_id, sprite->real_x, sprite->real_y,
 				sprite->sprite_id, sprite->scale);
 		ft_stradd(&str, temp);
