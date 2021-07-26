@@ -13,7 +13,7 @@ SRCS = ./main.c \
 	   ./map_editor.c \
 	   ../libDoom/libbxpm/byte_utils.c \
 	   ../libDoom/libbxpm/read_bxpm.c \
-	   ../core.c
+	   ./core.c
 OBJS = $(SRCS:.c=.o)
 
 INCLUDES = \
@@ -23,8 +23,7 @@ INCLUDES = \
 	-I../libDoom/libgfx \
 	-I../libDoom/SDL2/includes \
 	-I../libDoom/libbxpm \
-	-I../game/inc \
-	-I../
+	-I../game/inc
 
 LIB_FOLDERS = \
 	-L../libDoom/libft \
