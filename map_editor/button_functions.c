@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 13:59:23 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 18:02:18 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 18:13:24 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,7 +61,7 @@ void	add_portal(t_grid *grid)
 	wall_1_sec = NULL;
 	wall_2_sec = NULL;
 	check_if_we_can_make_portal(grid, &other, &wall_1_sec, &wall_2_sec);
-	if (wall_1_sec == NULL)
+	if (wall_1_sec == NULL || wall_2_sec == NULL)
 		return ;
 	other->neighbor_sector = wall_1_sec;
 	grid->modify_wall->neighbor_sector = wall_2_sec;
