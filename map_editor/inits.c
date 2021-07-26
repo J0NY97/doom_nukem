@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/19 14:51:36 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 12:28:10 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ void	window_init(t_editor *editor, t_bui_libui *libui)
 	coord = ui_init_coords(10, 10, 1920, 1080);
 	editor->window = bui_new_window(libui, "Doom Editor", coord, 0);
 	bui_set_window_color(editor->window, editor->palette.win);
-	bui_set_window_icon(editor->window, ROOT_PATH"ui/ui_images/damage.png");
+	bui_set_window_icon(editor->window, ICON_PATH"damage.png");
 }
 
 void	edit_window_init(t_editor *editor, t_bui_libui *libui)
@@ -163,7 +163,7 @@ void	selection_mode_button_init(t_editor *editor)
 	editor->select_mode_buttons = NULL;
 	editor->active_select_mode = NULL;
 	editor->button_draw = new_selection_mode_button(editor->select_mode,
-			ROOT_PATH"ui/ui_images/draw_mode.png", 0);
+			ICON_PATH"draw_mode.png", 0);
 	editor->select_mode_vertex = new_selection_mode_button(editor->select_mode,
 			ICON_PATH"selection_mode_vertex.png", 1);
 	editor->select_mode_wall = new_selection_mode_button(editor->select_mode,
@@ -235,16 +235,16 @@ void	button_init_info_area(t_editor *editor)
 	coord = ui_init_coords(editor->info_area->position.w - 110, 25, 32, 32);
 	editor->button_remove = bui_new_element(editor->info_area, NULL, coord);
 	bui_set_element_image_to_states(editor->button_remove,
-		ROOT_PATH"ui/ui_images/remove_button.png",
-		ROOT_PATH"ui/ui_images/remove_button_click.png",
-		ROOT_PATH"ui/ui_images/remove_button_click.png");
+		ICON_PATH"remove_button.png",
+		ICON_PATH"remove_button_click.png",
+		ICON_PATH"remove_button_click.png");
 	coord = ui_init_coords(editor->info_area->position.w
 			- 110 + 32 + 10, 25, 32, 32);
 	editor->button_edit = bui_new_element(editor->info_area, NULL, coord);
 	bui_set_element_image_to_states(editor->button_edit,
-		ROOT_PATH"ui/ui_images/edit_button.png",
-		ROOT_PATH"ui/ui_images/edit_button_click.png",
-		ROOT_PATH"ui/ui_images/edit_button_click.png");
+		ICON_PATH"edit_button.png",
+		ICON_PATH"edit_button_click.png",
+		ICON_PATH"edit_button_click.png");
 }
 
 void	general_info_init(t_editor *editor)
@@ -299,9 +299,9 @@ t_bui_element *
 	coord.x += text_coord.w;
 	tick = bui_new_element(parent, NULL, coord);
 	bui_set_element_image_to_states(tick,
-		ROOT_PATH"ui/ui_images/tick_box_off.png",
-		ROOT_PATH"ui/ui_images/tick_box_hover.png",
-		ROOT_PATH"ui/ui_images/tick_box_on.png");
+		ICON_PATH"tick_box_off.png",
+		ICON_PATH"tick_box_hover.png",
+		ICON_PATH"tick_box_on.png");
 	return (tick);
 }
 
@@ -344,9 +344,9 @@ void	button_init_other(int button_w, int gap, t_editor *editor)
 			"save", coord);
 	editor->button_save->text_y = -20;
 	bui_set_element_image_to_states(editor->button_save,
-		ROOT_PATH"ui/ui_images/save_button.png",
-		ROOT_PATH"ui/ui_images/save_button_click.png",
-		ROOT_PATH"ui/ui_images/save_button_click.png");
+		ICON_PATH"save_button.png",
+		ICON_PATH"save_button_click.png",
+		ICON_PATH"save_button_click.png");
 	map_type_tickbox_init(gap, editor);
 }
 
@@ -722,9 +722,9 @@ void	wall_tab_init(t_editor *editor)
 	coord = ui_init_coords(40, 0, 20, 20);
 	editor->wall_solid_tick = bui_new_element(editor->wall_solid, NULL, coord);
 	bui_set_element_image_to_states(editor->wall_solid_tick,
-		ROOT_PATH"ui/ui_images/tick_box_off.png",
-		ROOT_PATH"ui/ui_images/tick_box_hover.png",
-		ROOT_PATH"ui/ui_images/tick_box_on.png");
+		ICON_PATH"tick_box_off.png",
+		ICON_PATH"tick_box_hover.png",
+		ICON_PATH"tick_box_on.png");
 }
 
 void	portal_tab_init(t_editor *editor)
@@ -740,9 +740,9 @@ void	portal_tab_init(t_editor *editor)
 	editor->wall_portal_tick = bui_new_element(editor->wall_portal,
 			NULL, coord);
 	bui_set_element_image_to_states(editor->wall_portal_tick,
-		ROOT_PATH"ui/ui_images/tick_box_off.png",
-		ROOT_PATH"ui/ui_images/tick_box_hover.png",
-		ROOT_PATH"ui/ui_images/tick_box_on.png");
+		ICON_PATH"tick_box_off.png",
+		ICON_PATH"tick_box_hover.png",
+		ICON_PATH"tick_box_on.png");
 }
 
 void	wall_sprite_tab_init(t_editor *editor)
@@ -851,9 +851,9 @@ void	new_radio_button(
 	radio->text_y = -100;
 	bui_set_element_color(radio, 0x00);
 	bui_set_element_image_to_states(radio,
-		ROOT_PATH"ui/ui_images/radio_button_off.png",
-		ROOT_PATH"ui/ui_images/radio_button_hover.png",
-		ROOT_PATH"ui/ui_images/radio_button_on.png");
+		ICON_PATH"radio_button_off.png",
+		ICON_PATH"radio_button_hover.png",
+		ICON_PATH"radio_button_on.png");
 	add_to_list(list, radio, sizeof(t_bui_element));
 }
 

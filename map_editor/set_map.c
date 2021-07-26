@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/02 12:10:33 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 11:47:12 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -342,7 +342,7 @@ void	set_map(t_editor *editor)
 	str = make_whole_map_string(editor);
 	fd = creat(editor->fullpath, S_IRUSR | S_IWUSR);
 	if (fd > -1)
-		ft_fprintf(fd, "%s", str);
+		ft_dprintf(fd, "%s", str);
 	else
 		add_text_to_info_box(editor, "[ERROR] Couldnt save map!");
 	close(fd);
