@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2020/09/27 15:42:22 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 14:25:35 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,9 @@
 
 void	free_array(char **arr)
 {
-	int i = 0;
+	int	i;
 
+	i = 0;
 	while (arr[i] != NULL)
 		ft_strdel(&arr[i++]);
 	free(arr);

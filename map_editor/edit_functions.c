@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 11:54:39 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 14:25:09 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -108,7 +108,7 @@ void	wall_render(t_editor *editor)
 	scale = editor->edit_view_wall->position.w / dim.w;
 	scaled_wall = create_surface(dim.w * scale, dim.h * scale);
 	render_texture_on_the_wall(scaled_wall, editor->texture_textures[
-			ft_clamp(wall->texture_id, 0, editor->texture_amount)],
+		ft_clamp(wall->texture_id, 0, editor->texture_amount)],
 		editor->grid.modify_wall->texture_scale, scale);
 	render_sprites_on_the_wall(editor, scaled_wall, scale);
 	render_scaled_wall(editor, scaled_wall);
