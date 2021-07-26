@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 14:53:13 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 16:22:12 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,27 +53,25 @@ char	*set_point(t_editor *doom)
 	return (str);
 }
 
-char	*set_all_sprites_for_wall(t_wall *wall, int wall_id)
+char	*set_all_sprites_for_wall(t_wall *wall, int wall_id, int *id)
 {
 	t_list		*curr_sprite;
 	t_sprite	*sprite;
 	char		*temp;
 	char		*str;
-	int			id;
 
-	id = 0;
 	curr_sprite = wall->sprites;
 	str = ft_strnew(0);
 	while (curr_sprite)
 	{
 		sprite = curr_sprite->content;
 		temp = ft_sprintf("%d\t%d\t%.3f\t%.3f\t%d\t%.3f\n",
-				id, wall_id, sprite->real_x, sprite->real_y,
+				*id, wall_id, sprite->real_x, sprite->real_y,
 				sprite->sprite_id, sprite->scale);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		curr_sprite = curr_sprite->next;
-		id++;
+		*id += 1;
 	}
 	return (str);
 }
@@ -84,13 +82,15 @@ char	*set_sprite(t_editor *editor)
 	char	*str;
 	char	*temp;
 	int		wall_id;
+	int		id;
 
 	wall_id = 0;
+	id = 0;
 	str = ft_sprintf("type:wsprite\tid\twall_id\tx\ty\ttex\tscale\n");
 	curr_wall = editor->grid.walls;
 	while (curr_wall)
 	{
-		temp = set_all_sprites_for_wall(curr_wall->content, wall_id);
+		temp = set_all_sprites_for_wall(curr_wall->content, wall_id, &id);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		wall_id++;
