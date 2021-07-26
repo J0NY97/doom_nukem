@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 14:08:04 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 14:16:16 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,8 @@ void	main_menu_events(t_launcher *launcher, t_bui_libui *libui)
 	if (bui_button_toggle(launcher->play_button))
 	{
 		launcher->play_menu->menu->show = 1;
-		play_menu_events(launcher, launcher->play_menu, launcher->settings_menu);
+		play_menu_events(launcher, launcher->play_menu,
+			launcher->settings_menu);
 	}
 	if (bui_button_toggle(launcher->editor_button))
 	{

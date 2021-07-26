@@ -9,7 +9,7 @@ t_ui_menu_editor	*editor_menu_init(t_bui_element *main_menu)
 	return (menu);
 }
 
-	void	editor_menu_events(t_launcher *launcher, t_ui_menu_editor *menu)
+void	editor_menu_events(t_launcher *launcher, t_ui_menu_editor *menu)
 {
 	char	*map_pressed;
 	char	*arr[4];

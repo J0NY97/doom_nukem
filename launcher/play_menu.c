@@ -137,7 +137,8 @@ void	init_play_menu_map_buttons(t_ui_menu_play *menu, t_list *maps)
 }
 
 void	launch_game(
-		t_launcher *launcher, t_ui_menu_play *menu, t_ui_menu_settings *settings, char *text)
+		t_launcher *launcher, t_ui_menu_play *menu,
+		t_ui_menu_settings *settings, char *text)
 {
 	char	*arr[10];
 
@@ -163,7 +164,6 @@ void	launch_game(
 		arr[8] = ft_strdup("");
 	arr[9] = NULL;
 	free_launcher(launcher);
-	system("leaks wolf3d");
 	execv(arr[0], arr);
 }
 
@@ -188,7 +188,9 @@ char	*check_map_clicked(t_ui_menu_play *menu)
 	return (text);
 }
 
-void	play_menu_events(t_launcher *launcher, t_ui_menu_play *menu, t_ui_menu_settings *settings)
+void	play_menu_events(
+		t_launcher *launcher, t_ui_menu_play *menu,
+		t_ui_menu_settings *settings)
 {
 	char	*text;
 
