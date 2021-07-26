@@ -8,15 +8,15 @@ SRCS = \
        ./launcher_help.c \
        ./main_menu.c
 OBJS = $(SRCS:.c=.o)
-INCLUDES = -I../libft \
-	   -I../better_libui \
-	   -I../ft_printf \
-	   -I../libgfx \
-	   -I../SDL2/includes \
+INCLUDES = -I../libDoom/libft \
+	   -I../libDoom/better_libui \
+	   -I../libDoom/libpf \
+	   -I../libDoom/libgfx \
+	   -I../libDoom/SDL2/includes \
 	   -I../ \
 	   -I../game/inc
-LIBS = -L../libft -L../better_libui -L../ft_printf -L../libgfx -L../SDL2/lib \
-       -lui -lSDL2 -lSDL2_ttf -lSDL2_image -lprintf -lft -lgfx 
+LIBS = -L../libDoom/libft -L../libDoom/better_libui -L../libDoom/libpf -L../libDoom/libgfx -L../libDoom/SDL2/lib \
+       -lui -lSDL2 -lSDL2_ttf -lSDL2_image -lpf -lft -lgfx 
 FLAGS = -Wall -Wextra
 # -Werror
 
