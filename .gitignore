@@ -4,7 +4,6 @@
 .DS_Store
 map_editor/maps/*
 .vscode
-SDL2
 ui/dialog
 better_libui/test
 path.h
