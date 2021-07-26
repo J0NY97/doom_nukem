@@ -67,6 +67,7 @@ typedef struct	s_ui_menu_editor
 
 typedef struct	s_launcher
 {
+	t_fps	*fps;
 	t_bui_element *menu;
 
 	t_ui_menu_settings *settings_menu;
@@ -80,17 +81,8 @@ typedef struct	s_launcher
 	t_ui_menu_editor *editor_menu;
 	t_bui_element *editor_button;
 
-	t_list		*main_menu_buttons;
+	t_list		*main_menu_buttons; // list of t_bui_element
 	t_bui_element	*active_button;
-
-	// mc button textures
-	// !!! REMEMBER TO FREE !!!!!!
-	SDL_Surface	*mc_button;
-	SDL_Surface	*mc_button_hover;
-	SDL_Surface	*mc_button_click;
-	SDL_Surface	*mc_button_x3;
-	SDL_Surface	*mc_button_x3_hover;
-	SDL_Surface	*mc_button_x3_click;
 
 	// Colors
 	Uint32	gray_blue;
@@ -101,6 +93,10 @@ typedef struct	s_launcher
 	t_list	*map_list; // list of char *
 }		t_launcher;
 
+// free
+void			free_launcher(t_launcher *launcher);
+
+// init
 t_launcher		*launcher_init(t_bui_window *win);
 void			main_menu_events(t_launcher *main_menu, t_bui_libui *libui);
 t_list			*get_maps(char *directoy);
@@ -108,12 +104,12 @@ t_list			*get_maps(char *directoy);
 // Editor //
 t_ui_menu_editor	*editor_menu_init(t_bui_element *main_menu);
 void			init_editor_menu_map_buttons(t_ui_menu_editor *menu, t_list *maps);
-void			editor_menu_events(t_ui_menu_editor *menu);
+void			editor_menu_events(t_launcher *launcher, t_ui_menu_editor *menu);
 
 // Play //
 void			init_play_menu_map_buttons(t_ui_menu_play *menu, t_list *maps);
 t_ui_menu_play		*play_menu_init(t_bui_element *parent_elem);
-void			play_menu_events(t_ui_menu_play *play_menu, t_ui_menu_settings *settings);
+void			play_menu_events(t_launcher *launcher, t_ui_menu_play *play_menu, t_ui_menu_settings *settings);
 
 // Settings //
 t_ui_menu_settings	*settings_menu_init(t_bui_element *parent_elem);

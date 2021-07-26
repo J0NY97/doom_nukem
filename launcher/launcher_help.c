@@ -45,10 +45,10 @@ t_bui_element	*new_main_menu_button(t_launcher *launcher, char *text, int i)
 	c.x = launcher->menu->position.w / 8 / 2;
 	button = bui_new_element(launcher->menu, text, c);
 	bui_set_element_text_font(button, TTF_PATH"AmazDoom.ttf", 48, 0xff000000);
-	bui_set_element_image_all_states_image(button,
-		launcher->mc_button,
-		launcher->mc_button_hover,
-		launcher->mc_button_click);
+	bui_set_element_image_to_states(button,
+		ICON_PATH"mc_button.png",
+		ICON_PATH"mc_button_hover.png",
+		ICON_PATH"mc_button_click.png");
 	bui_center_element_text(button);
 	return (button);
 }

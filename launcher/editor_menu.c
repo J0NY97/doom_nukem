@@ -9,7 +9,7 @@ t_ui_menu_editor	*editor_menu_init(t_bui_element *main_menu)
 	return (menu);
 }
 
-void	editor_menu_events(t_ui_menu_editor *menu)
+	void	editor_menu_events(t_launcher *launcher, t_ui_menu_editor *menu)
 {
 	char	*map_pressed;
 	char	*arr[4];
@@ -23,8 +23,9 @@ void	editor_menu_events(t_ui_menu_editor *menu)
 		arr[3] = NULL;
 		ft_printf("%s %s",
 			arr[0], arr[1]);
-		// free launcher
 		bui_libui_quit(menu->menu->libui);
+		free_launcher(launcher);
+		system("leaks wolf3d");
 		execv(arr[0], arr);
 	}
 }
