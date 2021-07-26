@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 13:59:23 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/19 14:23:13 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 15:37:32 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,17 +22,13 @@ int	wall_has_same_coords(t_wall *w1, t_wall *w2)
 	return (0);
 }
 
-// When / IF this is the only function left, just split it in 2
-void	add_portal(t_grid *grid)
+void	check_if_we_can_make_portal(
+		t_grid *grid, t_wall **other,
+		t_sector **wall_1_sec, t_sector **wall_2_sec)
 {
-	t_list		*sec;
-	t_list		*wall;
-	t_wall		*other;
-	t_sector	*wall_1_sec;
-	t_sector	*wall_2_sec;
+	t_list	*sec;
+	t_list	*wall;
 
-	wall_1_sec = NULL;
-	wall_2_sec = NULL;
 	sec = grid->sectors;
 	while (sec)
 	{
@@ -42,17 +38,29 @@ void	add_portal(t_grid *grid)
 			if (wall_has_same_coords(grid->modify_wall, wall->content))
 			{
 				if (grid->modify_wall == wall->content)
-					wall_1_sec = sec->content;
+					*wall_1_sec = sec->content;
 				else
 				{
-					other = wall->content;
-					wall_2_sec = sec->content;
+					*other = wall->content;
+					*wall_2_sec = sec->content;
 				}
 			}
 			wall = wall->next;
 		}
 		sec = sec->next;
 	}
+}
+
+void	add_portal(t_grid *grid)
+{
+	t_wall		*other;
+	t_sector	*wall_1_sec;
+	t_sector	*wall_2_sec;
+
+	other = NULL;
+	wall_1_sec = NULL;
+	wall_2_sec = NULL;
+	check_if_we_can_make_portal(grid, &other, &wall_1_sec, &wall_2_sec);
 	if (wall_1_sec == NULL)
 		return ;
 	other->neighbor_sector = wall_1_sec;

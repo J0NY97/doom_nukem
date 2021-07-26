@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 12:28:10 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 15:49:45 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,8 +106,8 @@ void	grid_init1(t_editor *editor)
 	editor->grid.elem = bui_new_menu(editor->window, "grid", coord);
 	bui_set_element_color(editor->grid.elem, editor->palette.win_elem);
 	editor->grid.elem->update = 0;
-	editor->grid.hover = EMPTY_VEC;
-	editor->grid.last_hover = EMPTY_VEC;
+	editor->grid.hover = (t_vector){0, 0, 0};
+	editor->grid.last_hover = (t_vector){0, 0, 0};
 	editor->spawn.pos = (t_vector){.x = 0, .y = 0, .z = 0};
 	editor->spawn.direction = 0;
 	editor->scale = 1;
@@ -116,8 +116,8 @@ void	grid_init1(t_editor *editor)
 
 void	grid_init(t_editor *editor)
 {
-	editor->grid.selected1 = EMPTY_VEC;
-	editor->grid.selected2 = EMPTY_VEC;
+	editor->grid.selected1 = (t_vector){0, 0, 0};
+	editor->grid.selected2 = (t_vector){0, 0, 0};
 	editor->grid.modify_wall = NULL;
 	editor->grid.modify_point = NULL;
 	editor->grid.modify_sector = NULL;

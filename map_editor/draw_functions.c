@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/05/17 18:28:36 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 15:49:52 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -147,11 +147,11 @@ void	check_selected(t_grid *grid)
 	{
 		grid->modify_sector->first_point = NULL;
 		grid->modify_sector = NULL;
-		grid->selected1 = EMPTY_VEC;
-		grid->selected2 = EMPTY_VEC;
+		grid->selected1 = (t_vector){0, 0, 0};
+		grid->selected2 = (t_vector){0, 0, 0};
 	}
 	grid->selected1 = grid->selected2;
-	grid->selected2 = EMPTY_VEC;
+	grid->selected2 = (t_vector){0, 0, 0};
 }
 
 void	click_calc_sec(t_grid *grid)
@@ -200,8 +200,8 @@ void	unselect_selected(t_editor *editor, t_grid *grid)
 {
 	if (key_pressed(editor->libui, KEY_B))
 	{
-		grid->selected1 = EMPTY_VEC;
-		grid->selected2 = EMPTY_VEC;
+		grid->selected1 = (t_vector){0, 0, 0};
+		grid->selected2 = (t_vector){0, 0, 0};
 		grid->modify_point = NULL;
 		grid->modify_wall = NULL;
 		grid->modify_entity = NULL;

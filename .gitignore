@@ -9,3 +9,4 @@ better_libui/test
 path.h
 a.out
 *.exe
+SDL2

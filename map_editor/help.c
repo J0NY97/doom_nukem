@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/19 17:02:16 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 15:54:48 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ Uint32	random_color(void)
 
 int	vector_is_empty(t_vector v)
 {
-	return (vector_compare(v, EMPTY_VEC));
+	return (vector_compare(v, (t_vector){0, 0, 0}));
 }
 
 int	pointer_compare(void *p1, void *p2)
@@ -165,8 +165,6 @@ t_sector	*new_sector(int id)
 	sector->ceiling_texture_scale = 1.0f;
 	sector->gravity = 9;
 	sector->light_level = 10;
-	sector->lowest_pos = gfx_new_vector(INT_MAX, INT_MAX, INT_MAX);
-	sector->highest_pos = gfx_new_vector(INT_MIN, INT_MIN, INT_MIN);
 	sector->color = random_color();
 	return (sector);
 }
@@ -395,12 +393,30 @@ void	remove_all_points_not_a_part_of_a_wall(t_list **points, t_list **walls)
 	}
 }
 
+int	tttt(t_sector *s2, t_wall *w, t_sector *s, int *found)
+{
+	t_list	*w2;
+
+	w2 = s2->walls;
+	while (w2)
+	{
+		if (w->neighbor_sector == s2
+			&& ((t_wall *)w2->content)->neighbor_sector == s)
+		{
+			*found = 1;
+			return (1);
+		}
+		w2 = w2->next;
+	}
+	*found = 0;
+	return (0);
+}
+
 void	remove_all_non_existing_portals(t_list **sectors)
 {
 	t_list	*s;
 	t_list	*w;
 	t_list	*s2;
-	t_list	*w2;
 	int		found;
 
 	found = 0;
@@ -413,20 +429,7 @@ void	remove_all_non_existing_portals(t_list **sectors)
 			s2 = *sectors;
 			while (s2)
 			{
-				w2 = ((t_sector *)s2->content)->walls;
-				while (w2)
-				{
-					if (((t_wall *)w->content)->neighbor_sector
-						== s2->content
-						&& ((t_wall *)w2->content)->neighbor_sector
-						== s->content)
-					{
-						found = 1;
-						break ;
-					}
-					w2 = w2->next;
-				}
-				if (found == 1)
+				if (tttt(s2->content, w->content, s->content, &found))
 					break ;
 				s2 = s2->next;
 			}
@@ -481,61 +484,6 @@ void	remove_all_lonely_walls(t_list **walls, t_list **sectors)
 			remove_from_walls(walls, wall->content);
 		wall = wall->next;
 	}
-}
-
-/* This might not be needed. */
-/* Thats the reason its not norminetted */
-/* Try to remove this and then test in the game if it works. */
-/*
-NOTE: This spaghett has to be added so that niklas renderer can work. 
-
-1. loop through all sectors walls
-2. save either wall, and loop through all the walls again and search for a wall with common vertex. that is not itself 
-3. when found, check that if its the same vertex aka v1 == v1 or v2 == v2, if not switcheroo.
-4. remove all the old walls and set sector - walls to the new lst.
-
-NOTE: we always check wall->dest
-*/
-void	sort_sector_wall_list(t_sector *sector)
-{
-	t_list	*sorted_list;
-	t_list	*rucc;
-	t_wall	*wall;
-
-	sorted_list = NULL;
-	if (!sector)
-		return ;
-	ft_putstr("didnt return1");
-	if (sector->walls == NULL)
-		return ;
-	ft_putstr("didnt return2");
-	wall = sector->walls->content;
-	add_to_list(&sorted_list, wall, sizeof(t_wall));		
-	rucc = sector->walls;
-	while (rucc)
-	{
-		if ((vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->orig->pos)
-			|| vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->dest->pos))
-			&& !wall_compare(wall, rucc->content)) 
-		{
-			if (vector_compare(wall->dest->pos, ((t_wall *)rucc->content)->dest->pos))
-			{
-				t_point *temp = ((t_wall *)rucc->content)->dest;
-				((t_wall *)rucc->content)->dest = ((t_wall *)rucc->content)->orig;
-				((t_wall *)rucc->content)->orig = temp;
-			}
-			wall = rucc->content;
-			add_to_list(&sorted_list, wall, sizeof(t_wall));
-			if (vector_compare(((t_wall *)sector->walls->content)->orig->pos, wall->dest->pos))
-				break ;
-			rucc = sector->walls;
-		}
-		else
-			rucc = rucc->next;
-	}
-	ft_lstdel(&sector->walls, &dummy_free_er);
-	sector->walls = sorted_list;
-	ft_putstr("We are done sorting the sector.\n");
 }
 
 t_sector	*get_sector_with_wall(t_list **sector_list, t_wall *wall)
