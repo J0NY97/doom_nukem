@@ -6,13 +6,14 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/06 12:03:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/19 19:04:37 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 13:24:54 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "stdlib.h"
 #include "libft.h"
-#include "ft_printf.h"
+#include "libpf.h"
+#include "fcntl.h"
 
 int 	main(void)
 {
@@ -22,7 +23,7 @@ int 	main(void)
 
 	fd = creat("path.h", S_IRUSR | S_IWUSR);
 	path = realpath("./", NULL);
-	ft_fprintf(fd, "\
+	ft_dprintf(fd, "\
 #ifndef PATH_H\n\
 # define PATH_H\n\
 # define ROOT_PATH \"%s/\"\n\
