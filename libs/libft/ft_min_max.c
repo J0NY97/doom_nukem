@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 14:11:22 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/26 14:31:53 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/26 14:34:30 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	ft_min(int a, int b)
 {
-	if (a > b)
+	if (a < b)
 		return (a);
 	return (b);
 }
