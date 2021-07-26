@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 13:00:04 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/26 13:30:24 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,15 @@ int	main(int argc, char **argv)
 	if (!map)
 		return (1);
 	map_editor(map);
+	ft_strdel(&map);
 	system("leaks doom_editor");
 	if (ft_strequ(argv[2], "-l")
 		|| ft_strequ(argv[2], "-launcher"))
 	{
-		arr[0] = ft_strdup(ROOT_PATH"launcher/menu");
+		arr[0] = ft_strdup(ROOT_PATH"wolf3d");
 		arr[1] = NULL;
 		execv(arr[0], arr);
 	}
-	ft_strdel(&map);
 	SDL_Quit();
 	TTF_Quit();
 	IMG_Quit();
