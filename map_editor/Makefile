@@ -39,20 +39,11 @@ BETTER_LIBUI = ../better_libui
 LIBGFX = ../libgfx
 FT_PRINTF = ../ft_printf
 
-#remove this.
-LIBS = \
-	$(LIBGFX)/libgfx.a \
-	$(BETTER_LIBUI)/libui.a \
-	$(FT_PRINTF)/libprintf.a \
-	$(LIBFT)/libft.a \
-	-lSDL2 -lSDL2_ttf -lSDL2_image
-
 FLAGS = -Wall -Wextra
 
-#all: $(LIBS) $(NAME)
 all: $(NAME)
 
-$(LIBS): $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
+LIBS: $(LIBFT) $(BETTER_LIBUI) $(LIBGFX) $(FT_PRINTF)
 	@mingw32-make -C ../libft
 	@mingw32-make -C ../ft_printf
 	@mingw32-make -C ../libgfx
