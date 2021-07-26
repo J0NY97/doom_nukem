@@ -202,10 +202,10 @@ void	bui_change_element_text(t_bui_element *elem, char *text)
 	char	*font_name;
 
 	font_name = elem->font_name;
-	ft_strdel(elem->text);
+	ft_strdel(&elem->text);
 	elem->text = ft_strdup(text);
 	bui_set_element_text_font(elem, font_name, elem->font_size, elem->text_color);
-	ft_strdel(font_name);
+	ft_strdel(&font_name);
 }
 
 // remove itn x and y at some ponit.
