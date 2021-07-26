@@ -6,6 +6,7 @@ SRCS = \
        ./settings_menu.c \
        ./editor_menu.c \
        ./launcher_help.c \
+	   ./free.c \
        ./main_menu.c
 OBJS = $(SRCS:.c=.o)
 INCLUDES = -I../libs/libft \

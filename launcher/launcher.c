@@ -22,27 +22,23 @@ t_bui_window	*window_init(t_bui_libui *libui)
 
 int	main(void)
 {
-	t_fps			*fps;
 	t_bui_libui		*libui;
 	t_bui_window	*win;
 	t_launcher		*launcher;
 
-	fps = ft_memalloc(sizeof(t_fps));
 	libui = bui_new_libui();
 	win = window_init(libui);
 	launcher = launcher_init(win);
-
 	while (libui->run)
 	{
 		bui_event_handler_new(libui);
 		main_menu_events(launcher, libui);
 		bui_render_new(libui);
-		bui_fps_func(fps);
-		update_title_fps(win->win, fps);
+		bui_fps_func(launcher->fps);
+		update_title_fps(win->win, launcher->fps);
 	}
-	// launcher_free(launcher);
-	// free map_dir
-	// free map_list
+	free_launcher(launcher);
 	bui_libui_quit(libui);
+	system("leaks wolf3d");
 	return (0);
 }
