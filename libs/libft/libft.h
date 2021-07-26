@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 11:56:18 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/26 11:55:35 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/26 14:20:43 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,10 +79,10 @@ void				ft_memdel(void **ap);
 void				*ft_memdup(const void *mem, size_t size);
 void				*ft_memmove(void *dst, const void *src, size_t n);
 void				*ft_memset(void *b, int c, size_t len);
-int  				  ft_min(int a, int b);
-int   				 ft_max(int a, int b);
-float   			ft_fmin(float a, float b);
-float   			 ft_fmax(float a, float b);
+int					ft_min(int a, int b);
+int					ft_max(int a, int b);
+float				ft_fmin(float a, float b);
+float				ft_fmax(float a, float b);
 int					ft_nbrlen(long nbr);
 int					ft_nstrstr(char *str1, char *str2);
 double				ft_pow(double n, int pow);
