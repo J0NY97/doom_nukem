@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/15 09:52:36 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 15:30:24 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,7 +91,7 @@ void	drag_calc(t_editor *editor, t_grid *grid)
 	move_x = 0.0f;
 	move_y = 0.0f;
 	if ((SDL_GetWindowFlags(editor->window->win) & SDL_WINDOW_MOUSE_FOCUS)
-		&& key_pressed(editor->libui, MKEY_RIGHT))
+		&& mouse_pressed(editor->libui, SDL_BUTTON_RIGHT))
 	{
 		move_x = grid->hover.x - grid->last_hover.x;
 		move_y = grid->hover.y - grid->last_hover.y;
@@ -144,7 +144,7 @@ void	update_general_info_element(t_editor *editor)
 	str = ft_sprintf("v: %d, w: %d, s: %d, e: %d\n",
 			editor->grid.point_amount, editor->grid.wall_amount,
 			editor->grid.sector_amount, editor->grid.entity_amount);
-	bui_set_element_text(editor->general_info, str, 0, 0);
+	bui_set_element_text(editor->general_info, str);
 	ft_strdel(&str);
 }
 
@@ -166,7 +166,7 @@ void	draw_selected_point(t_editor *editor, t_grid *grid)
 				grid->gap));
 	}
 	editor->selected_vector_info->text_color = 0xffffffff;
-	bui_set_element_text(editor->selected_vector_info, s, 0, 0);
+	bui_set_element_text(editor->selected_vector_info, s);
 	ft_strdel(&s);
 }
 
@@ -349,7 +349,7 @@ void	draw_selected_sector(t_editor *editor, t_grid *grid)
 			curr = curr->next;
 		}
 	}
-	bui_set_element_text(editor->selected_sector_info, str, 0, 0);
+	bui_set_element_text(editor->selected_sector_info, str);
 	ft_strdel(&str);
 }
 

@@ -30,7 +30,8 @@ t_bui_element	*bui_new_element_defaults(
 	elem->font_size = 12;
 	elem->font_name = ft_strdup(BUI_PATH"DroidSans.ttf");
 	elem->font_style = TTF_STYLE_NORMAL;
-	bui_set_element_text(elem, text, 0, 0);
+	bui_set_element_text_position(elem, 0, 0);
+	bui_set_element_text(elem, text);
 	elem->state = ELEMENT_DEFAULT;
 	elem->show = 1;
 	elem->type = TYPE_ELEMENT;

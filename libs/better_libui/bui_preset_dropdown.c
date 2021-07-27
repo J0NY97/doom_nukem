@@ -21,7 +21,8 @@ t_preset_dropdown	*bui_new_dropdown_preset(
 	drop->drop = bui_new_element(menu, text, pos);
 	drop->arrow = bui_new_element(drop->drop, text,
 			(t_xywh){pos.w - 20, 0, pos.h, 20});
-	bui_set_element_text(drop->arrow, "<", 5, 2);
+	bui_set_element_text_position(drop->arrow, 5, 2);
+	bui_set_element_text(drop->arrow, "<");
 	drop->bass = bui_new_element(menu, "view", (t_xywh){
 			drop->drop->position.x,
 			drop->drop->position.y + drop->drop->position.h,
@@ -65,10 +66,10 @@ int	preset_dropdown_events(t_preset_dropdown *dropdown)
 {
 	bui_button_toggle(dropdown->drop);
 	dropdown->bass->show = dropdown->drop->toggle;
-	bui_change_element_text(dropdown->arrow, "<");
+	bui_set_element_text(dropdown->arrow, "<");
 	if (dropdown->bass->show)
 	{
-		bui_change_element_text(dropdown->arrow, "^");
+		bui_set_element_text(dropdown->arrow, "^");
 		if (only_one_button_toggled_at_a_time(dropdown->elements,
 				&dropdown->active))
 		{
@@ -78,7 +79,7 @@ int	preset_dropdown_events(t_preset_dropdown *dropdown)
 	}
 	if (dropdown->active != NULL)
 	{
-		bui_change_element_text(dropdown->drop, dropdown->active->text);
+		bui_set_element_text(dropdown->drop, dropdown->active->text);
 		SDL_BlitScaled(dropdown->active->surface[0], NULL,
 			dropdown->drop->surface[0], NULL);
 		SDL_BlitScaled(dropdown->active->surface[1], NULL,

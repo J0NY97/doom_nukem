@@ -37,8 +37,7 @@ void	bui_set_slider_values(
 		= bui_set_slider_value(value, min,
 			max, slider->slider->position.w);
 	slide_str = ft_itoa(slider->value);
-	bui_set_element_text(slider->button, slide_str,
-		slider->button->text_x, slider->button->text_y);
+	bui_set_element_text(slider->button, slide_str);
 	bui_center_element_text(slider->button);
 	ft_strdel(&slide_str);
 }
@@ -61,8 +60,7 @@ void	preset_slider_events(t_preset_slider *slider)
 				slider->button->position.x, slider->slider->position.w
 				- slider->button->position.w);
 		slide_str = ft_itoa(slider->value);
-		bui_set_element_text(slider->button, slide_str,
-			slider->button->text_x, slider->button->text_y);
+		bui_set_element_text(slider->button, slide_str);
 		bui_center_element_text(slider->button);
 		ft_strdel(&slide_str);
 	}

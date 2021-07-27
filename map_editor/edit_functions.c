@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 13:55:22 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 15:31:55 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -185,13 +185,13 @@ void	move_selected_sprite(t_editor *editor)
 	move_speed = 0.1f;
 	if (editor->grid.modify_sprite != NULL)
 	{
-		if (key_pressed(editor->libui, KEY_LEFT))
+		if (key_pressed(editor->libui, SDL_SCANCODE_LEFT))
 			editor->grid.modify_sprite->real_x -= move_speed;
-		else if (key_pressed(editor->libui, KEY_RIGHT))
+		else if (key_pressed(editor->libui, SDL_SCANCODE_RIGHT))
 			editor->grid.modify_sprite->real_x += move_speed;
-		if (key_pressed(editor->libui, KEY_UP))
+		if (key_pressed(editor->libui, SDL_SCANCODE_UP))
 			editor->grid.modify_sprite->real_y -= move_speed;
-		else if (key_pressed(editor->libui, KEY_DOWN))
+		else if (key_pressed(editor->libui, SDL_SCANCODE_DOWN))
 			editor->grid.modify_sprite->real_y += move_speed;
 		changer_prefab_events_float(editor->sprite_scale_changer,
 			&editor->grid.modify_sprite->scale, 0.1f);
@@ -308,9 +308,9 @@ void	loop_all_fandc_texture_buttons(t_editor *editor)
 	{
 		if (((t_bui_element *)curr->content)->was_clicked_last_frame)
 		{
-			if (mouse_pressed(editor->libui, MKEY_LEFT))
+			if (mouse_pressed(editor->libui, SDL_BUTTON_LEFT))
 				editor->active_floor_texture = curr->content;
-			else if (mouse_pressed(editor->libui, MKEY_RIGHT))
+			else if (mouse_pressed(editor->libui, SDL_BUTTON_RIGHT))
 				editor->active_ceiling_texture = curr->content;
 		}
 		curr = curr->next;

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 13:55:14 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 14:19:24 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -418,7 +418,7 @@ void	changer_prefab_events(
 	else if (bui_button(changer->sub_button))
 		*current_value -= change_amount;
 	str = ft_sprintf("%d", *current_value);
-	bui_change_element_text(changer->value, str);
+	bui_set_element_text(changer->value, str);
 	ft_strdel(&str);
 }
 
@@ -435,7 +435,7 @@ void	changer_prefab_events_float(
 	else if (bui_button(changer->sub_button))
 		*current_value -= change_amount;
 	str = ft_sprintf("%.1f", *current_value);
-	bui_change_element_text(changer->value, str);
+	bui_set_element_text(changer->value, str);
 	ft_strdel(&str);
 }
 
@@ -543,8 +543,8 @@ void	sector_slope_floor_changer_init(t_editor *editor)
 			+ editor->slope_floor_title->position.h + 10, 100, 40);
 	editor->slope_floor_wall_changer
 		= new_changer_prefab(editor->slope_edit_menu, "Wall ID", coord);
-	bui_change_element_text(editor->slope_floor_wall_changer->sub_button, "<");
-	bui_change_element_text(editor->slope_floor_wall_changer->add_button, ">");
+	bui_set_element_text(editor->slope_floor_wall_changer->sub_button, "<");
+	bui_set_element_text(editor->slope_floor_wall_changer->add_button, ">");
 	coord = new_xywh(editor->slope_floor_wall_changer->menu->position.x
 			+ editor->slope_floor_wall_changer->menu->position.w + 10,
 			editor->slope_floor_wall_changer->menu->position.y, 100, 40);
@@ -567,9 +567,9 @@ void	sector_slope_ceiling_changer_init(t_editor *editor)
 			+ editor->slope_ceiling_title->position.h + 10, 100, 40);
 	editor->slope_ceiling_wall_changer
 		= new_changer_prefab(editor->slope_edit_menu, "Wall ID", coord);
-	bui_change_element_text(editor->slope_ceiling_wall_changer->sub_button,
+	bui_set_element_text(editor->slope_ceiling_wall_changer->sub_button,
 		"<");
-	bui_change_element_text(editor->slope_ceiling_wall_changer->add_button,
+	bui_set_element_text(editor->slope_ceiling_wall_changer->add_button,
 		">");
 	coord = new_xywh(editor->slope_ceiling_wall_changer->menu->position.x
 			+ editor->slope_ceiling_wall_changer->menu->position.w + 10,

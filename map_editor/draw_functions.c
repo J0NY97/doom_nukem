@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 15:49:52 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 15:36:48 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -187,18 +187,18 @@ void	click_calc(t_editor *editor, t_grid *grid)
 			grid->elem->position.w, grid->elem->position.h}))
 		return ;
 	if (editor->libui->mouse_down_last_frame
-		&& mouse_pressed(editor->libui, MKEY_LEFT))
+		&& mouse_pressed(editor->libui, SDL_BUTTON_LEFT))
 		click_calc_sec(grid);
 	else if (editor->libui->mouse_down_last_frame
-		&& mouse_pressed(editor->libui, MKEY_RIGHT))
+		&& mouse_pressed(editor->libui, SDL_BUTTON_RIGHT))
 		click_calc_ent(editor);
-	else if (mouse_pressed(editor->libui, MKEY_MIDDLE))
+	else if (mouse_pressed(editor->libui, SDL_BUTTON_MIDDLE))
 		editor->spawn.pos = grid->hover;
 }
 
 void	unselect_selected(t_editor *editor, t_grid *grid)
 {
-	if (key_pressed(editor->libui, KEY_B))
+	if (key_pressed(editor->libui, SDL_SCANCODE_B))
 	{
 		grid->selected1 = (t_vector){0, 0, 0};
 		grid->selected2 = (t_vector){0, 0, 0};
@@ -419,6 +419,6 @@ void	draw_hover_info(t_editor *doom, t_grid *grid)
 	str = ft_sprintf("%d, %d\nzoom: %d\n", (int)grid->hover.x,
 			(int)grid->hover.y, (int)grid->gap);
 	doom->hover_info->text_color = 0xffffffff;
-	bui_set_element_text(doom->hover_info, str, 0, 0);
+	bui_set_element_text(doom->hover_info, str);
 	ft_strdel(&str);
 }

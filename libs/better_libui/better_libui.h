@@ -201,11 +201,14 @@ struct s_bui_window
 /*
  * t_list	*windows; list of t_bui_window
  * t_list	*menus; list of t_bui_element
+ * char		*keys; https://wiki.libsdl.org/SDL_Scancode
+ * char		*mouse_buttons; https://wiki.libsdl.org/SDL_MouseButtonEvent
 */
 struct s_bui_libui
 {
 	SDL_Event	event;
-	char		events[EVENT_LAST];
+	char		keys[SDL_NUM_SCANCODES];
+	char		mouse_buttons[5];
 	char		*last_key;
 	int			last_mouse_x;
 	int			last_mouse_y;
@@ -269,7 +272,6 @@ void				bui_set_window_color(t_bui_window *win, Uint32 color);
 void				bui_set_window_icon(t_bui_window *window, char *image_path);
 
 // Render stuff
-void				bui_render(t_bui_window *win);
 void				bui_render_to_screen(t_bui_element *elem);
 
 // Event handling
@@ -288,6 +290,7 @@ int					number_pressed(t_bui_libui *libui);
 
 // Menubar stuff
 t_bui_element		*bui_new_menu(t_bui_window *win, char *name, t_xywh pos);
+void				update_element(t_bui_element *elem, SDL_Window *win);
 
 // Element stuff
 t_bui_element		*bui_new_element_defaults(t_bui_libui *libui, char *text, t_xywh pos);
@@ -301,7 +304,7 @@ void				bui_set_element_list_color(t_list *list, Uint32 color);
 void				bui_set_element_border(t_bui_element *elem, int thiccness, Uint32 color);
 void				bui_set_element_state_border(t_bui_element *elem, int thiccness, Uint32 color, int state);
 // Text
-void				bui_set_element_text(t_bui_element *elem, char *text, int x, int y);
+void				bui_set_element_text(t_bui_element *elem, char *text);
 void				bui_set_element_text_position(t_bui_element *elem, int x, int y);
 void				bui_change_element_text(t_bui_element *elem, char *text);
 void				bui_set_element_text_color(t_bui_element *elem, Uint32 color);
@@ -360,8 +363,8 @@ void				bui_render_the_event(t_bui_libui *libui);
 void				bui_libui_quit(t_bui_libui *libui);
 void				bui_element_free(void *elem, size_t size);
 // New testing purposeum
-void				bui_event_handler_new(t_bui_libui *libui);
-void				bui_render_new(t_bui_libui *libui);
+void				bui_event_handler(t_bui_libui *libui);
+void				bui_render(t_bui_libui *libui);
 
 /////////////////
 // PRESET STUFF

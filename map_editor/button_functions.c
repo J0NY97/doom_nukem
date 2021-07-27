@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 13:59:23 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 18:13:24 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 15:27:51 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -145,15 +145,15 @@ void	other_box_events(t_editor *editor)
 
 void	select_mode_shortcut(t_editor *editor)
 {
-	if (key_pressed(editor->libui, KEY_1))
+	if (key_pressed(editor->libui, SDL_SCANCODE_1))
 		editor->active_select_mode = editor->button_draw;
-	else if (key_pressed(editor->libui, KEY_2))
+	else if (key_pressed(editor->libui, SDL_SCANCODE_2))
 		editor->active_select_mode = editor->select_mode_vertex;
-	else if (key_pressed(editor->libui, KEY_3))
+	else if (key_pressed(editor->libui, SDL_SCANCODE_3))
 		editor->active_select_mode = editor->select_mode_wall;
-	else if (key_pressed(editor->libui, KEY_4))
+	else if (key_pressed(editor->libui, SDL_SCANCODE_4))
 		editor->active_select_mode = editor->select_mode_sector;
-	else if (key_pressed(editor->libui, KEY_5))
+	else if (key_pressed(editor->libui, SDL_SCANCODE_5))
 		editor->active_select_mode = editor->select_mode_entity;
 }
 
@@ -186,8 +186,7 @@ void	add_text_to_info_box(t_editor *editor, char *text)
 	editor->info_box_start_timer = SDL_GetTicks();
 	editor->info_box_timer = 5000;
 	editor->info_box->text_color = 0x00ffffff;
-	bui_set_element_text(editor->info_box, text,
-		editor->info_box->text_x, editor->info_box->text_y);
+	bui_set_element_text(editor->info_box, text);
 }
 
 int	get_list_len(t_list *list)

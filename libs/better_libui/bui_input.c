@@ -36,13 +36,13 @@ char	*add_to_input(t_bui_element *input)
 		new_str = ft_strdup(input->text);
 	else
 		new_str = ft_strnew(0);
-	if (key_pressed(libui, KEY_SPACE))
+	if (key_pressed(libui, SDL_SCANCODE_SPACE))
 		ft_straddchar(&new_str, ' ');
 	else
 	{
 		if (alpha_pressed(libui) || number_pressed(libui))
 		{
-			if (!key_pressed(libui, KEY_LSHIFT))
+			if (!key_pressed(libui, SDL_SCANCODE_LSHIFT))
 				ft_straddchar(&new_str,
 					ft_tolower(libui->last_key[0]));
 			else
@@ -63,16 +63,16 @@ int	bui_input(t_bui_element *input)
 	{
 		if (libui->last_key != NULL)
 		{
-			if (key_pressed(libui, KEY_RETURN))
+			if (key_pressed(libui, SDL_SCANCODE_RETURN))
 			{
 				input->toggle = 0;
 				return (1);
 			}
-			else if (key_pressed(libui, KEY_BACKSPACE))
+			else if (key_pressed(libui, SDL_SCANCODE_BACKSPACE))
 				new_str = remove_from_input(input);
 			else
 				new_str = add_to_input(input);
-			bui_change_element_text(input, new_str);
+			bui_set_element_text(input, new_str);
 			ft_strdel(&new_str);
 		}
 	}

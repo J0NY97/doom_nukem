@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:55:18 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 11:55:19 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 15:06:58 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -127,12 +127,12 @@ void	map_editor(char *map)
 	{
 		bui_fps_func(fps);
 		update_title_fps(editor->window->win, fps);
-		bui_event_handler_new(libui);
+		bui_event_handler(libui);
 		draw_grid(editor, &editor->grid);
 		hover_calc(editor, &editor->grid);
 		button_choice_event(editor);
 		general_events(editor);
-		bui_render_new(libui);
+		bui_render(libui);
 	}
 	ft_putstr("[map_editor] Bye!\n");
 	free(fps);

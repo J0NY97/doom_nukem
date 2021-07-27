@@ -7,12 +7,16 @@ SRCS = \
        ./bui_libui.c \
        ./bui_preset.c \
        ./bui_text.c \
+       ./bui_text_other.c \
+       ./bui_text_pos.c \
        ./bui_window.c \
        ./dir_open.c \
        ./load_image.c \
        ./bui_quit.c \
        ./bui_draw_circle.c \
        ./bui_draw_line.c \
+       ./bui_render0.c \
+       ./bui_render1.c \
        ./bui_render.c \
        ./bui_events.c \
        ./bui_input.c \

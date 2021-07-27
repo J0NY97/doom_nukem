@@ -41,19 +41,7 @@ SDL_Surface	*bui_make_text_surface_from_recipe(t_text_recipe *recipe)
 	return (surface);
 }
 
-void	bui_change_element_text(t_bui_element *elem, char *text)
-{
-	char	*font_name;
-
-	font_name = ft_strdup(elem->font_name);
-	ft_strdel(&elem->text);
-	elem->text = ft_strdup(text);
-	bui_set_element_text_font(elem, font_name,
-		elem->font_size, elem->text_color);
-	ft_strdel(&font_name);
-}
-
-void	bui_set_element_text(t_bui_element *elem, char *text, int x, int y)
+void	bui_set_element_text(t_bui_element *elem, char *text)
 {
 	char	*temp_font_name;
 
@@ -66,8 +54,6 @@ void	bui_set_element_text(t_bui_element *elem, char *text, int x, int y)
 	if (!text)
 		return ;
 	elem->text = ft_strdup(text);
-	elem->text_x = x;
-	elem->text_y = y;
 	temp_font_name = ft_strdup(elem->font_name);
 	bui_set_element_text_font(elem, temp_font_name,
 		elem->font_size, elem->text_color);
@@ -82,41 +68,6 @@ void	bui_remove_element_text(t_bui_element *elem)
 		SDL_FreeSurface(elem->text_surface);
 	elem->text = NULL;
 	elem->text_surface = NULL;
-}
-
-void	bui_set_element_text_color(t_bui_element *elem, Uint32 color)
-{
-	char	*font_name;
-
-	font_name = ft_strdup(elem->font_name);
-	bui_set_element_text_font(elem, font_name, elem->font_size, color);
-	ft_strdel(&font_name);
-}
-
-void	bui_set_element_text_size(t_bui_element *elem, Uint32 size)
-{
-	char	*font_name;
-
-	font_name = ft_strdup(elem->font_name);
-	bui_set_element_text_font(elem, font_name, size, elem->text_color);
-	ft_strdel(&font_name);
-}
-
-void	bui_element_set_text_font(t_bui_element *elem, char *font_name)
-{
-	bui_set_element_text_font(elem, font_name,
-		elem->font_size, elem->text_color);
-}
-
-void	bui_element_set_text_style(t_bui_element *elem, int style)
-{
-	char	*font_name;
-
-	elem->font_style = style;
-	font_name = ft_strdup(elem->font_name);
-	bui_set_element_text_font(elem, font_name,
-		elem->font_size, elem->text_color);
-	ft_strdel(&font_name);
 }
 
 void	bui_set_element_text_font(
@@ -148,40 +99,4 @@ void	bui_set_element_text_font(
 	}
 	else
 		ft_putstr("[bui_set_element_text_font] Couldnt make text surface.\n");
-}
-
-void	bui_set_element_text_position(t_bui_element *elem, int x, int y)
-{
-	elem->text_x = x;
-	elem->text_y = y;
-}
-
-void	bui_center_element_text_x(t_bui_element *elem)
-{
-	int	text_w;
-	int	text_h;
-
-	if (!elem->font || !elem->text)
-		return ;
-	TTF_SizeText(elem->font, elem->text, &text_w, &text_h);
-	elem->text_x = (elem->position.w / 2) - (text_w / 2);
-}
-
-void	bui_center_element_text_y(t_bui_element *elem)
-{
-	int	text_w;
-	int	text_h;
-
-	if (!elem->font || !elem->text)
-		return ;
-	TTF_SizeText(elem->font, elem->text, &text_w, &text_h);
-	elem->text_y = (elem->position.h / 2) - (text_h / 2);
-}
-
-void	bui_center_element_text(t_bui_element *elem)
-{
-	if (!elem->font || !elem->text)
-		return ;
-	bui_center_element_text_x(elem);
-	bui_center_element_text_y(elem);
 }
