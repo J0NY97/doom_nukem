@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 12:19:16 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 15:49:45 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 13:55:14 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,7 @@ void	window_init(t_editor *editor, t_bui_libui *libui)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(10, 10, 1920, 1080);
+	coord = new_xywh(10, 10, 1920, 1080);
 	editor->window = bui_new_window(libui, "Doom Editor", coord, 0);
 	bui_set_window_color(editor->window, editor->palette.win);
 	bui_set_window_icon(editor->window, ICON_PATH"damage.png");
@@ -26,7 +26,7 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(500, 500, 1000, 500);
+	coord = new_xywh(500, 500, 1000, 500);
 	editor->new_edit_window = bui_new_window(libui, "Editor", coord, 0);
 	bui_set_window_color(editor->new_edit_window, editor->palette.win);
 	SDL_MinimizeWindow(editor->new_edit_window->win);
@@ -188,7 +188,7 @@ void	selection_mode_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(10, 25, editor->toolbox->position.w - 20, 55);
+	coord = new_xywh(10, 25, editor->toolbox->position.w - 20, 55);
 	editor->select_mode = bui_new_element(editor->toolbox, "Mode", coord);
 	editor->select_mode->update_state = 0;
 	bui_set_element_text_font(editor->select_mode, TTF_PATH"DroidSans.ttf",
@@ -201,7 +201,7 @@ void	toolbox_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(10, 10, editor->window->active_surface->w / 7,
+	coord = new_xywh(10, 10, editor->window->active_surface->w / 7,
 			editor->window->active_surface->h - 20);
 	editor->toolbox = bui_new_menu(editor->window, "toolbox", coord);
 	editor->toolbox->update_state = 0;
@@ -218,7 +218,7 @@ void	init_info_box(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(10, editor->info_area->position.h - 40 - 10,
+	coord = new_xywh(10, editor->info_area->position.h - 40 - 10,
 			editor->info_area->position.w - 20, 40);
 	editor->info_box = bui_new_element(editor->info_area, NULL, coord);
 	editor->info_box->update_state = 0;
@@ -232,13 +232,13 @@ void	button_init_info_area(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(editor->info_area->position.w - 110, 25, 32, 32);
+	coord = new_xywh(editor->info_area->position.w - 110, 25, 32, 32);
 	editor->button_remove = bui_new_element(editor->info_area, NULL, coord);
 	bui_set_element_image_to_states(editor->button_remove,
 		ICON_PATH"remove_button.png",
 		ICON_PATH"remove_button_click.png",
 		ICON_PATH"remove_button_click.png");
-	coord = ui_init_coords(editor->info_area->position.w
+	coord = new_xywh(editor->info_area->position.w
 			- 110 + 32 + 10, 25, 32, 32);
 	editor->button_edit = bui_new_element(editor->info_area, NULL, coord);
 	bui_set_element_image_to_states(editor->button_edit,
@@ -251,7 +251,7 @@ void	general_info_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(10, editor->selected_vector_info->position.y
+	coord = new_xywh(10, editor->selected_vector_info->position.y
 			+ editor->selected_vector_info->position.h + 5,
 			editor->info_area->position.w - 20, 40);
 	editor->general_info = bui_new_element(editor->info_area, "Info", coord);
@@ -266,21 +266,21 @@ void	info_area_init(t_editor *editor, t_xywh c)
 	editor->info_area = bui_new_element(editor->toolbox, NULL, c);
 	editor->info_area->update_state = 0;
 	bui_set_element_color(editor->info_area, editor->palette.elem_elem);
-	coord = ui_init_coords(10, 20, 100, 50);
+	coord = new_xywh(10, 20, 100, 50);
 	editor->hover_info = bui_new_element(editor->info_area, NULL, coord);
 	bui_set_element_color(editor->hover_info, editor->info_area->color);
-	coord = ui_init_coords(10, 75, 100, 50);
+	coord = new_xywh(10, 75, 100, 50);
 	editor->selected_sector_info
 		= bui_new_element(editor->info_area, NULL, coord);
 	editor->selected_sector_info->text_color = 0xffffffff;
 	bui_set_element_color(editor->selected_sector_info,
 		editor->info_area->color);
-	coord = ui_init_coords(10, 130, 100, 55);
+	coord = new_xywh(10, 130, 100, 55);
 	editor->selected_vector_info
 		= bui_new_element(editor->info_area, NULL, coord);
 	bui_set_element_color(editor->selected_vector_info,
 		editor->info_area->color);
-	coord = ui_init_coords(editor->info_area->position.w - 110, 100, 100, 40);
+	coord = new_xywh(editor->info_area->position.w - 110, 100, 100, 40);
 	editor->scaler = new_changer_prefab(editor->info_area, "Map Scale", coord);
 	init_info_box(editor);
 	general_info_init(editor);
@@ -309,12 +309,12 @@ void	map_type_tickbox_init(int gap, t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(editor->button_save->position.x
+	coord = new_xywh(editor->button_save->position.x
 			+ editor->button_save->position.w + gap,
 			editor->button_save->position.y - gap, 20, 20);
 	editor->endless_tickbox = new_map_type_tickbox(editor->other_mode,
 			"endless", coord);
-	coord = ui_init_coords(editor->button_save->position.x
+	coord = new_xywh(editor->button_save->position.x
 			+ editor->button_save->position.w + gap,
 			editor->button_save->position.y + gap, 20, 20);
 	editor->story_tickbox = new_map_type_tickbox(editor->other_mode,
@@ -333,11 +333,11 @@ void	button_init_other(int button_w, int gap, t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(gap, 20, 100, 20);
+	coord = new_xywh(gap, 20, 100, 20);
 	editor->map_name_input
 		= bui_new_element(editor->other_mode, editor->mapname, coord);
 	editor->map_name_input->text_x = 5;
-	coord = ui_init_coords(editor->map_name_input->position.x
+	coord = new_xywh(editor->map_name_input->position.x
 			+ editor->map_name_input->position.w + gap, 20,
 			button_w, button_w);
 	editor->button_save = bui_new_element(editor->other_mode,
@@ -358,8 +358,8 @@ void	button_init(t_editor *editor)
 
 	gap = 10;
 	button_w = 32;
-	coord = ui_init_coords(10, 25, 50, 55);
-	coord = ui_init_coords(editor->select_mode->position.x,
+	coord = new_xywh(10, 25, 50, 55);
+	coord = new_xywh(editor->select_mode->position.x,
 			editor->select_mode->position.y
 			+ editor->select_mode->position.h + 10,
 			editor->toolbox->position.w - 20, 55);
@@ -392,9 +392,9 @@ t_changer_prefab *
 	prefab = ft_memalloc(sizeof(t_changer_prefab));
 	prefab->menu = bui_new_element(parent_menu, title, coord);
 	bui_set_element_flags(prefab->menu, BUI_ELEMENT_DONT_UPDATE_STATE);
-	temp_coord = ui_init_coords(0, coord.h - 20, 20, 20);
+	temp_coord = new_xywh(0, coord.h - 20, 20, 20);
 	prefab->sub_button = bui_new_element(prefab->menu, "-", temp_coord);
-	temp_coord = ui_init_coords(coord.w - 20, coord.h - 20, 20, 20);
+	temp_coord = new_xywh(coord.w - 20, coord.h - 20, 20, 20);
 	prefab->add_button = bui_new_element(prefab->menu, "+", temp_coord);
 	temp_coord.x = prefab->sub_button->position.x
 		+ prefab->sub_button->position.w;
@@ -450,7 +450,7 @@ void	new_texture_button(
 
 	button_gap = 20;
 	amount_on_x = floor(parent->position.w / (50 + button_gap + 20));
-	coord = ui_init_coords(0, 0, 50, 50);
+	coord = new_xywh(0, 0, 50, 50);
 	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + 20;
 	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + 50;
 	str = ft_sprintf("%d", i);
@@ -483,7 +483,7 @@ void	floor_and_ceiling_texture_menu_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(editor->edit_toolbox_sector->position.x
+	coord = new_xywh(editor->edit_toolbox_sector->position.x
 			+ editor->edit_toolbox_sector->position.w + 5, 5,
 			(editor->new_edit_window->position.w
 				- editor->edit_toolbox_sector->position.w - 15) * 0.5,
@@ -493,12 +493,12 @@ void	floor_and_ceiling_texture_menu_init(t_editor *editor)
 	bui_set_element_color(editor->sector_texture_menu,
 		editor->palette.elem_elem_elem);
 	texture_buttons_init(editor);
-	coord = ui_init_coords(editor->sector_texture_menu->position.w - 100,
+	coord = new_xywh(editor->sector_texture_menu->position.w - 100,
 			0, 50, 20);
 	editor->floor_texture_title
 		= bui_new_element(editor->sector_texture_menu, "Floor", coord);
 	bui_set_element_color(editor->floor_texture_title, 0xff0000ff);
-	coord = ui_init_coords(editor->sector_texture_menu->position.w - 50,
+	coord = new_xywh(editor->sector_texture_menu->position.w - 50,
 			0, 50, 20);
 	editor->ceiling_texture_title
 		= bui_new_element(editor->sector_texture_menu, "Ceiling", coord);
@@ -509,7 +509,7 @@ void	sector_edit_changer_inits(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(5, (25 * 1) + (40 * 0), 100, 40);
+	coord = new_xywh(5, (25 * 1) + (40 * 0), 100, 40);
 	editor->floor_height = new_changer_prefab(editor->edit_toolbox_sector,
 			"floor height", coord);
 	coord.y = (25 * 2) + (40 * 1);
@@ -533,19 +533,19 @@ void	sector_slope_floor_changer_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(10, editor->slope_sector->position.y
+	coord = new_xywh(10, editor->slope_sector->position.y
 			+ editor->slope_sector->position.h + 10, 100, 20);
 	editor->slope_floor_title = bui_new_element(editor->slope_edit_menu,
 			"Floor", coord);
 	bui_set_element_color(editor->slope_floor_title, 0xff0000ff);
-	coord = ui_init_coords(editor->slope_floor_title->position.x,
+	coord = new_xywh(editor->slope_floor_title->position.x,
 			editor->slope_floor_title->position.y
 			+ editor->slope_floor_title->position.h + 10, 100, 40);
 	editor->slope_floor_wall_changer
 		= new_changer_prefab(editor->slope_edit_menu, "Wall ID", coord);
 	bui_change_element_text(editor->slope_floor_wall_changer->sub_button, "<");
 	bui_change_element_text(editor->slope_floor_wall_changer->add_button, ">");
-	coord = ui_init_coords(editor->slope_floor_wall_changer->menu->position.x
+	coord = new_xywh(editor->slope_floor_wall_changer->menu->position.x
 			+ editor->slope_floor_wall_changer->menu->position.w + 10,
 			editor->slope_floor_wall_changer->menu->position.y, 100, 40);
 	editor->slope_floor_angle_changer
@@ -556,13 +556,13 @@ void	sector_slope_ceiling_changer_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(10,
+	coord = new_xywh(10,
 			editor->slope_floor_wall_changer->menu->position.y
 			+ editor->slope_floor_wall_changer->menu->position.h + 10, 100, 20);
 	editor->slope_ceiling_title = bui_new_element(editor->slope_edit_menu,
 			"Ceiling", coord);
 	bui_set_element_color(editor->slope_ceiling_title, 0xff00ff00);
-	coord = ui_init_coords(editor->slope_ceiling_title->position.x,
+	coord = new_xywh(editor->slope_ceiling_title->position.x,
 			editor->slope_ceiling_title->position.y
 			+ editor->slope_ceiling_title->position.h + 10, 100, 40);
 	editor->slope_ceiling_wall_changer
@@ -571,7 +571,7 @@ void	sector_slope_ceiling_changer_init(t_editor *editor)
 		"<");
 	bui_change_element_text(editor->slope_ceiling_wall_changer->add_button,
 		">");
-	coord = ui_init_coords(editor->slope_ceiling_wall_changer->menu->position.x
+	coord = new_xywh(editor->slope_ceiling_wall_changer->menu->position.x
 			+ editor->slope_ceiling_wall_changer->menu->position.w + 10,
 			editor->slope_ceiling_wall_changer->menu->position.y, 100, 40);
 	editor->slope_ceiling_angle_changer
@@ -582,7 +582,7 @@ void	sector_slope_edit_menu_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(editor->sector_texture_menu->position.x
+	coord = new_xywh(editor->sector_texture_menu->position.x
 			+ editor->sector_texture_menu->position.w + 5, 5,
 			editor->new_edit_window->position.w
 			- editor->sector_texture_menu->position.w
@@ -592,7 +592,7 @@ void	sector_slope_edit_menu_init(t_editor *editor)
 			"Slope Edit", coord);
 	bui_set_element_color(editor->slope_edit_menu,
 		editor->palette.elem_elem_elem);
-	coord = ui_init_coords(10, 20, editor->slope_edit_menu->position.w - 20,
+	coord = new_xywh(10, 20, editor->slope_edit_menu->position.w - 20,
 			editor->slope_edit_menu->position.h * 0.5);
 	editor->slope_sector = bui_new_element(editor->slope_edit_menu,
 			"Sector", coord);
@@ -605,7 +605,7 @@ void	init_sector_editor(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f,
+	coord = new_xywh(5, 5, editor->new_edit_window->position.w * 0.20f,
 			editor->new_edit_window->position.h - 10);
 	editor->edit_toolbox_sector = bui_new_menu(editor->new_edit_window,
 			"New Toolbox", coord);
@@ -627,7 +627,7 @@ void	new_wall_texture_button(
 
 	button_gap = 15;
 	amount_on_x = floor(parent->position.w / (50 + button_gap + 5));
-	coord = ui_init_coords(0, 0, 50, 50);
+	coord = new_xywh(0, 0, 50, 50);
 	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + 5;
 	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + 70;
 	str = ft_itoa(i);
@@ -688,7 +688,7 @@ void	tabsystem_wall_editor_init(t_editor *editor)
 {
 	t_xywh			coord;
 
-	coord = ui_init_coords(5, 20,
+	coord = new_xywh(5, 20,
 			editor->edit_toolbox_wall->position.w - 10,
 			editor->edit_toolbox_wall->position.h - 25);
 	editor->wall_tab = bui_new_tab_preset(editor->edit_toolbox_wall,
@@ -705,7 +705,7 @@ void	wall_tab_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(5, 20, 80, 40);
+	coord = new_xywh(5, 20, 80, 40);
 	editor->texture_scale_changer
 		= new_changer_prefab(editor->wall_texture_view, "texture scale", coord);
 	bui_set_element_color(editor->texture_scale_changer->menu, 0xff06D6A0);
@@ -714,12 +714,12 @@ void	wall_tab_init(t_editor *editor)
 	bui_set_element_color(editor->texture_scale_changer->value, 0xff06D6A0);
 	bui_set_element_color(editor->texture_scale_changer->add_button,
 		0xff06D6A0);
-	coord = ui_init_coords(115, 20, 100, 20);
+	coord = new_xywh(115, 20, 100, 20);
 	editor->wall_solid = bui_new_element(editor->wall_texture_view,
 			"Solid:", coord);
 	bui_set_element_color(editor->wall_solid,
 		((t_bui_element *)editor->wall_solid->parent)->color);
-	coord = ui_init_coords(40, 0, 20, 20);
+	coord = new_xywh(40, 0, 20, 20);
 	editor->wall_solid_tick = bui_new_element(editor->wall_solid, NULL, coord);
 	bui_set_element_image_to_states(editor->wall_solid_tick,
 		ICON_PATH"tick_box_off.png",
@@ -731,12 +731,12 @@ void	portal_tab_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(115, 40, 100, 20);
+	coord = new_xywh(115, 40, 100, 20);
 	editor->wall_portal = bui_new_element(editor->wall_texture_view,
 			"Portal:", coord);
 	bui_set_element_color(editor->wall_portal,
 		((t_bui_element *)editor->wall_portal->parent)->color);
-	coord = ui_init_coords(40, 0, 20, 20);
+	coord = new_xywh(40, 0, 20, 20);
 	editor->wall_portal_tick = bui_new_element(editor->wall_portal,
 			NULL, coord);
 	bui_set_element_image_to_states(editor->wall_portal_tick,
@@ -749,22 +749,22 @@ void	wall_sprite_tab_init(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(95, 20, 80, 20);
+	coord = new_xywh(95, 20, 80, 20);
 	editor->add_wall_sprite_button = bui_new_element(editor->wall_sprite_view,
 			"add sprite", coord);
 	bui_set_element_color(editor->add_wall_sprite_button, 0xff06D6A0);
-	coord = ui_init_coords(95, 40, 80, 20);
+	coord = new_xywh(95, 40, 80, 20);
 	editor->remove_wall_sprite_button
 		= bui_new_element(editor->wall_sprite_view, "remove sprite", coord);
 	bui_set_element_color(editor->remove_wall_sprite_button, 0xff06D6A0);
-	coord = ui_init_coords(5, 20, 80, 40);
+	coord = new_xywh(5, 20, 80, 40);
 	editor->sprite_scale_changer = new_changer_prefab(editor->wall_sprite_view,
 			"sprite scale", coord);
 	bui_set_element_color(editor->sprite_scale_changer->menu, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->sub_button, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->value, 0xff06D6A0);
 	bui_set_element_color(editor->sprite_scale_changer->add_button, 0xff06D6A0);
-	coord = ui_init_coords(0, 0, 50, 20);
+	coord = new_xywh(0, 0, 50, 20);
 	editor->sprite_changer = new_changer_prefab(editor->wall_sprite_view,
 			"Wall Sprite ID", coord);
 	editor->selected_sprite = 0;
@@ -819,11 +819,11 @@ void	init_wall_editor(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w * 0.20f,
+	coord = new_xywh(5, 5, editor->new_edit_window->position.w * 0.20f,
 			editor->new_edit_window->position.h - 10);
 	editor->edit_toolbox_wall = bui_new_menu(editor->new_edit_window,
 			"New Toolbox", coord);
-	coord = ui_init_coords(editor->edit_toolbox_sector->position.x
+	coord = new_xywh(editor->edit_toolbox_sector->position.x
 			+ editor->edit_toolbox_sector->position.w + 5, 5,
 			editor->new_edit_window->position.w
 			- editor->edit_toolbox_sector->position.w - 15,
@@ -846,7 +846,7 @@ void	new_radio_button(
 	t_xywh			coord;
 	t_bui_element	*radio;
 
-	coord = ui_init_coords(c.x, c.y, 15, 15);
+	coord = new_xywh(c.x, c.y, 15, 15);
 	radio = bui_new_element(parent, str, coord);
 	radio->text_y = -100;
 	bui_set_element_color(radio, 0x00);
@@ -894,7 +894,7 @@ void	add_to_entity_editor(t_editor *editor)
 			((t_entity_preset *)curr->content)->name);
 		curr = curr->next;
 	}
-	coord = ui_init_coords(editor->edit_toolbox_entity->position.w * 0.5f - 50,
+	coord = new_xywh(editor->edit_toolbox_entity->position.w * 0.5f - 50,
 			editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
 	coord.x -= 7;
 	new_radio_button(&editor->entity_direction_radio_buttons,
@@ -913,11 +913,11 @@ void	init_entity_editor2(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(5, 20,
+	coord = new_xywh(5, 20,
 			editor->edit_toolbox_entity->position.w - 10, 20);
 	editor->entity_type_drop = bui_new_dropdown_preset(
 			editor->edit_toolbox_entity, "Entity types", coord);
-	coord = ui_init_coords(editor->edit_toolbox_entity->position.w * 0.5f
+	coord = new_xywh(editor->edit_toolbox_entity->position.w * 0.5f
 			- 50, editor->edit_toolbox_entity->position.h * 0.5f, 100, 100);
 	editor->edit_entity_direction = bui_new_element(
 			editor->edit_toolbox_entity, "Direction", coord);
@@ -931,13 +931,13 @@ void	init_entity_editor(t_editor *editor)
 {
 	t_xywh	coord;
 
-	coord = ui_init_coords(5, 5, editor->new_edit_window->position.w
+	coord = new_xywh(5, 5, editor->new_edit_window->position.w
 			* 0.20f, editor->new_edit_window->position.h - 10);
 	editor->edit_toolbox_entity = bui_new_menu(editor->new_edit_window,
 			"Entity Toolbox", coord);
 	bui_set_element_color(editor->edit_toolbox_entity,
 		editor->palette.elem_elem_elem);
-	coord = ui_init_coords(editor->edit_toolbox_sector->position.x
+	coord = new_xywh(editor->edit_toolbox_sector->position.x
 			+ editor->edit_toolbox_sector->position.w + 5, 5,
 			editor->new_edit_window->position.w
 			- editor->edit_toolbox_sector->position.w - 15,

@@ -2,6 +2,7 @@ NAME = libui.a
 SRCS = \
        ./bui_element.c \
        ./bui_slider.c \
+	   ./bui_draw.c \
        ./bui_event_handler.c \
        ./bui_libui.c \
        ./bui_preset.c \
@@ -16,7 +17,18 @@ SRCS = \
        ./bui_events.c \
        ./bui_input.c \
        ./bui_image.c \
-       ./bui_stuff.c \
+       ./bui_set.c \
+       ./bui_get.c \
+       ./bui_print.c \
+       ./bui_edit.c \
+	   ./bui_fps.c \
+	   ./bui_color.c \
+       ./bui_preset_console.c \
+       ./bui_preset_dropdown.c \
+       ./bui_preset_menu.c \
+       ./bui_preset_scrollbar.c \
+       ./bui_preset_slider.c \
+       ./bui_preset_tab.c \
        ./help.c
 OBJS = $(SRCS:.c=.o)
 

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 14:25:09 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 13:55:22 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,7 +25,7 @@ void	render_sprites_on_the_wall(
 		sprite = curr->content;
 		temp_sprite
 			= editor->texture_textures[sprite->sprite_id];
-		sprite->coord = ui_init_coords(
+		sprite->coord = new_xywh(
 				scale * sprite->real_x, scale * sprite->real_y,
 				scale * sprite->scale, scale * sprite->scale);
 		SDL_BlitScaled(temp_sprite, NULL, scaled_wall, &(SDL_Rect){
@@ -343,7 +343,7 @@ void	draw_selected_f_and_c_button(t_editor *editor)
 
 	if (editor->active_floor_texture)
 	{
-		c = ui_init_coords(0, 0,
+		c = new_xywh(0, 0,
 				editor->active_floor_texture->active_surface->w,
 				editor->active_floor_texture->active_surface->h);
 		draw_rect_border(editor->active_floor_texture->active_surface,
@@ -351,7 +351,7 @@ void	draw_selected_f_and_c_button(t_editor *editor)
 	}
 	if (editor->active_ceiling_texture)
 	{
-		c = ui_init_coords(2, 2,
+		c = new_xywh(2, 2,
 				editor->active_ceiling_texture->active_surface->w - 4,
 				editor->active_ceiling_texture->active_surface->h - 4);
 		draw_rect_border(
