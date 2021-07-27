@@ -59,6 +59,7 @@ t_bui_element	*bui_new_menu(t_bui_window *parent, char *name, t_xywh pos)
 	menu = bui_new_element_defaults(parent->libui, name, pos);
 	menu->type = TYPE_MENU;
 	menu->parent = parent;
+	menu->update_state = 0;
 	add_to_list(&parent->menus, menu, sizeof(t_bui_element));
 	return (menu);
 }

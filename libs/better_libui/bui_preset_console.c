@@ -46,7 +46,7 @@ void	preset_console_events(t_preset_console *console)
 	libui = console->menu->menu->libui;
 	preset_menu_events(console->menu);
 	if (bui_button(console->send)
-		|| (console->input->toggle && key_pressed(libui, KEY_RETURN)))
+		|| (console->input->toggle && key_pressed(libui, SDL_SCANCODE_RETURN)))
 	{
 		console_log(console, console->input->text);
 		if (console->latest_command)

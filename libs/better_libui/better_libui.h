@@ -21,74 +21,6 @@ enum e_types
 	ELEMENT_ALL = 4
 };
 
-enum e_events
-{
-	EVENT_FIRST = 0,
-	KEY_LCTRL,
-	KEY_LSHIFT,
-	KEY_SPACE,
-	KEY_RETURN,
-	KEY_ESCAPE,
-	KEY_BACKSPACE,
-	KEY_A,
-	KEY_B,
-	KEY_C,
-	KEY_D,
-	KEY_E,
-	KEY_F,
-	KEY_G,
-	KEY_H,
-	KEY_I,
-	KEY_J,
-	KEY_K,
-	KEY_L,
-	KEY_M,
-	KEY_N,
-	KEY_O,
-	KEY_P,
-	KEY_Q,
-	KEY_R,
-	KEY_S,
-	KEY_T,
-	KEY_U,
-	KEY_V,
-	KEY_W,
-	KEY_X,
-	KEY_Y,
-	KEY_Z,
-	KEY_0,
-	KEY_1,
-	KEY_2,
-	KEY_3,
-	KEY_4,
-	KEY_5,
-	KEY_6,
-	KEY_7,
-	KEY_8,
-	KEY_9,
-	KEYP_0,
-	KEYP_1,
-	KEYP_2,
-	KEYP_3,
-	KEYP_4,
-	KEYP_5,
-	KEYP_6,
-	KEYP_7,
-	KEYP_8,
-	KEYP_9,
-	KEY_LEFT,
-	KEY_RIGHT,
-	KEY_UP,
-	KEY_DOWN,
-	MKEY_LEFT,
-	MKEY_RIGHT,
-	MKEY_MIDDLE,
-	MWHEEL,
-	KPKEY_PLUS,
-	KPKEY_MINUS,
-	EVENT_LAST
-};
-
 enum e_element_types
 {
 	TYPE_MENU,
@@ -141,7 +73,7 @@ typedef struct s_text_recipe
 SDL_Surface			*bui_make_text_surface_from_recipe(t_text_recipe *recipe);
 
 /*
- * t_list *children; list of t_bui_element
+ * t_list	*children; list of t_bui_element
 */
 struct s_bui_element
 {

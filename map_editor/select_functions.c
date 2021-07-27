@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 15:30:24 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 15:45:28 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -240,7 +240,7 @@ void	select_wall(t_editor *editor)
 void	selection(t_editor *editor, t_grid *grid)
 {
 	if (editor->libui->mouse_down_last_frame
-		&& mouse_pressed(editor->libui, MKEY_LEFT))
+		&& mouse_pressed(editor->libui, SDL_BUTTON_LEFT))
 	{
 		if (bui_button_toggle(editor->select_mode_vertex))
 			select_point(grid);
