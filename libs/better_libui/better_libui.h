@@ -290,6 +290,7 @@ int					number_pressed(t_bui_libui *libui);
 t_bui_element		*bui_new_menu(t_bui_window *win, char *name, t_xywh pos);
 
 // Element stuff
+t_bui_element		*bui_new_element_defaults(t_bui_libui *libui, char *text, t_xywh pos);
 t_bui_element		*bui_new_element(t_bui_element *menu, char *name, t_xywh pos);
 void				bui_set_element_state(t_bui_element *elem, int state);
 int					bui_button(t_bui_element *button);
@@ -343,6 +344,7 @@ t_rgba				hex_to_rgba(Uint32 color_hex);
 Uint32				rgba_to_hex(t_rgba rgba);
 void				draw_rect(SDL_Surface *surface, t_xywh c, Uint32 color, int fill);
 void				draw_rect_border(SDL_Surface *surface, t_xywh c, Uint32 color, unsigned int size);
+void				draw_surface_border(SDL_Surface *surface, Uint32 color, int thiccness);
 int					hitbox_rect(int x, int y, t_xywh rect);
 t_xywh				ui_init_coords(int x, int y, int w, int h);
 t_xywh				new_xywh(int x, int y, int w, int h);

@@ -1,32 +1,17 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   bui_text.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/27 11:59:02 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/27 12:22:11 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "better_libui.h"
 
-SDL_Surface	*bui_new_text(
-		char *text, TTF_Font *font, Uint32 font_color, int max_w)
-{
-	SDL_Surface	*text_surface;
-	t_rgba		rgb;
-
-	if (!text)
-	{
-		ft_printf("[bui_new_text] char *text == NULL\n");
-		return (NULL);
-	}
-	if (!font)
-	{
-		ft_printf("[bui_new_text]: TTF_Font *font == NULL\n");
-		return (NULL);
-	}
-	if (ft_strlen(text) == 0)
-		ft_printf("[bui_new_text] char *text len == 0\n");
-	rgb = hex_to_rgba(font_color);
-	text_surface = TTF_RenderUTF8_Blended_Wrapped(font, text,
-			(SDL_Color){.a = rgb.a, .r = rgb.r, .g = rgb.g, .b = rgb.b}, max_w);
-	if (!text_surface)
-		ft_printf("[bui_new_text]: text_surface ; %s\n", TTF_GetError());
-	return (text_surface);
-}
-
-// This function is in prototype mode.
 SDL_Surface	*bui_make_text_surface_from_recipe(t_text_recipe *recipe)
 {
 	SDL_Surface	*surface;
@@ -50,34 +35,153 @@ SDL_Surface	*bui_make_text_surface_from_recipe(t_text_recipe *recipe)
 	TTF_CloseFont(font);
 	if (!surface)
 	{
-		ft_printf("[bui_make_text_surface_from_recipe] no surface made for text: %s, TTF?ERROR : %s!", recipe->text, TTF_GetError());
+		ft_printf("[bui_make_text_surface_from_recipe] no surface made for "\
+			"text: %s,TTF?ERROR : %s!", recipe->text, TTF_GetError());
 	}
 	return (surface);
 }
 
-// Dont use this before its tested.
-void	bui_element_update_text(t_bui_element *elem)
+void	bui_change_element_text(t_bui_element *elem, char *text)
 {
-	TTF_Font	*font;	
-	SDL_Surface	*surface;
+	char	*font_name;
 
-	font = TTF_OpenFont(elem->font_name, elem->font_size);
-	if (!font)
-	{
-		ft_printf("[bui_element_update_text] TTF_ERROR:  %s", TTF_GetError());
-		return ;
-	}
-	if (elem->font)
-		TTF_CloseFont(elem->font);
-	elem->font = font;
-	surface = bui_new_text(elem->text, elem->font,
-			elem->text_color, elem->position.w);
-	if (!surface)
-	{
-		ft_printf("[bui_element_update_text] TTF_ERROR:  %s", TTF_GetError());
-		return ;
-	}
+	font_name = ft_strdup(elem->font_name);
+	ft_strdel(&elem->text);
+	elem->text = ft_strdup(text);
+	bui_set_element_text_font(elem, font_name,
+		elem->font_size, elem->text_color);
+	ft_strdel(&font_name);
+}
+
+void	bui_set_element_text(t_bui_element *elem, char *text, int x, int y)
+{
+	char	*temp_font_name;
+
+	if (elem->text)
+		ft_strdel(&elem->text);
 	if (elem->text_surface)
 		SDL_FreeSurface(elem->text_surface);
-	elem->text_surface = surface;
+	elem->text = NULL;
+	elem->text_surface = NULL;
+	if (!text)
+		return ;
+	elem->text = ft_strdup(text);
+	elem->text_x = x;
+	elem->text_y = y;
+	temp_font_name = ft_strdup(elem->font_name);
+	bui_set_element_text_font(elem, temp_font_name,
+		elem->font_size, elem->text_color);
+	ft_strdel(&temp_font_name);
+}
+
+void	bui_remove_element_text(t_bui_element *elem)
+{
+	if (elem->text)
+		ft_strdel(&elem->text);
+	if (elem->text_surface)
+		SDL_FreeSurface(elem->text_surface);
+	elem->text = NULL;
+	elem->text_surface = NULL;
+}
+
+void	bui_set_element_text_color(t_bui_element *elem, Uint32 color)
+{
+	char	*font_name;
+
+	font_name = ft_strdup(elem->font_name);
+	bui_set_element_text_font(elem, font_name, elem->font_size, color);
+	ft_strdel(&font_name);
+}
+
+void	bui_set_element_text_size(t_bui_element *elem, Uint32 size)
+{
+	char	*font_name;
+
+	font_name = ft_strdup(elem->font_name);
+	bui_set_element_text_font(elem, font_name, size, elem->text_color);
+	ft_strdel(&font_name);
+}
+
+void	bui_element_set_text_font(t_bui_element *elem, char *font_name)
+{
+	bui_set_element_text_font(elem, font_name,
+		elem->font_size, elem->text_color);
+}
+
+void	bui_element_set_text_style(t_bui_element *elem, int style)
+{
+	char	*font_name;
+
+	elem->font_style = style;
+	font_name = ft_strdup(elem->font_name);
+	bui_set_element_text_font(elem, font_name,
+		elem->font_size, elem->text_color);
+	ft_strdel(&font_name);
+}
+
+void	bui_set_element_text_font(
+		t_bui_element *elem, char *font_name, Uint32 size, Uint32 color)
+{
+	t_text_recipe	recipe;
+	SDL_Surface		*text_surface;
+
+	if (!elem->text || !font_name)
+		return ;
+	text_surface = bui_make_text_surface_from_recipe(&(t_text_recipe){
+			.text = elem->text, .font_name = font_name,
+			.font_style = elem->font_style, .max_w = elem->position.w
+			- elem->text_x, .text_color = color, .font_size = size});
+	if (text_surface)
+	{
+		if (elem->text_surface)
+			SDL_FreeSurface(elem->text_surface);
+		if (elem->font)
+			TTF_CloseFont(elem->font);
+		ft_strdel(&elem->font_name);
+		elem->font_name = ft_strdup(font_name);
+		elem->font = TTF_OpenFont(font_name, size);
+		elem->text_surface = text_surface;
+		elem->text_color = color;
+		elem->font_size = size;
+		elem->text_w = elem->text_surface->w;
+		elem->text_h = elem->text_surface->h;
+	}
+	else
+		ft_putstr("[bui_set_element_text_font] Couldnt make text surface.\n");
+}
+
+void	bui_set_element_text_position(t_bui_element *elem, int x, int y)
+{
+	elem->text_x = x;
+	elem->text_y = y;
+}
+
+void	bui_center_element_text_x(t_bui_element *elem)
+{
+	int	text_w;
+	int	text_h;
+
+	if (!elem->font || !elem->text)
+		return ;
+	TTF_SizeText(elem->font, elem->text, &text_w, &text_h);
+	elem->text_x = (elem->position.w / 2) - (text_w / 2);
+}
+
+void	bui_center_element_text_y(t_bui_element *elem)
+{
+	int	text_w;
+	int	text_h;
+
+	if (!elem->font || !elem->text)
+		return ;
+	TTF_SizeText(elem->font, elem->text, &text_w, &text_h);
+	elem->text_y = (elem->position.h / 2) - (text_h / 2);
+}
+
+void	bui_center_element_text(t_bui_element *elem)
+{
+	if (!elem->font || !elem->text)
+		return ;
+	bui_center_element_text_x(elem);
+	bui_center_element_text_y(elem);
 }

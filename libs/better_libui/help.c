@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   help.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/27 11:58:44 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/27 11:58:45 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "better_libui.h"
 
 void	set_pixel(SDL_Surface *surface, int x, int y, Uint32 color)
@@ -173,4 +185,24 @@ void	bui_fps_func(t_fps *fps)
 void	clear_surface(SDL_Surface *surface)
 {
 	SDL_memset(surface->pixels, 0, surface->h * surface->pitch);
+}
+
+void	draw_surface_border(SDL_Surface *surface, Uint32 color, int thiccness)
+{
+	int		i;
+	t_xywh	c;
+
+	c.x = 0;
+	c.y = 0;
+	c.w = surface->w;
+	c.h = surface->h;
+	i = 0;
+	if (!surface)
+		ft_printf("[draw_surface_border] surface == NULL.\n");
+	while (i < thiccness)
+	{
+		draw_rect(surface, (t_xywh){c.x + i, c.y + i,
+			c.w - (i * 2), c.h - (i * 2)}, color, 0);
+		i++;
+	}
 }

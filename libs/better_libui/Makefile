@@ -1,7 +1,6 @@
 NAME = libui.a
 SRCS = \
        ./bui_element.c \
-       ./bui_menu.c \
        ./bui_slider.c \
        ./bui_event_handler.c \
        ./bui_libui.c \
@@ -14,6 +13,10 @@ SRCS = \
        ./bui_draw_circle.c \
        ./bui_draw_line.c \
        ./bui_render.c \
+       ./bui_events.c \
+       ./bui_input.c \
+       ./bui_image.c \
+       ./bui_stuff.c \
        ./help.c
 OBJS = $(SRCS:.c=.o)
 
@@ -26,7 +29,7 @@ $(NAME): $(SRCS)
 	@gcc -c $(SRCS) \
 		-I../libpf \
 		-I../libft \
-		-I../SDL2/includes 
+		-I../SDL2/includes
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
 	@echo "$(NAME) was successfully created."
