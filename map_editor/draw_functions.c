@@ -12,47 +12,6 @@
 
 #include "editor.h"
 
-t_point	*get_point_from_list_at_pos(t_list *list, t_vector v)
-{
-	t_list	*curr;
-
-	curr = list;
-	while (curr)
-	{
-		if (vector_compare(((t_point *)curr->content)->pos, v))
-			return (curr->content);
-		curr = curr->next;
-	}
-	return (NULL);
-}
-
-t_wall	*get_wall_from_list(t_list **list, t_point *v1, t_point *v2)
-{
-	t_list	*curr;
-	t_wall	*wall;
-
-	curr = *list;
-	while (curr)
-	{
-		wall = curr->content;
-		if ((vector_compare(wall->orig->pos, v1->pos)
-				&& vector_compare(wall->dest->pos, v2->pos))
-			|| (vector_compare(wall->orig->pos, v2->pos)
-				&& vector_compare(wall->dest->pos, v1->pos)))
-			return (curr->content);
-		curr = curr->next;
-	}
-	return (NULL);
-}
-
-int	vector_in_wall(t_vector v, t_wall *vec)
-{
-	if (vector_compare(v, vec->orig->pos)
-		|| vector_compare(v, vec->dest->pos))
-		return (1);
-	return (0);
-}
-
 void	update_real_dimensions(t_grid *grid)
 {
 	float	low_x;
@@ -78,80 +37,6 @@ void	update_real_dimensions(t_grid *grid)
 	grid->dimensions.y = low_y * grid->gap;
 	grid->dimensions.w = hi_x * grid->gap;
 	grid->dimensions.h = hi_y * grid->gap;
-}
-
-t_point	*get_point_from_wall_in_sector(t_sector *sector, t_point *v)
-{
-	t_wall	*w;
-	t_list	*wall;
-
-	wall = sector->walls;
-	while (wall)
-	{
-		w = wall->content;
-		if (vector_compare(w->orig->pos, v->pos))
-			return (w->orig);
-		else if (vector_compare(w->dest->pos, v->pos))
-			return (w->dest);
-		wall = wall->next;
-	}
-	return (NULL);
-}
-
-t_point	*get_existing_point_or_new(t_grid *grid, t_vector pos)
-{
-	t_point	*point;
-
-	point = get_point_from_wall_in_sector(grid->modify_sector,
-			&(t_point){0, pos});
-	if (point == NULL)
-	{
-		point = new_point(pos);
-		add_to_list(&grid->points, point, sizeof(t_point));
-	}
-	return (point);
-}
-
-t_wall	*get_existing_wall_or_new(t_grid *grid, t_point *temp1, t_point *temp2)
-{
-	t_wall	*wall;
-
-	wall = NULL;
-	wall = get_wall_from_list(&grid->modify_sector->walls, temp1, temp2);
-	if (wall == NULL)
-	{
-		wall = new_wall(temp1, temp2);
-		add_to_list(&grid->walls, wall, sizeof(t_wall));
-		add_to_list(&grid->modify_sector->walls, wall, sizeof(t_wall));
-	}
-	return (wall);
-}
-
-void	check_selected(t_grid *grid)
-{
-	t_point	*temp1;
-	t_point	*temp2;
-	t_wall	*temp_wall;
-
-	temp1 = NULL;
-	temp2 = NULL;
-	temp_wall = NULL;
-	if (vector_is_empty(grid->selected2))
-		return ;
-	temp1 = get_existing_point_or_new(grid, grid->selected1);
-	temp2 = get_existing_point_or_new(grid, grid->selected2);
-	temp_wall = get_existing_wall_or_new(grid, temp1, temp2);
-	if (grid->modify_sector->first_point == NULL)
-		grid->modify_sector->first_point = temp1;
-	if (grid->modify_sector->first_point == temp_wall->dest)
-	{
-		grid->modify_sector->first_point = NULL;
-		grid->modify_sector = NULL;
-		grid->selected1 = (t_vector){0, 0, 0};
-		grid->selected2 = (t_vector){0, 0, 0};
-	}
-	grid->selected1 = grid->selected2;
-	grid->selected2 = (t_vector){0, 0, 0};
 }
 
 void	click_calc_sec(t_grid *grid)
@@ -198,16 +83,13 @@ void	click_calc(t_editor *editor, t_grid *grid)
 
 void	unselect_selected(t_editor *editor, t_grid *grid)
 {
-	if (key_pressed(editor->libui, SDL_SCANCODE_B))
-	{
-		grid->selected1 = (t_vector){0, 0, 0};
-		grid->selected2 = (t_vector){0, 0, 0};
-		grid->modify_point = NULL;
-		grid->modify_wall = NULL;
-		grid->modify_entity = NULL;
-		editor->grid.modify_sprite = NULL;
-		grid->modify_sector = NULL;
-	}
+	grid->selected1 = (t_vector){0, 0, 0};
+	grid->selected2 = (t_vector){0, 0, 0};
+	grid->modify_point = NULL;
+	grid->modify_wall = NULL;
+	grid->modify_entity = NULL;
+	editor->grid.modify_sprite = NULL;
+	grid->modify_sector = NULL;
 }
 
 void	hover_calc(t_editor *doom, t_grid *grid)
@@ -274,142 +156,6 @@ void	draw_grid(t_editor *doom, t_grid *grid)
 			(t_vector){i * grid->gap,
 			grid->elem->active_surface->h, 0});
 	draw_dimensions(grid);
-}
-
-void	draw_points(t_grid *grid, t_list *points)
-{
-	t_list	*curr;
-
-	curr = points;
-	while (curr)
-	{
-		gfx_draw_vector(grid->elem->active_surface, 0xff00ff00, 1,
-			gfx_vector_multiply(((t_point *)curr->content)->pos,
-				grid->gap));
-		curr = curr->next;
-	}
-}
-
-void	draw_wall(t_wall *wall, t_grid *grid, Uint32 color)
-{
-	t_vector	orig_vec;
-	t_vector	dest_vec;
-
-	orig_vec = gfx_vector_multiply(wall->orig->pos, grid->gap);
-	dest_vec = gfx_vector_multiply(wall->dest->pos, grid->gap);
-	gfx_draw_line(grid->elem->active_surface, color, orig_vec, dest_vec);
-}
-
-void	draw_walls(t_grid *grid, t_list **walls, Uint32 color)
-{
-	t_list	*curr;
-
-	curr = *walls;
-	while (curr)
-	{
-		gfx_draw_line(grid->elem->active_surface, color,
-			((t_wall *)curr->content)->orig->pos,
-			((t_wall *)curr->content)->dest->pos);
-		curr = curr->next;
-	}
-}
-
-void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
-{
-	char		*str;
-	SDL_Surface	*id_text;
-
-	sector->center = (t_vector){x, y, 0};
-	if (grid->font)
-	{
-		str = ft_itoa(sector->id);
-		id_text = TTF_RenderText_Blended(grid->font, str,
-				(SDL_Color){255, 255, 255, 255});
-		SDL_BlitSurface(id_text, NULL, grid->elem->active_surface,
-			&(SDL_Rect){x - (id_text->w / 2), y - (id_text->h / 2),
-			id_text->w, id_text->h});
-		SDL_FreeSurface(id_text);
-		ft_strdel(&str);
-	}
-}
-
-void	draw_sector(t_sector *sector, t_grid *grid)
-{
-	int		i;
-	float	x;
-	float	y;
-	t_list	*wall;
-	t_wall	*w;
-
-	x = 0;
-	y = 0;
-	wall = sector->walls;
-	while (wall)
-	{
-		w = wall->content;
-		x += (w->orig->pos.x + w->dest->pos.x) * grid->gap;
-		y += (w->orig->pos.y + w->dest->pos.y) * grid->gap;
-		if (((t_wall *)wall->content)->neighbor_sector != NULL)
-			draw_wall(wall->content, grid, 0xffff0000);
-		else
-			draw_wall(wall->content, grid, sector->color);
-		wall = wall->next;
-	}
-	i = get_list_len(sector->walls) * 2;
-	if (i == 0)
-		return ;
-	draw_sector_number(sector, grid, x /= i, y /= i);
-}
-
-void	draw_sectors(t_grid *grid)
-{
-	t_list	*curr;
-
-	curr = grid->sectors;
-	while (curr)
-	{
-		draw_sector(curr->content, grid);
-		curr = curr->next;
-	}
-	if (grid->modify_sector != NULL
-		&& grid->modify_sector->first_point != NULL)
-		gfx_draw_vector(grid->elem->active_surface, 0xffff0000, 2,
-			gfx_vector_multiply(grid->modify_sector->first_point->pos,
-				grid->gap));
-}
-
-void	draw_entity(t_editor *editor, t_entity *entity)
-{
-	t_vector	pos;
-	int			color;
-	float		angle;
-
-	if (entity->preset == NULL)
-		entity->preset = editor->default_entity;
-	pos = gfx_vector_multiply(entity->pos, editor->grid.gap);
-	gfx_draw_vector(editor->grid.elem->active_surface, 0xffaaab5d, 6, pos);
-	color = 0xff0000ff;
-	if (entity->preset->mood == ENTITY_TYPE_HOSTILE)
-		color = 0xffff0000;
-	else if (entity->preset->mood == ENTITY_TYPE_FRIENDLY)
-		color = 0xff00ff00;
-	gfx_draw_vector(editor->grid.elem->active_surface, color, 3, pos);
-	angle = entity->direction * (M_PI / 180);
-	gfx_draw_vector(editor->grid.elem->active_surface, 0xffaaab5d, 1,
-		gfx_new_vector(cos(angle) * 10.0f + pos.x,
-			sin(angle) * 10.0f + pos.y, 0));
-}
-
-void	draw_entities(t_editor *editor)
-{
-	t_list		*curr;
-
-	curr = editor->grid.entities;
-	while (curr)
-	{
-		draw_entity(editor, curr->content);
-		curr = curr->next;
-	}
 }
 
 void	draw_hover_info(t_editor *doom, t_grid *grid)

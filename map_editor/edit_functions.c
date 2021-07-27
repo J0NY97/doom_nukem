@@ -211,10 +211,10 @@ void	change_selected_sprite(t_editor *editor)
 		changer_prefab_events(editor->sprite_changer,
 			&editor->selected_sprite, 1);
 		if (editor->selected_sprite
-			>= get_list_len(editor->grid.modify_wall->sprites))
+			>= ft_lstlen(editor->grid.modify_wall->sprites))
 			editor->selected_sprite = 0;
 		else if (editor->selected_sprite < 0)
-			editor->selected_sprite = get_list_len(
+			editor->selected_sprite = ft_lstlen(
 					editor->grid.modify_wall->sprites) - 1;
 		editor->grid.modify_sprite = get_nth_from_list(
 				&editor->grid.modify_wall->sprites,
@@ -425,7 +425,7 @@ void	floor_ceiling_id_changer_prefab_events(t_editor *editor)
 {
 	int	wall_amount;
 
-	wall_amount = get_list_len(editor->grid.modify_sector->walls);
+	wall_amount = ft_lstlen(editor->grid.modify_sector->walls);
 	changer_prefab_events(editor->slope_floor_wall_changer,
 		&editor->grid.modify_sector->floor_slope_wall_id, 1);
 	if (editor->grid.modify_sector->floor_slope_wall_id >= wall_amount)

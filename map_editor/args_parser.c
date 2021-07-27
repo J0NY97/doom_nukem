@@ -43,3 +43,22 @@ char	*args_parser(int ac, char **av)
 	}
 	return (NULL);
 }
+
+char	*get_mapname_from_path(char *map)
+{
+	char	**mapname;
+	char	*str;
+	int		i;
+
+	i = 0;
+	mapname = ft_strsplit(map, '/');
+	while (mapname[i + 1])
+		i++;
+	if (ft_strendswith(mapname[i], ".endless") == 0)
+		ft_strremove(mapname[i], ".endless");
+	else if (ft_strendswith(mapname[i], ".story") == 0)
+		ft_strremove(mapname[i], ".story");
+	str = ft_strdup(mapname[i]);
+	free_array(mapname);
+	return (str);
+}

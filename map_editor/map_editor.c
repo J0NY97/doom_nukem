@@ -21,25 +21,6 @@ void	update_title_fps(SDL_Window *win, t_fps *fps)
 	ft_strdel(&str);
 }
 
-char	*get_mapname_from_path(char *map)
-{
-	char	**mapname;
-	char	*str;
-	int		i;
-
-	i = 0;
-	mapname = ft_strsplit(map, '/');
-	while (mapname[i + 1])
-		i++;
-	if (ft_strendswith(mapname[i], ".endless") == 0)
-		ft_strremove(mapname[i], ".endless");
-	else if (ft_strendswith(mapname[i], ".story") == 0)
-		ft_strremove(mapname[i], ".story");
-	str = ft_strdup(mapname[i]);
-	free_array(mapname);
-	return (str);
-}
-
 void	init(t_editor *editor, t_bui_libui *libui, char *map)
 {
 	editor->libui = libui;
@@ -57,30 +38,11 @@ void	init(t_editor *editor, t_bui_libui *libui, char *map)
 	read_map_file(editor);
 }
 
-void	draw_button_events(t_editor *editor)
-{
-	click_calc(editor, &editor->grid);
-	check_selected(&editor->grid);
-}
-
-void	selection_button_events(t_editor *editor)
-{
-	selection(editor, &editor->grid);
-	if (editor->grid.modify_wall == NULL)
-		editor->grid.modify_sprite = NULL;
-	drag_calc(editor, &editor->grid);
-	draw_selected_point(editor, &editor->grid);
-	draw_selected_wall(&editor->grid);
-	draw_selected_sector(editor, &editor->grid);
-	draw_selected_entity(&editor->grid);
-	selection_mode_buttons(editor, &editor->grid);
-	selected_option_menu(editor, &editor->grid);
-}
-
 void	general_events(t_editor *editor)
 {
 	update_general_info_element(editor);
-	unselect_selected(editor, &editor->grid);
+	if (key_pressed(editor->libui, SDL_SCANCODE_B))
+		unselect_selected(editor, &editor->grid);
 	update_real_dimensions(&editor->grid);
 	draw_sectors(&editor->grid);
 	draw_points(&editor->grid, editor->grid.points);
@@ -108,9 +70,23 @@ void	general_events(t_editor *editor)
 void	button_choice_event(t_editor *editor)
 {
 	if (bui_button_toggle(editor->button_draw))
-		draw_button_events(editor);
+	{
+		click_calc(editor, &editor->grid);
+		check_selected(&editor->grid);
+	}
 	else
-		selection_button_events(editor);
+	{
+		selection(editor, &editor->grid);
+		if (editor->grid.modify_wall == NULL)
+			editor->grid.modify_sprite = NULL;
+		drag_calc(editor, &editor->grid);
+		draw_selected_point(editor, &editor->grid);
+		draw_selected_wall(&editor->grid);
+		draw_selected_sector(editor, &editor->grid);
+		draw_selected_entity(&editor->grid);
+		selection_mode_buttons(editor, &editor->grid);
+		selected_option_menu(editor, &editor->grid);
+	}
 }
 
 void	map_editor(char *map)

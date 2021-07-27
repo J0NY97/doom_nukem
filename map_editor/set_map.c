@@ -210,7 +210,7 @@ char	*set_walls_and_neighbors_for_sector(t_list *wall_list)
 	char	**neighbor_ids;
 	int		wall_amount;
 
-	wall_amount = get_list_len(wall_list);
+	wall_amount = ft_lstlen(wall_list);
 	wall_ids = ft_memalloc(sizeof(char *) * wall_amount + 1);
 	wall_ids[wall_amount] = NULL;
 	neighbor_ids = ft_memalloc(sizeof(char *) * wall_amount + 1);

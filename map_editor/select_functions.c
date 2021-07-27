@@ -340,7 +340,7 @@ void	draw_selected_sector(t_editor *editor, t_grid *grid)
 	{
 		str = ft_sprintf("Selected Sector:\nid: %d\nwalls: %d\n",
 				grid->modify_sector->id,
-				get_list_len(grid->modify_sector->walls));
+				ft_lstlen(grid->modify_sector->walls));
 		curr = grid->modify_sector->walls;
 		while (curr)
 		{

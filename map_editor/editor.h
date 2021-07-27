@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   editor.h                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/27 16:48:54 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/27 16:48:55 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef EDITOR_H
 # define EDITOR_H
 # define SDL_MAIN_HANDLED
@@ -285,7 +297,6 @@ void				remove_all_lonely_walls(t_list **walls, t_list **sectors);
 void				remove_all_lonely_points(t_editor *editor);
 void				remove_from_list_if_with(t_list **list, void *s, int (*cmp)(void *, void *), void (*del)(void *, size_t));
 float				get_wall_length(t_wall *wall);
-int					get_list_len(t_list *list);
 int					vector_is_empty(t_vector v);
 int					pointer_compare(void *p1, void *p2);
 int					vector_compare(t_vector v1, t_vector v2);
@@ -310,5 +321,12 @@ Uint32				random_color(void);
 SDL_Surface			*load_bxpm_to_surface(char *bxpm_file);
 void				set_map(t_editor *doom);
 void				read_map_file(t_editor *doom);
+char				*get_mapname_from_path(char *map);
+int					in_list(void *pointer, t_list *list);
+int					wall_has_same_coords(t_wall *w1, t_wall *w2);
+void				remove_entity_from_list(t_list **entities, t_entity *entity);
+void				remove_selected_point_from_all_walls_and_sectors(t_editor *editor);
+void				save_button_events(t_editor *editor);
+void				other_box_events(t_editor *editor);
 
 #endif
