@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   bui_preset_console.c                               :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/27 14:05:22 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/27 14:07:10 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "better_libui.h"
 
 t_preset_console	*bui_new_console_preset(t_bui_window *win, t_xywh pos)
@@ -47,6 +59,7 @@ void	preset_console_events(t_preset_console *console)
 		console->view->text_y += libui->mouse_wheel_y
 			* TTF_FontLineSkip(console->view->font);
 }
+
 void	console_log(t_preset_console *console, char *text)
 {
 	char	*str;
