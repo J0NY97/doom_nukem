@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   bui_render0.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/27 16:23:13 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/27 16:23:56 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "better_libui.h"
 
 void	mouse_update(t_bui_libui *libui, SDL_Event e)
@@ -8,9 +20,13 @@ void	mouse_update(t_bui_libui *libui, SDL_Event e)
 		libui->mouse_down_last_frame = 1;
 		libui->mouse_click_x = libui->mouse_x;
 		libui->mouse_click_y = libui->mouse_y;
+		libui->mouse_buttons[e.button.button] = 1;
 	}
-	else if (e.button.type == SDL_MOUSEBUTTONUP)
+	if (e.button.type == SDL_MOUSEBUTTONUP)
+	{
 		libui->mouse_down = 0;
+		libui->mouse_buttons[e.button.button] = 0;
+	}
 	else if (e.type == SDL_MOUSEWHEEL)
 	{
 		libui->mouse_wheel_x = e.wheel.x;
@@ -52,14 +68,11 @@ void	bui_update_elements(t_bui_libui *libui)
 	while (curr_win)
 	{
 		win = curr_win->content;
-		if (1) //(SDL_GetWindowFlags(win->win) & SDL_WINDOW_SHOWN))
+		curr_menu = win->menus;
+		while (curr_menu)
 		{
-			curr_menu = win->menus;
-			while (curr_menu)
-			{
-				update_element(curr_menu->content, win->win);
-				curr_menu = curr_menu->next;
-			}
+			update_element(curr_menu->content, win->win);
+			curr_menu = curr_menu->next;
 		}
 		curr_win = curr_win->next;
 	}
@@ -85,13 +98,7 @@ void	bui_event_handler(t_bui_libui *libui)
 			libui->keys[e.key.keysym.scancode] = e.key.type == SDL_KEYDOWN;
 			key_was(libui, e.key.keysym, e.key.type == SDL_KEYDOWN);
 		}
-		else if (e.button.type == SDL_MOUSEBUTTONDOWN || e.button.type == SDL_MOUSEBUTTONUP)
-		{
-			libui->mouse_buttons[e.button.button] = e.button.type == SDL_MOUSEBUTTONDOWN;
-			mouse_update(libui, e);
-		}
-		else if (e.type == SDL_MOUSEWHEEL)
-			mouse_update(libui, e);
+		mouse_update(libui, e);
 	}
 	get_mouse_states(libui);
 	bui_update_elements(libui);

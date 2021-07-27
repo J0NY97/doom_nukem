@@ -18,6 +18,7 @@ SRCS = \
        ./bui_render0.c \
        ./bui_render1.c \
        ./bui_render.c \
+       ./bui_mouse.c \
        ./bui_events.c \
        ./bui_input.c \
        ./bui_image.c \

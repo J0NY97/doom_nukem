@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:56:39 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 11:56:40 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 16:11:21 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,9 +43,9 @@ int	main(void)
 	launcher = launcher_init(win);
 	while (libui->run)
 	{
-		bui_event_handler_new(libui);
+		bui_event_handler(libui);
 		main_menu_events(launcher, libui);
-		bui_render_new(libui);
+		bui_render(libui);
 		bui_fps_func(launcher->fps);
 		update_title_fps(win->win, launcher->fps);
 	}

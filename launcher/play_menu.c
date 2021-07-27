@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:56:29 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 11:56:31 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 16:11:44 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,7 @@
 void	difficulty_drop_init(t_ui_menu_play *play_menu, t_xywh c)
 {
 	// Difficulty text elem
-	c = ui_init_coords(25, 25, 100, 20);
+	c = new_xywh(25, 25, 100, 20);
 	play_menu->difficulty_text_elem
 		= bui_new_element(play_menu->endless_view, "Difficulty:", c);
 	bui_set_element_color(play_menu->difficulty_text_elem,
@@ -54,10 +54,10 @@ void	endless_tab_init(t_ui_menu_play *play_menu)
 	play_menu->endless_view->update_state = 0;
 	free(temp);
 	// Difficulty text elem
-	c = ui_init_coords(25, 25, 100, 20);
+	c = new_xywh(25, 25, 100, 20);
 	difficulty_drop_init(play_menu, c);
 	// Divider
-	c = ui_init_coords(c.x + c.w + c.x, 5, 1,
+	c = new_xywh(c.x + c.w + c.x, 5, 1,
 			play_menu->endless_view->active_surface->h - 10);
 	bui_new_element(play_menu->endless_view, NULL, c);
 	// Maps view

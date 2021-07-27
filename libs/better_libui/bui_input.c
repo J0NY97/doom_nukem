@@ -12,6 +12,34 @@
 
 #include "better_libui.h"
 
+int	alpha_pressed(t_bui_libui *libui)
+{
+	int	i;
+
+	i = SDL_SCANCODE_A;
+	while (i <= SDL_SCANCODE_Z)
+	{
+		if (libui->keys[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
+int	number_pressed(t_bui_libui *libui)
+{
+	int	i;
+
+	i = SDL_SCANCODE_0;
+	while (i <= SDL_SCANCODE_9)
+	{
+		if (libui->keys[i])
+			return (1);
+		i++;
+	}
+	return (0);
+}
+
 char	*remove_from_input(t_bui_element *input)
 {
 	int		len;

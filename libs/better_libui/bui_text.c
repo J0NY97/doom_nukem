@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:59:02 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 12:22:11 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 16:29:14 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -97,6 +97,4 @@ void	bui_set_element_text_font(
 		elem->text_w = elem->text_surface->w;
 		elem->text_h = elem->text_surface->h;
 	}
-	else
-		ft_putstr("[bui_set_element_text_font] Couldnt make text surface.\n");
 }

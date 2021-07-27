@@ -1,9 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   bui_render1.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/27 16:17:36 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/27 16:18:59 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "better_libui.h"
 
-static void update_element_state(t_bui_element *elem)
+static void	update_element_state(t_bui_element *elem)
 {
 	if (elem->show && hitbox_rect(elem->libui->mouse_x,
-		elem->libui->mouse_y, elem->screen_pos))
+			elem->libui->mouse_y, elem->screen_pos))
 	{
 		if (elem->libui->mouse_down)
 		{

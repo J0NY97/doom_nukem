@@ -40,22 +40,6 @@ void	key_was(t_bui_libui *libui, SDL_Keysym key, int type)
 		libui->last_key = NULL;
 }
 
-int	mouse_moved(t_bui_libui *libui)
-{
-	if (libui->mouse_x != libui->last_mouse_x
-		|| libui->mouse_y != libui->last_mouse_y)
-		return (1);
-	return (0);
-}
-
-int	mouse_wheel(t_bui_libui *libui)
-{
-	if (libui->mouse_wheel_x != 0
-		|| libui->mouse_wheel_y != 0)
-		return (1);
-	return (0);
-}
-
 int	key_pressed(t_bui_libui *libui, int key)
 {
 	if (key < 0 || key > SDL_NUM_SCANCODES)
@@ -73,44 +57,4 @@ int	key_press(t_bui_libui *libui, char *key)
 	}
 	else
 		return (0);
-}
-
-int	mouse_pressed(t_bui_libui *libui, int key)
-{
-	if (key < 0 || key > 4)
-		return (0);
-	return (libui->mouse_buttons[key]);
-}
-
-int	mouse_hover(t_bui_libui *libui, t_xywh rect)
-{
-	return (hitbox_rect(libui->mouse_x, libui->mouse_y, rect));
-}
-
-int	alpha_pressed(t_bui_libui *libui)
-{
-	int	i;
-
-	i = SDL_SCANCODE_A;
-	while (i <= SDL_SCANCODE_Z)
-	{
-		if (libui->keys[i])
-			return (1);
-		i++;
-	}
-	return (0);
-}
-
-int	number_pressed(t_bui_libui *libui)
-{
-	int	i;
-
-	i = SDL_SCANCODE_0;
-	while (i <= SDL_SCANCODE_9)
-	{
-		if (libui->keys[i])
-			return (1);
-		i++;
-	}
-	return (0);
 }

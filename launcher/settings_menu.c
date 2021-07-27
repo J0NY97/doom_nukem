@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:57:08 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 11:57:08 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/27 16:11:49 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -128,7 +128,7 @@ t_ui_menu_settings	*settings_menu_init(t_bui_element *parent_elem)
 
 	settings = ft_memalloc(sizeof(t_ui_menu_settings));
 	settings->menu = new_main_menu_menu(parent_elem, "Settings");
-	c = ui_init_coords(0, 20, 100, 20);
+	c = new_xywh(0, 20, 100, 20);
 	c.x = settings->menu->position.w / 8 / 2;
 	c.y = settings->menu->position.w / 8 / 2;
 	// Texts
