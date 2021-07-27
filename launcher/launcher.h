@@ -22,7 +22,7 @@ typedef struct		s_map_button_data
 typedef struct	s_ui_menu_settings
 {
 	t_bui_element *menu;
-	
+
 	t_bui_element *fov;
 	t_bui_element *mouse_x;
 	t_bui_element *mouse_y;
@@ -110,10 +110,15 @@ void			editor_menu_events(t_launcher *launcher, t_ui_menu_editor *menu);
 void			init_play_menu_map_buttons(t_ui_menu_play *menu, t_list *maps);
 t_ui_menu_play		*play_menu_init(t_bui_element *parent_elem);
 void			play_menu_events(t_launcher *launcher, t_ui_menu_play *play_menu, t_ui_menu_settings *settings);
+void	difficulty_drop_init(t_ui_menu_play *play_menu, t_xywh c);
+void	endless_tab_init(t_ui_menu_play *play_menu);
+void	story_tab_init(t_ui_menu_play *play_menu);
 
 // Settings //
 t_ui_menu_settings	*settings_menu_init(t_bui_element *parent_elem);
 void			settings_menu_events(t_ui_menu_settings *settings_menu);
+void			settings_text_init(t_ui_menu_settings *settings, t_xywh c);
+void			settings_slider_init(t_ui_menu_settings *settings, t_xywh c, int *i);
 
 // HELP //
 t_bui_element		*new_map_button(t_bui_element *parent, char *text, int i, t_xywh c);

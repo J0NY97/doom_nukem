@@ -1,11 +1,14 @@
-NAME = wolf3d 
+NAME = wolf3d
 SRCS = \
        ./launcher.c \
        ./get_maps.c \
        ./play_menu.c \
+       ./play_menu2.c \
        ./settings_menu.c \
+       ./settings_menu2.c \
        ./editor_menu.c \
        ./launcher_help.c \
+       ./dropdown.c \
 	   ./free.c \
        ./main_menu.c
 OBJS = $(SRCS:.c=.o)
@@ -17,7 +20,7 @@ INCLUDES = -I../libs/libft \
 	   -I../ \
 	   -I../game/inc
 LIBS = -L../libs/libft -L../libs/better_libui -L../libs/libpf -L../libs/libgfx -L../libs/SDL2/lib \
-       -lui -lSDL2 -lSDL2_ttf -lSDL2_image -lpf -lft -lgfx 
+       -lui -lSDL2 -lSDL2_ttf -lSDL2_image -lpf -lft -lgfx
 FLAGS = -Wall -Wextra
 # -Werror
 

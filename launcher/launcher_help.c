@@ -12,20 +12,6 @@
 
 #include "launcher.h"
 
-t_bui_element	*new_bass_element(t_preset_dropdown *drop, char *text)
-{
-	t_bui_element	*elem;
-
-	elem = preset_dropdown_add_element(drop, text);
-	bui_set_element_image_to_states(elem,
-		ICON_PATH"mc_button_x3.png",
-		ICON_PATH"mc_button_x3_hover.png",
-		ICON_PATH"mc_button_x3_disable.png");
-	elem->text_x = 5;
-	bui_center_element_text_y(elem);
-	return (elem);
-}
-
 t_bui_element	*new_main_menu_menu(t_bui_element *parent, char *text)
 {
 	t_bui_element	*menu;
