@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   entity_edit.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/28 12:40:10 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/28 12:45:46 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "editor.h"
 
 void	draw_selected_entity_texture(t_editor *editor)
@@ -34,4 +46,3 @@ void	entity_drop_down_event(t_editor *editor)
 				editor->entity_type_drop->active->text);
 	}
 }
-

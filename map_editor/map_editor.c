@@ -32,7 +32,7 @@ void	init(t_editor *editor, t_bui_libui *libui, char *map)
 	window_init(editor, libui);
 	edit_window_init(editor, libui);
 	bui_set_window_color(editor->window, 0xff000000);
-	bui_set_window_color(editor->new_edit_window, 0xff000000);
+	bui_set_window_color(editor->edit_window, 0xff000000);
 	toolbox_init(editor);
 	grid_init1(editor);
 	read_map_file(editor);

@@ -18,8 +18,22 @@ SRCS = \
 	./sector_edit.c \
 	./entity_edit.c \
 	./fandc_edit.c \
+	./move.c \
+	./point_select.c \
+	./entity_select.c \
+	./wall_select.c \
+	./sector_select.c \
 	./args_parser.c \
 	./inits.c \
+	./init_textures.c \
+	./init_entity_presets.c \
+	./init_toolbox.c \
+	./init_selection_modes.c \
+	./init_other_box.c \
+	./init_entity_editor.c \
+	./init_wall_editor.c \
+	./init_sector_editor.c \
+	./changer_prefab.c \
 	./button_functions.c \
 	./button_events.c \
 	./draw_functions.c \

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   button_events.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/28 12:43:34 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/28 12:45:06 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "editor.h"
 
 void	other_box_events(t_editor *editor)
@@ -69,7 +81,7 @@ void	selection_mode_buttons(t_editor *editor, t_grid *grid)
 		remove_button_events(editor, grid);
 	else if (bui_button(editor->button_edit))
 	{
-		SDL_RestoreWindow(editor->new_edit_window->win);
-		SDL_RaiseWindow(editor->new_edit_window->win);
+		SDL_RestoreWindow(editor->edit_window->win);
+		SDL_RaiseWindow(editor->edit_window->win);
 	}
 }

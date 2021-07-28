@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   entity_preset.c                                    :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/28 12:43:48 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/28 12:46:02 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "editor.h"
 
 t_entity_preset	*new_entity_preset(char *name)
@@ -24,7 +36,7 @@ void	free_entity_preset(void *content, size_t size)
 		SDL_FreeSurface(ent->texture);
 	ft_memdel((void **)&ent);
 }
-// TODO: Get from list if function.
+
 t_entity_preset	*get_entity_preset_with_name(t_list *list, char *name)
 {
 	t_list			*curr;

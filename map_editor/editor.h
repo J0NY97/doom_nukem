@@ -139,7 +139,7 @@ struct s_editor
 	t_bui_element		*story_tickbox;
 	t_bui_element		*active_map_type;
 	t_list				*map_type_tickboxes; // list of t_bui_element
-	t_bui_window		*new_edit_window;
+	t_bui_window		*edit_window;
 	///////////////////
 	// Wall elements
 	///////////////////
@@ -342,5 +342,12 @@ void				wall_sprite_view_events(t_editor *editor);
 void				portal_texture_view_events(t_editor *editor);
 void				draw_selected_f_and_c_button(t_editor *editor);
 void				draw_selected_entity_texture(t_editor *editor);
+void				movement(t_editor *editor, int move_x, int move_y);
+void				select_point(t_grid *grid);
+void				select_entity(t_editor *editor);
+void				select_wall(t_editor *editor);
+void				draw_wall_as_selected(t_grid *grid, SDL_Surface *surface, t_wall *wall);
+void				load_all_textures(t_editor *editor);
+void				selection_mode_button_init(t_editor *editor);
 
 #endif

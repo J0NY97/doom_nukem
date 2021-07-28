@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   entity.c                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/28 12:43:44 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/28 12:45:38 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "editor.h"
 
 t_entity	*new_entity(int id, t_vector pos)
@@ -36,6 +48,7 @@ t_entity	*get_entity_from_list_at_pos(t_list *list, t_vector pos)
 	}
 	return (NULL);
 }
+
 void	draw_entity(t_editor *editor, t_entity *entity)
 {
 	t_vector	pos;
