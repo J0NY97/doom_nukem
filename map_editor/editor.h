@@ -349,5 +349,28 @@ void				select_wall(t_editor *editor);
 void				draw_wall_as_selected(t_grid *grid, SDL_Surface *surface, t_wall *wall);
 void				load_all_textures(t_editor *editor);
 void				selection_mode_button_init(t_editor *editor);
+void				sector_slope_edit_menu_init(t_editor *editor);
+t_point				*get_point_with_id(t_list *points, int id);
+t_wall				*get_wall_with_id(t_list *walls, int id);
+t_sector			*get_sector_with_id(t_list *sectors, int id);
+void				read_vertex(t_grid *grid, int fd);
+void				read_wall(t_grid *grid, int fd);
+void				read_sprite(t_grid *grid, int fd);
+void				read_spawn(t_spawn *spawn, int fd);
+void				read_entities(t_editor *editor, int fd);
+void				read_sectors(t_editor *editor, int fd);
+void				read_fandc(t_editor *editor, int fd);
+char				*set_point(t_editor *doom);
+char				*set_sprite(t_editor *editor);
+char				*set_wall(t_editor *doom);
+char				*set_entities(t_editor *doom);
+char				*set_fandc(t_editor *editor);
+char				*set_sector(t_editor *doom);
+void				new_texture_button(t_bui_element *parent, t_list **list, SDL_Surface *texture, int i);
+void				wall_sprite_texture_tab_init(t_editor *editor);
+void				wall_texture_tab_init(t_editor *editor);
+void				portal_texture_tab_init(t_editor *editor);
+void				tabsystem_wall_editor_init(t_editor *editor);
+t_bui_element		*add_new_wall_texture_tab(t_preset_tab *tab, char *text, Uint32 color);
 
 #endif

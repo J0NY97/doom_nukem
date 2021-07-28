@@ -21,11 +21,11 @@ void	new_texture_button(
 	int				amount_on_x;
 	char			*str;
 
-	button_gap = 20;
-	amount_on_x = floor(parent->position.w / (50 + button_gap + 20));
+	button_gap = 15;
+	amount_on_x = floor(parent->position.w / (70 + button_gap + 5));
 	coord = new_xywh(0, 0, 50, 50);
-	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + 20;
-	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + 50;
+	coord.x = (i % (amount_on_x + 1)) * (coord.w + button_gap) + 5;
+	coord.y = (i / (amount_on_x + 1)) * (coord.h + button_gap) + 70;
 	str = ft_sprintf("%d", i);
 	temp_elem = bui_new_element(parent, str, coord);
 	ft_strdel(&str);
@@ -37,7 +37,7 @@ void	new_texture_button(
 	add_to_list(list, temp_elem, sizeof(t_bui_element));
 }
 
-void	texture_buttons_init(t_editor *editor)
+void	sector_texture_buttons_init(t_editor *editor)
 {
 	int	i;
 
@@ -65,7 +65,7 @@ void	floor_and_ceiling_texture_menu_init(t_editor *editor)
 			"Sector Texture Menu", coord);
 	bui_set_element_color(editor->sector_texture_menu,
 		editor->palette.elem_elem_elem);
-	texture_buttons_init(editor);
+	sector_texture_buttons_init(editor);
 	coord = new_xywh(editor->sector_texture_menu->position.w - 100,
 			0, 50, 20);
 	editor->floor_texture_title
@@ -100,78 +100,6 @@ void	sector_edit_changer_inits(t_editor *editor)
 	coord.y = (25 * 7) + (40 * 6);
 	editor->ceiling_scale = new_changer_prefab(editor->edit_toolbox_sector,
 			"ceiling texture scale", coord);
-}
-
-void	sector_slope_floor_changer_init(t_editor *editor)
-{
-	t_xywh	coord;
-
-	coord = new_xywh(10, editor->slope_sector->position.y
-			+ editor->slope_sector->position.h + 10, 100, 20);
-	editor->slope_floor_title = bui_new_element(editor->slope_edit_menu,
-			"Floor", coord);
-	bui_set_element_color(editor->slope_floor_title, 0xff0000ff);
-	coord = new_xywh(editor->slope_floor_title->position.x,
-			editor->slope_floor_title->position.y
-			+ editor->slope_floor_title->position.h + 10, 100, 40);
-	editor->slope_floor_wall_changer
-		= new_changer_prefab(editor->slope_edit_menu, "Wall ID", coord);
-	bui_set_element_text(editor->slope_floor_wall_changer->sub_button, "<");
-	bui_set_element_text(editor->slope_floor_wall_changer->add_button, ">");
-	coord = new_xywh(editor->slope_floor_wall_changer->menu->position.x
-			+ editor->slope_floor_wall_changer->menu->position.w + 10,
-			editor->slope_floor_wall_changer->menu->position.y, 100, 40);
-	editor->slope_floor_angle_changer
-		= new_changer_prefab(editor->slope_edit_menu, "Slope Angle", coord);
-}
-
-void	sector_slope_ceiling_changer_init(t_editor *editor)
-{
-	t_xywh	coord;
-
-	coord = new_xywh(10,
-			editor->slope_floor_wall_changer->menu->position.y
-			+ editor->slope_floor_wall_changer->menu->position.h + 10, 100, 20);
-	editor->slope_ceiling_title = bui_new_element(editor->slope_edit_menu,
-			"Ceiling", coord);
-	bui_set_element_color(editor->slope_ceiling_title, 0xff00ff00);
-	coord = new_xywh(editor->slope_ceiling_title->position.x,
-			editor->slope_ceiling_title->position.y
-			+ editor->slope_ceiling_title->position.h + 10, 100, 40);
-	editor->slope_ceiling_wall_changer
-		= new_changer_prefab(editor->slope_edit_menu, "Wall ID", coord);
-	bui_set_element_text(editor->slope_ceiling_wall_changer->sub_button,
-		"<");
-	bui_set_element_text(editor->slope_ceiling_wall_changer->add_button,
-		">");
-	coord = new_xywh(editor->slope_ceiling_wall_changer->menu->position.x
-			+ editor->slope_ceiling_wall_changer->menu->position.w + 10,
-			editor->slope_ceiling_wall_changer->menu->position.y, 100, 40);
-	editor->slope_ceiling_angle_changer
-		= new_changer_prefab(editor->slope_edit_menu, "Slope Angle", coord);
-}
-
-void	sector_slope_edit_menu_init(t_editor *editor)
-{
-	t_xywh	coord;
-
-	coord = new_xywh(editor->sector_texture_menu->position.x
-			+ editor->sector_texture_menu->position.w + 5, 5,
-			editor->edit_window->position.w
-			- editor->sector_texture_menu->position.w
-			- editor->edit_toolbox_sector->position.w - 20,
-			editor->edit_window->position.h - 10);
-	editor->slope_edit_menu = bui_new_menu(editor->edit_window,
-			"Slope Edit", coord);
-	bui_set_element_color(editor->slope_edit_menu,
-		editor->palette.elem_elem_elem);
-	coord = new_xywh(10, 20, editor->slope_edit_menu->position.w - 20,
-			editor->slope_edit_menu->position.h * 0.5);
-	editor->slope_sector = bui_new_element(editor->slope_edit_menu,
-			"Sector", coord);
-	bui_set_element_flags(editor->slope_sector, BUI_ELEMENT_DONT_UPDATE_STATE);
-	sector_slope_floor_changer_init(editor);
-	sector_slope_ceiling_changer_init(editor);
 }
 
 void	init_sector_editor(t_editor *editor)

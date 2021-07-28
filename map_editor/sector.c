@@ -48,53 +48,6 @@ void	free_sector(void *content, size_t size)
 	free(sector);
 }
 
-void	remove_from_sectors(t_list **sectors, t_sector *sec)
-{
-	remove_from_list_if_with(sectors, sec, &pointer_compare, &free_sector);
-}
-
-int	sector_compare(t_sector *s1, t_sector *s2)
-{
-	if (s1->id == s2->id)
-		return (1);
-	return (0);
-}
-
-t_sector	*get_sector_with_wall(t_list **sector_list, t_wall *wall)
-{
-	t_list	*curr;
-	t_list	*rruc;
-
-	curr = *sector_list;
-	while (curr)
-	{
-		rruc = ((t_sector *)curr->content)->walls;
-		while (rruc)
-		{
-			if (rruc->content == wall)
-				return (curr->content);
-			rruc = rruc->next;
-		}
-		curr = curr->next;
-	}
-	return (NULL);
-}
-
-void	remove_all_non_existing_sectors(t_editor *editor)
-{
-	t_list		*sec;
-	t_sector	*sector;
-
-	sec = editor->grid.sectors;
-	while (sec)
-	{
-		sector = sec->content;
-		sec = sec->next;
-		if (sector && ft_lstlen(sector->walls) == 0)
-			remove_from_sectors(&editor->grid.sectors, sector);
-	}
-}
-
 void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
 {
 	char		*str;

@@ -10,6 +10,7 @@ SRCS = \
 	./entity_preset.c \
 	./portal.c \
 	./vector.c \
+	./cleanup_crew.c \
 	./grid_adding.c \
 	./other.c \
 	./wall_edit.c \
@@ -32,7 +33,9 @@ SRCS = \
 	./init_other_box.c \
 	./init_entity_editor.c \
 	./init_wall_editor.c \
+	./init_wall_editor_tab.c \
 	./init_sector_editor.c \
+	./init_sector_slope_editor.c \
 	./changer_prefab.c \
 	./button_functions.c \
 	./button_events.c \
@@ -40,7 +43,12 @@ SRCS = \
 	./sector_creation.c \
 	./select_functions.c \
 	./set_map.c \
+	./set_map1.c \
+	./set_map2.c \
 	./get_map.c \
+	./get_map1.c \
+	./get_map2.c \
+	./get_map_help.c \
 	./help.c \
 	./edit_functions.c \
 	./free.c \
