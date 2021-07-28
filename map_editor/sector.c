@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 12:44:27 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 12:44:28 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 13:20:56 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,6 +94,7 @@ void	remove_all_non_existing_sectors(t_editor *editor)
 			remove_from_sectors(&editor->grid.sectors, sector);
 	}
 }
+
 void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
 {
 	char		*str;

@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   init_other_box.c                                   :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/28 13:19:49 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/28 13:20:41 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "editor.h"
 
 t_bui_element *
@@ -62,6 +74,7 @@ void	button_init_other(int button_w, int gap, t_editor *editor)
 		ICON_PATH"save_button_click.png");
 	map_type_tickbox_init(gap, editor);
 }
+
 void	button_init(t_editor *editor)
 {
 	t_xywh	coord;
