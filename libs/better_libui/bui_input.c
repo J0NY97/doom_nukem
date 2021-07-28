@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 14:05:02 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 14:05:03 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 12:03:55 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,8 +71,7 @@ char	*add_to_input(t_bui_element *input)
 		if (alpha_pressed(libui) || number_pressed(libui))
 		{
 			if (!key_pressed(libui, SDL_SCANCODE_LSHIFT))
-				ft_straddchar(&new_str,
-					ft_tolower(libui->last_key[0]));
+				ft_straddchar(&new_str, ft_tolower(libui->last_key[0]));
 			else
 				ft_stradd(&new_str, libui->last_key);
 		}

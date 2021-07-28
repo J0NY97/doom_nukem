@@ -328,5 +328,19 @@ void				remove_entity_from_list(t_list **entities, t_entity *entity);
 void				remove_selected_point_from_all_walls_and_sectors(t_editor *editor);
 void				save_button_events(t_editor *editor);
 void				other_box_events(t_editor *editor);
+t_wall				*get_longest_wall_from_list(t_list *list);
+t_vector			*get_scaled_line(SDL_Surface *surface, t_wall *wall, t_vector center, float scale);
+void				floor_ceiling_slope_changer_prefab_events(t_editor *editor);
+void				floor_ceiling_id_changer_prefab_events(t_editor *editor);
+void				sector_f_and_c_button_events(t_editor *editor);
+void				draw_sector_viewer(t_editor *editor, SDL_Surface *surf);
+void				sector_changer_prefab_events(t_editor *editor);
+void				entity_drop_down_event(t_editor *editor);
+void				wall_render(t_editor *editor);
+void				wall_texture_view_events(t_editor *editor);
+void				wall_sprite_view_events(t_editor *editor);
+void				portal_texture_view_events(t_editor *editor);
+void				draw_selected_f_and_c_button(t_editor *editor);
+void				draw_selected_entity_texture(t_editor *editor);
 
 #endif

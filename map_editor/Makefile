@@ -3,12 +3,21 @@ SRCS = \
 	./main.c \
 	./point.c \
 	./wall.c \
+	./wall_help.c \
 	./sector.c \
 	./entity.c \
 	./sprite.c \
 	./entity_preset.c \
 	./portal.c \
 	./vector.c \
+	./grid_adding.c \
+	./other.c \
+	./wall_edit.c \
+	./wall_render.c \
+	./wall_sprite_edit.c \
+	./sector_edit.c \
+	./entity_edit.c \
+	./fandc_edit.c \
 	./args_parser.c \
 	./inits.c \
 	./button_functions.c \
