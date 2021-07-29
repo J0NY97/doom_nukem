@@ -6,35 +6,39 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/06 12:03:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/26 13:24:54 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 16:04:03 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "stdlib.h"
-#include "libft.h"
-#include "libpf.h"
-#include "fcntl.h"
+#include "SDL.h"
+#include <fcntl.h>
+#include <stdio.h>
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
-int 	main(void)
+int	main(void)
 {
 	int		fd;
 	char	*line;
-	char	*path;
+	char	*path1;
+	char	*path2;
 
-	fd = creat("path.h", S_IRUSR | S_IWUSR);
-	path = realpath("./", NULL);
-	ft_dprintf(fd, "\
+	fd = creat("./path.h", S_IRUSR | S_IWUSR);
+	path1 = SDL_GetBasePath();
+	dprintf(fd, "\
 #ifndef PATH_H\n\
 # define PATH_H\n\
-# define ROOT_PATH \"%s/\"\n\
-# define GAME_PATH ROOT_PATH\"game/\"\n\
-# define RESOURCE_PATH GAME_PATH\"resources/\"\n\
-# define TTF_PATH RESOURCE_PATH\"TTF/\"\n\
-# define UI_PATH RESOURCE_PATH\"UI/\"\n\
-# define ICON_PATH RESOURCE_PATH\"ICON/\"\n\
+# define ROOT_PATH \"%s\"\n\
+# define GAME_PATH \"%sgame/\"\n\
+# define WAV_PATH \"%sgame/resources/WAV/\"\n\
+# define BXPM_PATH \"%sgame/resources/BXPM/\"\n\
+# define ICON_PATH \"%sgame/resources/ICON/\"\n\
+# define TTF_PATH \"%sgame/resources/TTF/\"\n\
+# define MAP_PATH \"%sgame/resources/MAPS/\"\n\
 #endif"\
-	, path);
+	, path1, path1, path1, path1, path1, path1, path1);
 	close(fd);
-	free(path);
-	return (1);
+	free(path1);
+	return (0);
 }

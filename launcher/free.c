@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:57:03 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 11:57:03 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 16:16:43 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,6 @@ void	free_launcher(t_launcher *launcher)
 	free_play_menu(launcher->play_menu);
 	free_editor_menu(launcher->editor_menu);
 	ft_lstdel(&launcher->main_menu_buttons, &dummy_free_er);
-	ft_strdel(&launcher->map_dir);
 	ft_lstdel(&launcher->map_list, &free_char_pointer);
 	free(launcher);
 }

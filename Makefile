@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/26 14:17:10 by nneronin         ###   ########.fr        #
+#    Updated: 2021/07/28 14:46:34 by jsalmi           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -21,10 +21,11 @@ MAGENTA		:=	"\e[0;35m"
 CYAN		:=	"\e[0;36m"
 UNDERLINE	:=	"\x1b[4m"
 RESET		:=	"\e[0m"
+PATH_H		= ./path.h
 
 name = dontcare
 
-all: framework  
+all: $(PATH_H) framework  
 	@make -C ./libs/libft
 	@make -C ./libs/libpf
 	@make -C ./libs/libbxpm
@@ -67,6 +68,10 @@ endif
 re: fclean all
 
 SDL_DIR		:= ./libs/SDL_Frameworks
+
+$(PATH_H):
+	@printf $(CYAN)"[INFO]	Creating path.h\n"$(RESET)
+	@sh ./get_path/run.sh
 
 framework:
 ifeq ($(SHELL_NAME), Darwin)

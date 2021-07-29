@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/10/11 13:40:11 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/19 14:41:40 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 16:41:15 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,11 +85,9 @@ void	read_map_file(t_editor *editor)
 	}
 	while (get_next_line(fd, &line))
 	{
-		ft_putstr(line);
-		ft_putchar('\n');
 		choose_correct_reader(editor, line, fd);
 		ft_strdel(&line);
 	}
 	close(fd);
-	free(line);
+	ft_strdel(&line);
 }

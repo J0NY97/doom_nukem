@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:56:53 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 11:56:55 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 16:32:26 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,13 +37,10 @@ t_list	*get_maps(char *directory)
 			|| (ft_strendswith(dp->d_name, ".story") == 0))
 		{
 			file = ft_strdup(dp->d_name);
-			ft_printf("Found map named: %s", file);
 			add_to_list(&maps, file, sizeof(char *));
-			ft_printf(" == %s\n", maps->content);
 		}
 		dp = readdir(dirp);
 	}
 	closedir(dirp);
-	ft_printf("Map directory: %s read.\n", directory);
 	return (maps);
 }

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/26 14:16:16 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 16:16:32 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,9 +48,8 @@ t_launcher	*launcher_init(t_bui_window *win)
 	bui_set_element_image_from_path(launcher->menu, ELEMENT_DEFAULT,
 		ICON_PATH"test2.bmp", NULL);
 	// Getting map stuff
-	launcher->map_dir = ft_strdup(ROOT_PATH"map_editor/maps");
 	launcher->map_list = NULL;
-	launcher->map_list = get_maps(launcher->map_dir);
+	launcher->map_list = get_maps(MAP_PATH);
 	// Menu init
 	the_menu_init(launcher);
 	// button adding to list

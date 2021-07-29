@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:56:29 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 16:11:44 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 16:20:40 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ void	launch_game(
 	char	*arr[10];
 
 	arr[0] = ft_sprintf("%s", GAME_PATH"doom");
-	arr[1] = ft_sprintf("%s%s", ROOT_PATH"map_editor/maps/", text);
+	arr[1] = ft_sprintf("%s%s", MAP_PATH, text);
 	arr[2] = ft_sprintf("-size=%s", settings->resolution_drop->active->text);
 	arr[3] = ft_sprintf("-res=%.2f",
 			(float)settings->texture_scale_slider->value / 100);

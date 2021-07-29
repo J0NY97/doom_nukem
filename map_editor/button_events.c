@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 12:43:34 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 12:45:06 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 16:08:27 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,10 +32,10 @@ void	save_button_events(t_editor *editor)
 	editor->mapname = ft_strdup(editor->map_name_input->text);
 	ft_strdel(&editor->fullpath);
 	if (bui_button_toggle(editor->endless_tickbox))
-		editor->fullpath = ft_sprintf(ROOT_PATH"map_editor/maps/%s%s",
+		editor->fullpath = ft_sprintf(MAP_PATH"%s%s",
 				editor->mapname, ".endless");
 	else if (bui_button_toggle(editor->story_tickbox))
-		editor->fullpath = ft_sprintf(ROOT_PATH"map_editor/maps/%s%s",
+		editor->fullpath = ft_sprintf(MAP_PATH"%s%s",
 				editor->mapname, ".story");
 	remove_all_non_existing_sectors(editor);
 	remove_all_lonely_walls(&editor->grid.walls, &editor->grid.sectors);

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:19:46 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 13:19:47 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/28 16:34:32 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,5 +44,4 @@ void	init_entity_presets(t_list **list)
 		SDL_FreeSurface(image);
 		i++;
 	}
-	ft_printf("[init_entity_presets]\n");
 }

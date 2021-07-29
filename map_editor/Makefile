@@ -66,7 +66,8 @@ INCLUDES = \
 	-I../libs/libgfx \
 	-I../libs/SDL2/includes \
 	-I../libs/libbxpm \
-	-I../game/inc
+	-I../game/inc \
+	-I../
 
 LIB_FOLDERS = \
 	-L../libs/libft \
