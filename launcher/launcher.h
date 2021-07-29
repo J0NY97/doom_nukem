@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/29 11:58:19 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/29 11:59:12 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 18:37:24 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,6 +82,7 @@ typedef struct s_ui_menu_editor
 */
 typedef struct s_launcher
 {
+	t_bui_libui			*libui;
 	t_fps				*fps;
 	t_bui_element		*menu;
 	t_ui_menu_settings	*settings_menu;
@@ -102,7 +103,7 @@ typedef struct s_launcher
 void					free_launcher(t_launcher *launcher);
 
 // init
-t_launcher				*launcher_init(t_bui_window *win);
+t_launcher				*launcher_init(t_bui_libui *libui, t_bui_window *win);
 void					main_menu_events(t_launcher *main_menu, t_bui_libui *libui);
 t_list					*get_maps(char *directoy);
 

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:57:03 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 16:16:43 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 18:29:04 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,4 +55,7 @@ void	free_launcher(t_launcher *launcher)
 	ft_lstdel(&launcher->main_menu_buttons, &dummy_free_er);
 	ft_lstdel(&launcher->map_list, &free_char_pointer);
 	free(launcher);
+	SDL_Quit();
+	IMG_Quit();
+	TTF_Quit();
 }

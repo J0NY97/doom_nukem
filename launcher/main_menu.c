@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 16:16:32 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 18:37:16 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,25 +34,21 @@ void	the_menu_init(t_launcher *launcher)
 	init_editor_menu_map_buttons(launcher->editor_menu, launcher->map_list);
 }
 
-t_launcher	*launcher_init(t_bui_window *win)
+t_launcher	*launcher_init(t_bui_libui *libui, t_bui_window *win)
 {
 	t_launcher	*launcher;
 
 	launcher = ft_memalloc(sizeof(t_launcher));
+	launcher->libui = libui;
 	launcher->fps = ft_memalloc(sizeof(t_fps));
-	// useless INIT
 	load_useless_stuff(launcher);
-	// Menu	
 	launcher->menu = bui_new_menu(win, NULL,
 			(t_xywh){0, 0, win->position.w, win->position.h});
 	bui_set_element_image_from_path(launcher->menu, ELEMENT_DEFAULT,
 		ICON_PATH"test2.bmp", NULL);
-	// Getting map stuff
 	launcher->map_list = NULL;
 	launcher->map_list = get_maps(MAP_PATH);
-	// Menu init
 	the_menu_init(launcher);
-	// button adding to list
 	launcher->play_button = new_main_menu_button(launcher, "play", 0);
 	launcher->editor_button = new_main_menu_button(launcher, "editor", 1);
 	launcher->settings_button = new_main_menu_button(launcher, "settings", 2);

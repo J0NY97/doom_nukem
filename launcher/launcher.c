@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:56:39 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 16:11:21 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 18:37:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	main(void)
 
 	libui = bui_new_libui();
 	win = window_init(libui);
-	launcher = launcher_init(win);
+	launcher = launcher_init(libui, win);
 	while (libui->run)
 	{
 		bui_event_handler(libui);
@@ -49,8 +49,8 @@ int	main(void)
 		bui_fps_func(launcher->fps);
 		update_title_fps(win->win, launcher->fps);
 	}
-	free_launcher(launcher);
 	bui_libui_quit(libui);
+	free_launcher(launcher);
 	system("leaks wolf3d");
 	return (0);
 }

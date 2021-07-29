@@ -12,15 +12,21 @@ SRCS = \
 	   ./free.c \
        ./main_menu.c
 OBJS = $(SRCS:.c=.o)
+
+SDL_DIR		:= ../libs/SDL_Frameworks
+SDL_MAIN	:= -I $(SDL_DIR)/SDL2.framework/Headers -framework SDL2 -F $(SDL_DIR)
+SDL_IMAGE	:= -I $(SDL_DIR)/SDL2_image.framework/Headers -framework SDL2_image -F $(SDL_DIR)
+SDL_TTF		:= -I $(SDL_DIR)/SDL2_ttf.framework/Headers -framework SDL2_ttf -F $(SDL_DIR)
+
 INCLUDES = -I../libs/libft \
 	   -I../libs/better_libui \
 	   -I../libs/libpf \
 	   -I../libs/libgfx \
-	   -I../libs/SDL2/includes \
+	   $(SDL_MAIN) $(SDL_IMAGE) $(SDL_TTF) \
 	   -I../ \
 	   -I../game/inc
-LIBS = -L../libs/libft -L../libs/better_libui -L../libs/libpf -L../libs/libgfx -L../libs/SDL2/lib \
-       -lui -lSDL2 -lSDL2_ttf -lSDL2_image -lpf -lft -lgfx
+LIBS = -L../libs/libft -L../libs/better_libui -L../libs/libpf -L../libs/libgfx \
+       -lui -lpf -lft -lgfx
 FLAGS = -Wall -Wextra
 # -Werror
 

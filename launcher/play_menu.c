@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:56:29 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 16:20:40 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 18:29:42 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ void	launch_game(
 		arr[8] = ft_strdup("");
 	arr[9] = NULL;
 	free_launcher(launcher);
+	bui_libui_quit(launcher->libui);
 	execv(arr[0], arr);
 }
 
