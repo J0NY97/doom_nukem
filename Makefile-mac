@@ -26,8 +26,6 @@ PATH_H		= ./path.h
 name = dontcare
 
 all: framework $(PATH_H)  
-	@make -C ./libs/libft
-	@make -C ./libs/libpf
 	@make -C ./libs/libbxpm
 	@make -C ./libs/libtp
 	@make -C ./libs/better_libui
@@ -65,6 +63,8 @@ SDL_DIR		:= ./libs/SDL_Frameworks
 
 $(PATH_H):
 	@printf $(CYAN)"[INFO]	Creating path.h\n"$(RESET)
+	@make -C ./libs/libft
+	@make -C ./libs/libpf
 	@sh ./get_path/run.sh
 
 framework:
