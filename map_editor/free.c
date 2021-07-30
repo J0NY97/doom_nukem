@@ -37,6 +37,9 @@ void	editor_free2(t_editor *editor)
 {
 	int	i;
 
+	changer_prefab_free(editor->ceiling_scale, 0);
+	ft_lstdel(&editor->sector_texture_buttons, &dummy_free_er);
+	changer_prefab_free(editor->slope_floor_wall_changer, 0);
 	changer_prefab_free(editor->slope_floor_angle_changer, 0);
 	changer_prefab_free(editor->slope_ceiling_wall_changer, 0);
 	changer_prefab_free(editor->slope_ceiling_angle_changer, 0);
@@ -70,9 +73,9 @@ void	editor_free(t_editor *editor)
 	changer_prefab_free(editor->gravity, 0);
 	changer_prefab_free(editor->lighting, 0);
 	changer_prefab_free(editor->floor_scale, 0);
-	changer_prefab_free(editor->ceiling_scale, 0);
-	ft_lstdel(&editor->sector_texture_buttons, &dummy_free_er);
-	changer_prefab_free(editor->slope_floor_wall_changer, 0);
 	editor_free2(editor);
 	ft_memdel((void **)&editor);
+	SDL_Quit();
+	TTF_Quit();
+	IMG_Quit();
 }

@@ -60,7 +60,9 @@ SRCS = \
 OBJS = $(SRCS:.c=.o)
 
 SDL_DIR		:= ../libs/SDL
-SDL_INC		:= -I$(SDL_DIR)/include -L$(SDL_DIR)/lib -lSDL2
+SDL_INC		:= -I$(SDL_DIR)/include
+SDL_LIB_DIR	:= -L$(SDL_DIR)/lib
+SDL_LIB		:= -lSDL2 -lSDL2_ttf -lSDL2_image
 
 INCLUDES = \
 	-I../libs/libft \
@@ -77,8 +79,9 @@ LIB_FOLDERS = \
 	-L../libs/libpf \
 	-L../libs/better_libui \
 	-L../libs/libgfx \
+	$(SDL_LIB_DIR) \
 
-LIB = -lui -lpf -lft -lgfx
+LIB = $(SDL_LIB) -lui -lpf -lft -lgfx
 
 FLAGS = -Wall -Wextra
 

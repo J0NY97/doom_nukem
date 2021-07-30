@@ -22,9 +22,6 @@ int	main(int argc, char **argv)
 		return (1);
 	map_editor(map);
 	ft_strdel(&map);
-	SDL_Quit();
-	TTF_Quit();
-	IMG_Quit();
 	if (argc == 3 && (ft_strequ(argv[2], "-l")
 			|| ft_strequ(argv[2], "-launcher")))
 	{

@@ -112,6 +112,6 @@ void	map_editor(char *map)
 	}
 	ft_putstr("[map_editor] Bye!\n");
 	free(fps);
-	editor_free(editor);
 	bui_libui_quit(libui);
+	editor_free(editor);
 }
