@@ -31,7 +31,7 @@ all: $(NAME)
 	@printf $(CYAN)"[INFO]	$(NAME) ready!\n"$(RESET)
 
 $(NAME): $(SRCS)
-	@gcc -c $(SRCS) -pthread
+	@gcc -c $(SRCS)
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
 	@rm -f $(OBJS)

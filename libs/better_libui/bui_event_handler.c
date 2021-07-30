@@ -47,6 +47,13 @@ int	key_pressed(t_bui_libui *libui, int key)
 	return (libui->keys[key]);
 }
 
+int	key_repeat(t_bui_libui *libui, int key)
+{
+	if (key < 0 || key > SDL_NUM_SCANCODES)
+		return (0);
+	return (libui->keys[key] > 1);
+}
+
 int	key_press(t_bui_libui *libui, char *key)
 {
 	if (libui->last_key != NULL

@@ -126,6 +126,7 @@ void	remove_portal(t_grid *grid)
 			{
 				((t_wall *)w->content)->neighbor_sector = NULL;
 				((t_wall *)w->content)->solid = 1;
+				remove_all_non_existing_portals(&grid->sectors);
 			}
 			w = w->next;
 		}

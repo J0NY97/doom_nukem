@@ -75,13 +75,15 @@ void	remove_button_events(t_editor *editor, t_grid *grid)
 	unselect_selected(editor, grid);
 }
 
+void	edit_button_event(t_editor *editor)
+{
+	editor->edit->menu->show = editor->edit->menu->show != 1;
+}
+
 void	selection_mode_buttons(t_editor *editor, t_grid *grid)
 {
 	if (bui_button(editor->button_remove))
 		remove_button_events(editor, grid);
 	else if (bui_button(editor->button_edit))
-	{
-		SDL_RestoreWindow(editor->edit_window->win);
-		SDL_RaiseWindow(editor->edit_window->win);
-	}
+		edit_button_event(editor);
 }

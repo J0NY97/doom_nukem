@@ -224,10 +224,12 @@ void				bui_set_window_icon(t_bui_window *window, char *image_path);
 void				bui_render_to_screen(t_bui_element *elem);
 
 // Event handling
-void				bui_event_handler(t_bui_libui *libui);
+void				bui_event_handler(t_bui_libui *libui, SDL_Event *e);
+void				bui_update_elements(t_bui_libui *libui);
 void				key_was(t_bui_libui *libui, SDL_Keysym key, int type);
 void				mouse_key_was(t_bui_libui *libui, Uint8 button, int type);
 int					key_pressed(t_bui_libui *libui, int key);
+int					key_repeat(t_bui_libui *libui, int key);
 int					key_press(t_bui_libui *libui, char *key);
 int					mouse_pressed(t_bui_libui *libui, int key);
 void				libui_events_check(t_bui_libui *libui);
@@ -337,7 +339,6 @@ void				bui_render_the_event(t_bui_libui *libui);
 void				bui_libui_quit(t_bui_libui *libui);
 void				bui_element_free(void *elem, size_t size);
 // New testing purposeum
-void				bui_event_handler(t_bui_libui *libui);
 void				bui_render(t_bui_libui *libui);
 
 /////////////////

@@ -30,6 +30,7 @@ void	edit_window_init(t_editor *editor, t_bui_libui *libui)
 	editor->edit_window = bui_new_window(libui, "Editor", coord, 0);
 	bui_set_window_color(editor->edit_window, editor->palette.win);
 	SDL_MinimizeWindow(editor->edit_window->win);
+	editor->edit->menu = bui_new_menu(editor->window, "Editor", coord);
 	init_sector_editor(editor);
 	init_wall_editor(editor);
 	init_entity_editor(editor);

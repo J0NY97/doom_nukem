@@ -78,6 +78,7 @@ void	bui_update_elements(t_bui_libui *libui)
 	}
 }
 
+/*
 void	bui_event_handler(t_bui_libui *libui)
 {
 	SDL_Event	e;
@@ -95,11 +96,36 @@ void	bui_event_handler(t_bui_libui *libui)
 			libui->run = 0;
 		else if (e.key.type == SDL_KEYDOWN || e.key.type == SDL_KEYUP)
 		{
-			libui->keys[e.key.keysym.scancode] = e.key.type == SDL_KEYDOWN;
+			if (e.key.repeat != 0)
+				libui->keys[e.key.keysym.scancode] += e.key.type == SDL_KEYDOWN;
+			else
+				libui->keys[e.key.keysym.scancode] = e.key.type == SDL_KEYDOWN;
 			key_was(libui, e.key.keysym, e.key.type == SDL_KEYDOWN);
 		}
 		mouse_update(libui, e);
 	}
 	get_mouse_states(libui);
 	bui_update_elements(libui);
+}
+*/
+void	bui_event_handler(t_bui_libui *libui, SDL_Event *e)
+{
+	libui->mouse_down_last_frame = 0;
+	libui->last_key = NULL;
+	libui->mouse_wheel_x = 0;
+	libui->mouse_wheel_y = 0;
+	if ((e->type == SDL_WINDOWEVENT
+			&& e->window.event == SDL_WINDOWEVENT_CLOSE)
+		|| key_pressed(libui, SDL_SCANCODE_ESCAPE))
+		libui->run = 0;
+	else if (e->key.type == SDL_KEYDOWN || e->key.type == SDL_KEYUP)
+	{
+		if (e->key.repeat != 0)
+			libui->keys[e->key.keysym.scancode] += e->key.type == SDL_KEYDOWN;
+		else
+			libui->keys[e->key.keysym.scancode] = e->key.type == SDL_KEYDOWN;
+		key_was(libui, e->key.keysym, e->key.type == SDL_KEYDOWN);
+	}
+	mouse_update(libui, *e);
+	get_mouse_states(libui);
 }
