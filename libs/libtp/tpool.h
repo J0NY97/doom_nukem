@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/09 10:13:13 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/08 14:55:12 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/30 16:07:24 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,7 @@ void					*tpool_func(void *arg);
 int						tpool_add(t_tpool *tpool,
 							int (*func)(void *), void *arg);
 int						tpool_wait(t_tpool *tpool);
+void					*tpool_bzero(void *arg, size_t n);
 int						tpool_error(int i);
 
 #endif

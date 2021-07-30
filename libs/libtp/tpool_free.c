@@ -6,11 +6,25 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/09 10:36:46 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/08 14:56:24 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/30 16:07:00 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "tpool.h"
+
+void	*tpool_bzero(void *arg, size_t n)
+{
+	size_t			i;
+	char			*str;
+	unsigned char	cchar;
+
+	i = -1;
+	str = arg;
+	cchar = 0;
+	while (++i < n)
+		str[i] = cchar;
+	return (arg);
+}
 
 void	tpool_memdel(void **ap)
 {

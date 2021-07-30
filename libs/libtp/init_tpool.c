@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/09 10:14:42 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/08 14:52:32 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/30 16:07:42 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,7 @@ int	init_tpool(t_tpool *tpool, int amount)
 	int	i;
 
 	i = -1;
-	bzero(tpool, sizeof(t_tpool));
+	tpool_bzero(tpool, sizeof(t_tpool));
 	pthread_mutex_init(&tpool->mutex, NULL);
 	pthread_cond_init(&tpool->task_cond, NULL);
 	pthread_cond_init(&tpool->main_cond, NULL);
@@ -58,7 +58,7 @@ int	init_tpool(t_tpool *tpool, int amount)
 	tpool->threads = (pthread_t *)malloc(sizeof(pthread_t) * amount);
 	if (!tpool->threads)
 		return (tpool_error(-3));
-	bzero(tpool->threads, sizeof(pthread_t) * amount);
+	tpool_bzero(tpool->threads, sizeof(pthread_t) * amount);
 	while (++i < amount)
 		if (pthread_create(&tpool->threads[i], NULL, tpool_func, tpool))
 			return (tpool_error(-2));
