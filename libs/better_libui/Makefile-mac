@@ -1,0 +1,69 @@
+NAME = libui.a
+SRCS = \
+       ./bui_element.c \
+       ./bui_slider.c \
+	   ./bui_draw.c \
+       ./bui_event_handler.c \
+       ./bui_libui.c \
+       ./bui_preset.c \
+       ./bui_text.c \
+       ./bui_text_other.c \
+       ./bui_text_pos.c \
+       ./bui_window.c \
+       ./dir_open.c \
+       ./load_image.c \
+       ./bui_quit.c \
+       ./bui_draw_circle.c \
+       ./bui_draw_line.c \
+       ./bui_render0.c \
+       ./bui_render1.c \
+       ./bui_render.c \
+       ./bui_mouse.c \
+       ./bui_events.c \
+       ./bui_input.c \
+       ./bui_image.c \
+       ./bui_set.c \
+       ./bui_get.c \
+       ./bui_print.c \
+       ./bui_edit.c \
+	   ./bui_fps.c \
+	   ./bui_color.c \
+       ./bui_preset_console.c \
+       ./bui_preset_dropdown.c \
+       ./bui_preset_menu.c \
+       ./bui_preset_scrollbar.c \
+       ./bui_preset_slider.c \
+       ./bui_preset_tab.c \
+       ./help.c
+OBJS = $(SRCS:.c=.o)
+
+all: $(NAME)
+
+SDL_DIR		:= ../SDL_Frameworks
+SDL_MAIN	:= -I$(SDL_DIR)/SDL2.framework/Headers -F$(SDL_DIR)
+SDL_IMAGE	:= -I$(SDL_DIR)/SDL2_image.framework/Headers -F$(SDL_DIR)
+SDL_TTF		:= -I$(SDL_DIR)/SDL2_ttf.framework/Headers -F$(SDL_DIR)
+
+$(NAME): $(SRCS)
+	@sh bui_path_mac.sh
+	@gcc -c $(SRCS) \
+		-I../libpf \
+		-I../libft \
+		$(SDL_MAIN)	$(SDL_IMAGE) $(SDL_TTF)
+	@ar rc $(NAME) $(OBJS)
+	@ranlib $(NAME)
+	@echo "$(NAME) was successfully created."
+
+clean:
+	@rm -f $(OBJS)
+	@echo "$(NAME) was cleaned."
+
+fclean: clean
+	@rm -f $(NAME)
+
+re: fclean all
+
+.PHONY: clean, all, re, fclean
+
+
+

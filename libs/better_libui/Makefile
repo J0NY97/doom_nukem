@@ -1,69 +1,42 @@
-NAME = libui.a
-SRCS = \
-       ./bui_element.c \
-       ./bui_slider.c \
-	   ./bui_draw.c \
-       ./bui_event_handler.c \
-       ./bui_libui.c \
-       ./bui_preset.c \
-       ./bui_text.c \
-       ./bui_text_other.c \
-       ./bui_text_pos.c \
-       ./bui_window.c \
-       ./dir_open.c \
-       ./load_image.c \
-       ./bui_quit.c \
-       ./bui_draw_circle.c \
-       ./bui_draw_line.c \
-       ./bui_render0.c \
-       ./bui_render1.c \
-       ./bui_render.c \
-       ./bui_mouse.c \
-       ./bui_events.c \
-       ./bui_input.c \
-       ./bui_image.c \
-       ./bui_set.c \
-       ./bui_get.c \
-       ./bui_print.c \
-       ./bui_edit.c \
-	   ./bui_fps.c \
-	   ./bui_color.c \
-       ./bui_preset_console.c \
-       ./bui_preset_dropdown.c \
-       ./bui_preset_menu.c \
-       ./bui_preset_scrollbar.c \
-       ./bui_preset_slider.c \
-       ./bui_preset_tab.c \
-       ./help.c
-OBJS = $(SRCS:.c=.o)
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
+#    Updated: 2021/07/29 13:33:07 by nneronin         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
 
-all: $(NAME)
+SHELL_NAME	:= $(shell uname -s)
+name = dontcare
 
-SDL_DIR		:= ../SDL_Frameworks
-SDL_MAIN	:= -I$(SDL_DIR)/SDL2.framework/Headers -F$(SDL_DIR)
-SDL_IMAGE	:= -I$(SDL_DIR)/SDL2_image.framework/Headers -F$(SDL_DIR)
-SDL_TTF		:= -I$(SDL_DIR)/SDL2_ttf.framework/Headers -F$(SDL_DIR)
-
-$(NAME): $(SRCS)
-	@sh bui_path.sh
-	@gcc -c $(SRCS) \
-		-I../libpf \
-		-I../libft \
-		$(SDL_MAIN)	$(SDL_IMAGE) $(SDL_TTF)
-	@ar rc $(NAME) $(OBJS)
-	@ranlib $(NAME)
-	@echo "$(NAME) was successfully created."
+all: 
+	@echo "OS: $(SHELL_NAME)"
+ifeq ($(SHELL_NAME), Darwin)
+	@echo "Making mac version."
+	@make -f Makefile-mac
+else
+	@echo "Making windows version."
+	@mingw32-make -f Makefile-win
+endif
 
 clean:
-	@rm -f $(OBJS)
-	@echo "$(NAME) was cleaned."
-
-fclean: clean
-	@rm -f $(NAME)
+ifeq ($(SHELL_NAME), Darwin)
+	@make clean -f Makefile-mac
+else
+	@mingw32-make clean -f Makefile-win 
+endif
+	
+fclean:
+ifeq ($(SHELL_NAME), Darwin)
+	@make fclean -f Makefile-mac
+else
+	@mingw32-make fclean -f Makefile-win 
+endif
 
 re: fclean all
 
-.PHONY: clean, all, re, fclean
-
-
-
+.PHONY: clean, all, re, fclean, framework, framework_del, frameworks_re
