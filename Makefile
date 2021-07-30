@@ -14,9 +14,12 @@ SHELL_NAME	:= $(shell uname -s)
 name = dontcare
 
 all: 
+	@echo "OS: $(SHELL_NAME)"
 ifeq ($(SHELL_NAME), Darwin)
+	@echo "Making mac version."
 	@make -f Makefile-mac
 else
+	@echo "Making windows version."
 	@mingw32-make -f Makefile-win
 endif
 
@@ -28,7 +31,11 @@ else
 endif
 	
 fclean:
-	@make fclean -C ./game
+ifeq ($(SHELL_NAME), Darwin)
+	@make fclean -f Makefile-mac
+else
+	@mingw32-make fclean -f Makefile-win 
+endif
 
 re: fclean all
 

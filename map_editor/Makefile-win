@@ -1,0 +1,101 @@
+NAME = doom_editor
+SRCS = \
+	./main.c \
+	./point.c \
+	./wall.c \
+	./wall_help.c \
+	./sector.c \
+	./entity.c \
+	./sprite.c \
+	./entity_preset.c \
+	./portal.c \
+	./vector.c \
+	./cleanup_crew.c \
+	./grid_adding.c \
+	./other.c \
+	./wall_edit.c \
+	./wall_render.c \
+	./wall_sprite_edit.c \
+	./sector_edit.c \
+	./entity_edit.c \
+	./fandc_edit.c \
+	./move.c \
+	./point_select.c \
+	./entity_select.c \
+	./wall_select.c \
+	./sector_select.c \
+	./args_parser.c \
+	./inits.c \
+	./init_textures.c \
+	./init_entity_presets.c \
+	./init_toolbox.c \
+	./init_selection_modes.c \
+	./init_other_box.c \
+	./init_entity_editor.c \
+	./init_wall_editor.c \
+	./init_wall_editor_tab.c \
+	./init_sector_editor.c \
+	./init_sector_slope_editor.c \
+	./changer_prefab.c \
+	./button_functions.c \
+	./button_events.c \
+	./draw_functions.c \
+	./sector_creation.c \
+	./select_functions.c \
+	./set_map.c \
+	./set_map1.c \
+	./set_map2.c \
+	./get_map.c \
+	./get_map1.c \
+	./get_map2.c \
+	./get_map_help.c \
+	./help.c \
+	./edit_functions.c \
+	./free.c \
+	./map_editor.c \
+	../libs/libbxpm/byte_utils.c \
+	../libs/libbxpm/read_bxpm.c \
+	./core.c
+
+OBJS = $(SRCS:.c=.o)
+
+SDL_DIR		:= ../libs/SDL
+SDL_INC		:= -I$(SDL_DIR)/include -L$(SDL_DIR)/lib -lSDL2
+
+INCLUDES = \
+	-I../libs/libft \
+	-I../libs/libpf \
+	-I../libs/better_libui \
+	-I../libs/libgfx \
+	$(SDL_INC) \
+	-I../libs/libbxpm \
+	-I../game/inc \
+	-I../
+
+LIB_FOLDERS = \
+	-L../libs/libft \
+	-L../libs/libpf \
+	-L../libs/better_libui \
+	-L../libs/libgfx \
+
+LIB = -lui -lpf -lft -lgfx
+
+FLAGS = -Wall -Wextra
+
+all: $(NAME)
+
+$(NAME): $(SRCS)
+	@gcc -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+	@echo "$(NAME) was successfully created."
+
+clean:
+	@rm -f $(OBJS)
+	@echo "$(NAME) was cleaned."
+
+fclean:
+	@rm -f $(NAME)
+	@echo "$(NAME) was fcleaned."
+
+re: fclean $(LIBS) all
+
+.PHONY: clean, all, re, fclean

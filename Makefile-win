@@ -24,8 +24,6 @@ PATH_H		= ./path.h
 name = dontcare
 
 all: $(PATH_H)  
-	@mingw32-make -C ./libs/libft
-	@mingw32-make -C ./libs/libpf
 	@mingw32-make -C ./libs/libbxpm
 	@mingw32-make -C ./libs/libtp
 	@mingw32-make -C ./libs/better_libui
@@ -61,6 +59,8 @@ re: fclean all
 
 $(PATH_H):
 	@printf $(CYAN)"[INFO]	Creating path.h\n"$(RESET)
-	@sh ./get_path/run.sh
+	@mingw32-make -C ./libs/libft
+	@mingw32-make -C ./libs/libpf
+	@sh ./get_path/run_win.sh
 
 .PHONY: clean, all, re, fclean, framework, framework_del, frameworks_re

@@ -10,7 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#define SDL_MAIN_HANDLED
 #include "SDL.h"
+#include "sys/stat.h"
+#include "libft.h"
+#include "libpf.h"
 #include <fcntl.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -22,11 +26,10 @@ int	main(void)
 	int		fd;
 	char	*line;
 	char	*path1;
-	char	*path2;
 
 	fd = creat("./path.h", S_IRUSR | S_IWUSR);
 	path1 = SDL_GetBasePath();
-	dprintf(fd, "\
+	ft_dprintf(fd, "\
 #ifndef PATH_H\n\
 # define PATH_H\n\
 # define ROOT_PATH \"%s\"\n\
