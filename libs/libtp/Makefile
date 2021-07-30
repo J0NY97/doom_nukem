@@ -34,15 +34,15 @@ $(NAME): $(SRCS)
 	@gcc -c $(SRCS) -pthread
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
-	@/bin/rm -f $(OBJS)
+	@rm -f $(OBJS)
 	@printf $(GREEN)"Compiling $(NAME)\n"$(RESET)
 
 clean:
-	@/bin/rm -f $(OBJS)
+	@rm -f $(OBJS)
 	@printf $(CYAN)"[INFO]	$(NAME) cleaned\n"$(RESET)
 
 fclean: clean
-	@/bin/rm -f $(NAME)
+	@rm -f $(NAME)
 
 re: fclean all
 
