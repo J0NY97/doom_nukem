@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:56:39 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/29 18:37:36 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 14:11:41 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ int	main(void)
 
 	libui = bui_new_libui();
 	win = window_init(libui);
-	launcher = launcher_init(libui, win);
+	launcher = launcher_init(win);
 	while (libui->run)
 	{
 		bui_event_handler(libui);

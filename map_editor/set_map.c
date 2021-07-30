@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/26 15:07:25 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 12:44:41 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 13:03:41 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,7 +101,6 @@ void	set_map(t_editor *editor)
 	else
 		add_text_to_info_box(editor, "[ERROR] Couldnt save map!");
 	close(fd);
-	ft_printf("%s", str);
 	ft_strdel(&str);
 	ft_putstr("Map saved Successfully.\n");
 	ft_printf("to : %s\n", editor->fullpath);

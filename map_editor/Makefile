@@ -59,12 +59,18 @@ SRCS = \
 
 OBJS = $(SRCS:.c=.o)
 
+SDL_DIR		:= ../libs/SDL_Frameworks
+SDL_MAIN	:= -I $(SDL_DIR)/SDL2.framework/Headers -framework SDL2 -F $(SDL_DIR)
+SDL_IMAGE	:= -I $(SDL_DIR)/SDL2_image.framework/Headers -framework SDL2_image -F $(SDL_DIR)
+SDL_MIXER	:= -I $(SDL_DIR)/SDL2_mixer.framework/Headers -framework SDL2_mixer -F $(SDL_DIR)
+SDL_TTF		:= -I $(SDL_DIR)/SDL2_ttf.framework/Headers -framework SDL2_ttf -F $(SDL_DIR)
+
 INCLUDES = \
 	-I../libs/libft \
 	-I../libs/libpf \
 	-I../libs/better_libui \
 	-I../libs/libgfx \
-	-I../libs/SDL2/includes \
+	$(SDL_MAIN) $(SDL_IMAGE) $(SDL_TTF) \
 	-I../libs/libbxpm \
 	-I../game/inc \
 	-I../
@@ -74,9 +80,8 @@ LIB_FOLDERS = \
 	-L../libs/libpf \
 	-L../libs/better_libui \
 	-L../libs/libgfx \
-	-L../libs/SDL2/lib
 
-LIB = -lui -lSDL2 -lSDL2_ttf -lSDL2_image -lpf -lft -lgfx
+LIB = -lui -lpf -lft -lgfx
 
 FLAGS = -Wall -Wextra
 

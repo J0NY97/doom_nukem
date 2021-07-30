@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:57:08 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 16:11:49 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 12:35:57 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,15 +65,11 @@ t_ui_menu_settings	*settings_menu_init(t_bui_element *parent_elem)
 	c = new_xywh(0, 20, 100, 20);
 	c.x = settings->menu->position.w / 8 / 2;
 	c.y = settings->menu->position.w / 8 / 2;
-	// Texts
 	settings_text_init(settings, c);
 	i = 0;
 	c.x += c.w + 5;
-	// Sliders
 	settings_slider_init(settings, c, &i);
-	// fps
 	settings_developer_init(settings, c, &i);
-	// resolution drop
 	settings_resolution_init(settings, c, &i);
 	return (settings);
 }

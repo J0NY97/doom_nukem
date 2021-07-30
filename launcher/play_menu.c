@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:56:29 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/29 18:29:42 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 12:35:26 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,13 @@ t_ui_menu_play	*play_menu_init(t_bui_element *parent_elem)
 
 	play_menu = ft_memalloc(sizeof(t_ui_menu_play));
 	play_menu->menu = new_main_menu_menu(parent_elem, "Play");
-	// Play tab
 	c.x = play_menu->menu->position.w / 8 / 2;
 	c.y = play_menu->menu->position.w / 8 / 2;
 	c.w = play_menu->menu->position.w - c.x * 2;
 	c.h = play_menu->menu->position.h - c.y * 2;
 	play_menu->play_tabs = bui_new_tab_preset(play_menu->menu, "tab", c);
 	bui_set_element_color(play_menu->play_tabs->tabsystem, 0x00);
-	// Endless
 	endless_tab_init(play_menu);
-	// Story
 	story_tab_init(play_menu);
 	return (play_menu);
 }
@@ -61,7 +58,6 @@ void	launch_game(
 		arr[8] = ft_strdup("");
 	arr[9] = NULL;
 	free_launcher(launcher);
-	bui_libui_quit(launcher->libui);
 	execv(arr[0], arr);
 }
 

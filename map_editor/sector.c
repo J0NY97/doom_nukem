@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 12:44:27 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 13:20:56 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 13:04:32 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,15 +36,12 @@ void	free_sector(void *content, size_t size)
 {
 	t_sector	*sector;
 
-	ft_putstr("[free_sector]\n");
 	(void)size;
 	sector = content;
 	if (sector == NULL)
 		return ;
-	ft_putstr("Starting to free walls from sector.\n");
 	if (sector->walls)
 		ft_lstdel(&sector->walls, &dummy_free_er);
-	ft_putstr("All walls from sector freed.\n");
 	free(sector);
 }
 

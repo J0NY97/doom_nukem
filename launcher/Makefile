@@ -25,8 +25,10 @@ INCLUDES = -I../libs/libft \
 	   $(SDL_MAIN) $(SDL_IMAGE) $(SDL_TTF) \
 	   -I../ \
 	   -I../game/inc
+
 LIBS = -L../libs/libft -L../libs/better_libui -L../libs/libpf -L../libs/libgfx \
        -lui -lpf -lft -lgfx
+
 FLAGS = -Wall -Wextra
 # -Werror
 

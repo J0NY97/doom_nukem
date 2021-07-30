@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/29 11:58:19 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/29 18:37:24 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 12:37:23 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,6 @@ typedef struct s_ui_menu_editor
 */
 typedef struct s_launcher
 {
-	t_bui_libui			*libui;
 	t_fps				*fps;
 	t_bui_element		*menu;
 	t_ui_menu_settings	*settings_menu;
@@ -103,33 +102,44 @@ typedef struct s_launcher
 void					free_launcher(t_launcher *launcher);
 
 // init
-t_launcher				*launcher_init(t_bui_libui *libui, t_bui_window *win);
-void					main_menu_events(t_launcher *main_menu, t_bui_libui *libui);
+t_launcher				*launcher_init(t_bui_window *win);
+void					main_menu_events(
+							t_launcher *main_menu, t_bui_libui *libui);
 t_list					*get_maps(char *directoy);
 
 // Editor //
 t_ui_menu_editor		*editor_menu_init(t_bui_element *main_menu);
-void					init_editor_menu_map_buttons(t_ui_menu_editor *menu, t_list *maps);
-void					editor_menu_events(t_launcher *launcher, t_ui_menu_editor *menu);
+void					init_editor_menu_map_buttons(
+							t_ui_menu_editor *menu, t_list *maps);
+void					editor_menu_events(
+							t_launcher *launcher, t_ui_menu_editor *menu);
 
 // Play //
-void					init_play_menu_map_buttons(t_ui_menu_play *menu, t_list *maps);
+void					init_play_menu_map_buttons(
+							t_ui_menu_play *menu, t_list *maps);
 t_ui_menu_play			*play_menu_init(t_bui_element *parent_elem);
-void					play_menu_events(t_launcher *launcher, t_ui_menu_play *play_menu, t_ui_menu_settings *settings);
-void					difficulty_drop_init(t_ui_menu_play *play_menu, t_xywh c);
+void					play_menu_events(
+							t_launcher *launcher, t_ui_menu_play *play_menu,
+							t_ui_menu_settings *settings);
+void					difficulty_drop_init(
+							t_ui_menu_play *play_menu, t_xywh c);
 void					endless_tab_init(t_ui_menu_play *play_menu);
 void					story_tab_init(t_ui_menu_play *play_menu);
 
 // Settings //
 t_ui_menu_settings		*settings_menu_init(t_bui_element *parent_elem);
 void					settings_menu_events(t_ui_menu_settings *settings_menu);
-void					settings_text_init(t_ui_menu_settings *settings, t_xywh c);
-void					settings_slider_init(t_ui_menu_settings *settings, t_xywh c, int *i);
+void					settings_text_init(
+							t_ui_menu_settings *settings, t_xywh c);
+void					settings_slider_init(
+							t_ui_menu_settings *settings, t_xywh c, int *i);
 
 // HELP //
-t_bui_element			*new_map_button(t_bui_element *parent, char *text, int i, t_xywh c);
+t_bui_element			*new_map_button(
+							t_bui_element *parent, char *text, int i, t_xywh c);
 t_bui_element			*new_main_menu_menu(t_bui_element *parent, char *text);
-t_bui_element			*new_main_menu_button(t_launcher *menu, char *text, int i);
+t_bui_element			*new_main_menu_button(
+							t_launcher *menu, char *text, int i);
 t_bui_element			*new_bass_element(t_preset_dropdown *drop, char *text);
 char					*get_clicked_map_button(t_list *map_buttons);
 t_xywh					get_next_pos(t_xywh start_pos, int i);

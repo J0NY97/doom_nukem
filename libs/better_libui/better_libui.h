@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/29 12:07:09 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/29 12:07:10 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 12:55:25 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -201,7 +201,8 @@ typedef struct s_fps
 void				bui_fps_func(t_fps *fps);
 
 // Drawing stuff
-void				ft_create_circle(SDL_Surface *surface, Uint32 color, t_shapes c);
+void				ft_create_circle(
+						SDL_Surface *surface, Uint32 color, t_shapes c);
 void				ft_create_line(SDL_Surface *surf, Uint32 color, t_shapes l);
 
 // Libui stuff
@@ -209,8 +210,12 @@ t_bui_libui			*bui_new_libui(void);
 void				libui_events_clear(t_bui_libui *libui);
 
 // Window stuff
-t_bui_window		*bui_new_window(t_bui_libui *libui, char *name, t_xywh pos, Uint32 flags);
-t_bui_window		*bui_new_window_from_window(t_bui_libui *libui, SDL_Window *win, SDL_Surface *surface);
+t_bui_window		*bui_new_window(
+						t_bui_libui *libui, char *name, t_xywh pos,
+						Uint32 flags);
+t_bui_window		*bui_new_window_from_window(
+						t_bui_libui *libui, SDL_Window *win,
+						SDL_Surface *surface);
 void				bui_set_window_flags(t_bui_window *win, Uint32 flags);
 void				bui_set_window_color(t_bui_window *win, Uint32 color);
 void				bui_set_window_icon(t_bui_window *window, char *image_path);
@@ -237,24 +242,34 @@ t_bui_element		*bui_new_menu(t_bui_window *win, char *name, t_xywh pos);
 void				update_element(t_bui_element *elem, SDL_Window *win);
 
 // Element stuff
-t_bui_element		*bui_new_element_defaults(t_bui_libui *libui, char *text, t_xywh pos);
-t_bui_element		*bui_new_element(t_bui_element *menu, char *name, t_xywh pos);
+t_bui_element		*bui_new_element_defaults(
+						t_bui_libui *libui, char *text, t_xywh pos);
+t_bui_element		*bui_new_element(
+						t_bui_element *menu, char *name, t_xywh pos);
 void				bui_set_element_state(t_bui_element *elem, int state);
 int					bui_button(t_bui_element *button);
 int					bui_button_allow_duplicate(t_bui_element *button);
 int					bui_button_toggle(t_bui_element *button);
 void				bui_set_element_color(t_bui_element *elem, Uint32 color);
 void				bui_set_element_list_color(t_list *list, Uint32 color);
-void				bui_set_element_border(t_bui_element *elem, int thiccness, Uint32 color);
-void				bui_set_element_state_border(t_bui_element *elem, int thiccness, Uint32 color, int state);
+void				bui_set_element_border(
+						t_bui_element *elem, int thiccness, Uint32 color);
+void				bui_set_element_state_border(
+						t_bui_element *elem, int thiccness, Uint32 color,
+						int state);
 // Text
 void				bui_set_element_text(t_bui_element *elem, char *text);
-void				bui_set_element_text_position(t_bui_element *elem, int x, int y);
+void				bui_set_element_text_position(
+						t_bui_element *elem, int x, int y);
 void				bui_change_element_text(t_bui_element *elem, char *text);
-void				bui_set_element_text_color(t_bui_element *elem, Uint32 color);
-void				bui_set_element_text_font(t_bui_element *elem, char *font, Uint32 size, Uint32 color); // rename this to something else.
-void				bui_element_set_text_style(t_bui_element *elem, int style); // TTF font style
-void				bui_element_set_text_font(t_bui_element *elem, char *font_name);
+void				bui_set_element_text_color(
+						t_bui_element *elem, Uint32 color);
+void				bui_set_element_text_font(
+						t_bui_element *elem, char *font, Uint32 size,
+						Uint32 color);
+void				bui_element_set_text_style(t_bui_element *elem, int style);
+void				bui_element_set_text_font(
+						t_bui_element *elem, char *font_name);
 void				bui_set_element_text_size(t_bui_element *elem, Uint32 size);
 void				bui_remove_element_text(t_bui_element *elem);
 void				bui_center_element_text_x(t_bui_element *elem);
@@ -264,10 +279,18 @@ void				bui_center_element_text(t_bui_element *elem);
 void				bui_element_update_text(t_bui_element *elem);
 
 int					bui_input(t_bui_element *input);
-void				bui_set_element_image_from_path(t_bui_element *element, int type, char *path, t_xywh *pos);
-void				bui_set_element_image(t_bui_element *element, int type, SDL_Surface *image, t_xywh *pos);
-void				bui_set_element_image_all_states_image(t_bui_element *element, SDL_Surface *zeroth, SDL_Surface *first, SDL_Surface *second);
-void				bui_set_element_image_to_states(t_bui_element *element, char *zeroth, char *first, char *second);
+void				bui_set_element_image_from_path(
+						t_bui_element *element, int type, char *path,
+						t_xywh *pos);
+void				bui_set_element_image(
+						t_bui_element *element, int type, SDL_Surface *image,
+						t_xywh *pos);
+void				bui_set_element_image_all_states_image(
+						t_bui_element *element, SDL_Surface *zeroth,
+						SDL_Surface *first, SDL_Surface *second);
+void				bui_set_element_image_to_states(
+						t_bui_element *element, char *zeroth, char *first,
+						char *second);
 void				bui_element_resize(t_bui_element *element, t_xywh coord);
 void				bui_set_element_flags(t_bui_element *elem, Uint32 flags);
 
@@ -276,7 +299,9 @@ int					bui_get_slider_value(int min, int max, int pos_x, int w);
 int					bui_set_slider_value(int value, int min, int max, int w);
 
 // Text Stuff
-SDL_Surface			*bui_new_text(char *text, TTF_Font *font, Uint32 font_color, int max_w);
+SDL_Surface			*bui_new_text(
+						char *text, TTF_Font *font, Uint32 font_color,
+						int max_w);
 
 // Tab Widgeta majig
 t_bui_element		*bui_new_tab(t_list **group, char *name, Uint32 color);
@@ -289,9 +314,13 @@ SDL_Surface			*create_surface(int w, int h);
 void				clear_surface(SDL_Surface *surface);
 t_rgba				hex_to_rgba(Uint32 color_hex);
 Uint32				rgba_to_hex(t_rgba rgba);
-void				draw_rect(SDL_Surface *surface, t_xywh c, Uint32 color, int fill);
-void				draw_rect_border(SDL_Surface *surface, t_xywh c, Uint32 color, unsigned int size);
-void				draw_surface_border(SDL_Surface *surface, Uint32 color, int thiccness);
+void				draw_rect(
+						SDL_Surface *surface, t_xywh c, Uint32 color, int fill);
+void				draw_rect_border(
+						SDL_Surface *surface, t_xywh c, Uint32 color,
+						unsigned int size);
+void				draw_surface_border(
+						SDL_Surface *surface, Uint32 color, int thiccness);
 int					hitbox_rect(int x, int y, t_xywh rect);
 t_xywh				ui_init_coords(int x, int y, int w, int h);
 t_xywh				new_xywh(int x, int y, int w, int h);
@@ -299,7 +328,8 @@ void				xywh_print(t_xywh c);
 t_list				*dir_open(char *folder_path, unsigned char type, int *size);
 SDL_Surface			*load_image(char *file);
 t_bui_element		*bui_get_element_with_text(t_bui_libui *libui, char *text);
-t_bui_element		*bui_get_element_with_text_from_list(t_list *list, char *text);
+t_bui_element		*bui_get_element_with_text_from_list(
+						t_list *list, char *text);
 
 // Testing purposeum
 void				dummy_free_er(void *dum, size_t my);
@@ -386,7 +416,8 @@ struct s_preset_tab
 };
 
 // Menu
-t_preset_menu		*bui_new_menu_preset(t_bui_window *win, char *title, t_xywh pos);
+t_preset_menu		*bui_new_menu_preset(
+						t_bui_window *win, char *title, t_xywh pos);
 void				preset_menu_events(t_preset_menu *menu);
 // Console
 t_preset_console	*bui_new_console_preset(t_bui_window *win, t_xywh pos);
@@ -395,24 +426,31 @@ void				console_log(t_preset_console *console, char *text);
 // Slider
 t_preset_slider		*bui_new_slider_preset(t_bui_element *menu, t_xywh pos);
 void				preset_slider_events(t_preset_slider *slider);
-void				bui_set_slider_values(t_preset_slider *slider, int value, int min, int max);
+void				bui_set_slider_values(
+						t_preset_slider *slider, int value, int min, int max);
 void				preset_slider_set_button(t_preset_slider *slider);
 // Scrollbar
-t_preset_scrollbar	*bui_new_scrollbar_preset(t_bui_element *menu, t_xywh pos, t_bui_element *target);
+t_preset_scrollbar	*bui_new_scrollbar_preset(
+						t_bui_element *menu, t_xywh pos, t_bui_element *target);
 void				preset_scrollbar_events(t_preset_scrollbar *scrollbar);
 // Drop down
-t_preset_dropdown	*bui_new_dropdown_preset(t_bui_element *menu, char *text, t_xywh pos);
+t_preset_dropdown	*bui_new_dropdown_preset(
+						t_bui_element *menu, char *text, t_xywh pos);
 void				dropdown_preset_free(void *preset, size_t size);
 int					preset_dropdown_events(t_preset_dropdown *dropdown);
-t_bui_element		*preset_dropdown_add_element(t_preset_dropdown *dropdown, char *text);
+t_bui_element		*preset_dropdown_add_element(
+						t_preset_dropdown *dropdown, char *text);
 // Tab
-t_preset_tab		*bui_new_tab_preset(t_bui_element *menu, char *text, t_xywh pos);
+t_preset_tab		*bui_new_tab_preset(
+						t_bui_element *menu, char *text, t_xywh pos);
 void				tab_preset_free(void *preset, size_t size);
 void				preset_tab_events(t_preset_tab *tab);
 t_bui_element		**preset_tab_add(t_preset_tab *tab, char *text);
 
 // Other
-int					only_one_button_toggled_at_a_time(t_list *list, t_bui_element **active);
-void				toggle_on_element_with_text(t_list *elements, t_bui_element **active, char *text);
+int					only_one_button_toggled_at_a_time(
+						t_list *list, t_bui_element **active);
+void				toggle_on_element_with_text(
+						t_list *elements, t_bui_element **active, char *text);
 
 #endif

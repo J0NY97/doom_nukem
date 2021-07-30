@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   dropdown.c                                         :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/29 12:34:41 by jsalmi            #+#    #+#             */
+/*   Updated: 2021/07/29 12:34:54 by jsalmi           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "launcher.h"
 
 t_bui_element	*new_bass_element(t_preset_dropdown *drop, char *text)
@@ -16,14 +28,12 @@ t_bui_element	*new_bass_element(t_preset_dropdown *drop, char *text)
 
 void	difficulty_drop_init(t_ui_menu_play *play_menu, t_xywh c)
 {
-	// Difficulty text elem
 	c = new_xywh(25, 25, 100, 20);
 	play_menu->difficulty_text_elem
 		= bui_new_element(play_menu->endless_view, "Difficulty:", c);
 	bui_set_element_color(play_menu->difficulty_text_elem,
 		play_menu->endless_view->color);
 	play_menu->difficulty_text_elem->update_state = 0;
-	// Difficulty dropdown
 	play_menu->difficulty_dropdown
 		= bui_new_dropdown_preset(play_menu->endless_view, "Difficulty",
 			(t_xywh){play_menu->difficulty_text_elem->position.x,
@@ -34,7 +44,6 @@ void	difficulty_drop_init(t_ui_menu_play *play_menu, t_xywh c)
 		ICON_PATH"mc_button.png",
 		ICON_PATH"mc_button_hover.png",
 		ICON_PATH"mc_button_click.png");
-	// Bass elements
 	new_bass_element(play_menu->difficulty_dropdown, "easy");
 	new_bass_element(play_menu->difficulty_dropdown, "normal");
 	play_menu->difficulty_dropdown->active

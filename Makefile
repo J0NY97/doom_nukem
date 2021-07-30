@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/28 14:46:34 by jsalmi           ###   ########.fr        #
+#    Updated: 2021/07/29 13:33:07 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,15 +25,15 @@ PATH_H		= ./path.h
 
 name = dontcare
 
-all: $(PATH_H) framework  
+all: framework $(PATH_H)  
 	@make -C ./libs/libft
 	@make -C ./libs/libpf
 	@make -C ./libs/libbxpm
 ifeq ($(SHELL_NAME), Darwin)
 	@make -C ./libs/libtp
 endif
-	@make -C ./libs/libgfx
 	@make -C ./libs/better_libui
+	@make -C ./libs/libgfx
 	@make -C ./map_editor
 	@make -C ./launcher
 	@make -C ./game

@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/09/19 12:27:49 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/29 18:37:16 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 12:35:10 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,26 +20,21 @@ void	load_useless_stuff(t_launcher *launcher)
 
 void	the_menu_init(t_launcher *launcher)
 {
-	// Settings
 	launcher->settings_menu = settings_menu_init(launcher->menu);
 	launcher->settings_menu->menu->show = 0;
-	// Play menu
 	launcher->play_menu = play_menu_init(launcher->menu);
 	launcher->play_menu->menu->show = 0;
-	// Editor menu
 	launcher->editor_menu = editor_menu_init(launcher->menu);
 	launcher->editor_menu->menu->show = 0;
-	// Init the map buttons for needing menus.
 	init_play_menu_map_buttons(launcher->play_menu, launcher->map_list);
 	init_editor_menu_map_buttons(launcher->editor_menu, launcher->map_list);
 }
 
-t_launcher	*launcher_init(t_bui_libui *libui, t_bui_window *win)
+t_launcher	*launcher_init(t_bui_window *win)
 {
 	t_launcher	*launcher;
 
 	launcher = ft_memalloc(sizeof(t_launcher));
-	launcher->libui = libui;
 	launcher->fps = ft_memalloc(sizeof(t_fps));
 	load_useless_stuff(launcher);
 	launcher->menu = bui_new_menu(win, NULL,

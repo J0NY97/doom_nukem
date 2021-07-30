@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 11:54:28 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/29 12:11:13 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/07/29 13:55:36 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,9 @@ int	main(int argc, char **argv)
 		return (1);
 	map_editor(map);
 	ft_strdel(&map);
+	SDL_Quit();
+	TTF_Quit();
+	IMG_Quit();
 	if (argc == 3 && (ft_strequ(argv[2], "-l")
 			|| ft_strequ(argv[2], "-launcher")))
 	{
@@ -29,9 +32,6 @@ int	main(int argc, char **argv)
 		arr[1] = NULL;
 		execv(arr[0], arr);
 	}
-	SDL_Quit();
-	TTF_Quit();
-	IMG_Quit();
 	system("leaks doom_editor");
 	return (0);
 }

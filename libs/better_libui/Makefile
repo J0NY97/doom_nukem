@@ -39,14 +39,17 @@ OBJS = $(SRCS:.c=.o)
 
 all: $(NAME)
 
+SDL_DIR		:= ../SDL_Frameworks
+SDL_MAIN	:= -I$(SDL_DIR)/SDL2.framework/Headers -F$(SDL_DIR)
+SDL_IMAGE	:= -I$(SDL_DIR)/SDL2_image.framework/Headers -F$(SDL_DIR)
+SDL_TTF		:= -I$(SDL_DIR)/SDL2_ttf.framework/Headers -F$(SDL_DIR)
+
 $(NAME): $(SRCS)
-#      @make -C ../libpf
-#      @make -C ../libft
 	@sh bui_path.sh
 	@gcc -c $(SRCS) \
 		-I../libpf \
 		-I../libft \
-		-I../SDL2/includes
+		$(SDL_MAIN)	$(SDL_IMAGE) $(SDL_TTF)
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
 	@echo "$(NAME) was successfully created."
