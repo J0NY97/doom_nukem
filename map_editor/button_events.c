@@ -77,7 +77,8 @@ void	remove_button_events(t_editor *editor, t_grid *grid)
 
 void	edit_button_event(t_editor *editor)
 {
-	editor->edit->menu->show = editor->edit->menu->show != 1;
+	SDL_RestoreWindow(editor->edit_window->win);
+	SDL_RaiseWindow(editor->edit_window->win);
 }
 
 void	selection_mode_buttons(t_editor *editor, t_grid *grid)

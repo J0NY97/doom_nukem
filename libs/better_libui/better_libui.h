@@ -224,7 +224,7 @@ void				bui_set_window_icon(t_bui_window *window, char *image_path);
 void				bui_render_to_screen(t_bui_element *elem);
 
 // Event handling
-void				bui_event_handler(t_bui_libui *libui, SDL_Event *e);
+void				bui_event_handler(t_bui_libui *libui);
 void				bui_update_elements(t_bui_libui *libui);
 void				key_was(t_bui_libui *libui, SDL_Keysym key, int type);
 void				mouse_key_was(t_bui_libui *libui, Uint8 button, int type);

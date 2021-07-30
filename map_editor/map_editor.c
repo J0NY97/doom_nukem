@@ -97,17 +97,13 @@ void	map_editor(char *map)
 
 	fps = ft_memalloc(sizeof(t_fps));
 	editor = ft_memalloc(sizeof(t_editor));
-	editor->edit = ft_memalloc(sizeof(t_edit));
 	libui = bui_new_libui();
 	init(editor, libui, map);
-	SDL_Event e;
 	while (libui->run)
 	{
 		bui_fps_func(fps);
 		update_title_fps(editor->window->win, fps);
-		while (SDL_PollEvent(&e))
-			bui_event_handler(libui, &e);
-		bui_update_elements(libui);
+		bui_event_handler(libui);
 		draw_grid(editor, &editor->grid);
 		hover_calc(editor, &editor->grid);
 		button_choice_event(editor);

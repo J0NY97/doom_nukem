@@ -108,7 +108,7 @@ void	init_sector_editor(t_editor *editor)
 
 	coord = new_xywh(5, 5, editor->edit_window->position.w * 0.20f,
 			editor->edit_window->position.h - 10);
-	editor->edit_toolbox_sector = bui_new_element(editor->edit->menu,
+	editor->edit_toolbox_sector = bui_new_menu(editor->edit_window,
 			"New Toolbox", coord);
 	bui_set_element_color(editor->edit_toolbox_sector,
 		editor->palette.elem_elem_elem);

@@ -94,11 +94,6 @@ typedef struct s_changer_prefab
 	t_bui_element	*add_button;
 }					t_changer_prefab;
 
-typedef struct s_edit
-{
-	t_bui_element	*menu;
-}					t_edit;
-
 /*
  * t_list	*entity_presets; list of t_entity_preset
  * t_list	*select_mode_buttons; list of t_bui_element
@@ -113,7 +108,6 @@ struct s_editor
 {
 	t_bui_libui			*libui;
 	t_bui_window		*window;
-	t_edit				*edit;
 	t_bui_element		*toolbox;
 	t_bui_element		*info_area;
 	t_bui_element		*button_save;
