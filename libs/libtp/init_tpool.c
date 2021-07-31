@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2020/11/09 10:14:42 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/30 16:07:42 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/31 14:11:04 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,6 +50,8 @@ int	init_tpool(t_tpool *tpool, int amount)
 	int	i;
 
 	i = -1;
+	if (amount <= 0)
+		return (tpool_error(-6));
 	tpool_bzero(tpool, sizeof(t_tpool));
 	pthread_mutex_init(&tpool->mutex, NULL);
 	pthread_cond_init(&tpool->task_cond, NULL);
