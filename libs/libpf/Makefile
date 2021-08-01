@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/23 13:48:12 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/26 09:31:17 by nneronin         ###   ########.fr        #
+#    Updated: 2021/08/01 17:12:18 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -49,7 +49,7 @@ OBJS = $(SOURCES:.c=.o)
 CFLAGS = -Wall -Wextra -Werror -I $(IDIR) -I ../libft
 
 all: $(NAME)
-	@printf $(CYAN)"[INFO]	$(NAME) ready!\n"$(RESET)
+	@printf $(CYAN)"[INFO]	$(NAME) is up to date!\n"$(RESET)
 
 $(NAME): $(SRCS)
 	@gcc -c $(SRCS) $(CFLAGS)
