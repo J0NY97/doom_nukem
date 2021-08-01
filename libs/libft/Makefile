@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/18 11:13:47 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/26 08:59:24 by nneronin         ###   ########.fr        #
+#    Updated: 2021/08/01 17:12:18 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -131,7 +131,7 @@ OBJS = $(SRCS:.c=.o)
 FLAGS = -Wall -Wextra -Werror
 
 all: $(NAME)
-	@printf $(CYAN)"[INFO]	$(NAME) ready!\n"$(RESET)
+	@printf $(CYAN)"[INFO]	$(NAME) is up to date!\n"$(RESET)
 
 $(NAME): $(SRCS)
 	@gcc -c $(SRCS) $(CFLAGS)

@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/10 10:44:15 by nneronin          #+#    #+#              #
-#    Updated: 2021/07/26 09:33:06 by nneronin         ###   ########.fr        #
+#    Updated: 2021/08/01 17:12:18 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -35,7 +35,7 @@ CFLAGS = -Wall -Wextra -Werror -Wunused-variable -Wno-unused-result
 CFLAGS += -I $(IDIR) -I ../libft -I ../libpf 
 
 all: $(NAME)
-	@printf $(CYAN)"[INFO]	$(NAME) ready!\n"$(RESET)
+	@printf $(CYAN)"[INFO]	$(NAME) is up to date!\n"$(RESET)
 
 $(NAME): $(SRCS)
 	@gcc -c $(SRCS) $(CFLAGS)
