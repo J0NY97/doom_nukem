@@ -10,7 +10,10 @@ SRCS = \
        ./launcher_help.c \
        ./dropdown.c \
 	   ./free.c \
-       ./main_menu.c
+       ./main_menu.c \
+
+#	   ../../scop/bimgf.c \
+
 OBJS = $(SRCS:.c=.o)
 
 SDL_DIR		:= ../libs/SDL
@@ -24,7 +27,9 @@ INCLUDES = -I../libs/libft \
 	   -I../libs/libgfx \
 	   $(SDL_INC) \
 	   -I../ \
-	   -I../game/inc
+	   -I../game/inc \
+
+#	   -I../../scop \
 
 LIBS = -L../libs/libft -L../libs/better_libui -L../libs/libpf -L../libs/libgfx $(SDL_LIB) \
        -lui -lpf -lft -lgfx $(SDL_LIBS)

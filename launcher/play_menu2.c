@@ -17,7 +17,10 @@ void	map_button(t_map_button_data data)
 	char	*text;
 
 	text = ft_strdup(data.str);
-	ft_strremove(text, ".endless");
+	if (data.type == 0)
+		ft_strremove(text, ".endless");
+	else
+		ft_strremove(text, ".story");
 	add_to_list(data.list, new_map_button(data.parent, text, data.i, data.cap),
 		sizeof(t_bui_element));
 	ft_strdel(&text);
@@ -39,13 +42,13 @@ void	init_play_menu_map_buttons(t_ui_menu_play *menu, t_list *maps)
 			map_button((t_map_button_data){&menu->endless_maps,
 				menu->endless_maps_view, curr->content,
 				new_xywh(10, 10, menu->endless_maps_view->position.w,
-					menu->endless_maps_view->position.h), endless_x++});
+					menu->endless_maps_view->position.h), endless_x++, 0});
 		}
 		else if (ft_strendswith(curr->content, ".story") == 0)
 		{
 			map_button((t_map_button_data){&menu->story_maps, menu->story_view,
 				curr->content, new_xywh(30, 30, menu->story_view->position.w,
-					menu->story_view->position.h), story_x++});
+					menu->story_view->position.h), story_x++, 1});
 		}
 		curr = curr->next;
 	}

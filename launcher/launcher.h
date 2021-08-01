@@ -21,6 +21,7 @@
 # include "SDL_ttf.h"
 # include "SDL_image.h"
 # include "path.h"
+//# include "bimgf.h"
 
 typedef struct s_map_button_data
 {
@@ -29,6 +30,7 @@ typedef struct s_map_button_data
 	char				*str;
 	t_xywh				cap;
 	int					i;
+	int					type;
 }						t_map_button_data;
 
 typedef struct s_ui_menu_settings

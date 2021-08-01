@@ -30,6 +30,18 @@ void	the_menu_init(t_launcher *launcher)
 	init_editor_menu_map_buttons(launcher->editor_menu, launcher->map_list);
 }
 
+/*
+SDL_Surface	*from_bimgf_to_surface(t_bimgf *image)
+{
+	SDL_Surface	*surf;
+	int			i;
+
+	surf = SDL_CreateRGBSurfaceWithFormatFrom(image->pixels, image->w, image->h,
+			image->bpp * 8, image->bpp * image->w, SDL_PIXELFORMAT_BGR24);
+	return (surf);
+}
+*/
+
 t_launcher	*launcher_init(t_bui_window *win)
 {
 	t_launcher	*launcher;
@@ -41,6 +53,12 @@ t_launcher	*launcher_init(t_bui_window *win)
 			(t_xywh){0, 0, win->position.w, win->position.h});
 	bui_set_element_image_from_path(launcher->menu, ELEMENT_DEFAULT,
 		ICON_PATH"test2.bmp", NULL);
+	/*
+	t_bimgf	*image = bimgf_load(ICON_PATH"test2.bmp");
+	SDL_Surface *surf = from_bimgf_to_surface(image);
+	SDL_BlitScaled(surf, NULL, launcher->menu->surface[0], NULL);
+		*/
+
 	launcher->map_list = NULL;
 	launcher->map_list = get_maps(MAP_PATH);
 	the_menu_init(launcher);
