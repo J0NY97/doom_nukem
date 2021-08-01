@@ -112,6 +112,7 @@ struct s_editor
 	t_bui_element		*info_area;
 	t_bui_element		*button_save;
 	t_bui_element		*hover_info;
+	char				*event_str;
 	t_list				*entity_presets;
 	t_entity_preset		*default_entity;
 	int					scale;

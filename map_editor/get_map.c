@@ -49,6 +49,21 @@ void	read_mapinfo(t_editor *editor, int fd)
 	ft_strdel(&line);
 }
 
+void	read_events(t_editor *editor, int fd)
+{
+	char	*line;
+
+	while (get_next_line(fd, &line))
+	{
+		if (line[0] == '-')
+			break ;
+		ft_stradd(&editor->event_str, line);
+		ft_straddchar(&editor->event_str, '\n');
+		ft_strdel(&line);
+	}
+	ft_strdel(&line);
+}
+
 void	choose_correct_reader(t_editor *editor, char *line, int fd)
 {
 	if (!(ft_strncmp(line, "type:map", 8)))
@@ -70,6 +85,8 @@ void	choose_correct_reader(t_editor *editor, char *line, int fd)
 		read_fandc(editor, fd);
 	else if (!(ft_strncmp(line, "type:entity", 10)))
 		read_entities(editor, fd);
+	else if (!(ft_strncmp(line, "type:event", 10)))
+		read_events(editor, fd);
 }
 
 void	read_map_file(t_editor *editor)

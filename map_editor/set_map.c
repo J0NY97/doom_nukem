@@ -76,13 +76,11 @@ char	*make_whole_map_string(t_editor *editor)
 	order[M_FANDC] = set_fandc(editor);
 	order[M_ENTITY] = set_entities(editor);
 	str = ft_strjoiner(order[M_MAP], order[M_DIVIDER],
-			order[M_SPAWN], order[M_DIVIDER],
-			order[M_POINT], order[M_DIVIDER],
-			order[M_WALL], order[M_DIVIDER],
-			order[M_SPRITE], order[M_DIVIDER],
-			order[M_SECTOR], order[M_DIVIDER],
-			order[M_FANDC], order[M_DIVIDER],
-			order[M_ENTITY], order[M_DIVIDER], NULL);
+			order[M_SPAWN], order[M_DIVIDER], order[M_POINT], order[M_DIVIDER],
+			order[M_WALL], order[M_DIVIDER], order[M_SPRITE], order[M_DIVIDER],
+			order[M_SECTOR], order[M_DIVIDER], order[M_FANDC], order[M_DIVIDER],
+			order[M_ENTITY], order[M_DIVIDER], "type:event\n",
+			editor->event_str, order[M_DIVIDER], NULL);
 	free_array(order);
 	return (str);
 }

@@ -33,7 +33,6 @@ void	free_sprite(void *content, size_t size)
 {
 	t_sprite	*sprite;
 
-	ft_putstr("[free_sprite]\n");
 	(void)size;
 	if (content == NULL)
 		return ;

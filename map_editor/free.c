@@ -49,6 +49,7 @@ void	editor_free2(t_editor *editor)
 	while (++i < editor->texture_amount)
 		SDL_FreeSurface(editor->texture_textures[i]);
 	free(editor->texture_textures);
+	ft_strdel(&editor->event_str);
 }
 
 void	editor_free(t_editor *editor)
