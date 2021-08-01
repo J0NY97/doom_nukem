@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 14:55:22 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/30 16:07:53 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/31 14:10:53 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,5 +25,7 @@ int	tpool_error(int i)
 		write(1, "create_task.\n", 14);
 	else if (i == -5)
 		write(1, "no function passed to tpool_add.\n", 34);
+	else if (i == -6)
+		write(1, "nb processors must be > 0.\n", 34);
 	return (0);
 }

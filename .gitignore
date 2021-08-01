@@ -5,6 +5,7 @@
 map_editor/maps/*
 .vscode
 better_libui/test
-path.h
+*path.h
+wolf3d
 a.out
 *.exe
