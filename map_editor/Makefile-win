@@ -5,6 +5,7 @@ SRCS = \
 	./wall.c \
 	./wall_help.c \
 	./sector.c \
+	./event.c \
 	./entity.c \
 	./sprite.c \
 	./entity_preset.c \
@@ -45,6 +46,7 @@ SRCS = \
 	./set_map.c \
 	./set_map1.c \
 	./set_map2.c \
+	./set_map3.c \
 	./get_map.c \
 	./get_map1.c \
 	./get_map2.c \

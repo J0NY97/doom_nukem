@@ -30,6 +30,7 @@ void	grid_free(t_grid *grid)
 	ft_lstdel(&grid->walls, &free_wall);
 	ft_lstdel(&grid->points, &free_point);
 	ft_lstdel(&grid->entities, &free_entity);
+	ft_lstdel(&grid->events, &free_event);
 	TTF_CloseFont(grid->font);
 }
 
@@ -49,7 +50,6 @@ void	editor_free2(t_editor *editor)
 	while (++i < editor->texture_amount)
 		SDL_FreeSurface(editor->texture_textures[i]);
 	free(editor->texture_textures);
-	ft_strdel(&editor->event_str);
 }
 
 void	editor_free(t_editor *editor)

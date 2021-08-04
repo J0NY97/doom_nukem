@@ -66,6 +66,7 @@ void	grid_init(t_editor *editor)
 	editor->grid.points = NULL;
 	editor->grid.walls = NULL;
 	editor->grid.sectors = NULL;
+	editor->grid.events = NULL;
 	editor->grid.entities = NULL;
 	editor->grid.gap = 10;
 	editor->grid.point_amount = 0;
