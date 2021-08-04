@@ -31,7 +31,7 @@ char	*set_event(t_editor *editor)
 				event->type,
 				event->action,
 				event->id,
-				event->sector->id,
+				event->sector != NULL ? event->sector->id : -1,
 				event->min,
 				event->max,
 				event->speed);
