@@ -6,7 +6,7 @@
 /*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 13:19:46 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 16:34:32 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/08/04 14:04:08 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	init_entity_presets(t_list **list)
 	{
 		preset = new_entity_preset(g_entity_data[i].name);
 		preset->mood = ENTITY_TYPE_HOSTILE;
-		if (!g_entity_data[i].hostile)
+		if (!g_entity_data[i].type)
 			preset->mood = ENTITY_TYPE_NEUTRAL;
 		image = load_bxpm_to_surface(g_entity_data[i].path);
 		tc = g_entity_data[i].tc;
