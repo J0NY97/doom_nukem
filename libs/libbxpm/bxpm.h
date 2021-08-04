@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 17:15:02 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/26 08:52:53 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/08/02 12:29:30 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct s_bxpm
 
 typedef struct s_thread_bxpm
 {
+	int					active;
 	char				*path;
 	t_bxpm				*bxpm;
 }						t_thread_bxpm;
@@ -80,5 +81,6 @@ uint32_t				read_color24(unsigned char *str, int i);
 unsigned int			bpp_clr(double byte, unsigned char *str, uint32_t bpp);
 void					free_bxpm(t_bxpm *bxpm);
 void					free_bmp(t_bmp *bmp);
+int						multithread_read_bxpm(void *arg);
 
 #endif

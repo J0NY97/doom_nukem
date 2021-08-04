@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 13:20:28 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/10 13:43:11 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/08/02 12:29:57 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -93,4 +93,16 @@ int	read_bxpm(t_bxpm *bxpm, char *file)
 		return (0);
 	fclose(fd);
 	return (1);
+}
+
+int	multithread_read_bxpm(void *arg)
+{
+	int	res;
+
+	res = read_bxpm(((t_thread_bxpm *)arg)->bxpm, ((t_thread_bxpm *)arg)->path);
+	free(((t_thread_bxpm *)arg)->path);
+	if (res)
+		return (1);
+	ft_printf("Could not read %s\n", ((t_thread_bxpm *)arg)->path);
+	return (0);
 }
