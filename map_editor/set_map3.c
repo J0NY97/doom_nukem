@@ -12,6 +12,13 @@
 
 #include "editor.h"
 
+int	get_event_sector_id(t_sector *sector)
+{
+	if (sector)
+		return (sector->id);
+	return (-1);
+}
+
 char	*set_event(t_editor *editor)
 {
 	char	*str;
@@ -27,14 +34,9 @@ char	*set_event(t_editor *editor)
 	{
 		event = curr->content;
 		temp = ft_sprintf("%d\t%s\t%s\t%d\t%d\t%d\t%d\t%d\n",
-				++i,
-				event->type,
-				event->action,
-				event->id,
-				event->sector != NULL ? event->sector->id : -1,
-				event->min,
-				event->max,
-				event->speed);
+				++i, event->type, event->action, event->id,
+				get_event_sector_id(event->sector),
+				event->min, event->max, event->speed);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		curr = curr->next;

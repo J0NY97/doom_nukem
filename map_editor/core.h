@@ -87,13 +87,13 @@ struct s_sector
 };
 
 /*
- * char				*type;		type of event. e_event_type (but its a char * in the map file)
- * char				*action;	how to trigger event. e_player_action  (but its a char * in the map file)
- * int				id;			id of the sector / wall sprite, the trigger is on
- * t_sector			*sector;	if sector trigger, this is the sector
- * int				min;		min value of the whatever type
- * int				max;		max value of the whatever type
- * int				speed;		speed of the event
+ * char		*type;		e_event_type (but its a char * in the map file)
+ * char		*action;	event trigger. e_player_action (but its a char * in the map file)
+ * int		id;			id of wsprite that triggers	
+ * t_sector	*sector;	if sector trigger, this is the sector
+ * int		min;		min value of the whatever type
+ * int		max;		max value of the whatever type
+ * int		speed;		speed of the event
 */
 struct s_event
 {
