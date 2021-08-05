@@ -40,8 +40,8 @@ char	*add_to_input(t_bui_element *input)
 		ft_straddchar(&new_str, ' ');
 	else
 	{
-		if (alpha_pressed(libui) || number_pressed(libui) ||
-			special_char_pressed(libui))
+		if (alpha_pressed(libui) || number_pressed(libui)
+			|| special_char_pressed(libui))
 		{
 			if (!key_pressed(libui, SDL_SCANCODE_LSHIFT))
 				ft_straddchar(&new_str, ft_tolower(libui->last_key[0]));

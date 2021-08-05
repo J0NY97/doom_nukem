@@ -30,7 +30,6 @@ t_changer_prefab *
 	temp_coord.w = prefab->menu->position.w - temp_coord.x
 		- (prefab->menu->position.w - prefab->add_button->position.x);
 	prefab->value = bui_new_element(prefab->menu, "not set", temp_coord);
-	//bui_set_element_flags(prefab->value, BUI_ELEMENT_DONT_UPDATE_STATE);
 	return (prefab);
 }
 
