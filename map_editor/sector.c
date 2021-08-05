@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 12:44:27 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/08/04 14:35:50 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/08/05 13:53:48 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@ t_sector	*new_sector(int id)
 	sector->ceiling_texture = 2;
 	sector->floor_texture_scale = 10.0f;
 	sector->ceiling_texture_scale = 10.0f;
-	sector->gravity = 9;
-	sector->light_level = 10;
+	sector->gravity = 20;
+	sector->light_level = 0;
 	sector->color = random_color();
 	return (sector);
 }
