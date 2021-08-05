@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   sector.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 12:44:27 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/29 13:04:32 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/08/04 14:35:50 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,10 +22,10 @@ t_sector	*new_sector(int id)
 	sector->first_point = NULL;
 	sector->floor_height = 0;
 	sector->ceiling_height = 20;
-	sector->floor_texture = 0;
-	sector->ceiling_texture = 0;
-	sector->floor_texture_scale = 1.0f;
-	sector->ceiling_texture_scale = 1.0f;
+	sector->floor_texture = 2;
+	sector->ceiling_texture = 2;
+	sector->floor_texture_scale = 10.0f;
+	sector->ceiling_texture_scale = 10.0f;
 	sector->gravity = 9;
 	sector->light_level = 10;
 	sector->color = random_color();
