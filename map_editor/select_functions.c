@@ -82,6 +82,8 @@ int	vector_on_wall(t_vector v, t_wall *wall)
 
 void	selection(t_editor *editor, t_grid *grid)
 {
+	if (!(SDL_GetWindowFlags(editor->window->win) & SDL_WINDOW_MOUSE_FOCUS))
+		return ;
 	if (editor->libui->mouse_down_last_frame
 		&& mouse_pressed(editor->libui, SDL_BUTTON_LEFT))
 	{

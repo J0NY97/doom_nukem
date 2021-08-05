@@ -40,6 +40,8 @@ void	click_calc_ent(t_editor *editor)
 
 void	click_calc(t_editor *editor, t_grid *grid)
 {
+	if (!(SDL_GetWindowFlags(editor->window->win) & SDL_WINDOW_MOUSE_FOCUS))
+		return ;
 	if (!mouse_hover(editor->libui, (t_xywh){
 			grid->elem->position.x, grid->elem->position.y,
 			grid->elem->position.w, grid->elem->position.h}))
