@@ -48,9 +48,9 @@ typedef struct s_sprite
 */
 struct s_wall
 {
-	int				id;
 	t_point			*orig;
 	t_point			*dest;
+	int				id;
 	float			texture_scale;
 	short int		texture_id;
 	short int		portal_texture_id;
