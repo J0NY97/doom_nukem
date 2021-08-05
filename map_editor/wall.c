@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   wall.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 12:44:47 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/28 12:44:48 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/08/04 14:35:24 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@ t_wall	*new_wall(t_point *orig, t_point *dest)
 	new_wall = ft_memalloc(sizeof(t_wall));
 	new_wall->dest = dest;
 	new_wall->orig = orig;
-	new_wall->texture_scale = 1;
-	new_wall->texture_id = 0;
+	new_wall->texture_scale = 30;
+	new_wall->texture_id = 7;
 	new_wall->portal_texture_id = 0;
 	new_wall->solid = 1;
 	new_wall->sprites = NULL;
