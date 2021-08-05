@@ -107,6 +107,7 @@ void	map_editor(char *map)
 		draw_grid(editor, &editor->grid);
 		hover_calc(editor, &editor->grid);
 		button_choice_event(editor);
+	ft_putstr("button_choice_done\n");
 		general_events(editor);
 		bui_render(libui);
 	}

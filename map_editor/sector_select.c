@@ -67,12 +67,13 @@ void	select_sector(t_grid *grid)
 				(int)sec->center.y - (grid->gap),
 				grid->gap * 2, grid->gap * 2}))
 		{
-			temp = curr->content;
+			temp = sec;
 			break ;
 		}
 		curr = curr->next;
 	}
 	if (temp == NULL)
 		return ;
+	ft_putstr("done slecting\n");
 	grid->modify_sector = temp;
 }
