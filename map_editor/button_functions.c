@@ -14,6 +14,8 @@
 
 void	select_mode_shortcut(t_editor *editor)
 {
+	if (!(SDL_GetWindowFlags(editor->window->win) & SDL_WINDOW_MOUSE_FOCUS))
+		return ;
 	if (key_pressed(editor->libui, SDL_SCANCODE_1))
 		editor->active_select_mode = editor->button_draw;
 	else if (key_pressed(editor->libui, SDL_SCANCODE_2))

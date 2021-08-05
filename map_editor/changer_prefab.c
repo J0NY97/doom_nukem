@@ -30,14 +30,12 @@ t_changer_prefab *
 	temp_coord.w = prefab->menu->position.w - temp_coord.x
 		- (prefab->menu->position.w - prefab->add_button->position.x);
 	prefab->value = bui_new_element(prefab->menu, "not set", temp_coord);
-	bui_set_element_flags(prefab->value, BUI_ELEMENT_DONT_UPDATE_STATE);
+	//bui_set_element_flags(prefab->value, BUI_ELEMENT_DONT_UPDATE_STATE);
 	return (prefab);
 }
 
 void	changer_prefab_events(
-			t_changer_prefab *changer,
-			int *current_value,
-			int change_amount)
+		t_changer_prefab *changer, int *current_value, int change_amount)
 {
 	char	*str;
 
@@ -46,15 +44,18 @@ void	changer_prefab_events(
 		*current_value += change_amount;
 	else if (bui_button(changer->sub_button))
 		*current_value -= change_amount;
-	str = ft_sprintf("%d", *current_value);
-	bui_set_element_text(changer->value, str);
-	ft_strdel(&str);
+	if (bui_input(changer->value))
+		*current_value = ft_atoi(changer->value->text);
+	else if (changer->value->toggle == 0)
+	{
+		str = ft_sprintf("%d", *current_value);
+		bui_set_element_text(changer->value, str);
+		ft_strdel(&str);
+	}
 }
 
 void	changer_prefab_events_float(
-			t_changer_prefab *changer,
-			float *current_value,
-			float change_amount)
+		t_changer_prefab *changer, float *current_value, float change_amount)
 {
 	char	*str;
 
@@ -63,7 +64,12 @@ void	changer_prefab_events_float(
 		*current_value += change_amount;
 	else if (bui_button(changer->sub_button))
 		*current_value -= change_amount;
-	str = ft_sprintf("%.1f", *current_value);
-	bui_set_element_text(changer->value, str);
-	ft_strdel(&str);
+	if (bui_input(changer->value))
+		*current_value = ft_atof(changer->value->text);
+	else if (changer->value->toggle == 0)
+	{
+		str = ft_sprintf("%.1f", *current_value);
+		bui_set_element_text(changer->value, str);
+		ft_strdel(&str);
+	}
 }

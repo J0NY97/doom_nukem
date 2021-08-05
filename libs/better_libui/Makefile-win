@@ -4,6 +4,7 @@ SRCS = \
        ./bui_slider.c \
 	   ./bui_draw.c \
        ./bui_event_handler.c \
+	   ./bui_key_check.c \
        ./bui_libui.c \
        ./bui_preset.c \
        ./bui_text.c \

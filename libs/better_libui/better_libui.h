@@ -238,6 +238,7 @@ int					mouse_wheel(t_bui_libui *libui);
 int					mouse_hover(t_bui_libui *libui, t_xywh rect);
 int					alpha_pressed(t_bui_libui *libui);
 int					number_pressed(t_bui_libui *libui);
+int					special_char_pressed(t_bui_libui *libui);
 
 // Menubar stuff
 t_bui_element		*bui_new_menu(t_bui_window *win, char *name, t_xywh pos);
