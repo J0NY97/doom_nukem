@@ -74,6 +74,5 @@ void	select_sector(t_grid *grid)
 	}
 	if (temp == NULL)
 		return ;
-	ft_putstr("done slecting\n");
 	grid->modify_sector = temp;
 }
