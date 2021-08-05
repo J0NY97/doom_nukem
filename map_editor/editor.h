@@ -384,6 +384,7 @@ void					read_sprite(t_grid *grid, int fd);
 void					read_spawn(t_spawn *spawn, int fd);
 void					read_entities(t_editor *editor, int fd);
 void					read_sectors(t_editor *editor, int fd);
+void					read_events(t_editor *editor, int fd);
 void					read_fandc(t_editor *editor, int fd);
 char					*set_point(t_editor *doom);
 char					*set_sprite(t_editor *editor);

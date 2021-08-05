@@ -50,6 +50,7 @@ SRCS = \
 	./get_map.c \
 	./get_map1.c \
 	./get_map2.c \
+	./get_map3.c \
 	./get_map_help.c \
 	./help.c \
 	./edit_functions.c \

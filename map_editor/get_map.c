@@ -49,40 +49,6 @@ void	read_mapinfo(t_editor *editor, int fd)
 	ft_strdel(&line);
 }
 
-/*
- * NOTE: read_events needs to be called after we have gotten all the sectors.
-*/
-void	read_events(t_editor *editor, int fd)
-{
-	char	*line;
-	char	**arr;
-	t_event	*event;
-
-	while (get_next_line(fd, &line))
-	{
-		if (line[0] == '-')
-			break ;
-		arr = ft_strsplit(line, '\t');
-		event = new_event();
-		event->type = ft_strdup(arr[1]);
-		event->action = ft_strdup(arr[2]);
-		event->id = ft_atoi(arr[3]); // is this wall sprite id?
-		if (!ft_strequ(arr[4], "-"))
-			event->sector = get_sector_with_id(editor->grid.sectors,
-					atoi(arr[4]));
-		if (!ft_strequ(arr[5], "-"))
-			event->min = ft_atoi(arr[5]);
-		if (!ft_strequ(arr[6], "-"))
-			event->max = ft_atoi(arr[6]);
-		if (!ft_strequ(arr[7], "-"))
-			event->speed = ft_atoi(arr[7]);
-		add_to_list(&editor->grid.events, event, sizeof(t_event));
-		free_array(arr);
-		ft_strdel(&line);
-	}
-	ft_strdel(&line);
-}
-
 void	choose_correct_reader(t_editor *editor, char *line, int fd)
 {
 	if (!(ft_strncmp(line, "type:map", 8)))

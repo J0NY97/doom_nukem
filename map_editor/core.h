@@ -87,8 +87,8 @@ struct s_sector
 };
 
 /*
- * char		*type;		e_event_type (but its a char * in the map file)
- * char		*action;	event trigger. e_player_action (but its a char * in the map file)
+ * char		*type;		e_event_type (its a char *)
+ * char		*action;	event trigger. e_player_action (its a char *)
  * int		id;			id of wsprite that triggers	
  * t_sector	*sector;	if sector trigger, this is the sector
  * int		min;		min value of the whatever type
