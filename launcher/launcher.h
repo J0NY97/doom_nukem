@@ -21,7 +21,6 @@
 # include "SDL_ttf.h"
 # include "SDL_image.h"
 # include "path.h"
-//# include "bimgf.h"
 
 typedef struct s_map_button_data
 {

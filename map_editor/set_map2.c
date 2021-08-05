@@ -124,7 +124,6 @@ char	*set_entities(t_editor *doom)
 	while (curr)
 	{
 		ent = curr->content;
-		gfx_vector_string(ent->pos);
 		temp = ft_sprintf("%d\t%s\t%.1f\t%.1f\t%.1f\t%d\n",
 				ent->id, ent->preset->name, ent->pos.x, ent->pos.y,
 				ent->pos.z, ent->direction);

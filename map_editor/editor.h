@@ -81,6 +81,8 @@ typedef struct s_grid
 	t_list			*entities;
 	int				entity_amount;
 	int				wall_sprite_amount;
+	t_list			*events;
+	int				event_amount;
 	t_xywh			dimensions;
 	TTF_Font		*font;
 }					t_grid;
@@ -112,7 +114,6 @@ struct s_editor
 	t_bui_element		*info_area;
 	t_bui_element		*button_save;
 	t_bui_element		*hover_info;
-	char				*event_str;
 	t_list				*entity_presets;
 	t_entity_preset		*default_entity;
 	int					scale;
@@ -390,6 +391,7 @@ char					*set_wall(t_editor *doom);
 char					*set_entities(t_editor *doom);
 char					*set_fandc(t_editor *editor);
 char					*set_sector(t_editor *doom);
+char					*set_event(t_editor *editor);
 void					new_texture_button(
 							t_bui_element *parent, t_list **list,
 							SDL_Surface *texture, int i);

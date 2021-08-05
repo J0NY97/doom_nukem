@@ -19,6 +19,7 @@
 # define INT_MIN -2147483648
 
 typedef struct s_sector			t_sector;
+typedef struct s_event			t_event;
 typedef struct s_wall			t_wall;
 typedef struct s_point			t_point;
 typedef struct s_entity			t_entity;
@@ -86,6 +87,26 @@ struct s_sector
 };
 
 /*
+ * char				*type;		type of event. e_event_type (but its a char * in the map file)
+ * char				*action;	how to trigger event. e_player_action  (but its a char * in the map file)
+ * int				id;			id of the sector / wall sprite, the trigger is on
+ * t_sector			*sector;	if sector trigger, this is the sector
+ * int				min;		min value of the whatever type
+ * int				max;		max value of the whatever type
+ * int				speed;		speed of the event
+*/
+struct s_event
+{
+	char			*type;
+	char			*action;
+	int				id;
+	t_sector		*sector;
+	int				min;
+	int				max;
+	int				speed;
+};
+
+/*
  * int				direction; in degrees 
 */
 struct s_entity
@@ -105,5 +126,7 @@ struct				s_entity_preset
 
 void				add_to_list(t_list **list, void *new_v, size_t size);
 void				free_array(char **arr);
+t_event				*new_event(void);
+void				free_event(void *content, size_t size);
 
 #endif
