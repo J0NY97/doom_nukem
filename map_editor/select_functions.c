@@ -12,27 +12,6 @@
 
 #include "editor.h"
 
-void	drag_calc(t_editor *editor, t_grid *grid)
-{
-	float	move_x;
-	float	move_y;
-
-	move_x = 0.0f;
-	move_y = 0.0f;
-	if ((SDL_GetWindowFlags(editor->window->win) & SDL_WINDOW_MOUSE_FOCUS)
-		&& mouse_pressed(editor->libui, SDL_BUTTON_RIGHT))
-	{
-		move_x = grid->hover.x - grid->last_hover.x;
-		move_y = grid->hover.y - grid->last_hover.y;
-	}
-	if (grid->elem->was_hovered_last_frame
-		&& editor->libui->mouse_wheel_y != 0)
-		grid->gap = ft_clamp(grid->gap + editor->libui->mouse_wheel_y, 2, 32);
-	if (move_x == 0.0f && move_y == 0.0f)
-		return ;
-	movement(editor, move_x, move_y);
-}
-
 /*
  * how many poitns, walls, sectors, entities, wallsprites, (portals?)
 */

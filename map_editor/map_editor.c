@@ -69,6 +69,8 @@ void	general_events(t_editor *editor)
 
 void	button_choice_event(t_editor *editor)
 {
+	if (movement(editor))
+		return ;
 	if (bui_button_toggle(editor->button_draw))
 	{
 		click_calc(editor, &editor->grid);
@@ -79,7 +81,6 @@ void	button_choice_event(t_editor *editor)
 		selection(editor, &editor->grid);
 		if (editor->grid.modify_wall == NULL)
 			editor->grid.modify_sprite = NULL;
-		drag_calc(editor, &editor->grid);
 		draw_selected_point(editor, &editor->grid);
 		draw_selected_wall(&editor->grid);
 		draw_selected_sector(editor, &editor->grid);

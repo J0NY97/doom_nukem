@@ -62,11 +62,8 @@ void	draw_sector_viewer(t_editor *editor, SDL_Surface *surf)
 	while (curr)
 	{
 		v = get_scaled_line(surf, curr->content, center, scale - 1.0f);
-		gfx_vector_string(v[0]);
-		gfx_vector_string(v[1]);
 		gfx_draw_line(surf, editor->grid.modify_sector->color,
 			v[0], v[1]);
-		ft_putstr("draw done.\n");
 		free(v);
 		curr = curr->next;
 	}

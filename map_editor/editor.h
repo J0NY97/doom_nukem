@@ -366,7 +366,7 @@ void					wall_sprite_view_events(t_editor *editor);
 void					portal_texture_view_events(t_editor *editor);
 void					draw_selected_f_and_c_button(t_editor *editor);
 void					draw_selected_entity_texture(t_editor *editor);
-void					movement(t_editor *editor, int move_x, int move_y);
+int						movement(t_editor *editor);
 void					select_point(t_grid *grid);
 void					select_entity(t_editor *editor);
 void					select_wall(t_editor *editor);
