@@ -30,6 +30,42 @@ void	wall_texture_button_events(t_editor *editor)
 			= ft_atoi(editor->active_wall_texture->text);
 }
 
+/*
+ * Returns the wall that is the same as the one you give in but not the same,
+ * null if doenst find.
+*/
+t_wall	*get_duplicate_wall(t_list *walls, t_wall *wall)
+{
+	t_list	*curr;
+
+	if (!wall)
+		return (NULL);
+	curr = walls;
+	while (curr)
+	{
+		if (wall_has_same_coords(wall, curr->content)
+			&& wall != curr->content)
+			return (curr->content);
+		curr = curr->next;
+	}
+	return (NULL);
+}
+
+/*
+ * can only change wall solidity if we have 2 walls on top of eachother.
+ * has to make both of the walls solid/unsullied, because we cant choose.
+*/
+void	set_wall_solidity(t_editor *editor)
+{
+	t_wall	*w;
+
+	w = get_duplicate_wall(editor->grid.walls, editor->grid.modify_wall);
+	if (!w)
+		return ;
+	editor->grid.modify_wall->solid = !editor->wall_solid_tick->toggle;
+	w->solid = editor->grid.modify_wall->solid;
+}
+
 void	wall_texture_view_events(t_editor *editor)
 {
 	changer_prefab_events_float(editor->texture_scale_changer,
@@ -38,16 +74,9 @@ void	wall_texture_view_events(t_editor *editor)
 		= ft_fclamp(editor->grid.modify_wall->texture_scale, 0.1f, 64.0f);
 	editor->wall_solid_tick->toggle = editor->grid.modify_wall->solid;
 	if (bui_button(editor->wall_solid_tick))
-	{
-		if (editor->wall_solid_tick->toggle == 1)
-			editor->grid.modify_wall->solid = 0;
-		else
-			editor->grid.modify_wall->solid = 1;
-	}
-	if (editor->grid.modify_wall->neighbor_sector != NULL)
-		editor->wall_portal_tick->toggle = 1;
-	else
-		editor->wall_portal_tick->toggle = 0;
+		set_wall_solidity(editor);
+	editor->wall_portal_tick->toggle
+		= editor->grid.modify_wall->neighbor_sector != NULL;
 	if (bui_button(editor->wall_portal_tick))
 	{
 		if (editor->wall_portal_tick->toggle == 1)

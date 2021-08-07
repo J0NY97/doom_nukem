@@ -273,7 +273,6 @@ t_wall					*get_wall_from_list(
 							t_list **list, t_point *v1, t_point *v2);
 t_sprite				*get_sprite_from_list(t_list **list, int x, int y);
 void					update_real_dimensions(t_grid *grid);
-void					remove_from_walls(t_list **walls, t_wall *wall);
 void					remove_from_points(t_list **points, t_point *v);
 int						vector_in_wall(t_vector v, t_wall *vec);
 int						vector_on_wall(t_vector v, t_wall *line);
@@ -286,8 +285,6 @@ void					check_sector_wanter(t_editor *doom, SDL_Event *e);
 void					remove_wall_from_sector(
 							t_sector **sector, t_wall *wall);
 void					remove_from_sectors(t_list **sectors, t_sector *sec);
-void					remove_from_walls_non_free(
-							t_list **walls, t_wall *wall);
 void					remove_wall_from_all_sectors(
 							t_list **sectors, t_wall *wall);
 void					remove_wall_from_its_sector(t_grid *grid, t_wall *wall);
