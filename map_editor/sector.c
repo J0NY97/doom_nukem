@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 12:44:27 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/08/05 13:53:48 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/08/08 14:49:36 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,29 @@ void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
 	}
 }
 
+void	sector_center(t_sector *sector, t_grid *grid, float *x, float *y)
+{
+	float	a;
+	float	t;
+	t_list	*w;
+	t_wall	*wall;
+
+	a = 0.0f;
+	w = sector->walls;
+	while (w)
+	{
+		wall = w->content;
+		t = wall->orig->pos.x * wall->dest->pos.y * grid->gap
+			- wall->dest->pos.x * wall->orig->pos.y * grid->gap;
+		a += t;
+		*x += ((wall->orig->pos.x + wall->dest->pos.x) * grid->gap) * t;
+		*y += ((wall->orig->pos.y + wall->dest->pos.y) * grid->gap) * t;
+		w = w->next;
+	}
+	*x = *x / (6.0 * (a * 0.5));
+	*y = *y / (6.0 * (a * 0.5));
+}
+
 void	draw_sector(t_sector *sector, t_grid *grid)
 {
 	int		i;
@@ -89,6 +112,7 @@ void	draw_sector(t_sector *sector, t_grid *grid)
 	i = ft_lstlen(sector->walls) * 2;
 	if (i == 0)
 		return ;
+	//sector_center(sector, grid, &x, &y);
 	draw_sector_number(sector, grid, x /= i, y /= i);
 }
 
