@@ -23,10 +23,8 @@ void	read_vertex(t_grid *grid, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		new_p = (t_point *)malloc(sizeof(t_point));
-		new_p->pos = gfx_new_vector(ft_atoi(arr[1]),
-				ft_atoi(arr[2]),
-				0);
+		new_p = ft_memalloc(sizeof(t_point));
+		new_p->pos = gfx_new_vector(ft_atoi(arr[1]), ft_atoi(arr[2]), 0);
 		new_p->id = ft_atoi(arr[0]);
 		add_to_list(&grid->points, new_p, sizeof(t_point));
 		free_array(arr);
@@ -46,10 +44,8 @@ void	read_wall(t_grid *grid, int fd)
 		if (line[0] == '-')
 			break ;
 		arr = ft_strsplit(line, '\t');
-		new_w = new_wall(get_point_with_id(grid->points,
-					ft_atoi(arr[1])),
-				get_point_with_id(grid->points,
-					ft_atoi(arr[2])));
+		new_w = new_wall(get_point_with_id(grid->points, ft_atoi(arr[1])),
+				get_point_with_id(grid->points, ft_atoi(arr[2])));
 		new_w->id = ft_atoi(arr[0]);
 		new_w->texture_id = ft_atoi(arr[3]);
 		new_w->portal_texture_id = ft_atoi(arr[4]);
@@ -98,9 +94,7 @@ void	read_spawn(t_spawn *spawn, int fd)
 			break ;
 		arr = ft_strsplit(line, '\t');
 		spawn->pos = gfx_new_vector(
-				ft_atoi(arr[1]),
-				ft_atoi(arr[2]),
-				ft_atoi(arr[3]));
+				ft_atoi(arr[1]), ft_atoi(arr[2]), ft_atoi(arr[3]));
 		spawn->direction = ft_atoi(arr[4]);
 		free_array(arr);
 		ft_strdel(&line);
@@ -122,9 +116,7 @@ void	read_entities(t_editor *editor, int fd)
 			break ;
 		arr = ft_strsplit(line, '\t');
 		ent = new_entity(ft_atoi(arr[0]), (t_vector){
-				atof(arr[2]),
-				atof(arr[3]),
-				atof(arr[4])});
+				atof(arr[2]), atof(arr[3]), atof(arr[4])});
 		ent->preset
 			= get_entity_preset_with_name(editor->entity_presets, arr[1]);
 		ent->direction = ft_atoi(arr[5]);

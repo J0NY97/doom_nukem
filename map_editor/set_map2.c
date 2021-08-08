@@ -22,13 +22,13 @@ char	*set_point(t_editor *doom)
 
 	id = 0;
 	curr = doom->grid.points;
-	str = ft_sprintf("type:vertex\tid\tx\ty\tz\n");
+	str = ft_sprintf("type:vertex\tid\tx\ty\n");
 	while (curr)
 	{
 		point = curr->content;
 		point->id = id;
-		temp = ft_sprintf("%d\t%.1f\t%.1f\t%.1f\n",
-				point->id, point->pos.x, point->pos.y, point->pos.z);
+		temp = ft_sprintf("%d\t%.1f\t%.1f\n",
+				point->id, point->pos.x, point->pos.y);
 		ft_stradd(&str, temp);
 		ft_strdel(&temp);
 		point->id = id;
