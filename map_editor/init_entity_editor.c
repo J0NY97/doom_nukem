@@ -95,4 +95,10 @@ void	init_entity_editor(t_editor *editor)
 		editor->palette.elem_elem_elem);
 	init_entity_editor2(editor);
 	add_to_entity_editor(editor);
+	editor->entity_z_changer = new_changer_prefab(editor->edit_toolbox_entity,
+			"Entity Z", new_xywh(editor->edit_entity_direction->position.x,
+				editor->edit_entity_direction->position.y
+				+ editor->edit_entity_direction->position.h + 10,
+				editor->edit_entity_direction->position.w,
+				40));
 }

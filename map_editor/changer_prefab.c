@@ -72,3 +72,23 @@ void	changer_prefab_events_float(
 		ft_strdel(&str);
 	}
 }
+
+void	changer_prefab_events_double(
+		t_changer_prefab *changer, double *current_value, double change_amount)
+{
+	char	*str;
+
+	str = NULL;
+	if (bui_button(changer->add_button))
+		*current_value += change_amount;
+	else if (bui_button(changer->sub_button))
+		*current_value -= change_amount;
+	if (bui_input(changer->value))
+		*current_value = ft_atof(changer->value->text);
+	else if (changer->value->toggle == 0)
+	{
+		str = ft_sprintf("%.1f", *current_value);
+		bui_set_element_text(changer->value, str);
+		ft_strdel(&str);
+	}
+}

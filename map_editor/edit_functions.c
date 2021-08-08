@@ -33,6 +33,9 @@ void	entity_option(t_editor *editor)
 	editor->edit_toolbox_entity->show = 1;
 	editor->edit_view_entity->show = 1;
 	entity_drop_down_event(editor);
+	changer_prefab_events_double(editor->entity_z_changer,
+		&editor->grid.modify_entity->pos.z, 0.1);
+	entity_drop_down_event(editor);
 	curr = editor->entity_direction_radio_buttons;
 	while (curr)
 	{

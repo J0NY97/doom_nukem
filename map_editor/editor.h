@@ -195,6 +195,7 @@ struct s_editor
 	t_bui_element		*edit_entity_direction;
 	t_list				*entity_direction_radio_buttons;
 	t_bui_element		*active_direction_button;
+	t_changer_prefab	*entity_z_changer;
 	SDL_Surface			**texture_textures;
 	int					texture_amount;
 };
@@ -208,15 +209,14 @@ void					init_sector_editor(t_editor *editor);
 void					init_wall_editor(t_editor *editor);
 void					init_entity_editor(t_editor *doom);
 void					init_entity_presets(t_list **list);
-t_changer_prefab		*new_changer_prefab(
-							t_bui_element *parent_menu, char *title,
-							t_xywh coord);
-void					changer_prefab_events(
-							t_changer_prefab *changer, int *current_value,
-							int change_amount);
-void					changer_prefab_events_float(
-							t_changer_prefab *changer, float *current_value,
-							float change_amount);
+t_changer_prefab		*new_changer_prefab(t_bui_element *parent_menu,
+							char *title, t_xywh coord);
+void					changer_prefab_events(t_changer_prefab *changer,
+							int *current_value, int change_amount);
+void					changer_prefab_events_float(t_changer_prefab *changer,
+							float *current_value, float change_amount);
+void					changer_prefab_events_double(t_changer_prefab *changer,
+							double *current_value, double change_amount);
 void					remove_from_sprites(t_list **list, t_sprite *s);
 t_entity				*get_entity_from_list_at_pos(
 							t_list *list, t_vector pos);
