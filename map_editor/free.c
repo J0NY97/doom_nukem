@@ -45,6 +45,7 @@ void	editor_free2(t_editor *editor)
 	changer_prefab_free(editor->slope_ceiling_wall_changer, 0);
 	changer_prefab_free(editor->slope_ceiling_angle_changer, 0);
 	dropdown_preset_free(editor->entity_type_drop, 0);
+	changer_prefab_free(editor->entity_z_changer, 0);
 	ft_lstdel(&editor->entity_direction_radio_buttons, &dummy_free_er);
 	i = -1;
 	while (++i < editor->texture_amount)
