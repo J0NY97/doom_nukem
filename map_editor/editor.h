@@ -401,5 +401,6 @@ t_bui_element			*add_new_wall_texture_tab(
 							t_preset_tab *tab, char *text, Uint32 color);
 void					edit_button_event(t_editor *editor);
 t_wall					*get_duplicate_wall(t_list *walls, t_wall *wall);
+void					remove_button_events(t_editor *editor, t_grid *grid);
 
 #endif
