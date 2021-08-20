@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/18 11:13:47 by nneronin          #+#    #+#              #
-#    Updated: 2021/08/01 17:12:18 by nneronin         ###   ########.fr        #
+#    Updated: 2021/08/18 08:55:06 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -134,7 +134,7 @@ all: $(NAME)
 	@printf $(CYAN)"[INFO]	$(NAME) is up to date!\n"$(RESET)
 
 $(NAME): $(SRCS)
-	@gcc -c $(SRCS) $(CFLAGS)
+	@gcc -c -O3 $(SRCS) $(CFLAGS)
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
 	@rm -f $(OBJS)
