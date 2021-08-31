@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   settings_menu2.c                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/27 16:39:17 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/07/27 16:39:18 by jsalmi           ###   ########.fr       */
+/*   Updated: 2021/08/31 14:53:23 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,7 +33,7 @@ void	settings_slider_init(t_ui_menu_settings *settings, t_xywh c, int *i)
 
 	menu = settings->menu;
 	settings->fov_slider = new_setting_slider(menu, get_next_pos(c, *i));
-	bui_set_slider_values(settings->fov_slider, 75, 45, 120);
+	bui_set_slider_values(settings->fov_slider, 90, 50, 100);
 	*i += 1;
 	settings->mouse_x_slider = new_setting_slider(menu, get_next_pos(c, *i));
 	bui_set_slider_values(settings->mouse_x_slider, 5, 1, 10);
