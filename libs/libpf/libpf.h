@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 11:14:30 by nneronin          #+#    #+#             */
-/*   Updated: 2021/08/22 10:21:49 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/09/02 14:31:00 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 # include <stdint.h>
 # include <stdbool.h>
 
-# define FT_ERROR(...)	pf_error(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
-# define FT_INFO(...)	pf_info(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+# define PF_ERROR(...)	pf_error(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+# define PF_INFO(...)	pf_info(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 
 # define PF_BUFF_SIZE	2048
 
@@ -110,7 +110,7 @@ typedef struct s_pf_style
 typedef struct s_pf_emoji
 {
 	char		*str;
-	wchar_t		code;
+	unsigned short int	code;
 	int			len;
 }				t_pf_emoji;
 
