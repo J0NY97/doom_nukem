@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 11:14:30 by nneronin          #+#    #+#             */
-/*   Updated: 2021/09/02 14:31:00 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/09/02 14:33:48 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -110,7 +110,7 @@ typedef struct s_pf_style
 typedef struct s_pf_emoji
 {
 	char		*str;
-	unsigned short int	code;
+	wchar_t		code;
 	int			len;
 }				t_pf_emoji;
 
