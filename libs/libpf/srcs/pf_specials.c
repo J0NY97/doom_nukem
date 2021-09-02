@@ -29,29 +29,29 @@ static const t_pf_style	g_pf_styles[11] =
 
 static const t_pf_emoji	g_pf_emoji[23] =
 {
-	{"{OK}", 0x1F44C, 4},
-	{"{ERROR}", 0x26D4, 7},
-	{"{UP}", 0x2B06, 4},
-	{"{DOWN}", 0x2B07, 6},
-	{"{RIGHT}", 0x27A1, 7},
-	{"{LEFT}", 0x2B05, 6},
-	{"{CHECK}", 0x2705, 7},
-	{"{WARNING}", 0x26A0, 9},
-	{"{TALK}", 0x1F4AC, 6},
-	{"{NERD}", 0x1F913, 6},
-	{"{NEUTRAL}", 0x1f610, 9},
-	{"{TEARS}", 0x1f602, 7},
-	{"{HAHA}", 0x1f606, 6},
-	{"{FROWN}", 0x1f627, 7},
-	{"{FEAR}", 0x1f628, 6},
-	{"{SCREAM}", 0x1f631, 8},
-	{"{DEAD}", 0x1f635, 6},
-	{"{THINKING}", 0x1f914, 10},
-	{"{PRAY}", 0x1f64f, 6},
-	{"{POOP}", 0x1f4a9, 6},
-	{"{ROCKET}", 0x1f680, 8},
-	{"{BOMB}", 0x1f4a3, 6},
-	{"{SKULL}", 0x2620, 7}
+	{"{OK}", (short unsigned int)0x1F44C, 4},
+	{"{ERROR}", (short unsigned int)0x26D4, 7},
+	{"{UP}", (short unsigned int)0x2B06, 4},
+	{"{DOWN}", (short unsigned int)0x2B07, 6},
+	{"{RIGHT}", (short unsigned int)0x27A1, 7},
+	{"{LEFT}", (short unsigned int)0x2B05, 6},
+	{"{CHECK}", (short unsigned int)0x2705, 7},
+	{"{WARNING}", (short unsigned int)0x26A0, 9},
+	{"{TALK}", (short unsigned int)0x1F4AC, 6},
+	{"{NERD}", (short unsigned int)0x1F913, 6},
+	{"{NEUTRAL}", (short unsigned int)0x1f610, 9},
+	{"{TEARS}", (short unsigned int)0x1f602, 7},
+	{"{HAHA}", (short unsigned int)0x1f606, 6},
+	{"{FROWN}", (short unsigned int)0x1f627, 7},
+	{"{FEAR}", (short unsigned int)0x1f628, 6},
+	{"{SCREAM}", (short unsigned int)0x1f631, 8},
+	{"{DEAD}", (short unsigned int)0x1f635, 6},
+	{"{THINKING}", (short unsigned int)0x1f914, 10},
+	{"{PRAY}", (short unsigned int)0x1f64f, 6},
+	{"{POOP}", (short unsigned int)0x1f4a9, 6},
+	{"{ROCKET}", (short unsigned int)0x1f680, 8},
+	{"{BOMB}", (short unsigned int)0x1f4a3, 6},
+	{"{SKULL}", (short unsigned int)0x2620, 7}
 };
 
 static int	color_code(t_pf *p, int i)
@@ -110,7 +110,7 @@ static void	ft_wchar(t_pf *p, wchar_t wc)
 		fill_buffer_1(p, (char)(0xC0 | (wc >> 6)));
 		fill_buffer_1(p, (char)(0x80 | (wc & 0x3F)));
 	}
-	else if (wc <= 0xFFFF)
+	else if (wc <= 128)
 	{
 		fill_buffer_1(p, (char)(0xE0 | (wc >> 12)));
 		fill_buffer_1(p, (char)(0x80 | ((wc >> 6) & 0x3F)));
