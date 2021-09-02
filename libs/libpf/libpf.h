@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 11:14:30 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/06 14:59:06 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/08/22 10:21:49 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,16 +19,8 @@
 # include <stdint.h>
 # include <stdbool.h>
 
-# define BOLD		"\x1b[1m"
-# define UND		"\x1b[4m"
-# define RESET		"\x1b[00m"
-# define RED		"\x1b[31m"
-# define GREEN		"\x1b[32m"
-# define YELLOW		"\x1b[33m"
-# define BLUE		"\x1b[34m"
-# define MAGENTA	"\x1b[35m"
-# define CYAN		"\x1b[36m"
-# define WHITE		"\x1b[37m"
+# define FT_ERROR(...)	pf_error(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
+# define FT_INFO(...)	pf_info(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 
 # define PF_BUFF_SIZE	2048
 
@@ -53,18 +45,18 @@ typedef struct s_flag
 typedef struct s_pf
 {
 	va_list			ap;
+	t_flag			flag;
+	t_padding		padding;
 	char			*format;
 	char			*buffer;
-	uint8_t			caps;
+	const char		*invalid;
 	int				fd;
 	int				chars;
 	int				print_len;
-	const char		*invalid;
-	t_flag			flag;
 	int				min_width;
 	int				precision;
 	int				size_bytes;
-	t_padding		padding;
+	uint8_t			caps;
 }					t_pf;
 
 int					ft_printf(const char *restrict format, ...);
@@ -84,7 +76,6 @@ void				put_zeros(t_pf *p);
 void				put_right_spaces(t_pf *p);
 void				put_left_spaces(t_pf *p);
 void				pf_char(t_pf *p);
-void				pf_colors(t_pf *p);
 void				pf_float(t_pf *p);
 void				pf_invalid(t_pf *p);
 void				pf_nbr(t_pf *p);
@@ -92,14 +83,35 @@ int					pf_nbr_inf(t_pf *p, long double nb);
 void				pf_nbr_o(t_pf *p);
 void				pf_nbr_u(t_pf *p);
 void				pf_nbr_x(t_pf *p);
+void				pf_nbr_p(t_pf *p);
 void				pf_putpercent(t_pf *p);
 void				pf_str(t_pf *p);
 void				space_padding(t_pf *p, int extra);
 void				pf_base(t_pf *p, unsigned long nb, char *base);
+void				pf_specials(t_pf *p);
+void				print_code(t_pf *p, char *color, int code_len);
 void				fill_buffer(t_pf *p, const char *s, unsigned int size);
 void				set_float_padding(t_pf *p, long i_part, long double nb);
 void				set_float_padding(t_pf *p, long i_part, long double nb);
 void				set_zeros_base(t_pf *p, unsigned long nb, int base_len);
 void				error_msg(const char *restrict format, ...);
+void				pf_error(char *file, char *func, int line,
+						const char *restrict format, ...);
+void				pf_info(char *file, char *func, int line,
+						const char *restrict format, ...);
+
+typedef struct s_pf_style
+{
+	char		*str;
+	char		*code;
+	int			len;
+}				t_pf_style;
+
+typedef struct s_pf_emoji
+{
+	char		*str;
+	wchar_t		code;
+	int			len;
+}				t_pf_emoji;
 
 #endif

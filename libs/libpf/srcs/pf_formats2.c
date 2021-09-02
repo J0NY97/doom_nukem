@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 18:47:14 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/15 20:55:34 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/08/12 15:05:41 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,8 @@ void	specifier_sorter(t_pf *p, int c)
 		pf_nbr_u(p);
 	else if (c == 'X')
 		pf_nbr_x(p);
+	else if (c == 'p')
+		pf_nbr_p(p);
 	else
 		pf_invalid(p);
 }
