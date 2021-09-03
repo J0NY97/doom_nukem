@@ -6,51 +6,60 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/10 10:44:15 by nneronin          #+#    #+#              #
-#    Updated: 2021/08/01 17:12:18 by nneronin         ###   ########.fr        #
+#    Updated: 2021/09/03 13:05:51 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-RED				:= "\e[0;31m"
-GREEN			:= "\e[0;32m"
-YELLOW			:= "\e[0;33m"
-BLUE			:= "\e[0;34m"
-MAGENTA			:= "\e[0;35m"
-CYAN			:= "\e[0;36m"
-RESET			:= "\e[0m"
+RED		:= "\e[0;31m"
+GREEN	:= "\e[0;32m"
+YELLOW	:= "\e[0;33m"
+BLUE	:= "\e[0;34m"
+MAGENTA	:= "\e[0;35m"
+CYAN	:= "\e[0;36m"
+RESET	:= "\e[0m"
 
-IDIR 	=	.
-NAME	=	libbxpm.a
-SRCS	=	read_bmp.c \
-			read_bxpm.c \
-			surf_to_bmp.c \
-			surf_to_bxpm.c \
-			bmp_to_bxpm.c \
-			write_bmp.c \
-			write_bxpm.c \
-			byte_utils.c \
-			free.c
+RAW	=	read_bmp.c \
+		read_bxpm.c \
+		surf_to_bmp.c \
+		surf_to_bxpm.c \
+		bmp_to_bxpm.c \
+		write_bmp.c \
+		write_bxpm.c \
+		byte_utils.c \
+		free.c
 
-OBJS = $(SRCS:.c=.o)
-CFLAGS = -Wall -Wextra -Werror -Wunused-variable -Wno-unused-result
-CFLAGS += -I $(IDIR) -I ../libft -I ../libpf 
+NAME = libbxpm.a
+IDIR = .
+ODIR = objs
+CDIR = srcs
+SRCS = $(addprefix $(CDIR)/, $(RAW))
+OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))
+CFLAGS = -Wall -Wextra -Werror -MMD -O3
 
 all: $(NAME)
-	@printf $(CYAN)"[INFO]	$(NAME) is up to date!\n"$(RESET)
+	@printf ${GREEN}"> $(NAME) ready!\n"${RESET}
 
-$(NAME): $(SRCS)
-	@gcc -c $(SRCS) $(CFLAGS)
+$(ODIR):
+	@mkdir -p $(ODIR)
+	@printf "\n"
+
+$(ODIR)/%.o: $(CDIR)/%.c
+	@gcc -c $< -o $@ $(CFLAGS) -I . -I ../libft -I ../libpf
+	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
+
+$(NAME): $(ODIR) $(OBJS)
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
-	@rm -f $(OBJS)
-	@printf $(GREEN)"Compiling $(NAME)\n"$(RESET)
+	@printf ${CYAN}"\e[F\e[J[INFO] Linked $(NAME) with success.\n"${RESET}
 
-clean:
-	@rm -f $(OBJS)
-	@printf $(CYAN)"[INFO]	$(NAME) cleaned\n"$(RESET)
+clean: 
+	@printf ${CYAN}"[INFO] Removing $(NAME) object files.\n"${RESET}
+	@rm -rf $(ODIR)
 
 fclean: clean
-	@rm -f $(NAME)
+	@printf ${CYAN}"[INFO] Removing $(NAME)\n"${RESET}
+	@rm $(NAME)
 
 re: fclean all
 
-.PHONY: clean, all, fclean, re
+.PHONY: fclean all clean libft

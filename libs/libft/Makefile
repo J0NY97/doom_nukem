@@ -6,21 +6,19 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/18 11:13:47 by nneronin          #+#    #+#              #
-#    Updated: 2021/08/18 08:55:06 by nneronin         ###   ########.fr        #
+#    Updated: 2021/09/03 13:27:53 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
-RED				:= "\e[0;31m"
-GREEN			:= "\e[0;32m"
-YELLOW			:= "\e[0;33m"
-BLUE			:= "\e[0;34m"
-MAGENTA			:= "\e[0;35m"
-CYAN			:= "\e[0;36m"
-RESET			:= "\e[0m"
+RED		:= "\e[0;31m"
+GREEN	:= "\e[0;32m"
+YELLOW	:= "\e[0;33m"
+BLUE	:= "\e[0;34m"
+MAGENTA	:= "\e[0;35m"
+CYAN	:= "\e[0;36m"
+RESET	:= "\e[0m"
 
-NAME = libft.a
-
-SRCS = 	add_to_list.c\
+RAW =	add_to_list.c\
 		ft_atof.c\
 		ft_atoi.c\
 		ft_atoi_base.c\
@@ -125,28 +123,41 @@ SRCS = 	add_to_list.c\
 		ft_tolower.c\
 		ft_toupper.c\
 		ft_wordcount.c\
+		ft_timer_func.c\
 		get_next_line.c
 
-OBJS = $(SRCS:.c=.o)
-FLAGS = -Wall -Wextra -Werror
+NAME = libft.a
+IDIR = .
+ODIR = objs
+CDIR = srcs
+SRCS = $(addprefix $(CDIR)/, $(RAW))
+OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))
+CFLAGS = -Wall -Wextra -Werror -MMD -O3
 
 all: $(NAME)
-	@printf $(CYAN)"[INFO]	$(NAME) is up to date!\n"$(RESET)
+	@printf ${GREEN}"> $(NAME) ready!\n"${RESET}
 
-$(NAME): $(SRCS)
-	@gcc -c -O3 $(SRCS) $(CFLAGS)
+$(ODIR):
+	@mkdir -p $(ODIR)
+	@printf "\n"
+
+$(ODIR)/%.o: $(CDIR)/%.c
+	@gcc -c $< -o $@ $(CFLAGS) -I .
+	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
+
+$(NAME): $(ODIR) $(OBJS)
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
-	@rm -f $(OBJS)
-	@printf $(GREEN)"Compiling $(NAME)\n"$(RESET)
+	@printf ${CYAN}"\e[F\e[J[INFO] Linked $(NAME) with success.\n"${RESET}
 
-clean:
-	@rm -f $(OBJS)
-	@printf $(CYAN)"[INFO]	$(NAME) cleaned\n"$(RESET)
-	
+clean: 
+	@printf ${CYAN}"[INFO] Removing $(NAME) object files.\n"${RESET}
+	@rm -rf $(ODIR)
+
 fclean: clean
-	@rm -f $(NAME)
+	@printf ${CYAN}"[INFO] Removing $(NAME)\n"${RESET}
+	@rm $(NAME)
 
 re: fclean all
 
-.PHONY: clean, all, fclean, re
+.PHONY: fclean all clean libft

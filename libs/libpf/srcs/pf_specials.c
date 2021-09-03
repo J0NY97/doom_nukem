@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 10:15:12 by nneronin          #+#    #+#             */
-/*   Updated: 2021/08/21 10:49:05 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/09/03 12:50:09 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -103,14 +103,14 @@ static void	ft_wchar(t_pf *p, wchar_t wc)
 {
 	if (p->fd >= 3)
 		return ;
-	if (wc <= 0x7F)
+	if (wc <= 127)
 		fill_buffer_1(p, (char)wc);
-	else if (wc <= 0x7FF)
+	else if (wc <= 2047)
 	{
 		fill_buffer_1(p, (char)(0xC0 | (wc >> 6)));
 		fill_buffer_1(p, (char)(0x80 | (wc & 0x3F)));
 	}
-	else if (wc <= 128)
+	else if (wc <= 65535)
 	{
 		fill_buffer_1(p, (char)(0xE0 | (wc >> 12)));
 		fill_buffer_1(p, (char)(0x80 | ((wc >> 6) & 0x3F)));

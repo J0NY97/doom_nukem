@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/23 13:48:12 by nneronin          #+#    #+#              #
-#    Updated: 2021/09/02 10:56:42 by nneronin         ###   ########.fr        #
+#    Updated: 2021/09/03 12:56:22 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -47,9 +47,8 @@ CDIR = srcs
 SRCS = $(addprefix $(CDIR)/, $(RAW))
 OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))
 CFLAGS = -Wall -Wextra -Werror -MMD -O3
-BIN_DIR = .
 
-all: $(BIN_DIR)/$(NAME)
+all: $(NAME)
 	@printf ${GREEN}"> $(NAME) ready!\n"${RESET}
 
 $(ODIR):
@@ -60,17 +59,17 @@ $(ODIR)/%.o: $(CDIR)/%.c
 	@gcc -c $< -o $@ $(CFLAGS) -I . -I ../libft
 	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
 
-$(BIN_DIR)/$(NAME): $(ODIR) $(OBJS)
+$(NAME): $(ODIR) $(OBJS)
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
 	@printf ${CYAN}"\e[F\e[J[INFO] Linked $(NAME) with success.\n"${RESET}
 
 clean: 
-	@printf ${CYAN}"[INFO] Removing objs from the libft.\n"${RESET}
+	@printf ${CYAN}"[INFO] Removing $(NAME) object files.\n"${RESET}
 	@rm -rf $(ODIR)
 
 fclean: clean
-	@printf ${CYAN}"[INFO] Removing $(NAME) from the libft.\n"${RESET}
+	@printf ${CYAN}"[INFO] Removing $(NAME)\n"${RESET}
 	@rm $(NAME)
 
 re: fclean all

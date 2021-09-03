@@ -56,8 +56,6 @@ SRCS = \
 	./edit_functions.c \
 	./free.c \
 	./map_editor.c \
-	../libs/libbxpm/byte_utils.c \
-	../libs/libbxpm/read_bxpm.c \
 	./core.c
 
 OBJS = $(SRCS:.c=.o)
@@ -83,8 +81,9 @@ LIB_FOLDERS = \
 	-L../libs/libpf \
 	-L../libs/better_libui \
 	-L../libs/libgfx \
+	-L../libs/libbxpm \
 
-LIB = -lui -lpf -lft -lgfx
+LIB = -lui -lpf -lft -lgfx -lbxpm
 
 FLAGS = -Wall -Wextra
 
