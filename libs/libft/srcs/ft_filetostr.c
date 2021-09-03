@@ -30,7 +30,7 @@ char	*ft_fdtostr(int fd, int i)
 		ret = (char *)malloc(i + bytes_read + 1);
 		ret[i + bytes_read] = '\0';
 	}
-	if (bytes_read < 0 || !ret)
+	if (!ret)
 		return (0);
 	if (ret && bytes_read)
 		ft_memcpy(ret + i, buf, bytes_read);

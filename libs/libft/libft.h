@@ -149,5 +149,9 @@ int					ft_tolower(int c);
 int					ft_toupper(int c);
 int					ft_wordcount(const char *s, char c);
 int					get_next_line(const int fd, char **line);
+char				*ft_b_itoa(int nbr, char *buffer);
+void				ft_arraydel(char **arr);
+double				ft_timer_end(void);
+void				ft_timer_start(void);
 
 #endif

@@ -22,6 +22,8 @@ RAW =	add_to_list.c\
 		ft_atof.c\
 		ft_atoi.c\
 		ft_atoi_base.c\
+		ft_arraydel.c\
+		ft_b_itoa.c\
 		ft_bzero.c\
 		ft_clamp.c\
 		ft_compile_string.c\
