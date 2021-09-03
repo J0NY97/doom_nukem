@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/10 10:44:15 by nneronin          #+#    #+#              #
-#    Updated: 2021/09/03 13:05:51 by nneronin         ###   ########.fr        #
+#    Updated: 2021/09/03 15:29:40 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,33 +27,31 @@ RAW	=	read_bmp.c \
 		write_bxpm.c \
 		byte_utils.c \
 		free.c
-
+ 
 NAME = libbxpm.a
-IDIR = .
-ODIR = objs
 CDIR = srcs
+IDIR = -I. -I ../libft -I ../libpf
+ODIR = objs
 SRCS = $(addprefix $(CDIR)/, $(RAW))
 OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))
 CFLAGS = -Wall -Wextra -Werror -MMD -O3
 
 all: $(NAME)
-	@printf ${GREEN}"> $(NAME) ready!\n"${RESET}
+	@printf ${GREEN}"\e[J> $(NAME) ready!\n"${RESET}
 
 $(ODIR):
 	@mkdir -p $(ODIR)
-	@printf "\n"
 
 $(ODIR)/%.o: $(CDIR)/%.c
-	@gcc -c $< -o $@ $(CFLAGS) -I . -I ../libft -I ../libpf
-	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
+	@printf $(YELLOW)"\e[JCompiling $<\n\e[F"$(RESET)
+	@gcc -c $< -o $@ $(CFLAGS) $(IDIR)
 
 $(NAME): $(ODIR) $(OBJS)
 	@ar rc $(NAME) $(OBJS)
 	@ranlib $(NAME)
-	@printf ${CYAN}"\e[F\e[J[INFO] Linked $(NAME) with success.\n"${RESET}
 
 clean: 
-	@printf ${CYAN}"[INFO] Removing $(NAME) object files.\n"${RESET}
+	@printf ${CYAN}"[INFO] Removing objs.\n"${RESET}
 	@rm -rf $(ODIR)
 
 fclean: clean
@@ -62,4 +60,4 @@ fclean: clean
 
 re: fclean all
 
-.PHONY: fclean all clean libft
+.PHONY: fclean all clean re $(NAME)
