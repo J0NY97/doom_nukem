@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/09/03 15:32:17 by nneronin         ###   ########.fr        #
+#    Updated: 2021/09/05 06:45:52 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,8 +30,8 @@ all: framework $(PATH_H)
 	@make -C ./libs/libpf -j6
 	@make -C ./libs/libbxpm -j6
 	@make -C ./libs/libtp -j6
-	@make -C ./libs/better_libui -j6
 	@make -C ./libs/libgfx -j6
+	@make -C ./libs/better_libui -j6
 	@make -C ./map_editor
 	@make -C ./launcher
 	@make -C ./game
