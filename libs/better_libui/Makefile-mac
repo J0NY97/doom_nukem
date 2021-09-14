@@ -57,8 +57,11 @@ SRCS = $(addprefix $(CDIR)/, $(RAW))
 OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))
 CFLAGS =  -MMD -O3
 
-all: $(NAME)
+all: path $(NAME)
 	@printf ${GREEN}"\e[J> $(NAME) ready!\n"${RESET}
+
+path:
+	@sh bui_path_mac.sh
 
 $(ODIR):
 	@mkdir -p $(ODIR)
