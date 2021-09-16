@@ -110,7 +110,7 @@ static void	ft_wchar(t_pf *p, wchar_t wc)
 		fill_buffer_1(p, (char)(0xC0 | (wc >> 6)));
 		fill_buffer_1(p, (char)(0x80 | (wc & 0x3F)));
 	}
-	else if (wc <= 65535)
+	else if (wc <= 65534)
 	{
 		fill_buffer_1(p, (char)(0xE0 | (wc >> 12)));
 		fill_buffer_1(p, (char)(0x80 | ((wc >> 6) & 0x3F)));

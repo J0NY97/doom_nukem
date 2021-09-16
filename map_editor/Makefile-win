@@ -56,8 +56,8 @@ SRCS = \
 	./edit_functions.c \
 	./free.c \
 	./map_editor.c \
-	../libs/libbxpm/byte_utils.c \
-	../libs/libbxpm/read_bxpm.c \
+	../libs/libbxpm/srcs/byte_utils.c \
+	../libs/libbxpm/srcs/read_bxpm.c \
 	./core.c
 
 OBJS = $(SRCS:.c=.o)
