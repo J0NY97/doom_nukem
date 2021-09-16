@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/28 12:44:27 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/08/08 14:49:36 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/09/16 13:43:48 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,33 +63,62 @@ void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
 		ft_strdel(&str);
 	}
 }
+//	The New one
+//void	draw_sector(t_sector *sector, t_grid *grid, float x, float y)
+//{
+//	float	a;
+//	float	t;
+//	t_list	*w;
+//	t_wall	*wall;
+//
+//	a = 0.0f;
+//	w = sector->walls;
+//	while (w)
+//	{
+//		wall = w->content;
+//		t = wall->orig->pos.x * wall->dest->pos.y * grid->gap
+//			- wall->dest->pos.x * wall->orig->pos.y * grid->gap;
+//		a += t;
+//		x += ((wall->orig->pos.x + wall->dest->pos.x) * grid->gap) * t;
+//		y += ((wall->orig->pos.y + wall->dest->pos.y) * grid->gap) * t;
+//		if (wall->neighbor_sector != NULL)
+//			draw_wall(wall, grid, 0xffff0000);
+//		else
+//			draw_wall(wall, grid, sector->color);
+//		w = w->next;
+//	}
+//	x = x / (6.0 * (a * 0.5));
+//	y = y / (6.0 * (a * 0.5));
+//	draw_sector_number(sector, grid, x, y);
+//}
 
-void	draw_sector(t_sector *sector, t_grid *grid, float x, float y)
+void	draw_sector(t_sector *sector, t_grid *grid)
 {
-	float	a;
-	float	t;
-	t_list	*w;
-	t_wall	*wall;
+	int		i;
+	float	x;
+	float	y;
+	t_list	*wall;
+	t_wall	*w;
 
-	a = 0.0f;
-	w = sector->walls;
-	while (w)
+	x = 0;
+	y = 0;
+	wall = sector->walls;
+	while (wall)
 	{
-		wall = w->content;
-		t = wall->orig->pos.x * wall->dest->pos.y * grid->gap
-			- wall->dest->pos.x * wall->orig->pos.y * grid->gap;
-		a += t;
-		x += ((wall->orig->pos.x + wall->dest->pos.x) * grid->gap) * t;
-		y += ((wall->orig->pos.y + wall->dest->pos.y) * grid->gap) * t;
-		if (wall->neighbor_sector != NULL)
-			draw_wall(wall, grid, 0xffff0000);
+		w = wall->content;
+		x += (w->orig->pos.x + w->dest->pos.x) * grid->gap;
+		y += (w->orig->pos.y + w->dest->pos.y) * grid->gap;
+		if (((t_wall *)wall->content)->neighbor_sector != NULL)
+			draw_wall(wall->content, grid, 0xffff0000);
 		else
-			draw_wall(wall, grid, sector->color);
-		w = w->next;
+			draw_wall(wall->content, grid, sector->color);
+		wall = wall->next;
 	}
-	x = x / (6.0 * (a * 0.5));
-	y = y / (6.0 * (a * 0.5));
-	draw_sector_number(sector, grid, x, y);
+	i = ft_lstlen(sector->walls) * 2;
+	if (i == 0)
+		return ;
+	//sector_center(sector, grid, &x, &y);
+	draw_sector_number(sector, grid, x /= i, y /= i);
 }
 
 void	draw_sectors(t_grid *grid)
@@ -99,7 +128,8 @@ void	draw_sectors(t_grid *grid)
 	curr = grid->sectors;
 	while (curr)
 	{
-		draw_sector(curr->content, grid, 0, 0);
+		//draw_sector(curr->content, grid, 0, 0);
+		draw_sector(curr->content, grid);
 		curr = curr->next;
 	}
 	if (grid->modify_sector != NULL
