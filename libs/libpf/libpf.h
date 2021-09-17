@@ -95,7 +95,7 @@ void				set_float_padding(t_pf *p, long i_part, long double nb);
 void				set_float_padding(t_pf *p, long i_part, long double nb);
 void				set_zeros_base(t_pf *p, unsigned long nb, int base_len);
 void				error_msg(const char *restrict format, ...);
-void				pf_error(char *file, char *func, int line,
+void				pf_error(const char *file, const char *func, int line,
 						const char *restrict format, ...);
 void				pf_info(char *file, char *func, int line,
 						const char *restrict format, ...);
