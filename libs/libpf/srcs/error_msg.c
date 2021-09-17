@@ -34,7 +34,7 @@ void	error_msg(const char *restrict format, ...)
 	exit(1);
 }
 
-void	pf_error(char *file, char *func, int line,
+void	pf_error(const char *file, const char *func, int line,
 		const char *restrict format, ...)
 {
 	t_pf	p;
