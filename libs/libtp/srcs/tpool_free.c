@@ -53,13 +53,11 @@ void	free_task_list(t_task *tasks)
 int	free_tpool(t_tpool *tpool)
 {
 	int		i;
-	t_task	*task;
 
 	i = -1;
 	if (!tpool->threads)
 		return (0);
 	pthread_mutex_lock(&tpool->mutex);
-	task = tpool->tasks;
 	free_task_list(tpool->tasks);
 	tpool->stop = 1;
 	pthread_cond_broadcast(&tpool->task_cond);
