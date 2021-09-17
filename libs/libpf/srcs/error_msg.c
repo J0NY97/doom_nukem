@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/06 14:50:02 by nneronin          #+#    #+#             */
-/*   Updated: 2021/09/17 16:59:36 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/09/17 17:15:52 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,13 +34,13 @@ void	error_msg(const char *restrict format, ...)
 	exit(1);
 }
 
-void	pf_error(char *file, char *func, int line,
+void	pf_error(const char *file, const char *func, int line,
 		const char *restrict format, ...)
 {
 	t_pf	p;
 	char	buff[PF_BUFF_SIZE];
 
-	ft_printf("\e[0;31m[ERROR]\e[0m %s : %s: %d\n", file, func, line);
+	ft_printf("\e[0;31m[ERROR]\e[0m %s : %s : %d\n", file, func, line);
 	if (format)
 	{
 		write(1, "\t", 1);
@@ -55,7 +55,7 @@ void	pf_error(char *file, char *func, int line,
 	exit(1);
 }
 
-void	pf_info(char *file, char *func, int line,
+void	pf_info(const char *file, const char *func, int line,
 		const char *restrict format, ...)
 {
 	t_pf	p;

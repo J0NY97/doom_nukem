@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 10:15:12 by nneronin          #+#    #+#             */
-/*   Updated: 2021/09/03 12:50:09 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/09/17 17:15:35 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,17 +14,17 @@
 
 static const t_pf_style	g_pf_styles[11] =
 {
-	{"{RESET}", "\x1b[0m", 7},
-	{"{RED}", "\x1b[31m", 5},
-	{"{GREEN}", "\x1b[32m", 7},
-	{"{YELLOW}", "\x1b[33m", 8},
-	{"{BLUE}", "\x1b[34m", 6},
-	{"{MAGENTA}", "\x1b[35m", 9},
-	{"{CYAN}", "\x1b[36m", 6},
-	{"{BOLD}", "\x1b[1m", 6},
-	{"{ITALIC}", "\x1b[3m", 8},
-	{"{UND}", "\x1b[4m", 5},
-	{"{INVERT}", "\x1b[7m", 8}
+	{"{RESET}", "\e[0m", 7},
+	{"{RED}", "\e[31m", 5},
+	{"{GREEN}", "\e[32m", 7},
+	{"{YELLOW}", "\e[33m", 8},
+	{"{BLUE}", "\e[34m", 6},
+	{"{MAGENTA}", "\e[35m", 9},
+	{"{CYAN}", "\e[36m", 6},
+	{"{BOLD}", "\e[1m", 6},
+	{"{ITALIC}", "\e[3m", 8},
+	{"{UND}", "\e[4m", 5},
+	{"{INVERT}", "\e[7m", 8}
 };
 
 static const t_pf_emoji	g_pf_emoji[23] =
