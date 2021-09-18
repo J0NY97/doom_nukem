@@ -1,4 +1,4 @@
-NAME = wolf3d
+NAME = ../wolf3d
 SRCS = \
        ./launcher.c \
        ./get_maps.c \

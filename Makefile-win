@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/08/01 17:07:52 by nneronin         ###   ########.fr        #
+#    Updated: 2021/09/18 12:50:35 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -33,7 +33,6 @@ all: $(PATH_H)
 	@mingw32-make -C ./map_editor
 	@mingw32-make -C ./launcher
 	@mingw32-make -C ./game
-	@mv ./launcher/wolf3d .
 
 clean:
 	@mingw32-make clean -C ./libs/libft
@@ -56,7 +55,6 @@ fclean:
 	@mingw32-make fclean -C ./map_editor
 	@mingw32-make fclean -C ./launcher
 	@mingw32-make fclean -C ./game
-	@rm ./wolf3d
 
 re: fclean all
 
