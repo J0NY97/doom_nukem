@@ -37,12 +37,14 @@ void	free_entity(void *content, size_t size)
 
 t_entity	*get_entity_from_list_at_pos(t_list *list, t_vector pos)
 {
-	t_list	*curr;
+	t_list		*curr;
+	t_entity	*entity;
 
 	curr = list;
 	while (curr)
 	{
-		if (vector_compare(pos, ((t_entity *)curr->content)->pos))
+		entity = curr->content;
+		if (entity->pos.x == pos.x && entity->pos.y == pos.y)
 			return (curr->content);
 		curr = curr->next;
 	}
