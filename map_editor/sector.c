@@ -115,7 +115,7 @@ void	draw_sector(t_sector *sector, t_grid *grid)
 		wall = wall->next;
 	}
 	i = ft_lstlen(sector->walls) * 2;
-	if (i == 0)
+	if (i < 2)
 		return ;
 	//sector_center(sector, grid, &x, &y);
 	draw_sector_number(sector, grid, x /= i, y /= i);
