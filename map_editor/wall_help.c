@@ -33,9 +33,13 @@ void	remove_all_lonely_walls(t_list **walls, t_list **sectors)
 			sec = sec->next;
 		}
 		if (found == 0)
+		{
 			remove_from_list_if_with(walls, wall->content,
 				&pointer_compare, &free_wall);
-		wall = wall->next;
+			wall = *walls;
+		}
+		else
+			wall = wall->next;
 	}
 }
 

@@ -63,6 +63,7 @@ void	draw_sector_number(t_sector *sector, t_grid *grid, float x, float y)
 		ft_strdel(&str);
 	}
 }
+
 //	The New one
 //void	draw_sector(t_sector *sector, t_grid *grid, float x, float y)
 //{

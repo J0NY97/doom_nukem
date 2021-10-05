@@ -61,6 +61,7 @@ void	remove_button_events(t_editor *editor, t_grid *grid)
 		ft_lstdel(&grid->modify_sector->walls, &dummy_free_er);
 		remove_from_list_if_with(&editor->grid.sectors, grid->modify_sector,
 			&pointer_compare, &free_sector);
+		grid->modify_sector = NULL;
 	}
 	else if (grid->modify_entity != NULL)
 		remove_from_list_if_with(&grid->entities, grid->modify_entity,

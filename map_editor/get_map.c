@@ -82,9 +82,10 @@ void	read_map_file(t_editor *editor)
 	fd = open(editor->fullpath, O_RDONLY);
 	if (fd < 0)
 	{
-		ft_putstr("[read_map_file] Couldnt open map.\n");
+		ft_printf("[%s] Couldnt open map %s.\n", __FUNCTION__, editor->fullpath);
 		return ;
 	}
+	ft_printf("[%s] Successfully opened map : %s [%d]\n", __FUNCTION__, editor->fullpath, fd);
 	while (get_next_line(fd, &line))
 	{
 		choose_correct_reader(editor, line, fd);
