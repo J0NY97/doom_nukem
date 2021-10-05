@@ -34,9 +34,13 @@ void	remove_all_lonely_points(t_editor *editor)
 			wall = wall->next;
 		}
 		if (found == 0)
+		{
 			remove_from_list_if_with(&editor->grid.points, p->content,
 				&pointer_compare, &free_point);
-		p = p->next;
+			p = editor->grid.points;
+		}
+		else
+			p = p->next;
 	}
 }
 
