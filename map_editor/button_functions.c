@@ -26,14 +26,17 @@ void	select_mode_shortcut(t_editor *editor)
 		editor->active_select_mode = editor->select_mode_sector;
 	else if (key_pressed(editor->libui, SDL_SCANCODE_5))
 		editor->active_select_mode = editor->select_mode_entity;
-	if (KMOD_LCTRL & SDL_GetModState()
-		&& key_pressed(editor->libui, SDL_SCANCODE_S))
-		save_button_events(editor);
-	if (key_pressed(editor->libui, SDL_SCANCODE_E)
-		&& !key_repeat(editor->libui, SDL_SCANCODE_E))
-		edit_button_event(editor);
-	if (key_pressed(editor->libui, SDL_SCANCODE_DELETE))
-		remove_button_events(editor, &editor->grid);
+	else if (!editor->map_name_input->toggle)
+	{
+		if (KMOD_LCTRL & SDL_GetModState()
+			&& key_pressed(editor->libui, SDL_SCANCODE_S))
+			save_button_events(editor);
+		if (key_pressed(editor->libui, SDL_SCANCODE_E)
+			&& !key_repeat(editor->libui, SDL_SCANCODE_E))
+			edit_button_event(editor);
+		if (key_pressed(editor->libui, SDL_SCANCODE_DELETE))
+			remove_button_events(editor, &editor->grid);
+	}
 }
 
 void	loop_buttons(t_editor *editor)
