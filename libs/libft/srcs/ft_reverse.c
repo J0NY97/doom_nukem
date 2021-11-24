@@ -31,3 +31,23 @@ char	*ft_reverse(char *s)
 	}
 	return (str);
 }
+
+/*
+ * Wont malloc does it on the actual string.
+*/
+char	*ft_b_reverse(char *s)
+{
+	int		front;
+	int		back;
+	char	temp;
+
+	front = -1;
+	back = ft_strlen(s) - 1;
+	while (++front < back)
+	{
+		temp = s[front];
+		s[front] = s[back - front];
+		s[back] = temp;
+	}
+	return (s);
+}

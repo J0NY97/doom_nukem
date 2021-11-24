@@ -16,12 +16,12 @@ void	*ft_memalloc(size_t size)
 {
 	void	*mem;
 
-	mem = malloc(sizeof(*mem) * size);
-	if (mem)
+	mem = malloc(size);
+	if (!mem)
 	{
-		ft_bzero(mem, size);
-		return (mem);
+		write(1, "\x1b[31m!![FT_MEMALLOC ERROR]!!\x1b[00m\n", 35);
+		exit(1);
 	}
-	write(1, "\x1b[31m!![FT_MEMALLOC ERROR]!!\x1b[00m\n", 35);
-	exit(1);
+	ft_memset(mem, 0, size);
+	return (mem);
 }

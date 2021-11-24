@@ -14,6 +14,29 @@
 
 double	ft_atof(const char *str)
 {
+	double	res;
+	double	res2;
+	char	*c;
+	int		len;
+
+	c = (char *)str;
+	res = (double)ft_atoi(c);
+	while (*c && *c != '.')
+		c++;
+	if (*c == '.')
+		c++;
+	res2 = (double)ft_atoi(c);
+	len = ft_strlen(c);
+	while (len--)
+		res2 /= 10;
+	if (str[0] == '-')
+		res2 = -res2;
+	return (res + res2);
+}
+
+/*
+double	ft_atof(const char *str)
+{
 	double	integral;
 	double	fractal;
 	char	*c;
@@ -33,3 +56,4 @@ double	ft_atof(const char *str)
 		return ((integral + fractal) * -1);
 	return (integral + fractal);
 }
+*/

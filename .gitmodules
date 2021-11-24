@@ -16,3 +16,9 @@
 [submodule "game"]
 	path = game
 	url = https://github.com/Epicurius/Doom.git
+[submodule "map_editor_v2"]
+	path = map_editor_v2
+	url = https://github.com/J0NY97/doom_editor_v2.git
+[submodule "libs/libui_v3"]
+	path = libs/libui_v3
+	url = https://github.com/J0NY97/libui_v3.git

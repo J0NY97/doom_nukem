@@ -6,13 +6,13 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/08 14:10:50 by nneronin          #+#    #+#             */
-/*   Updated: 2021/09/17 17:46:07 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/07/26 14:26:19 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static float	ft_fclamp2(float x, float min, float max)
+static double	ft_fclamp2(double x, double min, double max)
 {
 	if (x < min)
 		return (min);
@@ -21,7 +21,7 @@ static float	ft_fclamp2(float x, float min, float max)
 	return (x);
 }
 
-float	ft_fclamp(float x, float a, float b)
+double	ft_fclamp(double x, double a, double b)
 {
 	if (a > b)
 		return (ft_fclamp2(x, b, a));

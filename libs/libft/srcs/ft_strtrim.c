@@ -12,6 +12,7 @@
 
 #include "./libft.h"
 
+/*
 char	*ft_strtrim(char const *s)
 {
 	int		x;
@@ -38,4 +39,25 @@ char	*ft_strtrim(char const *s)
 	asd = ft_strnew(y);
 	ft_strncpy(asd, (s + temp), y);
 	return (asd);
+}
+*/
+
+char	*ft_strtrim(char const *str)
+{
+	int		i;
+	int		j;
+	int		total;
+	char	*final;
+
+	i = -1;
+	while (str[++i] && ft_isspace(str[i]));
+	j = ft_strlen(str);
+	while (str[--j] && ft_isspace(str[j]));
+	total = j - i + 1;
+	if (total <= 0)
+		return (NULL);
+	final = ft_memalloc(sizeof(char) * (total + 1));
+	ft_strncpy(final, str + i, total);
+	final[total] = '\0';
+	return (final);
 }

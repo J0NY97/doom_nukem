@@ -18,6 +18,8 @@ int	ft_strcmp(const char *s1, const char *s2)
 	unsigned char	*asd;
 	unsigned char	*qwe;
 
+	if (!s1 || !s2)
+		return (1);
 	qwe = (unsigned char *)s2;
 	asd = (unsigned char *)s1;
 	x = 0;

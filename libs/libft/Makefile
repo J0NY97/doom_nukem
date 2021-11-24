@@ -23,13 +23,16 @@ RAW =	add_to_list.c\
 		ft_atoi.c\
 		ft_atoi_base.c\
 		ft_arraydel.c\
+		ft_arrlen.c\
 		ft_b_itoa.c\
+		ft_b_ftoa.c\
 		ft_bzero.c\
 		ft_clamp.c\
 		ft_compile_string.c\
 		ft_dellstnode.c\
 		ft_filetostr.c\
 		ft_ftoa.c\
+		ft_get_file_content.c\
 		ft_isalnum.c\
 		ft_isalpha.c\
 		ft_isascii.c\
@@ -85,6 +88,7 @@ RAW =	add_to_list.c\
 		ft_strchr.c\
 		ft_strchrlen.c\
 		ft_strclr.c\
+		ft_strnclr.c\
 		ft_strcmp.c\
 		ft_strcpy.c\
 		ft_strcut.c\
@@ -126,6 +130,7 @@ RAW =	add_to_list.c\
 		ft_toupper.c\
 		ft_wordcount.c\
 		ft_timer_func.c\
+		ft_lstdelone_nonfree.c\
 		get_next_line.c
 
 NAME = libft.a
