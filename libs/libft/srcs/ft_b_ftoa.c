@@ -54,5 +54,6 @@ char	*ft_b_ftoa(double d, int precision, char *buffer)
 		ft_strncpy(buffer + i + 1, temp, precision);
 	}
 	ft_strdel(&temp);
+	buffer[i + precision + 1] = '\0';
 	return (buffer);
 }
