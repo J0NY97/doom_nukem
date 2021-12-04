@@ -143,6 +143,8 @@ char	**ft_strsplit(char const *s, char c)
 
 	x[1] = 0;
 	x[0] = 0;
+	if (!s)
+		return (NULL);
 	arr = ft_memalloc(sizeof(char *) * (ft_wordcount(s, c) + 1));
 	while (s[x[0]])
 	{
