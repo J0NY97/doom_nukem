@@ -6,11 +6,9 @@ void	ft_arraydel(char **arr)
 
 	if (!arr)
 		return ;
-	i = 0;
-	while (arr[i])
-	{
+	i = -1;
+	while (arr[++i])
 		ft_strdel(&arr[i]);
-	}
 	free(arr);
 	arr = NULL;
 }
