@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/21 14:36:26 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/08 15:03:23 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/06 14:24:39 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@ char	*ft_strsub(char const *s, unsigned int start, size_t len)
 	str = (char *)malloc(sizeof(char) * (len + 1));
 	if (!len)
 		return (0);
-
 	while (i < len && s[start + i])
 	{
 		str[i] = s[start + i];
