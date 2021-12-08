@@ -63,7 +63,6 @@ $(PATH_H):
 	@printf $(CYAN)"[INFO]	Creating path.h\n"$(RESET)
 	@make -C ./libs/libft -j6
 	@make -C ./libs/libpf -j6
-	@sh ./libs/libui/ui_path_mac.sh
 	@sh ./get_path/run.sh
 
 framework:
