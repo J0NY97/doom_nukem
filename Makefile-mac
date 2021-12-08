@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/08 16:56:35 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/08 17:45:15 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -61,8 +61,9 @@ SDL_DIR		:= ./libs/SDL_Frameworks
 
 $(PATH_H):
 	@printf $(CYAN)"[INFO]	Creating path.h\n"$(RESET)
-	@make -C ./libs/libft
-	@make -C ./libs/libpf
+	@make -C ./libs/libft -j6
+	@make -C ./libs/libpf -j6
+	@sh ./libs/libui/ui_path_mac.sh
 	@sh ./get_path/run.sh
 
 framework:
