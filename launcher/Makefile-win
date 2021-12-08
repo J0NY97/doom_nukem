@@ -1,50 +1,60 @@
-NAME = ../wolf3d
+NAME = launcher
 SRCS = \
-       ./launcher.c \
-       ./get_maps.c \
-       ./play_menu.c \
-       ./play_menu2.c \
-       ./settings_menu.c \
-       ./settings_menu2.c \
-       ./editor_menu.c \
-       ./launcher_help.c \
-       ./dropdown.c \
-	   ./free.c \
-       ./main_menu.c \
+	./main.c \
+	./play.c \
+	./editor.c \
+	./settings.c \
+	./map.c \
+	./help.c \
 
 OBJS = $(SRCS:.c=.o)
 
-SDL_DIR		:= ../libs/SDL
+LIB_FOLDER	= ../libs
+SDL_DIR		:= $(LIB_FOLDER)/SDL
 SDL_INC		:= -I$(SDL_DIR)/include
-SDL_LIB		:= -L$(SDL_DIR)/lib
-SDL_LIBS	:= -lSDL2 -lSDL2_ttf -lSDL2_image
+SDL_LIB_DIR	:= -L$(SDL_DIR)/lib
+SDL_LIB		:= -lSDL2 -lSDL2_ttf -lSDL2_image
 
-INCLUDES = -I../libs/libft \
-	   -I../libs/better_libui \
-	   -I../libs/libpf \
-	   -I../libs/libgfx \
-	   $(SDL_INC) \
-	   -I../ \
-	   -I../game/inc \
+INCLUDES = \
+	-I$(LIB_FOLDER)/libft \
+	-I$(LIB_FOLDER)/libpf \
+	-I$(LIB_FOLDER)/libui_v3 \
+	-I$(LIB_FOLDER)/libbxpm \
+	$(SDL_INC) \
 
-LIBS = -L../libs/libft -L../libs/better_libui -L../libs/libpf -L../libs/libgfx $(SDL_LIB) \
-       -lui -lpf -lft -lgfx $(SDL_LIBS)
+LIB_FOLDERS = \
+	-L$(LIB_FOLDER)/libft \
+	-L$(LIB_FOLDER)/libpf \
+	-L$(LIB_FOLDER)/libui_v3 \
+	-L$(LIB_FOLDER)/libbxpm \
+	$(SDL_LIB_DIR) \
+
+LIB = $(SDL_LIB) -lui -lpf -lft -lbxpm
 
 FLAGS = -Wall -Wextra
 
 all: $(NAME)
 
+ODIR = .
+CDIR = .
+
+$(ODIR)/%.o: $(CDIR)/%.c
+	@gcc -c $< -o $@ -MMD -O3 \
+		$(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
+
 $(NAME): $(SRCS)
-	@gcc -o $(NAME) $(SRCS) $(FLAGS) $(INCLUDES) $(LIBS)
+	@gcc -O3 -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:
 	@rm -f $(OBJS)
 	@echo "$(NAME) was cleaned."
 
-fclean: clean
+fclean:
 	@rm -f $(NAME)
+	@echo "$(NAME) was fcleaned."
 
-re: fclean all
+re: fclean $(LIBS) all
 
 .PHONY: clean, all, re, fclean

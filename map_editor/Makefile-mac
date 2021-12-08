@@ -1,89 +1,44 @@
 NAME = doom_editor
 SRCS = \
 	./main.c \
+	./events.c \
+	./init.c \
+	./draw.c \
 	./point.c \
 	./wall.c \
-	./wall_help.c \
 	./sector.c \
-	./event.c \
 	./entity.c \
+	./event.c \
 	./sprite.c \
-	./entity_preset.c \
-	./portal.c \
-	./vector.c \
-	./cleanup_crew.c \
-	./grid_adding.c \
-	./other.c \
-	./wall_edit.c \
-	./wall_render.c \
-	./wall_sprite_edit.c \
-	./sector_edit.c \
-	./entity_edit.c \
-	./fandc_edit.c \
-	./move.c \
-	./point_select.c \
-	./entity_select.c \
-	./wall_select.c \
-	./sector_select.c \
-	./args_parser.c \
-	./inits.c \
-	./init_textures.c \
-	./init_entity_presets.c \
-	./init_toolbox.c \
-	./init_selection_modes.c \
-	./init_other_box.c \
-	./init_entity_editor.c \
-	./init_wall_editor.c \
-	./init_wall_editor_tab.c \
-	./init_sector_editor.c \
-	./init_sector_slope_editor.c \
-	./changer_prefab.c \
-	./button_functions.c \
-	./button_events.c \
-	./draw_functions.c \
-	./sector_creation.c \
-	./select_functions.c \
+	./math.c \
+	./bxpm.c \
 	./set_map.c \
-	./set_map1.c \
-	./set_map2.c \
-	./set_map3.c \
 	./get_map.c \
-	./get_map1.c \
-	./get_map2.c \
-	./get_map3.c \
-	./get_map_help.c \
+	./args_parser.c \
 	./help.c \
-	./edit_functions.c \
-	./free.c \
-	./map_editor.c \
-	./core.c
 
 OBJS = $(SRCS:.c=.o)
 
 SDL_DIR		:= ../libs/SDL_Frameworks
 SDL_MAIN	:= -I $(SDL_DIR)/SDL2.framework/Headers -framework SDL2 -F $(SDL_DIR)
 SDL_IMAGE	:= -I $(SDL_DIR)/SDL2_image.framework/Headers -framework SDL2_image -F $(SDL_DIR)
-SDL_MIXER	:= -I $(SDL_DIR)/SDL2_mixer.framework/Headers -framework SDL2_mixer -F $(SDL_DIR)
 SDL_TTF		:= -I $(SDL_DIR)/SDL2_ttf.framework/Headers -framework SDL2_ttf -F $(SDL_DIR)
 
 INCLUDES = \
 	-I../libs/libft \
 	-I../libs/libpf \
-	-I../libs/better_libui \
-	-I../libs/libgfx \
+	-I../libs/libui_v3 \
 	$(SDL_MAIN) $(SDL_IMAGE) $(SDL_TTF) \
 	-I../libs/libbxpm \
-	-I../game/inc \
-	-I../
+	-I./
 
 LIB_FOLDERS = \
 	-L../libs/libft \
 	-L../libs/libpf \
-	-L../libs/better_libui \
-	-L../libs/libgfx \
+	-L../libs/libui_v3 \
 	-L../libs/libbxpm \
 
-LIB = -lui -lpf -lft -lgfx -lbxpm
+LIB = -lui -lpf -lft -lbxpm
 
 FLAGS = -Wall -Wextra
 

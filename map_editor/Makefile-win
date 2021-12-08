@@ -1,62 +1,21 @@
 NAME = doom_editor
 SRCS = \
 	./main.c \
+	./events.c \
+	./init.c \
+	./draw.c \
 	./point.c \
 	./wall.c \
-	./wall_help.c \
 	./sector.c \
-	./event.c \
 	./entity.c \
+	./event.c \
 	./sprite.c \
-	./entity_preset.c \
-	./portal.c \
-	./vector.c \
-	./cleanup_crew.c \
-	./grid_adding.c \
-	./other.c \
-	./wall_edit.c \
-	./wall_render.c \
-	./wall_sprite_edit.c \
-	./sector_edit.c \
-	./entity_edit.c \
-	./fandc_edit.c \
-	./move.c \
-	./point_select.c \
-	./entity_select.c \
-	./wall_select.c \
-	./sector_select.c \
-	./args_parser.c \
-	./inits.c \
-	./init_textures.c \
-	./init_entity_presets.c \
-	./init_toolbox.c \
-	./init_selection_modes.c \
-	./init_other_box.c \
-	./init_entity_editor.c \
-	./init_wall_editor.c \
-	./init_wall_editor_tab.c \
-	./init_sector_editor.c \
-	./init_sector_slope_editor.c \
-	./changer_prefab.c \
-	./button_functions.c \
-	./button_events.c \
-	./draw_functions.c \
-	./sector_creation.c \
-	./select_functions.c \
+	./math.c \
+	./bxpm.c \
 	./set_map.c \
-	./set_map1.c \
-	./set_map2.c \
-	./set_map3.c \
 	./get_map.c \
-	./get_map1.c \
-	./get_map2.c \
-	./get_map3.c \
-	./get_map_help.c \
+	./args_parser.c \
 	./help.c \
-	./edit_functions.c \
-	./free.c \
-	./map_editor.c \
-	./core.c
 
 OBJS = $(SRCS:.c=.o)
 
@@ -65,32 +24,38 @@ SDL_INC		:= -I$(SDL_DIR)/include
 SDL_LIB_DIR	:= -L$(SDL_DIR)/lib
 SDL_LIB		:= -lSDL2 -lSDL2_ttf -lSDL2_image
 
+LIB_FOLDER = ../libs
+
 INCLUDES = \
-	-I../libs/libft \
-	-I../libs/libpf \
-	-I../libs/better_libui \
-	-I../libs/libgfx \
+	-I$(LIB_FOLDER)/libft \
+	-I$(LIB_FOLDER)/libpf \
+	-I$(LIB_FOLDER)/libui_v3 \
+	-I$(LIB_FOLDER)/libbxpm \
 	$(SDL_INC) \
-	-I../libs/libbxpm \
-	-I../game/inc \
-	-I../
 
 LIB_FOLDERS = \
-	-L../libs/libft \
-	-L../libs/libpf \
-	-L../libs/better_libui \
-	-L../libs/libgfx \
-	-L../libs/libbxpm \
+	-L$(LIB_FOLDER)/libft \
+	-L$(LIB_FOLDER)/libpf \
+	-L$(LIB_FOLDER)/libui_v3 \
+	-L$(LIB_FOLDER)/libbxpm \
 	$(SDL_LIB_DIR) \
 
-LIB = $(SDL_LIB) -lui -lpf -lft -lgfx -lbxpm
+LIB = $(SDL_LIB) -lui -lpf -lft -lbxpm
 
 FLAGS = -Wall -Wextra
 
 all: $(NAME)
 
+ODIR = .
+CDIR = .
+
+$(ODIR)/%.o: $(CDIR)/%.c
+	@gcc -c $< -o $@ -MMD -O3 \
+		$(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+	@printf $(YELLOW)"\e[F\e[JCompiling $<\n"$(RESET)
+
 $(NAME): $(SRCS)
-	@gcc -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
+	@gcc -O3 -o $(NAME) $(SRCS) $(INCLUDES) $(LIB_FOLDERS) $(LIB) $(FLAGS)
 	@echo "$(NAME) was successfully created."
 
 clean:

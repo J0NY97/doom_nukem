@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 15:01:20 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/08 15:48:39 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/08 16:29:04 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	ft_strwordcount(const char *str, char c)
 	return (count);
 }
 
-char	**ft_strsplit_old(const char *str, char c)
+char	**ft_strsplit(const char *str, char c)
 {
 	char	**arr;
 	int		i;
