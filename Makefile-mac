@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/08 16:50:59 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/08 16:56:35 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,6 +30,7 @@ all: framework $(PATH_H)
 	@make -C ./libs/libpf -j6
 	@make -C ./libs/libbxpm -j6
 	@make -C ./libs/libtp -j6
+	@make -C ./libs/libui -j6
 	@make -C ./map_editor -j6
 	@make -C ./launcher -j6
 	@make -C ./game -j6
@@ -39,6 +40,7 @@ clean:
 	@make clean -C ./libs/libpf
 	@make clean -C ./libs/libbxpm
 	@make clean -C ./libs/libtp
+	@make clean -C ./libs/libui
 	@make clean -C ./map_editor
 	@make clean -C ./launcher
 	@make clean -C ./game
@@ -48,6 +50,7 @@ fclean:
 	@make fclean -C ./libs/libpf
 	@make fclean -C ./libs/libbxpm
 	@make fclean -C ./libs/libtp
+	@make fclean -C ./libs/libui
 	@make fclean -C ./map_editor
 	@make fclean -C ./launcher
 	@make fclean -C ./game
