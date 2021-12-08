@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   ft_get_file_content.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/08 15:39:53 by nneronin          #+#    #+#             */
+/*   Updated: 2021/12/08 15:40:24 by nneronin         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "libft.h"
 #include "stdio.h"
 
@@ -21,10 +33,8 @@ char	*ft_get_file_content(char *file)
 		read_total += read_this_loop;
 		i++;
 		if (read_this_loop < 100)
-			break;
+			break ;
 	}
 	fclose(fd);
 	return (final);
 }
-
-
