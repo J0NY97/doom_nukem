@@ -67,6 +67,7 @@ RAW =	add_to_list.c\
 		ft_nbrlen.c\
 		ft_nstrstr.c\
 		ft_pow.c\
+		ft_putarr.c\
 		ft_putchar.c\
 		ft_putchar_fd.c\
 		ft_putendl.c\
