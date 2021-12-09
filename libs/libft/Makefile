@@ -24,6 +24,7 @@ RAW =	add_to_list.c\
 		ft_atoi_base.c\
 		ft_arraydel.c\
 		ft_arrlen.c\
+		ft_arrjoin.c\
 		ft_b_itoa.c\
 		ft_b_ftoa.c\
 		ft_bzero.c\
