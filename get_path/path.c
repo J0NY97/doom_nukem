@@ -6,11 +6,10 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/06 12:03:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/09 14:35:30 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/09 14:43:07 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#define SDL_MAIN_HANDLED
 #include "SDL.h"
 #include "sys/stat.h"
 #include "libft.h"
@@ -20,6 +19,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#define SDL_MAIN_HANDLED
 
 char	*build_non_rword_path(char *rword_path)
 {
