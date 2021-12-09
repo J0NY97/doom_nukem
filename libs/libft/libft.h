@@ -87,6 +87,7 @@ int					ft_nbrlen(long nbr);
 int					ft_nstrstr(char *str1, char *str2);
 double				ft_pow(double n, int pow);
 long double			ft_long_pow(long double n, int pow);
+void				ft_putarr(char **arr);
 void				ft_putchar(char c);
 void				ft_putchar_fd(char c, int fd);
 void				ft_putendl(char const *s);
