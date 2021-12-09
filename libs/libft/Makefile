@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/10/18 11:13:47 by nneronin          #+#    #+#              #
-#    Updated: 2021/09/03 15:25:34 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/09 13:40:52 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -144,7 +144,7 @@ OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))
 CFLAGS = -Wall -Wextra -Werror -MMD -O3
 
 all: $(NAME)
-	@printf ${GREEN}"\e[J> $(NAME) ready!\n"${RESET}
+	@printf $(GREEN)"\e[J[INFO] $(NAME) ready!\n"$(RESET)
 
 $(ODIR):
 	@mkdir -p $(ODIR)
@@ -158,11 +158,11 @@ $(NAME): $(ODIR) $(OBJS)
 	@ranlib $(NAME)
 
 clean: 
-	@printf ${CYAN}"[INFO] Removing objs.\n"${RESET}
+	@printf $(CYAN)"[INFO] $(NAME) cleaned!\n"$(RESET)
 	@rm -rf $(ODIR)
 
 fclean: clean
-	@printf ${CYAN}"[INFO] Removing $(NAME)\n"${RESET}
+	
 	@rm $(NAME)
 
 re: fclean all
