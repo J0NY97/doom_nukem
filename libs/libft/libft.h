@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 11:56:18 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/26 14:20:43 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/10 09:21:20 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -150,6 +150,7 @@ char				*ft_strsub(char const *s, unsigned int start, size_t len);
 char				*ft_strtoupper(const char *src);
 char				*ft_strtrim(char const *s);
 void				ft_swap(int *a, int *b);
+void				ft_fswap(float *a, float *b);
 int					ft_tolower(int c);
 int					ft_toupper(int c);
 int					ft_wordcount(const char *s, char c);
