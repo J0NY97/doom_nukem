@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/06 12:03:34 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/09 15:10:56 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/10 20:15:00 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ int	main(void)
 # define BXPM_PATH \"%sgame/resources/BXPM/\"\n\
 # define ICON_PATH \"%sgame/resources/ICON/\"\n\
 # define TTF_PATH \"%sgame/resources/TTF/\"\n\
-# define MAP_PATH \"%smap_editor/maps/\"\n\
+# define MAP_PATH \"%sgame/resources/MAPS/\"\n\
 # define BMP_PATH \"%sgame/resources/GAME/\"\n\
 # define GAME_PATH \"%sgame/\"\n\
 # define EDITOR_PATH \"%smap_editor/\"\n\
