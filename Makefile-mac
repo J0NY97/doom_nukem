@@ -6,24 +6,21 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/08 17:45:15 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/09 13:44:56 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 SHELL_NAME	:= $(shell uname -s)
 
-RED			:=	"\e[0;31m"
-GREEN		:=	"\x1b[38;5;119m"
-ORANGE		:=	"\x1b[38;5;208m"
-YELLOW		:=	"\e[0;33m"
-BLUE		:=	"\e[0;34m"
-MAGENTA		:=	"\e[0;35m"
-CYAN		:=	"\e[0;36m"
-UNDERLINE	:=	"\x1b[4m"
-RESET		:=	"\e[0m"
-PATH_H		= ./path.h
+RED		:= "\e[0;31m"
+GREEN	:= "\e[0;32m"
+YELLOW	:= "\e[0;33m"
+BLUE	:= "\e[0;34m"
+MAGENTA	:= "\e[0;35m"
+CYAN	:= "\e[0;36m"
+RESET	:= "\e[0m"
 
-name = dontcare
+PATH_H		= ./path.h
 
 all: framework $(PATH_H)
 	@make -C ./libs/libft -j6
@@ -74,7 +71,7 @@ ifeq ("$(wildcard ~/Library/Frameworks/SDL2*.framework)","")
 	@cp -Rf $(SDL_DIR)/SDL2_mixer.framework ~/Library/Frameworks/
 	@printf $(CYAN)"[INFO]	Moving Frameworks\n"$(RESET)
 else
-	@printf $(CYAN)"[INFO]	Frameworks Exists\n"$(RESET)
+	@printf $(GREEN)"[INFO] Frameworks ready!\n"$(RESET)
 endif
 
 framework_del:
