@@ -27,7 +27,7 @@ all: framework $(PATH_H)
 	@make -C ./libs/libpf -j6
 	@make -C ./libs/libbxpm -j6
 	@make -C ./libs/libtp -j6
-	@make -C ./libs/libui -j6
+	@make -C ./libs/libui
 	@make -C ./map_editor -j6
 	@make -C ./launcher -j6
 	@make -C ./game -j6
