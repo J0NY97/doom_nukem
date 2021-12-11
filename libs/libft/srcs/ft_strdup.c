@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   strdup.c                                           :+:      :+:    :+:   */
+/*   ft_strdup.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@stuent.hive.fi>         +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/17 11:58:56 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/08 14:33:39 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/11 16:04:16 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,23 +16,18 @@ char	*ft_strdup(const char *src)
 {
 	char	*dest;
 	int		x;
-	int		y;
 
-	y = 0;
-	x = 0;
+	x = -1;
 	if (!src)
 		return (NULL);
-	while (src[y] != '\0')
-		y++;
-	dest = (char *)malloc(sizeof(char) * (y + 1));
+	while (src[++x] != '\0')
+		;
+	dest = malloc(sizeof(char) * (x + 1));
 	if (!dest)
 		return (NULL);
-	while (y != 0)
-	{
+	x = -1;
+	while (src[++x])
 		dest[x] = src[x];
-		x++;
-		y--;
-	}
 	dest[x] = '\0';
 	return (dest);
 }
