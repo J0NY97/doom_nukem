@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/09 13:44:56 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/15 10:17:38 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -54,7 +54,7 @@ fclean:
 
 re: fclean all
 
-SDL_DIR		:= ./libs/SDL_Frameworks
+SDL_DIR		:= ./libs/SDL_MAC
 
 $(PATH_H):
 	@printf $(CYAN)"[INFO]	Creating path.h\n"$(RESET)
