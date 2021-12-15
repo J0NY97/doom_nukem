@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/30 13:41:55 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/06 09:34:36 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/14 17:17:58 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ int	ft_lstadd_new(t_list **list, void *content, size_t content_size)
 
 	if (content == NULL)
 		return (0);
-	new = (t_list *)malloc(sizeof(*new));
+	new = malloc(sizeof(t_list));
 	if (!new)
-		return (0);
+		exit (1);
 	new->content = content;
 	new->content_size = content_size;
 	ft_lstadd(list, new);
