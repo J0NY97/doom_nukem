@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 17:15:02 by nneronin          #+#    #+#             */
-/*   Updated: 2021/09/05 06:45:16 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/16 13:08:37 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,7 @@ typedef struct s_bxpm
 	int32_t				pix_nb;
 	uint32_t			*clr;
 	unsigned short		*pix;
-	uint32_t			*shade[512];
+	uint32_t			*shade[200];
 }						t_bxpm;
 
 typedef struct s_thread_bxpm
