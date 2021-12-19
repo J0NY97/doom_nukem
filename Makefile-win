@@ -28,8 +28,6 @@ all: $(PATH_H)
 	@mingw32-make -C ./libs/libpf
 	@mingw32-make -C ./libs/libbxpm
 	@mingw32-make -C ./libs/libtp
-	@mingw32-make -C ./libs/better_libui
-	@mingw32-make -C ./libs/libgfx
 	@mingw32-make -C ./map_editor
 	@mingw32-make -C ./launcher
 	@mingw32-make -C ./game
@@ -39,8 +37,6 @@ clean:
 	@mingw32-make clean -C ./libs/libpf
 	@mingw32-make clean -C ./libs/libbxpm
 	@mingw32-make clean -C ./libs/libtp
-	@mingw32-make clean -C ./libs/libgfx
-	@mingw32-make clean -C ./libs/better_libui
 	@mingw32-make clean -C ./map_editor
 	@mingw32-make clean -C ./launcher
 	@mingw32-make clean -C ./game
@@ -50,8 +46,6 @@ fclean:
 	@mingw32-make fclean -C ./libs/libpf
 	@mingw32-make fclean -C ./libs/libbxpm
 	@mingw32-make fclean -C ./libs/libtp
-	@mingw32-make fclean -C ./libs/libgfx
-	@mingw32-make fclean -C ./libs/better_libui
 	@mingw32-make fclean -C ./map_editor
 	@mingw32-make fclean -C ./launcher
 	@mingw32-make fclean -C ./game
