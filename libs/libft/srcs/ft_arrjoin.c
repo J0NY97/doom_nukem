@@ -23,10 +23,10 @@ char	**ft_arrjoin(char **to_this, char **from_this)
 	j = 0;
 	arr = NULL;
 	total = ft_arrlen(to_this) + ft_arrlen(from_this) + 1;
-	if (!total)
+	if (total  == 1)
 		return (NULL);
 	arr = ft_memalloc(sizeof(char *) * total);
-	while (to_this && to_this[++i])
+	while (to_this && to_this[i])
 	{
 		arr[i] = ft_strdup(to_this[i]);
 		i++;
