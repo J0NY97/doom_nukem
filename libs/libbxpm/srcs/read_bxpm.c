@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 13:20:28 by nneronin          #+#    #+#             */
-/*   Updated: 2021/08/02 12:29:57 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/27 12:49:06 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,52 +32,6 @@ int	read_bxpm_header(FILE *fd, t_bxpm *bxpm)
 	return (1);
 }
 
-int	read_bxpm_clr(FILE *fd, t_bxpm *bxpm)
-{
-	int				i;
-	int				x;
-	unsigned char	*clr;
-
-	i = 0;
-	x = 0;
-	clr = malloc(sizeof(unsigned char) * (bxpm->clr_nb * 4));
-	if (!clr)
-		return (0);
-	if (fread(clr, bxpm->clr_nb, 4, fd) != 4)
-		return (0);
-	while (i < bxpm->clr_nb * 4)
-	{
-		bxpm->clr[x] = read_color32(clr, i);
-		i += 4;
-		x++;
-	}
-	free(clr);
-	return (1);
-}
-
-int	read_bxpm_pix(FILE *fd, t_bxpm *bxpm)
-{
-	int				i;
-	int				x;
-	unsigned char	*pix;
-
-	i = 0;
-	x = 0;
-	pix = malloc(sizeof(unsigned char) * (bxpm->pix_nb * 2));
-	if (!pix)
-		return (0);
-	if (fread(pix, bxpm->pix_nb, 2, fd) != 2)
-		return (0);
-	while (i < bxpm->pix_nb * 2)
-	{
-		bxpm->pix[x] = read_int16(pix, i);
-		i += 2;
-		x++;
-	}
-	free(pix);
-	return (1);
-}
-
 int	read_bxpm(t_bxpm *bxpm, char *file)
 {
 	FILE	*fd;
@@ -87,9 +41,9 @@ int	read_bxpm(t_bxpm *bxpm, char *file)
 		return (0);
 	if (!read_bxpm_header(fd, bxpm))
 		return (0);
-	if (!read_bxpm_clr(fd, bxpm))
+	if (fread(bxpm->clr, bxpm->clr_nb, 4, fd) != 4)
 		return (0);
-	if (!read_bxpm_pix(fd, bxpm))
+	if (fread(bxpm->pix, bxpm->pix_nb, 2, fd) != 2)
 		return (0);
 	fclose(fd);
 	return (1);

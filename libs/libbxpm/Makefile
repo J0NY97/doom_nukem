@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/10 10:44:15 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/09 13:40:52 by nneronin         ###   ########.fr        #
+#    Updated: 2021/12/27 13:01:10 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -27,6 +27,7 @@ RAW	=	read_bmp.c \
 		write_bxpm.c \
 		write_bxpm2.c \
 		byte_utils.c \
+		bxpm_scaled.c \
 		free.c
  
 NAME = libbxpm.a

@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/17 17:15:02 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/16 13:08:37 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/27 13:32:59 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,5 +82,6 @@ unsigned int			bpp_clr(double byte, unsigned char *str, uint32_t bpp);
 void					free_bxpm(t_bxpm *bxpm);
 void					free_bmp(t_bmp *bmp);
 int						multithread_read_bxpm(void *arg);
+int	read_bxpm_scaled(t_bxpm *bxpm, char *file, float scale);
 
 #endif

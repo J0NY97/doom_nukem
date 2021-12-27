@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/25 14:42:43 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/10 13:17:28 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/27 12:47:35 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,22 +24,18 @@ void	write_bxpm_header(t_bxpm *bxpm, FILE *fd)
 
 void	write_bxpm_colors(t_bxpm *bxpm, FILE *fd)
 {
-	int	i;
-
-	i = -1;
-	while (++i < bxpm->clr_nb)
-	{
-		fwrite((const void *)&bxpm->clr[i], 1, 4, fd);
-	}
+	unsigned char	*clr;
+	
+	clr = (unsigned char *)bxpm->clr;
+	fwrite((const void *)clr, bxpm->clr_nb, 4, fd);
 }
 
 void	write_bxpm_pixels(t_bxpm *bxpm, FILE *fd)
 {
-	int	i;
-
-	i = -1;
-	while (++i < bxpm->pix_nb)
-		fwrite((const void *)&bxpm->pix[i], 1, 2, fd);
+	unsigned char	*pix;
+	
+	pix = (unsigned char *)bxpm->pix;
+	fwrite((const void *)pix, bxpm->pix_nb, 2, fd);
 }
 
 void	write_bxpm(t_bxpm *bxpm, char *path)
