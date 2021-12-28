@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 12:50:40 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/27 17:55:48 by nneronin         ###   ########.fr       */
+/*   Updated: 2021/12/28 14:52:30 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,20 +32,24 @@ static int	read_bxpm_header_scaled(FILE *fd, t_bxpm *bxpm)
 
 static inline void	copy_column(unsigned short *pix_w, t_bxpm *bxpm, int dy, int w)
 {
-	int	inc;
-	int	pos;
-	int dx, sx;
+	int				inc;
+	int				pos;
+	int				dx;
+	int				sx;
+	unsigned short	*pix;
 
+	pix = &bxpm->pix[dy * w];
 	pos = 0x10000;
 	inc = (bxpm->w << 16) / w;
 	sx = 0;
 	dx = 0;
 	while (dx < w)
 	{
-		bxpm->pix[dy * w + dx] = pix_w[sx];
+		pix[dx] = pix_w[sx];
 		while (pos > 0x10000L)
 		{
-			sx++;
+			if (sx < bxpm->w - 1)
+				sx++;
 			pos -= 0x10000L;
 		}
 		pos += inc;
@@ -71,8 +75,9 @@ static inline void	bxpm_scale(FILE *fd, t_bxpm *bxpm, int w, int h)
 		copy_column(pix_w, bxpm, dy, w);
 		while (pos > 0x10000L)
 		{
-			fread(pix_w, bxpm->w, 2, fd);
 			sy++;
+			if (sy < bxpm->h)
+				fread(pix_w, bxpm->w, 2, fd);
 			pos -= 0x10000L;
 		}
 		pos += inc;
@@ -93,8 +98,9 @@ int	read_bxpm_scaled(t_bxpm *bxpm, char *file, float scale)
 		return (0);
 	w = bxpm->w * scale;
 	h = bxpm->h * scale;
-	w += abs(w % 10 - 10);
-	h += abs(h % 10 - 10);
+	w -= w % 10;
+	h -= h % 10;
+	//ft_printf("%f [%d %d]\n", scale, w, h);
 	bxpm->pix = malloc(sizeof(unsigned short) * w * h);
 	if (!bxpm->pix)
 		return (0);
