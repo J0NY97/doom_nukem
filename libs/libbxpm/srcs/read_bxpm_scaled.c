@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   bxpm_scaled.c                                      :+:      :+:    :+:   */
+/*   read_bxpm_scaled.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/27 12:50:40 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/28 14:52:30 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/02 13:51:20 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,19 +18,19 @@ static int	read_bxpm_header_scaled(FILE *fd, t_bxpm *bxpm)
 
 	if (fread(header, 20, 1, fd) != 1)
 		return (0);
-	bxpm->w = read_int32(header, 0);
-	bxpm->h = read_int32(header, 4);
-	bxpm->clr_nb = read_int32(header, 8);
-	bxpm->pix_nb = read_int32(header, 12);
-	bxpm->bpp = read_int32(header, 16);
+	bxpm->w = read_int32(&header[0]);
+	bxpm->h = read_int32(&header[4]);
+	bxpm->clr_nb = read_int32(&header[8]);
+	bxpm->pix_nb = read_int32(&header[12]);
+	bxpm->bpp = read_int32(&header[16]);
 	bxpm->clr = malloc(sizeof(uint32_t) * bxpm->clr_nb);
 	if (!bxpm->clr)
 		return (0);
 	return (1);
 }
 
-
-static inline void	copy_column(unsigned short *pix_w, t_bxpm *bxpm, int dy, int w)
+static inline void	copy_column(unsigned short *pix_w, t_bxpm *bxpm,
+	int dy, int w)
 {
 	int				inc;
 	int				pos;
@@ -59,10 +59,11 @@ static inline void	copy_column(unsigned short *pix_w, t_bxpm *bxpm, int dy, int 
 
 static inline void	bxpm_scale(FILE *fd, t_bxpm *bxpm, int w, int h)
 {
-	int	pos;
-	int	inc;
-	int	dy, sy;
-	unsigned short *pix_w;
+	int				pos;
+	int				inc;
+	int				dy;
+	int				sy;
+	unsigned short	*pix_w;
 
 	pix_w = malloc(2 * bxpm->w);
 	pos = 0x10000;
@@ -75,8 +76,7 @@ static inline void	bxpm_scale(FILE *fd, t_bxpm *bxpm, int w, int h)
 		copy_column(pix_w, bxpm, dy, w);
 		while (pos > 0x10000L)
 		{
-			sy++;
-			if (sy < bxpm->h)
+			if (++sy < bxpm->h)
 				fread(pix_w, bxpm->w, 2, fd);
 			pos -= 0x10000L;
 		}
@@ -89,7 +89,8 @@ static inline void	bxpm_scale(FILE *fd, t_bxpm *bxpm, int w, int h)
 int	read_bxpm_scaled(t_bxpm *bxpm, char *file, float scale)
 {
 	FILE	*fd;
-	int		w, h;
+	int		w;
+	int		h;
 
 	fd = fopen(file, "rb");
 	if (fd == NULL)
@@ -100,7 +101,6 @@ int	read_bxpm_scaled(t_bxpm *bxpm, char *file, float scale)
 	h = bxpm->h * scale;
 	w -= w % 10;
 	h -= h % 10;
-	//ft_printf("%f [%d %d]\n", scale, w, h);
 	bxpm->pix = malloc(sizeof(unsigned short) * w * h);
 	if (!bxpm->pix)
 		return (0);
@@ -112,4 +112,13 @@ int	read_bxpm_scaled(t_bxpm *bxpm, char *file, float scale)
 	bxpm->pix_nb = w * h;
 	fclose(fd);
 	return (1);
+}
+
+int	multithread_read_bxpm_scaled(void *arg)
+{
+	if (read_bxpm_scaled(((t_thread_bxpm *)arg)->bxpm,
+			((t_thread_bxpm *)arg)->path, ((t_thread_bxpm *)arg)->scale))
+		return (1);
+	ft_printf("Could not read %s\n", ((t_thread_bxpm *)arg)->path);
+	return (0);
 }

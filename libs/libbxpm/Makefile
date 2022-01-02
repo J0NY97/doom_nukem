@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/05/10 10:44:15 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/27 13:01:10 by nneronin         ###   ########.fr        #
+#    Updated: 2022/01/02 13:52:43 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -20,14 +20,14 @@ RESET	:= "\e[0m"
 
 RAW	=	read_bmp.c \
 		read_bxpm.c \
-		surf_to_bmp.c \
-		surf_to_bxpm.c \
+		pix_to_bmp.c \
+		pix_to_bxpm.c \
 		bmp_to_bxpm.c \
 		write_bmp.c \
 		write_bxpm.c \
 		write_bxpm2.c \
 		byte_utils.c \
-		bxpm_scaled.c \
+		read_bxpm_scaled.c \
 		free.c
  
 NAME = libbxpm.a

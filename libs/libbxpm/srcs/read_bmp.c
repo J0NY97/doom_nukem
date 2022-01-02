@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/25 13:37:21 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/10 13:43:56 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/02 12:42:11 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,7 +43,7 @@ int	read_bmp(t_bmp *bmp, char *file)
 		return (0);
 	if (!bmp_header(fd, &bmp->header))
 		return (0);
-	bmp->data = malloc(sizeof(*bmp->data) * bmp->header.image_bytes);
+	bmp->data = malloc(bmp->header.image_bytes);
 	if (!bmp->data)
 		return (0);
 	if (fread(bmp->data, 1, bmp->header.image_bytes, fd)

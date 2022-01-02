@@ -1,18 +1,18 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   surface_to_bxpm.c                                  :+:      :+:    :+:   */
+/*   surf_to_bxpm.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/01 14:20:47 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/17 17:29:45 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/02 13:52:26 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bxpm.h"
 
-void	get_bxpm_header(t_bxpm *bxpm, int w, int h, int bpp)
+static void	get_bxpm_header(t_bxpm *bxpm, int w, int h, int bpp)
 {
 	bxpm->w = w;
 	bxpm->h = h;
@@ -21,7 +21,7 @@ void	get_bxpm_header(t_bxpm *bxpm, int w, int h, int bpp)
 	bxpm->pix_nb = w * h;
 }
 
-unsigned short	check_clr(t_bxpm *bxpm, uint32_t clr)
+static unsigned short	check_clr(t_bxpm *bxpm, uint32_t clr)
 {
 	unsigned short	i;
 
@@ -37,7 +37,7 @@ unsigned short	check_clr(t_bxpm *bxpm, uint32_t clr)
 	return (bxpm->clr_nb - 1);
 }
 
-void	get_bxpm_pixel_data(t_bxpm *bxpm, void *pixels)
+static void	get_bxpm_pixel_data(t_bxpm *bxpm, void *pixels)
 {
 	int	i;
 
@@ -50,7 +50,7 @@ void	get_bxpm_pixel_data(t_bxpm *bxpm, void *pixels)
 	}
 }
 
-t_bxpm	*surface_to_bxpm(int w, int h, int bpp, void *pixels)
+t_bxpm	*pix_to_bxpm(int w, int h, int bpp, void *pixels)
 {
 	t_bxpm	*bxpm;
 

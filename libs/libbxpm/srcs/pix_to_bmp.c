@@ -6,13 +6,13 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/09 12:48:53 by nneronin          #+#    #+#             */
-/*   Updated: 2021/05/17 17:29:12 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/02 13:52:09 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bxpm.h"
 
-void	get_bmp_header(t_header *header, int w, int h, int bpp)
+static void	get_bmp_header(t_header *header, int w, int h, int bpp)
 {
 	header->type = 0x4D42;
 	header->size = w * h * bpp + 54;
@@ -32,45 +32,45 @@ void	get_bmp_header(t_header *header, int w, int h, int bpp)
 	header->import_colors = 0;
 }
 
-void	pixel_clr(uint32_t clr, int i, unsigned char *data, int bpp)
+static void	pixel_clr(uint32_t clr, unsigned char *data, int bpp)
 {
 	if (bpp == 4)
 	{
-		data[i + 0] = clr;
-		data[i + 1] = clr >> 8;
-		data[i + 2] = clr >> 16;
-		data[i + 3] = clr >> 24;
+		data[0] = clr;
+		data[1] = clr >> 8;
+		data[2] = clr >> 16;
+		data[3] = clr >> 24;
 	}
 	else if (bpp == 3)
 	{
-		data[i + 0] = clr;
-		data[i + 1] = clr >> 8;
-		data[i + 2] = clr >> 16;
+		data[0] = clr;
+		data[1] = clr >> 8;
+		data[2] = clr >> 16;
 	}
 }
 
-void	get_bmp_pixel_data(t_bmp *bmp, void *pixels, int bpp)
+static void	get_bmp_pixel_data(t_bmp *bmp, void *pixels, int bpp)
 {
-	int	x;
-	int	y;
-	int	i;
+	int				x;
+	int				y;
+	unsigned char	*pix;
 
 	bmp->data = malloc(bmp->header.image_bytes + 1);
+	pix = &bmp->data[0];
 	y = bmp->header.height_px;
-	i = 0;
 	while (y--)
 	{
 		x = -1;
 		while (++x < bmp->header.width_px)
 		{
 			pixel_clr(((uint32_t *)pixels)[y * bmp->header.width_px + x],
-				i, bmp->data, bpp);
-			i += bpp;
+				pix, bpp);
+			pix += bpp;
 		}
 	}
 }
 
-t_bmp	*surface_to_bmp(int w, int h, int bpp, void *pixels)
+t_bmp	*pix_to_bmp(int w, int h, int bpp, void *pixels)
 {
 	t_bmp	*bmp;
 

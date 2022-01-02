@@ -6,19 +6,19 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/25 14:42:43 by nneronin          #+#    #+#             */
-/*   Updated: 2021/09/04 12:09:05 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/02 13:24:40 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bxpm.h"
 
-void	write_bxpm2_header(t_bxpm *bxpm, int fd, char *name)
+static void	write_bxpm2_header(t_bxpm *bxpm, int fd, char *name)
 {
 	ft_dprintf(fd, "static int\t\tbxpm_info_%s[5] = {\n%d,%d,%d,%d,%d};\n",
 		name, bxpm->w, bxpm->h, bxpm->clr_nb, bxpm->pix_nb, bxpm->bpp);
 }
 
-void	write_bxpm2_colors(t_bxpm *bxpm, int fd, char *name)
+static void	write_bxpm2_colors(t_bxpm *bxpm, int fd, char *name)
 {
 	int	i;
 
@@ -36,7 +36,7 @@ void	write_bxpm2_colors(t_bxpm *bxpm, int fd, char *name)
 	}
 }
 
-void	write_bxpm2_pixels(t_bxpm *bxpm, int fd, char *name)
+static void	write_bxpm2_pixels(t_bxpm *bxpm, int fd, char *name)
 {
 	int	i;
 

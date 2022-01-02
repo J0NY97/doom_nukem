@@ -6,23 +6,23 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/05 13:20:28 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/27 12:49:06 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/02 13:21:59 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bxpm.h"
 
-int	read_bxpm_header(FILE *fd, t_bxpm *bxpm)
+static int	read_bxpm_header(FILE *fd, t_bxpm *bxpm)
 {
 	unsigned char	header[20];
 
 	if (fread(header, 20, 1, fd) != 1)
 		return (0);
-	bxpm->w = read_int32(header, 0);
-	bxpm->h = read_int32(header, 4);
-	bxpm->clr_nb = read_int32(header, 8);
-	bxpm->pix_nb = read_int32(header, 12);
-	bxpm->bpp = read_int32(header, 16);
+	bxpm->w = read_int32(&header[0]);
+	bxpm->h = read_int32(&header[4]);
+	bxpm->clr_nb = read_int32(&header[8]);
+	bxpm->pix_nb = read_int32(&header[12]);
+	bxpm->bpp = read_int32(&header[16]);
 	bxpm->clr = malloc(sizeof(uint32_t) * bxpm->clr_nb);
 	if (!bxpm->clr)
 		return (0);
@@ -51,11 +51,7 @@ int	read_bxpm(t_bxpm *bxpm, char *file)
 
 int	multithread_read_bxpm(void *arg)
 {
-	int	res;
-
-	res = read_bxpm(((t_thread_bxpm *)arg)->bxpm, ((t_thread_bxpm *)arg)->path);
-	free(((t_thread_bxpm *)arg)->path);
-	if (res)
+	if (read_bxpm(((t_thread_bxpm *)arg)->bxpm, ((t_thread_bxpm *)arg)->path))
 		return (1);
 	ft_printf("Could not read %s\n", ((t_thread_bxpm *)arg)->path);
 	return (0);

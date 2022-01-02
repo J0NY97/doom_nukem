@@ -6,13 +6,13 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/09 12:48:53 by nneronin          #+#    #+#             */
-/*   Updated: 2021/07/10 13:50:35 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/02 13:22:47 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "bxpm.h"
 
-void	write_bpm_header(FILE *fd, t_header *header)
+static void	write_bpm_header(FILE *fd, t_header *header)
 {
 	fwrite((const void *)&header->type, 1, sizeof(uint16_t), fd);
 	fwrite((const void *)&header->size, 1, sizeof(uint32_t), fd);
@@ -32,7 +32,7 @@ void	write_bpm_header(FILE *fd, t_header *header)
 	fwrite((const void *)&header->import_colors, 1, sizeof(uint32_t), fd);
 }
 
-void	write_bpm_pixel_data(FILE *fd, t_bmp *bmp)
+static void	write_bpm_pixel_data(FILE *fd, t_bmp *bmp)
 {
 	fwrite(bmp->data, 1, bmp->header.image_bytes, fd);
 }
