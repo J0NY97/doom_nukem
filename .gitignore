@@ -7,6 +7,7 @@ map_editor/maps/*
 better_libui/test
 *path.h
 wolf3d
+log
 a.out
 *.exe
 doom_editor

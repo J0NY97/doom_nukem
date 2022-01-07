@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/04/25 14:42:43 by nneronin          #+#    #+#             */
-/*   Updated: 2022/01/02 13:27:53 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/02 14:59:47 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,16 +41,13 @@ static void	write_bxpm_pixels(t_bxpm *bxpm, FILE *fd)
 int	write_bxpm(t_bxpm *bxpm, char *path)
 {
 	FILE	*fd;
-	char	*full;
 
-	full = ft_strjoin(path, ".bxpm");
-	fd = fopen(full, "wb");
+	fd = fopen(path, "wb");
 	if (!fd)
 		return (0);
 	write_bxpm_header(bxpm, fd);
 	write_bxpm_colors(bxpm, fd);
 	write_bxpm_pixels(bxpm, fd);
-	free(full);
 	fclose(fd);
 	return (1);
 }

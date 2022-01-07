@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/14 11:14:30 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/08 15:52:17 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/07 16:47:11 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,6 @@
 # include <errno.h>
 # include <stdint.h>
 # include <stdbool.h>
-
-//# define PF_ERROR(...) pf_error(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
-//# define PF_INFO(...)	pf_info(__FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)
 
 # define PF_BUFF_SIZE	2048
 
@@ -94,11 +91,6 @@ void				fill_buffer(t_pf *p, const char *s, unsigned int size);
 void				set_float_padding(t_pf *p, long i_part, long double nb);
 void				set_float_padding(t_pf *p, long i_part, long double nb);
 void				set_zeros_base(t_pf *p, unsigned long nb, int base_len);
-void				error_msg(const char *restrict format, ...);
-//void				pf_error(const char *file, const char *func, int line,
-//						const char *restrict format, ...);
-//void				pf_info(const char *file, const char *func, int line,
-//						const char *restrict format, ...);
 
 typedef struct s_pf_style
 {
