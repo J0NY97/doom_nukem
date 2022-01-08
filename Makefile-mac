@@ -27,6 +27,7 @@ all: framework $(PATH_H)
 	@make -C ./libs/libpf -j6
 	@make -C ./libs/libbxpm -j6
 	@make -C ./libs/libtp -j6
+	@make -C ./libs/liblg -j6
 	@make -C ./libs/libui
 	@make -C ./map_editor -j6
 	@make -C ./launcher -j6
@@ -37,6 +38,7 @@ clean:
 	@make clean -C ./libs/libpf
 	@make clean -C ./libs/libbxpm
 	@make clean -C ./libs/libtp
+	@make clean -C ./libs/liblg
 	@make clean -C ./libs/libui
 	@make clean -C ./map_editor
 	@make clean -C ./launcher
@@ -47,6 +49,7 @@ fclean:
 	@make fclean -C ./libs/libpf
 	@make fclean -C ./libs/libbxpm
 	@make fclean -C ./libs/libtp
+	@make fclean -C ./libs/liblg
 	@make fclean -C ./libs/libui
 	@make fclean -C ./map_editor
 	@make fclean -C ./launcher
