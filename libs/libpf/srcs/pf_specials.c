@@ -6,25 +6,25 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/15 10:15:12 by nneronin          #+#    #+#             */
-/*   Updated: 2022/01/07 16:51:09 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/01/14 11:13:24 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libpf.h"
 
-static const t_pf_style	g_pf_styles[11] =
-{
-	{"{RESET}", "\e[0m", 7},
-	{"{RED}", "\e[31m", 5},
-	{"{GREEN}", "\e[32m", 7},
-	{"{YELLOW}", "\e[33m", 8},
-	{"{BLUE}", "\e[34m", 6},
-	{"{MAGENTA}", "\e[35m", 9},
-	{"{CYAN}", "\e[36m", 6},
-	{"{BOLD}", "\e[1m", 6},
-	{"{ITALIC}", "\e[3m", 8},
-	{"{UND}", "\e[4m", 5},
-	{"{INVERT}", "\e[7m", 8}
+static const t_pf_style	g_pf_styles[11]
+	= {
+{"{RESET}", "\e[0m", 7},
+{"{RED}", "\e[31m", 5},
+{"{GREEN}", "\e[32m", 7},
+{"{YELLOW}", "\e[33m", 8},
+{"{BLUE}", "\e[34m", 6},
+{"{MAGENTA}", "\e[35m", 9},
+{"{CYAN}", "\e[36m", 6},
+{"{BOLD}", "\e[1m", 6},
+{"{ITALIC}", "\e[3m", 8},
+{"{UND}", "\e[4m", 5},
+{"{INVERT}", "\e[7m", 8}
 };
 
 static int	color_code(t_pf *p, int i)
