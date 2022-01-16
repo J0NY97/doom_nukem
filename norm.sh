@@ -1,20 +1,28 @@
-norminette\
- game/srcs/*.c\
- game/srcs/BuyMenu/*.c\
- game/srcs/CollisionDetection/*.c\
- game/srcs/Draw/*.c\
- game/srcs/EntityCoords/*.c\
- game/srcs/Free/*.c\
- game/srcs/Init/*.c\
- game/srcs/Math/*.c\
- game/srcs/ParseMap/*.c\
- game/srcs/UI/*.c\
- game/inc/*.c\
- get_path/*.c\
- launcher/*.c\
- libs/libft/srcs/*.c\
- libs/libui/*.c\
- libs/libtp/srcs/*.c\
- libs/libpf/srcs/*.c
 
-norminette game/srcs/*.h game/inc/*.h get_path/*.h launcher/*.h libs/libft/*.h libs/libui/*.h libs/libtp/*.h libs/libpf/*.h
+norminette game/srcs/*.c | grep Error
+norminette game/srcs/BuyMenu/*.c | grep Error
+norminette game/srcs/CollisionDetection/*.c | grep Error
+norminette game/srcs/Draw/*.c | grep Error
+norminette game/srcs/EntityCoords/*.c | grep Error
+norminette game/srcs/Free/*.c | grep Error
+norminette game/srcs/Init/*.c | grep Error
+norminette game/srcs/Math/*.c | grep Error
+norminette game/srcs/ParseMap/*.c | grep Error
+norminette game/srcs/UI/*.c | grep Error
+norminette game/inc/*.c | grep Error
+
+norminette get_path/*.c | grep Error
+norminette launcher/*.c | grep Error
+norminette libs/libft/srcs/*.c | grep Error
+norminette libs/libui/*.c | grep Error
+norminette libs/libtp/srcs/*.c | grep Error
+norminette libs/libpf/srcs/*.c | grep Error
+
+#norminette	game/srcs/*.h | grep Error
+#norminette	game/inc/*.h | grep Error
+#norminette	get_path/*.h | grep Error
+#norminette	launcher/*.h | grep Error
+#norminette	libs/libft/*.h | grep Error
+#norminette	libs/libui/*.h | grep Error
+#norminette	libs/libtp/*.h | grep Error
+#norminette	libs/libpf/*.h | grep Error
