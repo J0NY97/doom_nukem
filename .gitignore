@@ -6,7 +6,7 @@ map_editor/maps/*
 .vscode
 better_libui/test
 *path.h
-wolf3d
+play
 log
 log.log
 a.out

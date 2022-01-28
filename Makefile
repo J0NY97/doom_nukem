@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/09 13:31:28 by nneronin         ###   ########.fr        #
+#    Updated: 2022/01/28 11:32:59 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,9 @@ ORANGE	:= "\x1b[38;5;208m"
 RESET	:= "\x1b[0m"
 
 SHELL_NAME	:= $(shell uname -s)
+RESOURCES	= ./game/resources
 
-all: 
+all: $(RESOURCES)
 ifeq ($(SHELL_NAME), Darwin)
 	@echo $(ORANGE)"OS: $(SHELL_NAME)\n Making mac version."$(RESET)
 	@make -f Makefile-mac
@@ -41,4 +42,9 @@ endif
 
 re: fclean all
 
-.PHONY: clean, all, re, fclean, framework, framework_del, frameworks_re
+$(RESOURCES):
+	@./DownloadResources.sh || (exit)
+	@unzip -q resources.zip -d ./game
+	@rm -rf resources.zip
+
+.PHONY: clean, all, re, fclean

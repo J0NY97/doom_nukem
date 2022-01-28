@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2021/12/15 10:17:38 by nneronin         ###   ########.fr        #
+#    Updated: 2022/01/28 11:29:11 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,7 @@ RESET	:= "\e[0m"
 
 PATH_H		= ./path.h
 
-all: framework $(PATH_H)
+all: install_framework $(PATH_H)
 	@make -C ./libs/libft -j6
 	@make -C ./libs/libpf -j6
 	@make -C ./libs/libbxpm -j6
@@ -57,36 +57,33 @@ fclean:
 
 re: fclean all
 
-SDL_DIR		:= ./libs/SDL_MAC
-
 $(PATH_H):
 	@printf $(CYAN)"[INFO]	Creating path.h\n"$(RESET)
 	@make -C ./libs/libft -j6
 	@make -C ./libs/libpf -j6
 	@sh ./get_path/run.sh
 
-framework:
+install_framework:
 	@mkdir -p ~/Library/Frameworks
-ifeq ("$(wildcard ~/Library/Frameworks/SDL2*.framework)","")
-	@cp -Rf $(SDL_DIR)/SDL2.framework ~/Library/Frameworks/
-	@cp -Rf $(SDL_DIR)/SDL2_ttf.framework ~/Library/Frameworks/
-	@cp -Rf $(SDL_DIR)/SDL2_image.framework ~/Library/Frameworks/
-	@cp -Rf $(SDL_DIR)/SDL2_mixer.framework ~/Library/Frameworks/
-	@printf $(CYAN)"[INFO]	Moving Frameworks\n"$(RESET)
-else
-	@printf $(GREEN)"[INFO] Frameworks ready!\n"$(RESET)
+ifeq ("$(wildcard ~/Library/Frameworks/SDL2.framework)","")
+	cp -Rf ./libs/SDL_MAC/SDL2.framework ~/Library/Frameworks/
+endif
+ifeq ("$(wildcard ~/Library/Frameworks/SDL2_ttf.framework)","")
+	cp -Rf ./libs/SDL_MAC/SDL2_ttf.framework ~/Library/Frameworks/
+endif
+ifeq ("$(wildcard ~/Library/Frameworks/SDL2_image.framework)","")
+	cp -Rf ./libs/SDL_MAC/SDL2_image.framework ~/Library/Frameworks/
+endif
+ifeq ("$(wildcard ~/Library/Frameworks/SDL2_mixer.framework)","")
+	cp -Rf ./libs/SDL_MAC/SDL2_mixer.framework ~/Library/Frameworks/
 endif
 
-framework_del:
-	@rm -rf ~/Library/Frameworks/SDL2*.framework
-	@/bin/rm -f $(NAME)
+delete_framework:
+	rm -rf ~/Library/Frameworks/SDL2.framework
+	rm -rf ~/Library/Frameworks/SDL2_ttf.framework
+	rm -rf ~/Library/Frameworks/SDL2_image.framework
+	rm -rf ~/Library/Frameworks/SDL2_mixer.framework
 	@printf $(CYAN)"[INFO]	Deleted SDL2 Frameworks from ~/Library/Frameworks\n"$(RESET)
 
-framework_re: framework_del
-	@cp -Rf $(SDL_DIR)/SDL2.framework ~/Library/Frameworks/
-	@cp -Rf $(SDL_DIR)/SDL2_ttf.framework ~/Library/Frameworks/
-	@cp -Rf $(SDL_DIR)/SDL2_image.framework ~/Library/Frameworks/
-	@cp -Rf $(SDL_DIR)/SDL2_mixer.framework ~/Library/Frameworks/
-	@printf $(CYAN)"[INFO]	Moving SDL2 Frameworks to ~/Library/Frameworks\n"$(RESET)
 
-.PHONY: clean, all, re, fclean, framework, framework_del, frameworks_re
+.PHONY: clean, all, re, fclean, install_framework, delete_framework
