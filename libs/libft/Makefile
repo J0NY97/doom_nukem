@@ -19,6 +19,7 @@ CYAN	:= "\e[0;36m"
 RESET	:= "\e[0m"
 
 RAW =	add_to_list.c\
+		get_file_content.c\
 		ft_atof.c\
 		ft_atoi.c\
 		ft_atoi_base.c\
@@ -33,7 +34,6 @@ RAW =	add_to_list.c\
 		ft_dellstnode.c\
 		ft_filetostr.c\
 		ft_ftoa.c\
-		ft_get_file_content.c\
 		ft_isalnum.c\
 		ft_isalpha.c\
 		ft_isascii.c\
@@ -141,7 +141,7 @@ IDIR = -I.
 ODIR = objs
 SRCS = $(addprefix $(CDIR)/, $(RAW))
 OBJS = $(addprefix $(ODIR)/, $(RAW:.c=.o))
-CFLAGS = -Wall -Wextra -Werror -MMD -O3
+CFLAGS = -Wall -Wextra -MMD -O3 #-Werror
 
 all: $(NAME)
 	@printf $(GREEN)"\e[J[INFO] $(NAME) ready!\n"$(RESET)

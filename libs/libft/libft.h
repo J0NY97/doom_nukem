@@ -164,6 +164,6 @@ char				**ft_arrjoin(char **to_this, char **from_this);
 double				ft_timer_end(void);
 void				ft_timer_start(void);
 void				ft_lstdelone_nonfree(t_list **lst, t_list *del);
-char				*ft_get_file_content(char *file);
+char				*get_file_content(char *file);
 
 #endif
