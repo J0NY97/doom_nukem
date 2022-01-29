@@ -162,7 +162,6 @@ clean:
 	@rm -rf $(ODIR)
 
 fclean: clean
-	
 	@rm $(NAME)
 
 re: fclean all

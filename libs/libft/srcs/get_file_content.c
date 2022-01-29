@@ -25,10 +25,12 @@ char	*get_file_content(char *file)
 	if (!file)
 		return (NULL);
 	fp = fopen(file, "r");
+	if (!fp)
+		return (NULL);
 	fd = fileno(fp);
 	fstat(fd, &file_stat);
 	file_len = file_stat.st_size;
-	final = malloc(file_len);
+	final = malloc(file_len + 1);
 	fread(final, 1, file_len, fp);
 	final[file_len] = '\0';
 	fclose(fp);
