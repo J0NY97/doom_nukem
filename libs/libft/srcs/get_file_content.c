@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_get_file_content.c                              :+:      :+:    :+:   */
+/*   get_file_content.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 15:39:53 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/08 15:40:24 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/02/01 13:39:22 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 
 char	*get_file_content(char *file)
 {
-	char	*final;
-	FILE	*fp;
-	int		fd;
+	char		*final;
+	FILE		*fp;
+	int			fd;
 	struct stat	file_stat;
-	int		file_len;
+	int			file_len;
 
 	if (!file)
 		return (NULL);
