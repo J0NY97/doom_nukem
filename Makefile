@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2022/01/28 11:32:59 by nneronin         ###   ########.fr        #
+#    Updated: 2022/02/04 14:18:21 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ RESOURCES	= ./game/resources
 
 all: $(RESOURCES)
 ifeq ($(SHELL_NAME), Darwin)
-	@echo $(ORANGE)"OS: $(SHELL_NAME)\n Making mac version."$(RESET)
+	@echo $(ORANGE)"OS: $(SHELL_NAME)"$(RESET)
 	@make -f Makefile-mac
 else
 	@echo "OS: $(SHELL_NAME)"
