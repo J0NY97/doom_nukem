@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2021/07/26 11:13:50 by nneronin          #+#    #+#              #
-#    Updated: 2022/01/28 11:29:11 by nneronin         ###   ########.fr        #
+#    Updated: 2022/02/04 11:41:31 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -30,8 +30,8 @@ all: install_framework $(PATH_H)
 	@make -C ./libs/liblg -j6
 	@make -C ./libs/libui
 	@make -C ./map_editor -j6
-	@make -C ./launcher -j6
 	@make -C ./game -j6
+	@make -C ./launcher -j6
 
 clean:
 	@make clean -C ./libs/libft
@@ -41,8 +41,8 @@ clean:
 	@make clean -C ./libs/liblg
 	@make clean -C ./libs/libui
 	@make clean -C ./map_editor
-	@make clean -C ./launcher
 	@make clean -C ./game
+	@make clean -C ./launcher
 
 fclean:
 	@make fclean -C ./libs/libft
@@ -52,8 +52,8 @@ fclean:
 	@make fclean -C ./libs/liblg
 	@make fclean -C ./libs/libui
 	@make fclean -C ./map_editor
-	@make fclean -C ./launcher
 	@make fclean -C ./game
+	@make fclean -C ./launcher
 
 re: fclean all
 
