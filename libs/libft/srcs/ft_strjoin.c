@@ -32,3 +32,29 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	dest[i] = '\0';
 	return (dest);
 }
+
+/*
+ * We join s1 and s2 into dest, dest should already be allocated, either heap
+ *	or stack;
+ * 'dest' should be atleast ft_strlen(s1) + ft_strlen(s2);
+ */
+char	*ft_b_strjoin(char *dest, const char *s1, const char *s2)
+{
+	int	s1_len;
+	int	s2_len;
+
+	s1_len = 0;
+	while (s1[s1_len])
+	{
+		dest[s1_len] = s1[s1_len];
+		s1_len++;
+	}
+	s2_len = 0;
+	while (s2[s2_len])
+	{
+		dest[s1_len + s2_len] = s2[s2_len];
+		s2_len++;
+	}
+	dest[s1_len + s2_len] = 0;
+	return (dest);
+}

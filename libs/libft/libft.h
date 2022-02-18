@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   libft.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
+/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/10/18 11:56:18 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/10 09:21:20 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/02/17 03:07:20 by jsalmi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ char				**stringsplit(const char *s, char c, int *nb);
 void				ft_striter(char *s, void (*f)(char *));
 void				ft_striteri(char *s, void (*f)(unsigned int, char *));
 char				*ft_strjoin(char const *s1, char const *s2);
+char				*ft_b_strjoin(char *dest, const char *s1, const char *s2);
 char				*ft_strjoiner(char *first, ...);
 char				*ft_strjoinf(char *s1, const char *s2);
 size_t				ft_strlcat(char *dest, const char *src, size_t size);
@@ -164,6 +165,6 @@ char				**ft_arrjoin(char **to_this, char **from_this);
 double				ft_timer_end(void);
 void				ft_timer_start(void);
 void				ft_lstdelone_nonfree(t_list **lst, t_list *del);
-char				*get_file_content(char *file);
+char				*get_file_content(const char *file);
 
 #endif

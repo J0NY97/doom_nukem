@@ -21,7 +21,8 @@ void	ft_putarr(char **arr)
 	i = -1;
 	while (arr[++i])
 	{
+		ft_putchar('<');
 		ft_putstr(arr[i]);
-		ft_putchar('\n');
+		ft_putstr(">\n");
 	}
 }
