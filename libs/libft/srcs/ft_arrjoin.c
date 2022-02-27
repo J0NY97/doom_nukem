@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_arrjoin.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.42.fr>              +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/11 10:09:19 by jsalmi            #+#    #+#             */
-/*   Updated: 2021/12/11 10:09:20 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/02/27 10:46:32 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ char	**ft_arrjoin(char **to_this, char **from_this)
 	j = 0;
 	arr = NULL;
 	total = ft_arrlen(to_this) + ft_arrlen(from_this) + 1;
-	if (total  == 1)
+	if (total == 1)
 		return (NULL);
 	arr = ft_memalloc(sizeof(char *) * total);
 	while (to_this && to_this[i])

@@ -6,7 +6,7 @@
 #    By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2020/09/23 13:48:12 by nneronin          #+#    #+#              #
-#    Updated: 2022/01/07 16:47:34 by nneronin         ###   ########.fr        #
+#    Updated: 2022/02/27 11:41:36 by nneronin         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -67,7 +67,7 @@ clean:
 
 fclean: clean
 	
-	@rm $(NAME)
+	@rm -f $(NAME)
 
 re: fclean all
 

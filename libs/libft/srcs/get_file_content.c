@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   get_file_content.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: jsalmi <jsalmi@student.hive.fi>            +#+  +:+       +#+        */
+/*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/08 15:39:53 by nneronin          #+#    #+#             */
-/*   Updated: 2022/02/18 02:29:53 by jsalmi           ###   ########.fr       */
+/*   Updated: 2022/02/27 10:48:34 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,11 +16,11 @@
 
 char	*get_file_content(const char *file)
 {
-	char	*final;
-	FILE	*fp;
-	int		fd;
+	char		*final;
+	FILE		*fp;
+	int			fd;
 	struct stat	file_stat;
-	int		file_len;
+	int			file_len;
 
 	if (!file)
 		return (NULL);

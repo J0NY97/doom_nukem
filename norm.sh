@@ -1,11 +1,11 @@
 
 
-#	norminette get_path/*.h | grep Error
-#	norminette launcher/*.h | grep Error
-#	norminette libs/libui/*.h | grep Error
-#	norminette get_path/*.c | grep Error
-#	norminette launcher/*.c | grep Error
-#	norminette libs/libui/*.c | grep Error
+	norminette get_path/*.h | grep Error
+	norminette launcher/*.h | grep Error
+	norminette libs/libui/*.h | grep Error
+	norminette get_path/*.c | grep Error
+	norminette launcher/*.c | grep Error
+	norminette libs/libui/*.c | grep Error
 
 	norminette game/srcs/*.c | grep Error
 	norminette game/srcs/UI | grep Error

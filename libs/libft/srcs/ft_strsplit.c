@@ -6,7 +6,7 @@
 /*   By: nneronin <nneronin@student.hive.fi>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/16 15:01:20 by nneronin          #+#    #+#             */
-/*   Updated: 2021/12/09 12:38:55 by nneronin         ###   ########.fr       */
+/*   Updated: 2022/02/27 10:47:55 by nneronin         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,7 +60,7 @@ void	fill_elem_pos(int *elem_pos, char *str, char delim)
 {
 	int	first;
 	int	second;
-	int i;
+	int	i;
 
 	first = 0;
 	second = 0;
@@ -80,7 +80,7 @@ void	fill_elem_pos(int *elem_pos, char *str, char delim)
 	}
 }
 
-int		get_elem_amount(const char *str, char delim)
+int	get_elem_amount(const char *str, char delim)
 {
 	int	amount;
 	int	second;
@@ -114,7 +114,7 @@ char	**ft_strsplit(char const *str, char delim)
 	elem_count = -1;
 	amount = get_elem_amount(str, delim) * 2;
 	elem_pos = malloc(sizeof(int) * amount);
-	fill_elem_pos(elem_pos, (char *)str, delim); // this is unnessecary. we could do everything, we do in this function, in the while loop down below.
+	fill_elem_pos(elem_pos, (char *)str, delim);
 	if (!elem_pos || amount == 0)
 		return (NULL);
 	final = malloc(sizeof(char *) * ((amount / 2) + 1));
